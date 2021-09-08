@@ -1,0 +1,54 @@
+package com.mzlalal.base.feign.oauth2;
+
+import com.mzlalal.base.common.GlobalConstant;
+import com.mzlalal.base.entity.global.BaseEntity;
+import com.mzlalal.base.entity.global.Result;
+import com.mzlalal.base.entity.oauth2.vo.OauthVo;
+import com.mzlalal.base.entity.oauth2.vo.TokenVo;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+
+/**
+ * 授权feign
+ *
+ * @author Mzlalal88
+ * @date 2021/7/28 14:28
+ */
+@FeignClient(value = GlobalConstant.FANTASY_OAUTH2 + "/api/v1/oauth", url = "http://127.0.0.1:9000/")
+public interface OauthFeignApi {
+
+    /**
+     * 登录
+     *
+     * @param oauthVo 授权参数
+     * @return Result<String>
+     */
+    @ApiOperation("登录")
+    @GetMapping("/authorize")
+    Result<BaseEntity> authorize(@Validated OauthVo oauthVo);
+
+    /**
+     * 获取令牌
+     *
+     * @param tokenVo 授权参数
+     * @return Result<String>
+     */
+    @ApiOperation("获取令牌")
+    @PostMapping("/token")
+    Result<BaseEntity> token(@Validated @RequestBody TokenVo tokenVo);
+
+    /**
+     * 登出
+     *
+     * @param token token
+     * @return Result
+     */
+    @ApiOperation("注销登出")
+    @GetMapping("/logout")
+    Result<Void> logout(@RequestHeader(GlobalConstant.F_AUTHORIZATION) String token);
+}
