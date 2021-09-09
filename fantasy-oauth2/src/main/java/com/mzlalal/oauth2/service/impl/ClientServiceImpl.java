@@ -1,4 +1,4 @@
-package com.mzlalal.oss.service.impl;
+package com.mzlalal.oauth2.service.impl;
 
 import cn.hutool.core.thread.ThreadUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -6,8 +6,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oauth2.ClientEntity;
 import com.mzlalal.base.util.Page;
-import com.mzlalal.oss.dao.ClientDao;
-import com.mzlalal.oss.service.ClientService;
+import com.mzlalal.oauth2.dao.ClientDao;
+import com.mzlalal.oauth2.service.ClientService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

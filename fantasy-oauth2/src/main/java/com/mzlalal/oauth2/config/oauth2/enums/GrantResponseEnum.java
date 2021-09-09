@@ -1,4 +1,4 @@
-package com.mzlalal.oss.config.oauth2.enums;
+package com.mzlalal.oauth2.config.oauth2.enums;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
@@ -10,9 +10,9 @@ import com.mzlalal.base.entity.oauth2.ClientEntity;
 import com.mzlalal.base.entity.oauth2.UserEntity;
 import com.mzlalal.base.entity.oauth2.vo.GrantCodeVo;
 import com.mzlalal.base.entity.oauth2.vo.OauthVo;
-import com.mzlalal.oss.config.oauth2.service.RedisAuthCodeService;
-import com.mzlalal.oss.config.oauth2.service.RedisTokenService;
-import com.mzlalal.oss.service.ClientService;
+import com.mzlalal.oauth2.config.oauth2.service.RedisAuthCodeService;
+import com.mzlalal.oauth2.config.oauth2.service.RedisTokenService;
+import com.mzlalal.oauth2.service.ClientService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**

@@ -1,10 +1,10 @@
-package com.mzlalal.oss.controller;
+package com.mzlalal.oauth2.controller;
 
 import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oauth2.UserEntity;
 import com.mzlalal.base.feign.oauth2.UserFeignApi;
-import com.mzlalal.oss.service.UserService;
+import com.mzlalal.oauth2.service.UserService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

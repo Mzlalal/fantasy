@@ -1,4 +1,4 @@
-package com.mzlalal.oss;
+package com.mzlalal.oauth2;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
@@ -16,7 +16,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  */
 @MapperScan(basePackages = "com.mzlalal.oauth2.dao")
 @EnableFeignClients(basePackages = {"com.mzlalal.base.feign"})
-@SpringBootApplication(scanBasePackages = {"com.mzlalal.base", "com.mzlalal.oss"})
+@SpringBootApplication(scanBasePackages = {"com.mzlalal.base", "com.mzlalal.oauth2"})
 public class SecurityOauthApplication {
 
     public static void main(String[] args) {

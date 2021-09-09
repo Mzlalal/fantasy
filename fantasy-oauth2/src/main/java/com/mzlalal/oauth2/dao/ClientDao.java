@@ -1,4 +1,4 @@
-package com.mzlalal.oss.dao;
+package com.mzlalal.oauth2.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.mzlalal.base.entity.oauth2.ClientEntity;

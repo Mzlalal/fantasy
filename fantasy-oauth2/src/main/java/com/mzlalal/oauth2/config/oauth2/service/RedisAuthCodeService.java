@@ -1,4 +1,4 @@
-package com.mzlalal.oss.config.oauth2.service;
+package com.mzlalal.oauth2.config.oauth2.service;
 
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.BooleanUtil;

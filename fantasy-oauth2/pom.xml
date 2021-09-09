@@ -169,7 +169,7 @@
                     <archive>
                         <manifest>
                             <!-- 指定程序入口 -->
-                            <mainClass>com.mzlalal.oss.SecurityOauthApplication</mainClass>
+                            <mainClass>com.mzlalal.oauth2.SecurityOauthApplication</mainClass>
                             <!-- 打包时 MANIFEST.MF文件不记录的时间戳版本 -->
                             <useUniqueVersions>false</useUniqueVersions>
                             <addClasspath>true</addClasspath>

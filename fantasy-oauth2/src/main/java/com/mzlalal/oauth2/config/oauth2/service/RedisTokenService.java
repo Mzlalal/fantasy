@@ -1,4 +1,4 @@
-package com.mzlalal.oss.config.oauth2.service;
+package com.mzlalal.oauth2.config.oauth2.service;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateUtil;
@@ -13,7 +13,7 @@ import com.mzlalal.base.entity.oauth2.AccessToken;
 import com.mzlalal.base.entity.oauth2.ClientEntity;
 import com.mzlalal.base.entity.oauth2.UserEntity;
 import com.mzlalal.base.util.AssertUtil;
-import com.mzlalal.oss.service.UserService;
+import com.mzlalal.oauth2.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;

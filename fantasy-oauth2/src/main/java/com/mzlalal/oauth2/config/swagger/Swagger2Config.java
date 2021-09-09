@@ -1,4 +1,4 @@
-package com.mzlalal.oss.config.swagger;
+package com.mzlalal.oauth2.config.swagger;
 
 import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j;
 import com.github.xiaoymin.knife4j.spring.extension.OpenApiExtensionResolver;

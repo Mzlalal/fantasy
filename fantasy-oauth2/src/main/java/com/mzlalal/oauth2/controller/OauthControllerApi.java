@@ -1,4 +1,4 @@
-package com.mzlalal.oss.controller;
+package com.mzlalal.oauth2.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ArrayUtil;
@@ -12,8 +12,8 @@ import com.mzlalal.base.entity.oauth2.vo.OauthVo;
 import com.mzlalal.base.entity.oauth2.vo.TokenVo;
 import com.mzlalal.base.feign.oauth2.OauthFeignApi;
 import com.mzlalal.base.util.AssertUtil;
-import com.mzlalal.oss.config.oauth2.enums.GrantResponseEnum;
-import com.mzlalal.oss.service.ClientService;
+import com.mzlalal.oauth2.config.oauth2.enums.GrantResponseEnum;
+import com.mzlalal.oauth2.service.ClientService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

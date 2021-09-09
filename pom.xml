@@ -7,6 +7,7 @@
     <modules>
         <module>fantasy-base</module>
         <module>fantasy-oauth2</module>
+        <module>fantasy-oss</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

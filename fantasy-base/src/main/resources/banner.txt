@@ -12,12 +12,12 @@
     服务端口：${server.port}
     应用名称：${spring.application.name}
     运行环境：${spring.profiles.active}
-    文档地址：http://localhost:${server.port}${server.servlet.context-path}/doc.html
+    文档地址：http://localhost:${server.port}${server.servlet.context-path:}/doc.html
 --------------------------------------------------------------------------------
 中间件配置
 --------------------------------------------------------------------------------
-    nacos：${spring.cloud.nacos.discovery.server-addr}
-    redis：${spring.redis.host}:${spring.redis.port}
+    nacos：${spring.cloud.nacos.discovery.server-addr:暂无设置}
+    redis：${spring.redis.host:暂无设置}:${spring.redis.port:暂无设置}
 --------------------------------------------------------------------------------
 JVM信息
 --------------------------------------------------------------------------------

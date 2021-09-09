@@ -1,4 +1,4 @@
-package com.mzlalal.oss.service;
+package com.mzlalal.oauth2.service;
 
 import com.mzlalal.base.entity.oauth2.ClientEntity;
 import com.mzlalal.base.service.BaseService;

@@ -1,10 +1,10 @@
-package com.mzlalal.oss.controller;
+package com.mzlalal.oauth2.controller;
 
 import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oauth2.ClientEntity;
 import com.mzlalal.base.feign.oauth2.ClientFeignApi;
-import com.mzlalal.oss.service.ClientService;
+import com.mzlalal.oauth2.service.ClientService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
