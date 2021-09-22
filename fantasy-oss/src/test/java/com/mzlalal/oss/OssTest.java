@@ -41,6 +41,7 @@ public class OssTest {
         }
         // 遍历上传
         System.out.println("文件开始上传...");
+        System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", "8");
         fileList.parallelStream().forEach(item -> {
             try {
                 String fsPath = minioService.upload(item);
