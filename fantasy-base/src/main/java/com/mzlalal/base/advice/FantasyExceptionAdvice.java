@@ -94,10 +94,10 @@ public class FantasyExceptionAdvice {
     @SneakyThrows
     private String processStack(Exception exception) {
         // 获取异常的所有的堆栈信息
-        StackTraceElement[] stackTraceElements = exception.getStackTrace();
+        StackTraceElement[] stackTraceElementArray = exception.getStackTrace();
         // 设置默认
-        StackTraceElement stack = stackTraceElements[0];
-        for (StackTraceElement item : stackTraceElements) {
+        StackTraceElement stack = stackTraceElementArray[0];
+        for (StackTraceElement item : stackTraceElementArray) {
             String className = item.getClassName();
             // base包抛出的类不需要
             if (!StrUtil.containsAny(className, "com.mzlalal.base", "$")

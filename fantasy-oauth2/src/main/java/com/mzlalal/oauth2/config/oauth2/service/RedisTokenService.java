@@ -48,7 +48,6 @@ public class RedisTokenService {
     public AccessToken createAccessToken(UserEntity userEntity, ClientEntity clientEntity) {
         // 如果存在token则返回旧的
         if (StrUtil.isNotBlank(userEntity.getAccessToken())) {
-            RedisTemplate<String, Object> redisTemplate = SpringUtil.getBean("redisTemplateStoreJson");
             // 如果存在redis 则返回旧的信息
             Boolean bool = redisTemplate.hasKey(GlobalConstant.tokenRedisKey(userEntity.getAccessToken()));
             if (BooleanUtil.isTrue(bool)) {

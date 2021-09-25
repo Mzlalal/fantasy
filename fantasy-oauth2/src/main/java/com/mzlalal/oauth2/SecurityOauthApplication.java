@@ -8,7 +8,6 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 /**
  * 启动类
  * EnableFeignClients 开启feign调用
- * EnableDiscoveryClient nacos注册中心
  * SpringBootApplication 扫描
  * MapperScan mybatis扫描
  *

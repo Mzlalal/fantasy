@@ -22,7 +22,7 @@ public enum GlobalResult {
     /**
      * 服务器繁忙
      */
-    REQ_NOT_FOUNT(404, "请求找不到了,请稍后再试"),
+    REQ_NOT_FOUNT(404, "请求找不到了，请稍后再试"),
     /**
      * 授权失败
      */
@@ -46,19 +46,19 @@ public enum GlobalResult {
     /**
      * 长时间未操作,请重新登录
      */
-    LONG_TIME_NO_OPERATION(411, "长时间未操作,请重新登录"),
+    LONG_TIME_NO_OPERATION(411, "长时间未操作，请重新登录"),
     /**
      * 授权验证码不正确,请重新登录
      */
-    OAUTH_CODE_NOT_CORRECT(412, "授权验证码不正确,请重新登录"),
+    OAUTH_CODE_NOT_CORRECT(412, "授权验证码不正确，请重新登录"),
     /**
      * 服务器繁忙
      */
-    SEVER_ERROR(500, "服务器繁忙,请稍后再试"),
+    SEVER_ERROR(500, "服务器繁忙，请稍后再试"),
     /**
      * 服务器繁忙
      */
-    FEIGN_SEVER_ERROR(5000, "服务器繁忙,请稍后再试"),
+    FEIGN_SEVER_ERROR(5000, "服务器繁忙，请稍后再试"),
     /**
      * 当前请求不支持当前METHOD访问
      */
@@ -98,7 +98,11 @@ public enum GlobalResult {
     /**
      * 手机格式不正确
      */
-    MOBILE_NOT_CORRECT(1007, "手机格式不正确");
+    MOBILE_NOT_CORRECT(1007, "手机格式不正确"),
+    /**
+     * 文件上传失败
+     */
+    FILE_UPLOAD_FAIL(1100, "文件上传失败，请稍后再试");
 
     /**
      * 状态
