@@ -1,7 +1,5 @@
 package com.mzlalal.oss.controller;
 
-import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.util.StrUtil;
 import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.oss.UploadFileEntity;
 import com.mzlalal.base.feign.oss.FileFeignApi;
@@ -11,10 +9,10 @@ import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 
 /**
@@ -39,19 +37,15 @@ public class FileController implements FileFeignApi {
     }
 
     @Override
-    public Result<UploadFileEntity> upload(MultipartFile file) throws MinioException, IOException {
-        // 保存为临时文件
-        File uploadFile = new File("/temp/" + file.getOriginalFilename());
-        FileUtil.writeFromStream(file.getInputStream(), uploadFile);
+    public Result<UploadFileEntity> upload(@RequestPart("file") MultipartFile multipartFile) throws MinioException, IOException {
         // 上传
-        String path = minioService.upload(uploadFile);
-        // 删除文件
-        boolean delete = uploadFile.delete();
-        if (!delete) {
-            log.info(StrUtil.format("临时文件:{}删除失败", uploadFile.getAbsolutePath()));
-        }
+        String path = minioService.upload(multipartFile.getOriginalFilename()
+                , multipartFile.getInputStream(), multipartFile.getBytes());
         // 构建返回结果
-        UploadFileEntity entity = UploadFileEntity.builder().path(path).size(file.getSize()).build();
+        UploadFileEntity entity = UploadFileEntity.builder()
+                .path(path)
+                .size(multipartFile.getSize())
+                .build();
         return Result.ok(entity);
     }
 }

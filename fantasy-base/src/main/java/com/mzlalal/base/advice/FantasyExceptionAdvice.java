@@ -45,20 +45,30 @@ import java.util.Set;
 public class FantasyExceptionAdvice {
 
     /**
-     * 打印异常和当前请求路径,请求参数
+     * 打印系统异常和当前请求路径,请求参数
      *
      * @param request 请求
      * @param cause   异常
      */
     protected void logExAndParams(HttpServletRequest request, Exception cause) {
+        // 打印原始报错
+        log.error("", ExceptionUtil.getRootCause(cause));
+        this.logCustomFormatMessage(request, cause);
+    }
+
+    /**
+     * 打印当前请求路径,请求参数
+     *
+     * @param request 请求
+     * @param cause   异常
+     */
+    protected void logCustomFormatMessage(HttpServletRequest request, Exception cause) {
         // 输出格式
         String format = "\n\t请求路径:{}\n\t代码位置:{}\n\t请求参数:\n\t\turl:{} \n\t\tbody:{} \n\t异常信息:{}";
         // 处理body内的参数
         StringBuilder requestBody = this.processRequestBody(request);
         // 处理堆栈错误信息
         String classLine = this.processStack(cause);
-        // 打印原始报错
-        log.error("", ExceptionUtil.getRootCause(cause));
         // 打印自定义错误信息
         log.error(StrUtil.format(format, request.getRequestURL(), classLine
                 , JSON.toJSONString(request.getParameterMap()), requestBody, ExceptionUtil.getMessage(cause)));
@@ -166,7 +176,7 @@ public class FantasyExceptionAdvice {
     @ExceptionHandler(BoomException.class)
     public Result<String> handleBoomException(HttpServletRequest request, Exception exception) {
         String state = exception.getMessage();
-        this.logExAndParams(request, exception);
+        this.logCustomFormatMessage(request, exception);
         return GlobalResult.getEnum(state).result();
     }
 

@@ -25,13 +25,13 @@ public interface FileFeignApi {
     /**
      * 上传文件
      *
-     * @param file 文件
+     * @param multipartFile 文件
      * @return string 文件FS地址
      * @throws MinioException minio异常
      * @throws IOException    IO异常
      */
     @ApiOperation("上传文件")
-    @PostMapping("/upload")
-    @ApiImplicitParam(name = "file", value = "文件", required = true, dataType = "MultipartFile", paramType = "form")
-    Result<UploadFileEntity> upload(@RequestPart("file") MultipartFile file) throws MinioException, IOException;
+    @PostMapping(value = "/upload", headers = "content-type=multipart/form-data")
+    @ApiImplicitParam(name = "file", value = "文件", required = true, dataType = "File", paramType = "form")
+    Result<UploadFileEntity> upload(@RequestPart("file") MultipartFile multipartFile) throws MinioException, IOException;
 }
