@@ -4,7 +4,6 @@ import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.oss.UploadFileEntity;
 import com.mzlalal.base.feign.oss.FileFeignApi;
 import com.mzlalal.minio.service.MinioService;
-import io.minio.errors.MinioException;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -12,8 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 
 /**
  * 文件上传
@@ -37,7 +34,7 @@ public class FileController implements FileFeignApi {
     }
 
     @Override
-    public Result<UploadFileEntity> upload(@RequestPart("file") MultipartFile multipartFile) throws MinioException, IOException {
+    public Result<UploadFileEntity> upload(@RequestPart("file") MultipartFile multipartFile) throws Exception {
         // 上传
         String path = minioService.upload(multipartFile.getOriginalFilename()
                 , multipartFile.getInputStream(), multipartFile.getBytes());

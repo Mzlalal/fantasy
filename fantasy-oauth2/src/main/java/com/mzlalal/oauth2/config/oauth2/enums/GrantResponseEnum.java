@@ -2,6 +2,7 @@ package com.mzlalal.oauth2.config.oauth2.enums;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
+import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.common.GlobalResult;
 import com.mzlalal.base.entity.global.BaseEntity;
 import com.mzlalal.base.entity.global.Result;
@@ -32,21 +33,17 @@ public enum GrantResponseEnum {
         public Result<BaseEntity> processGrant(OauthVo oauthVo) {
             // 密码直接授权
             String authCode = GrantProvideEnum.PASSWORD
-                    .validate(oauthVo.getUsername(), oauthVo.getValue());
+                    .validate(oauthVo.getUsername(), oauthVo.getGrantValue());
             // 消费授权码,获取用户信息
-            UserEntity userEntity = SpringUtil.getBean(RedisAuthCodeService.class)
-                    .consume(authCode);
+            UserEntity userEntity = SpringUtil.getBean(RedisAuthCodeService.class).consume(authCode);
             // 查询客户端
-            ClientEntity client = SpringUtil.getBean(ClientService.class)
-                    .getOneByClientId(oauthVo.getClientId());
+            ClientEntity client = SpringUtil.getBean(ClientService.class).getOneByClientId(oauthVo.getClientId());
             // 私匙不正确
-            if (!SpringUtil.getBean(BCryptPasswordEncoder.class)
-                    .matches(oauthVo.getClientSecret(), client.getClientSecret())) {
+            if (!SpringUtil.getBean(BCryptPasswordEncoder.class).matches(oauthVo.getClientSecret(), client.getClientSecret())) {
                 throw GlobalResult.OAUTH_FAIL.boom();
             }
             // 生成token
-            AccessToken accessToken = SpringUtil.getBean(RedisTokenService.class)
-                    .createAccessToken(userEntity, client);
+            AccessToken accessToken = SpringUtil.getBean(RedisTokenService.class).createAccessToken(userEntity, client);
             return Result.ok(accessToken);
         }
 
@@ -62,11 +59,15 @@ public enum GrantResponseEnum {
         @Override
         public Result<BaseEntity> processGrant(OauthVo oauthVo) {
             // 验证邮箱授权码
-            String authCode = GrantProvideEnum.MAIL
-                    .validate(oauthVo.getUsername(), oauthVo.getValue());
+            String authCode = GrantProvideEnum.MAIL.validate(oauthVo.getUsername(), oauthVo.getGrantValue());
+            // 回调URL格式
+            String redirectUriFormat = "{}?code={}&responseType={}&state={}";
+            // 格式化
+            String redirectUri = StrUtil.format(redirectUriFormat, oauthVo.getRedirectUri()
+                    , authCode, GlobalConstant.MAIL, oauthVo.getState());
             // 返回结果
             return Result.ok(GrantCodeVo.builder()
-                    .redirectUri(oauthVo.getRedirectUri() + "?code=" + authCode)
+                    .redirectUri(redirectUri)
                     .build());
         }
 
@@ -74,7 +75,7 @@ public enum GrantResponseEnum {
         public Result<BaseEntity> processToken(OauthVo oauthVo, ClientEntity client) {
             // 验证二次授权码
             UserEntity entity = SpringUtil.getBean(RedisAuthCodeService.class)
-                    .consume(oauthVo.getValue());
+                    .consume(oauthVo.getGrantValue());
             // 生成token
             AccessToken accessToken = SpringUtil.getBean(RedisTokenService.class)
                     .createAccessToken(entity, client);

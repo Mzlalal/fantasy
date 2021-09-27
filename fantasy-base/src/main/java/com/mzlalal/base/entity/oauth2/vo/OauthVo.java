@@ -33,12 +33,12 @@ public class OauthVo extends BaseEntity {
     private String clientSecret;
 
     @ApiModelProperty("授权类型:password-密码(直接返回TOKEN) mail-邮件验证码(二次验证)")
-    @NotBlank(message = "非法的授权类型")
+    @NotBlank(message = "授权类型不能为空")
     private String grantType;
 
     @ApiModelProperty("验证值:password-密码 mail-邮件验证码")
     @NotBlank(message = "字段值不能为空")
-    private String value;
+    private String grantValue;
 
     @ApiModelProperty("重定向地址")
     private String redirectUri;

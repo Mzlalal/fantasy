@@ -31,15 +31,11 @@ public class TokenVo extends BaseEntity {
     @NotBlank(message = "来源客户端未建立合作")
     private String clientSecret;
 
-    @ApiModelProperty("验证字段类型")
-    @NotBlank(message = "验证字段类型不能为空")
-    private String type;
-
-    @ApiModelProperty("验证字段")
-    @NotBlank(message = "验证字段不能为空")
-    private String field;
-
     @ApiModelProperty("授权类型")
-    @NotBlank(message = "非法的授权类型")
+    @NotBlank(message = "授权类型不能为空")
     private String responseType;
+
+    @ApiModelProperty("授权码")
+    @NotBlank(message = "授权码不能为空")
+    private String code;
 }

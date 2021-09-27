@@ -32,13 +32,9 @@ public interface GlobalConstant {
      */
     String MAIL = "mail";
     /**
-     * code
+     * 密码
      */
-    String VALIDATE_CODE = "code";
-    /**
-     * password
-     */
-    String VALIDATE_PASSWORD = "password";
+    String PASSWORD = "password";
 
     /**
      * 邮箱redis key

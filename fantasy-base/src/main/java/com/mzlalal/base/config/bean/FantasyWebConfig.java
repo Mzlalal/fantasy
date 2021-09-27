@@ -23,7 +23,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class FantasyWebConfig implements WebMvcConfigurer {
 
-    private RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     private final Oauth2Property oauth2Property;
 
@@ -35,11 +35,20 @@ public class FantasyWebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // 不需要登录即可访问的地址
-        String[] excludePath = new String[]{"/oauth/**", "/doc.html", "/webjars/**", "/v2/api-docs",
-                "/swagger-resources", "/swagger-resources/**", "**/**.css", "**/**.js", "**/**.html", "**/**.ico"};
+        String[] excludePath = new String[]{
+                // oauth
+                "/api/v1/oauth/logout", "/api/v1/oauth/token", "/api/v1/oauth/authorize"
+                , "/api/v1/oauth/authorize.code", "/api/v1/notify/**", "/oauth/callback"
+                // doc swagger
+                , "/doc.html", "/webjars/**", "/v2/api-docs", "/swagger-resources"
+                , "/swagger-resources/**"
+                // static resource
+                , "**/**.js", "**/**.css", "**/**.html", "**/**.ico"};
+        // 需要登录验证的网址
+        String[] includePath = new String[]{"/**"};
         // 登录拦截器
         registry.addInterceptor(new Oauth2ServerInterceptor(redisTemplate, oauth2Property))
-                .addPathPatterns("/**")
+                .addPathPatterns(includePath)
                 .excludePathPatterns(excludePath);
     }
 

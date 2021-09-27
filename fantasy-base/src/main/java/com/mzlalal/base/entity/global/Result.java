@@ -92,11 +92,11 @@ public class Result<T> implements Serializable {
     }
 
     public static <T> Result<T> state(int state, String msg) {
-        return Result.<T>builder().state(STATE_OK).msg(msg).build();
+        return Result.<T>builder().state(state).msg(msg).build();
     }
 
     public static <T> Result<T> state(int state, String msg, T entity) {
-        return Result.<T>builder().state(STATE_OK).msg(msg).data(entity).build();
+        return Result.<T>builder().state(state).msg(msg).data(entity).build();
     }
 
     /**

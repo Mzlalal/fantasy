@@ -3,6 +3,7 @@ package com.mzlalal.base.feign.oauth2;
 import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.entity.global.BaseEntity;
 import com.mzlalal.base.entity.global.Result;
+import com.mzlalal.base.entity.oauth2.vo.OauthCodeVo;
 import com.mzlalal.base.entity.oauth2.vo.OauthVo;
 import com.mzlalal.base.entity.oauth2.vo.TokenVo;
 import io.swagger.annotations.ApiOperation;
@@ -19,14 +20,25 @@ import org.springframework.web.bind.annotation.RequestHeader;
  * @author Mzlalal88
  * @date 2021/7/28 14:28
  */
-@FeignClient(value = GlobalConstant.FANTASY_OAUTH2 + "/api/v1/oauth", url = "http://127.0.0.1:9000/")
+@FeignClient(value = "oauthFeignApi"
+        , url = "http://127.0.0.1:9000/" + GlobalConstant.FANTASY_OAUTH2 + "/api/v1/oauth")
 public interface OauthFeignApi {
+
+    /**
+     * 登录验证码
+     *
+     * @param oauthCodeVo 登录验证码参数
+     * @return Result<BaseEntity>
+     */
+    @ApiOperation("登录验证码")
+    @PostMapping("/authorize.code")
+    Result<String> authorizeCode(@Validated @RequestBody OauthCodeVo oauthCodeVo);
 
     /**
      * 登录
      *
      * @param oauthVo 授权参数
-     * @return Result<String>
+     * @return Result<BaseEntity>
      */
     @ApiOperation("登录")
     @GetMapping("/authorize")
@@ -36,11 +48,21 @@ public interface OauthFeignApi {
      * 获取令牌
      *
      * @param tokenVo 授权参数
-     * @return Result<String>
+     * @return Result<BaseEntity>
      */
     @ApiOperation("获取令牌")
     @PostMapping("/token")
     Result<BaseEntity> token(@Validated @RequestBody TokenVo tokenVo);
+
+    /**
+     * 验证令牌
+     *
+     * @param token 令牌
+     * @return Result<BaseEntity>
+     */
+    @ApiOperation("验证令牌")
+    @PostMapping("/checkToken")
+    Result<BaseEntity> checkToken(@RequestHeader(GlobalConstant.F_AUTHORIZATION) String token);
 
     /**
      * 登出

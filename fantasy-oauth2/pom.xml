@@ -19,6 +19,16 @@
     <dependencies>
         <dependency>
             <groupId>com.mzlalal</groupId>
+            <artifactId>mz-notify-service-stater</artifactId>
+            <version>${mz.notify.service.stater.version}</version>
+        </dependency>
+        <!-- notify需要的模板渲染引擎 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-freemarker</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.mzlalal</groupId>
             <artifactId>mz-repeat-submit-stater</artifactId>
         </dependency>
         <dependency>

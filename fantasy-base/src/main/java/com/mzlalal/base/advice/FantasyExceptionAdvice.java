@@ -3,6 +3,7 @@ package com.mzlalal.base.advice;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.servlet.ServletUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONValidator;
@@ -25,9 +26,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.Objects;
@@ -64,35 +62,15 @@ public class FantasyExceptionAdvice {
      */
     protected void logCustomFormatMessage(HttpServletRequest request, Exception cause) {
         // 输出格式
-        String format = "\n\t请求路径:{}\n\t代码位置:{}\n\t请求参数:\n\t\turl:{} \n\t\tbody:{} \n\t异常信息:{}";
+        String format = "\n\t请求路径:{}\n\t代码位置:{}\n\t请求参数:\n\t\turl:{}\n\t\tbody:{}\n\t异常信息:{}";
         // 处理body内的参数
-        StringBuilder requestBody = this.processRequestBody(request);
+        String requestBody = ServletUtil.getBody(request);
         // 处理堆栈错误信息
         String classLine = this.processStack(cause);
         // 打印自定义错误信息
         log.error(StrUtil.format(format, request.getRequestURL(), classLine
-                , JSON.toJSONString(request.getParameterMap()), requestBody, ExceptionUtil.getMessage(cause)));
-    }
-
-    /**
-     * 处理body内的参数
-     *
-     * @param request 请求
-     * @return body参数
-     */
-    @SneakyThrows
-    private StringBuilder processRequestBody(HttpServletRequest request) {
-        StringBuilder requestBody = new StringBuilder();
-        // 获取requestBody的信息
-        BufferedReader streamReader = new BufferedReader(
-                new InputStreamReader(request.getInputStream(), StandardCharsets.UTF_8));
-        String input;
-        while ((input = streamReader.readLine()) != null) {
-            requestBody.append(input);
-        }
-        // 关闭流
-        streamReader.close();
-        return requestBody;
+                , JSON.toJSONString(request.getParameterMap()), requestBody
+                , ExceptionUtil.getMessage(cause)));
     }
 
     /**

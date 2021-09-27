@@ -37,13 +37,13 @@ public class RedisAuthCodeService {
      */
     public String store(UserEntity userEntity) {
         // 创建UUID
-        String authCode = IdUtil.fastSimpleUUID();
+        String code = IdUtil.fastSimpleUUID();
         // 存储
-        Boolean absent = redisTemplate.opsForValue().setIfAbsent(authCode, userEntity, 15, TimeUnit.MINUTES);
+        Boolean absent = redisTemplate.opsForValue().setIfAbsent(code, userEntity, 15, TimeUnit.MINUTES);
         // 如果不存在抛出异常
         AssertUtil.isTrue(BooleanUtil.isTrue(absent), GlobalResult.OAUTH_FAIL);
         // 返回授权码
-        return authCode;
+        return code;
     }
 
     /**

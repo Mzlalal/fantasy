@@ -1,0 +1,79 @@
+package com.mzlalal.base.feign.client;
+
+import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import com.mzlalal.base.common.GlobalConstant;
+import com.mzlalal.base.entity.global.Result;
+import com.mzlalal.base.entity.global.po.Po;
+import com.mzlalal.base.entity.oauth2.ClientEntity;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+/**
+ * feign调用类
+ *
+ * @author Mzlalal
+ * @date 2021-08-23 09:55:38
+ **/
+@FeignClient(value = "clientFeignApi"
+        , url = "http://127.0.0.1:9000/" + GlobalConstant.FANTASY_OAUTH2 + "/api/v1/oauth/client")
+public interface ClientFeignApi {
+
+    /**
+     * 查询分页信息
+     *
+     * @param po 分页参数
+     * @return Result
+     */
+    @ApiOperation("查看列表")
+    @RequestMapping(value = "/list", method = RequestMethod.POST)
+    @ApiOperationSupport(order = 1)
+    Result<ClientEntity> list(@RequestBody Po<ClientEntity> po);
+
+    /**
+     * 详情
+     *
+     * @param id ID 实体ID
+     * @return Result
+     */
+    @ApiOperation("查看详情")
+    @RequestMapping(value = "/info/{id}", method = RequestMethod.GET)
+    @ApiOperationSupport(order = 2)
+    Result<ClientEntity> info(@PathVariable("id") Long id);
+
+    /**
+     * 保存
+     *
+     * @param client 实体
+     * @return Result
+     */
+    @ApiOperation("保存")
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    @ApiOperationSupport(order = 3)
+    Result<Void> save(@RequestBody ClientEntity client);
+
+    /**
+     * 更新
+     *
+     * @param client 实体
+     * @return Result
+     */
+    @ApiOperation("更新")
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    @ApiOperationSupport(order = 4)
+    Result<Void> update(@RequestBody ClientEntity client);
+
+    /**
+     * 根据ID数组批量删除
+     *
+     * @param ids ID数组
+     * @return Result
+     */
+    @ApiOperation("删除")
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @ApiOperationSupport(order = 5)
+    Result<Void> delete(@RequestBody Long[] ids);
+}
