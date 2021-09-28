@@ -62,15 +62,12 @@ public class FantasyExceptionAdvice {
      */
     protected void logCustomFormatMessage(HttpServletRequest request, Exception cause) {
         // 输出格式
-        String format = "\n\t请求路径:{}\n\t代码位置:{}\n\t请求参数:\n\t\turl:{}\n\t\tbody:{}\n\t异常信息:{}";
-        // 处理body内的参数
-        String requestBody = ServletUtil.getBody(request);
+        String format = "\n\t请求路径:{}\n\t代码位置:{}\n\t请求参数:{}\n\t异常信息:{}";
         // 处理堆栈错误信息
         String classLine = this.processStack(cause);
         // 打印自定义错误信息
         log.error(StrUtil.format(format, request.getRequestURL(), classLine
-                , JSON.toJSONString(request.getParameterMap()), requestBody
-                , ExceptionUtil.getMessage(cause)));
+                , JSON.toJSONString(ServletUtil.getParamMap(request)), ExceptionUtil.getMessage(cause)));
     }
 
     /**
@@ -108,7 +105,7 @@ public class FantasyExceptionAdvice {
      */
     @ExceptionHandler(ConstraintViolationException.class)
     public Result<String> handleValidationException(HttpServletRequest request, ConstraintViolationException exception) {
-        this.logExAndParams(request, exception);
+        this.logCustomFormatMessage(request, exception);
         // 可能有多个条件校验失败 只返回第一条
         Set<ConstraintViolation<?>> violations = exception.getConstraintViolations();
         ConstraintViolation<?> errorMsg = CollUtil.get(violations, 0);
@@ -124,7 +121,7 @@ public class FantasyExceptionAdvice {
      */
     @ExceptionHandler(BindException.class)
     public Result<String> handleBindException(HttpServletRequest request, BindException exception) {
-        this.logExAndParams(request, exception);
+        this.logCustomFormatMessage(request, exception);
         // 可能有多个条件校验失败 只返回第一条
         List<FieldError> violations = exception.getFieldErrors();
         FieldError errorMsg = CollUtil.get(violations, 0);

@@ -36,8 +36,8 @@ public class OauthVo extends BaseEntity {
     @NotBlank(message = "授权类型不能为空")
     private String grantType;
 
-    @ApiModelProperty("验证值:password-密码 mail-邮件验证码")
-    @NotBlank(message = "字段值不能为空")
+    @ApiModelProperty("验证码:password-密码 mail-邮件验证码")
+    @NotBlank(message = "授权验证码不能为空")
     private String grantValue;
 
     @ApiModelProperty("重定向地址")

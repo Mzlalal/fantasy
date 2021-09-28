@@ -41,8 +41,8 @@ public interface OauthFeignApi {
      * @return Result<BaseEntity>
      */
     @ApiOperation("登录")
-    @GetMapping("/authorize")
-    Result<BaseEntity> authorize(@Validated OauthVo oauthVo);
+    @PostMapping("/authorize")
+    Result<BaseEntity> authorize(@Validated @RequestBody OauthVo oauthVo);
 
     /**
      * 获取令牌

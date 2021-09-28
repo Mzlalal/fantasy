@@ -87,7 +87,7 @@ public class OauthController implements OauthFeignApi {
     }
 
     @Override
-    public Result<BaseEntity> authorize(OauthVo oauthVo) {
+    public Result<BaseEntity> authorize(@RequestBody OauthVo oauthVo) {
         // 检查客户端
         ClientEntity client = clientService.getOneByClientId(oauthVo.getClientId());
         AssertUtil.notNull(client, GlobalResult.OAUTH_FAIL);
