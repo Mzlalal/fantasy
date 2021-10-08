@@ -37,7 +37,7 @@ public class FileController implements FileFeignApi {
     public Result<UploadFileEntity> upload(@RequestPart("file") MultipartFile multipartFile) throws Exception {
         // 上传
         String path = minioService.upload(multipartFile.getOriginalFilename()
-                , multipartFile.getInputStream(), multipartFile.getBytes());
+                , multipartFile.getInputStream());
         // 构建返回结果
         UploadFileEntity entity = UploadFileEntity.builder()
                 .path(path)
