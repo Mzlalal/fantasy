@@ -1,7 +1,11 @@
 package com.mzlalal.base.util;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Assert;
+import cn.hutool.core.util.ArrayUtil;
 import com.mzlalal.base.common.GlobalResult;
+
+import java.util.Collection;
 
 /**
  * 断言
@@ -35,5 +39,27 @@ public class AssertUtil extends Assert {
         if (obj == null) {
             throw resultCode.boom();
         }
+    }
+
+    /**
+     * 集合不包含则抛出异常
+     *
+     * @param collection 字符串集合
+     * @param str        字符串
+     * @param resultCode 全局状态码
+     */
+    public static <T> void collNotContains(Collection<T> collection, T str, GlobalResult resultCode) {
+        AssertUtil.isTrue(CollUtil.contains(collection, str), resultCode);
+    }
+
+    /**
+     * 数组不包含则抛出异常
+     *
+     * @param array      字符串数组
+     * @param str        字符串
+     * @param resultCode 全局状态码
+     */
+    public static <T> void arrayNotContains(T[] array, T str, GlobalResult resultCode) {
+        AssertUtil.isTrue(ArrayUtil.contains(array, str), resultCode);
     }
 }

@@ -37,6 +37,20 @@
         </dependency>
 
         <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+            <version>${spring.cloud.nacos.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+            <version>${spring.cloud.nacos.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-micro-spring-boot-starter</artifactId>
             <exclusions>
@@ -194,13 +208,10 @@
                                 --spring.profiles.active=product
                             </arg>
                             <arg>
-                                --spring.redis.host=172.18.0.1
+                                --spring.cloud.nacos.config.server-addr=172.18.0.1:8848
                             </arg>
                             <arg>
-                                --spring.datasource.host=172.18.0.1:3306
-                            </arg>
-                            <arg>
-                                --spring.datasource.password=MySql@88!
+                                --spring.cloud.nacos.discovery.server-addr=172.18.0.1:8848
                             </arg>
                         </args>
                         <!--使用当前时间-->

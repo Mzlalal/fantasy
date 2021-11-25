@@ -40,8 +40,7 @@ public class FantasyWebConfig implements WebMvcConfigurer {
                 "/api/v1/oauth/logout", "/api/v1/oauth/token", "/api/v1/oauth/authorize"
                 , "/api/v1/oauth/authorize.code", "/api/v1/notify/**", "/oauth/callback"
                 // doc swagger
-                , "/doc.html", "/webjars/**", "/v2/api-docs", "/swagger-resources"
-                , "/swagger-resources/**"
+                , "/doc.html", "/webjars/**", "/v2/api-docs", "/swagger-resources", "/swagger-resources/**"
                 // static resource
                 , "**/**.js", "**/**.css", "**/**.html", "**/**.ico"};
         // 需要登录验证的网址
@@ -52,6 +51,11 @@ public class FantasyWebConfig implements WebMvcConfigurer {
                 .excludePathPatterns(excludePath);
     }
 
+    /**
+     * 跨域请求拦截放行
+     *
+     * @return CorsFilter
+     */
     @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

@@ -13,13 +13,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
- * feign调用类
+ * 用户信息feign调用类
  *
  * @author Mzlalal
  * @date 2021-07-29 20:36:48
  **/
-@FeignClient(value = "userFeignApi"
-        , url = "http://127.0.0.1:9000/" + GlobalConstant.FANTASY_OAUTH2 + "/api/v1/oauth/user")
+@FeignClient(name = GlobalConstant.FANTASY_OAUTH2 + "/api/v1/oauth/user")
 public interface UserFeignApi {
 
     /**

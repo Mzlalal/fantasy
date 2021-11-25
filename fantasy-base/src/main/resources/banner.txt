@@ -12,14 +12,12 @@
     服务端口：${server.port}
     应用名称：${spring.application.name}
     运行环境：${spring.profiles.active}
-    文档地址：http://localhost:${server.port}${server.servlet.context-path:}/doc.html
+    文档地址：http://localhost:${server.port}/${spring.application.name:}/doc.html
     文档用户: ${knife4j.basic.username:暂无配置}/${knife4j.basic.password:暂无配置}
 --------------------------------------------------------------------------------
 中间件配置
 --------------------------------------------------------------------------------
     nacos：${spring.cloud.nacos.discovery.server-addr:暂无配置}
-    redis：${spring.redis.host:暂无配置}:${spring.redis.port:暂无配置}
-    database: ${spring.datasource.url:暂无配置}
 --------------------------------------------------------------------------------
 JVM信息
 --------------------------------------------------------------------------------

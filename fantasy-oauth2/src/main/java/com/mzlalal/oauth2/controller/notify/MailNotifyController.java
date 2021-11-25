@@ -11,6 +11,7 @@ import com.mzlalal.base.util.AssertUtil;
 import com.mzlalal.notify.service.MailNotifyService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2021-08-23 09:55:38
  */
 @Api(tags = "邮件通知")
+@Validated
 @RestController
 @RequestMapping("/api/v1/notify/mail")
 public class MailNotifyController implements MailNotifyFeignApi {
@@ -46,8 +48,7 @@ public class MailNotifyController implements MailNotifyFeignApi {
         AssertUtil.isTrue(Validator.isEmail(authorizeCodeEntity.getAccount())
                 , GlobalResult.EMAIL_NOT_CORRECT);
         // 渲染文本
-        String content = templateEngine
-                .getTemplate("/notify/mail/notifyAccountAuthorizeCode.html")
+        String content = templateEngine.getTemplate("/notify/mail/notifyAccountAuthorizeCode.html")
                 .render(BeanUtil.beanToMap(authorizeCodeEntity));
         // 发送邮件
         String messageId = mailNotifyService.send(authorizeCodeEntity.getAccount()

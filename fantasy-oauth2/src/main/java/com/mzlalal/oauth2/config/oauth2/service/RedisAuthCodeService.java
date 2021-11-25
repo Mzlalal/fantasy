@@ -1,7 +1,6 @@
 package com.mzlalal.oauth2.config.oauth2.service;
 
 import cn.hutool.core.lang.Assert;
-import cn.hutool.core.util.BooleanUtil;
 import cn.hutool.core.util.IdUtil;
 import com.mzlalal.base.common.GlobalResult;
 import com.mzlalal.base.entity.oauth2.UserEntity;
@@ -39,9 +38,7 @@ public class RedisAuthCodeService {
         // 创建UUID
         String code = IdUtil.fastSimpleUUID();
         // 存储
-        Boolean absent = redisTemplate.opsForValue().setIfAbsent(code, userEntity, 15, TimeUnit.MINUTES);
-        // 如果不存在抛出异常
-        AssertUtil.isTrue(BooleanUtil.isTrue(absent), GlobalResult.OAUTH_FAIL);
+        redisTemplate.opsForValue().setIfAbsent(code, userEntity, 15, TimeUnit.MINUTES);
         // 返回授权码
         return code;
     }

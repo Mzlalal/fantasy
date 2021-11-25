@@ -12,6 +12,7 @@ import com.mzlalal.oauth2.service.UserService;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Future;
@@ -55,7 +56,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     }
 
     @Override
-    public boolean updateAccessTokenById(Long id, UserEntity userEntity) {
+    public boolean updateAccessTokenById(@NotNull(message = "用户ID不能为空") Long id, UserEntity userEntity) {
         UpdateWrapper<UserEntity> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("id", id);
         return this.update(userEntity, updateWrapper);

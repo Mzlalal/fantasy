@@ -82,7 +82,7 @@ public abstract class FantasySwagger2Config implements WebMvcConfigurer {
     /**
      * 增加全局头部 header
      *
-     * @return
+     * @return List<ApiKey>
      */
     private List<ApiKey> securitySchemes() {
         return Collections.singletonList(new ApiKey(GlobalConstant.F_AUTHORIZATION, GlobalConstant.F_AUTHORIZATION, "header"));

@@ -19,6 +19,6 @@ public class OssApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(OssApplication.class, args);
+        System.out.println("The SecurityOauthApplication Has Been Started Successfully!");
     }
-
 }

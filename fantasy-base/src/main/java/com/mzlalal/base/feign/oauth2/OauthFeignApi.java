@@ -8,20 +8,18 @@ import com.mzlalal.base.entity.oauth2.vo.OauthVo;
 import com.mzlalal.base.entity.oauth2.vo.TokenVo;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 /**
- * 授权feign
+ * 登录授权feign
  *
  * @author Mzlalal88
  * @date 2021/7/28 14:28
  */
-@FeignClient(value = "oauthFeignApi"
-        , url = "http://127.0.0.1:9000/" + GlobalConstant.FANTASY_OAUTH2 + "/api/v1/oauth")
+@FeignClient(name = GlobalConstant.FANTASY_OAUTH2 + "/api/v1/oauth")
 public interface OauthFeignApi {
 
     /**
@@ -32,7 +30,7 @@ public interface OauthFeignApi {
      */
     @ApiOperation("登录验证码")
     @PostMapping("/authorize.code")
-    Result<String> authorizeCode(@Validated @RequestBody OauthCodeVo oauthCodeVo);
+    Result<String> authorizeCode(@RequestBody OauthCodeVo oauthCodeVo);
 
     /**
      * 登录
@@ -42,7 +40,7 @@ public interface OauthFeignApi {
      */
     @ApiOperation("登录")
     @PostMapping("/authorize")
-    Result<BaseEntity> authorize(@Validated @RequestBody OauthVo oauthVo);
+    Result<BaseEntity> authorize(@RequestBody OauthVo oauthVo);
 
     /**
      * 获取令牌
@@ -52,7 +50,7 @@ public interface OauthFeignApi {
      */
     @ApiOperation("获取令牌")
     @PostMapping("/token")
-    Result<BaseEntity> token(@Validated @RequestBody TokenVo tokenVo);
+    Result<BaseEntity> token(@RequestBody TokenVo tokenVo);
 
     /**
      * 验证令牌

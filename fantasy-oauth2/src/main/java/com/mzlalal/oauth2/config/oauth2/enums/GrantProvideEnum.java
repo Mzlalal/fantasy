@@ -25,39 +25,60 @@ public enum GrantProvideEnum {
      * 邮箱验证码登录
      */
     MAIL() {
+        /**
+         * 用户服务
+         */
+        private final UserService userService = SpringUtil.getBean(UserService.class);
+        /**
+         * redis授权码服务
+         */
+        private final RedisAuthCodeService redisAuthCodeService = SpringUtil.getBean(RedisAuthCodeService.class);
+        /**
+         * redis授权码服务
+         */
+        private final StringRedisTemplate redisTemplate = SpringUtil.getBean(StringRedisTemplate.class);
+
         @Override
         public String validate(String username, String value) {
             // 邮箱格式
             AssertUtil.isTrue(Validator.isEmail(username), GlobalResult.EMAIL_NOT_CORRECT);
-            // 比较redis中的验证码
-            StringRedisTemplate redisTemplate = SpringUtil.getBean(StringRedisTemplate.class);
             // 获取验证码
             String redisCode = redisTemplate.opsForValue().get(GlobalConstant.mailCodeRedisKey(username));
             // 验证码是否正确
             AssertUtil.isTrue(StrUtil.equals(redisCode, value), GlobalResult.VALIDATE_CODE_NOT_RIGHT);
             // 查询用户信息
-            UserEntity userEntity = SpringUtil.getBean(UserService.class).findOneByMail(username)
-                    .orElseThrow(GlobalResult.EMAIL_NOT_FOUNT::boom);
+            UserEntity userEntity = userService.findOneByMail(username).orElseThrow(GlobalResult.EMAIL_NOT_FOUNT::boom);
             // 存储用户信息并返回授权码
-            return SpringUtil.getBean(RedisAuthCodeService.class).store(userEntity);
+            return redisAuthCodeService.store(userEntity);
         }
     },
     /**
      * 密码登录
      */
     PASSWORD() {
+        /**
+         * 用户服务
+         */
+        private final UserService userService = SpringUtil.getBean(UserService.class);
+        /**
+         * 密码工具
+         */
+        private final BCryptPasswordEncoder passwordEncoder = SpringUtil.getBean(BCryptPasswordEncoder.class);
+        /**
+         * redis授权码服务
+         */
+        private final RedisAuthCodeService redisAuthCodeService = SpringUtil.getBean(RedisAuthCodeService.class);
+
         @Override
         public String validate(String username, String value) {
             // 手机格式
             AssertUtil.isTrue(Validator.isMobile(username), GlobalResult.MOBILE_NOT_CORRECT);
-            // 密码
-            BCryptPasswordEncoder passwordEncoder = SpringUtil.getBean(BCryptPasswordEncoder.class);
             // 查询用户信息
-            UserEntity userEntity = SpringUtil.getBean(UserService.class).findOneByMobile(username)
+            UserEntity userEntity = userService.findOneByMobile(username)
                     .orElseThrow(GlobalResult.MOBILE_NOT_FOUNT::boom);
             // 存储用户信息和授权码
             if (passwordEncoder.matches(value, userEntity.getPassword())) {
-                return SpringUtil.getBean(RedisAuthCodeService.class).store(userEntity);
+                return redisAuthCodeService.store(userEntity);
             }
             // 密码不正确
             throw GlobalResult.PASSWORD_NOT_RIGHT.boom();

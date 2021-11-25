@@ -6,13 +6,10 @@ import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.BooleanUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.extra.spring.SpringUtil;
 import com.mzlalal.base.common.GlobalConstant;
-import com.mzlalal.base.common.GlobalResult;
 import com.mzlalal.base.entity.oauth2.AccessToken;
 import com.mzlalal.base.entity.oauth2.ClientEntity;
 import com.mzlalal.base.entity.oauth2.UserEntity;
-import com.mzlalal.base.util.AssertUtil;
 import com.mzlalal.oauth2.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -30,12 +27,21 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class RedisTokenService {
 
+    /**
+     * redis操作模板
+     */
     private final RedisTemplate<String, Object> redisTemplate;
+    /**
+     * 用户service
+     */
+    private final UserService userService;
 
     @Autowired
-    public RedisTokenService(RedisTemplate<String, Object> redisTemplate) {
+    public RedisTokenService(RedisTemplate<String, Object> redisTemplate, UserService userService) {
         this.redisTemplate = redisTemplate;
         Assert.notNull(redisTemplate, "redisTemplate不能为空");
+        this.userService = userService;
+        Assert.notNull(userService, "userService不能为空");
     }
 
     /**
@@ -61,19 +67,14 @@ public class RedisTokenService {
                 .expireAt(DateUtil.offsetSecond(new Date(), clientEntity.getAccessTokenTime()))
                 .build();
         // 设置TOKEN
-        Boolean tokenBool = redisTemplate.opsForValue().setIfAbsent(GlobalConstant.tokenRedisKey(accessToken.getAccessToken())
+        redisTemplate.opsForValue().setIfAbsent(GlobalConstant.tokenRedisKey(accessToken.getAccessToken())
                 , userEntity, clientEntity.getAccessTokenTime(), TimeUnit.SECONDS);
-        // 设置失败
-        AssertUtil.isTrue(BooleanUtil.isTrue(tokenBool), GlobalResult.OAUTH_FAIL);
         // 设置刷新TOKEN
-        Boolean refreshBool = redisTemplate.opsForValue().setIfAbsent(GlobalConstant.tokenRedisKey(accessToken.getRefreshToken())
+        redisTemplate.opsForValue().setIfAbsent(GlobalConstant.tokenRedisKey(accessToken.getRefreshToken())
                 , "", clientEntity.getRefreshTokenTime(), TimeUnit.SECONDS);
-        // 设置失败
-        AssertUtil.isTrue(BooleanUtil.isTrue(refreshBool), GlobalResult.OAUTH_FAIL);
         // 更新用户token
         BeanUtil.copyProperties(accessToken, userEntity);
-        SpringUtil.getBean(UserService.class)
-                .updateAccessTokenById(userEntity.getId(), userEntity);
+        userService.updateAccessTokenById(userEntity.getId(), userEntity);
         return accessToken;
     }
 }

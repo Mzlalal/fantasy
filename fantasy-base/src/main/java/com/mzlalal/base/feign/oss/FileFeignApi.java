@@ -16,8 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @author Mzlalal
  * @date 2021/9/24 10:04
  */
-@FeignClient(value = "fileFeignApi"
-        , url = "http://127.0.0.1:9005/" + GlobalConstant.FANTASY_OSS + "/api/v1/oss/file")
+@FeignClient(name = GlobalConstant.FANTASY_OSS + "/api/v1/oss/file")
 public interface FileFeignApi {
 
     /**

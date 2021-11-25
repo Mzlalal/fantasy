@@ -94,8 +94,7 @@ public class OauthController implements OauthFeignApi {
         // 获取授权类型
         String[] grantTypeArray = StrUtil.splitToArray(client.getResponseType(), ",");
         // 不存在这输出异常
-        AssertUtil.isTrue(ArrayUtil.contains(grantTypeArray, oauthVo.getGrantType())
-                , GlobalResult.OAUTH_RESPONSE_TYPE_NOT_CORRECT);
+        AssertUtil.arrayNotContains(grantTypeArray, oauthVo.getGrantType(), GlobalResult.OAUTH_RESPONSE_TYPE_NOT_CORRECT);
         // 重定向地址为空,则设置默认的重新地址
         if (StrUtil.isBlank(oauthVo.getRedirectUri())) {
             oauthVo.setRedirectUri(client.getRedirectUri());
