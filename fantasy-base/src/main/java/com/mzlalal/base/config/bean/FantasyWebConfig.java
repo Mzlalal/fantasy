@@ -2,6 +2,7 @@ package com.mzlalal.base.config.bean;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mzlalal.base.interceptor.FantasyActionReportInterceptor;
 import com.mzlalal.base.oauth2.Oauth2Property;
 import com.mzlalal.base.oauth2.interceptor.Oauth2ServerInterceptor;
 import org.springframework.context.annotation.Bean;
@@ -34,21 +35,17 @@ public class FantasyWebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        // 不需要登录即可访问的地址
-        String[] excludePath = new String[]{
-                // oauth
-                "/api/v1/oauth/logout", "/api/v1/oauth/token", "/api/v1/oauth/authorize"
-                , "/api/v1/oauth/authorize.code", "/api/v1/notify/**", "/oauth/callback"
-                // doc swagger
-                , "/doc.html", "/webjars/**", "/v2/api-docs", "/swagger-resources", "/swagger-resources/**"
-                // static resource
-                , "**/**.js", "**/**.css", "**/**.html", "**/**.ico"};
-        // 需要登录验证的网址
-        String[] includePath = new String[]{"/**"};
         // 登录拦截器
-        registry.addInterceptor(new Oauth2ServerInterceptor(redisTemplate, oauth2Property))
-                .addPathPatterns(includePath)
-                .excludePathPatterns(excludePath);
+        Oauth2ServerInterceptor oauth2ServerInterceptor = new Oauth2ServerInterceptor(redisTemplate, oauth2Property);
+        registry.addInterceptor(oauth2ServerInterceptor)
+                .addPathPatterns(oauth2ServerInterceptor.getIncludePath())
+                .excludePathPatterns(oauth2ServerInterceptor.getExcludePath());
+
+        // 请求参数拦截器
+        FantasyActionReportInterceptor fantasyActionReportInterceptor = new FantasyActionReportInterceptor();
+        registry.addInterceptor(fantasyActionReportInterceptor)
+                .addPathPatterns(fantasyActionReportInterceptor.getIncludePath())
+                .excludePathPatterns(fantasyActionReportInterceptor.getExcludePath());
     }
 
     /**

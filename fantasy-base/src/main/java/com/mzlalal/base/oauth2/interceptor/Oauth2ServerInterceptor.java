@@ -27,6 +27,31 @@ public class Oauth2ServerInterceptor implements HandlerInterceptor {
 
     private final Oauth2Property oauth2Property;
 
+    /**
+     * 不需要登录即可访问的地址
+     */
+    private final String[] excludePath = new String[]{
+            // oauth
+            "/api/v1/oauth/logout", "/api/v1/oauth/token", "/api/v1/oauth/authorize"
+            , "/api/v1/oauth/authorize.code", "/api/v1/notify/**", "/oauth/callback"
+            // doc swagger
+            , "/doc.html", "/webjars/**", "/v2/api-docs", "/swagger-resources", "/swagger-resources/**"
+            // static resource
+            , "**/**.js", "**/**.css", "**/**.html", "**/**.ico"};
+
+    /**
+     * 需要登录验证的网址
+     */
+    private final String[] includePath = new String[]{"/**"};
+
+    public String[] getExcludePath() {
+        return excludePath;
+    }
+
+    public String[] getIncludePath() {
+        return includePath;
+    }
+
     public Oauth2ServerInterceptor(RedisTemplate<String, Object> redisTemplate, Oauth2Property oauth2Property) {
         this.redisTemplate = redisTemplate;
         this.oauth2Property = oauth2Property;
