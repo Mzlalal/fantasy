@@ -38,7 +38,7 @@ public class ClientEntity extends BaseEntity {
     @ApiModelProperty("重定向地址")
     private String redirectUri;
 
-    @ApiModelProperty(value = "授权类型", example = "code,password")
+    @ApiModelProperty(value = "授权类型", example = "mail,password")
     private String responseType;
 
     @ApiModelProperty(value = "授权范围", example = "mobile,mail,header")

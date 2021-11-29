@@ -92,15 +92,15 @@ public class OauthController implements OauthFeignApi {
         ClientEntity client = clientService.getOneByClientId(oauthVo.getClientId());
         AssertUtil.notNull(client, GlobalResult.OAUTH_FAIL);
         // 获取授权类型
-        String[] grantTypeArray = StrUtil.splitToArray(client.getResponseType(), ",");
+        String[] responseTypeArray = StrUtil.splitToArray(client.getResponseType(), ",");
         // 不存在这输出异常
-        AssertUtil.arrayNotContains(grantTypeArray, oauthVo.getGrantType(), GlobalResult.OAUTH_RESPONSE_TYPE_NOT_CORRECT);
+        AssertUtil.arrayNotContains(responseTypeArray, oauthVo.getResponseType(), GlobalResult.OAUTH_RESPONSE_TYPE_NOT_CORRECT);
         // 重定向地址为空,则设置默认的重新地址
         if (StrUtil.isBlank(oauthVo.getRedirectUri())) {
             oauthVo.setRedirectUri(client.getRedirectUri());
         }
         // 获取授权码
-        return GrantResponseEnum.getEnum(oauthVo.getGrantType()).processGrant(oauthVo);
+        return GrantResponseEnum.getEnum(oauthVo.getResponseType()).processGrant(oauthVo);
     }
 
     @Override
