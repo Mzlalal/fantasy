@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author Mzlalal
  * @date 2021/9/24 10:04
  */
-@FeignClient(name = GlobalConstant.FANTASY_OAUTH2 + "/api/v1/notify/mail")
+@FeignClient(name = GlobalConstant.FANTASY_OAUTH2 + "/api/v1/notify/mail", url = "${fantasy-oauth2.feign.service.config}")
 public interface MailNotifyFeignApi {
 
     /**

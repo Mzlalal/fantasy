@@ -1,8 +1,8 @@
 package com.mzlalal.base.interceptor;
 
 import com.alibaba.fastjson.JSON;
+import javassist.ClassPool;
 import lombok.SneakyThrows;
-import org.apache.ibatis.javassist.ClassPool;
 import org.springframework.boot.SpringBootVersion;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;

@@ -3,6 +3,7 @@ package com.mzlalal.oss;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
 /**
@@ -12,6 +13,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  *
  * @author Mzlalal
  */
+@EnableDiscoveryClient
 @EnableFeignClients(basePackages = {"com.mzlalal.base.feign"})
 @SpringBootApplication(scanBasePackages = {"com.mzlalal.base", "com.mzlalal.oss"}
         , exclude = {DataSourceAutoConfiguration.class})
