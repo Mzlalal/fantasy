@@ -20,7 +20,6 @@ import java.util.Properties;
  * Feign启动设置服务地址
  *
  * @author Mzlalal
- * @date 2021/11/30 11:07
  */
 @Order(0)
 public class FeignEnvProcessor implements EnvironmentPostProcessor {
@@ -37,10 +36,22 @@ public class FeignEnvProcessor implements EnvironmentPostProcessor {
      * 微服务配置路径
      */
     private final String feignServiceConfig = "{}.feign.service.config";
+    /**
+     * 是否已经加载
+     * 使用了bootstrap启动,导致EnvironmentPostProcessor执行两次
+     * 如果加载过了,则改为true
+     */
+    private static boolean alreadyLoaded = false;
 
     @Override
     @SneakyThrows
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
+        // 是否加载
+        if (alreadyLoaded) {
+            return;
+        }
+        // 更改状态
+        alreadyLoaded = true;
         // 获取运行环境
         String activeProfile = environment.getProperty("spring.profiles.active");
         // 应用名

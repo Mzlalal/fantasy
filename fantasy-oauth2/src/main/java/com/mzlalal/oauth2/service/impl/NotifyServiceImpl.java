@@ -1,32 +1,23 @@
-package com.mzlalal.oauth2.controller.notify;
+package com.mzlalal.oauth2.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.lang.Validator;
 import cn.hutool.extra.template.TemplateEngine;
 import com.mzlalal.base.common.GlobalResult;
-import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.notify.AccountAuthorizeCodeEntity;
-import com.mzlalal.base.feign.notify.MailNotifyFeignApi;
 import com.mzlalal.base.util.AssertUtil;
 import com.mzlalal.notify.service.MailNotifyService;
-import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Service;
 
 /**
- * 邮件通知controller
+ * 消息服务
  *
  * @author Mzlalal
- * @date 2021-08-23 09:55:38
+ * @date 2021/12/1 21:22
  */
-@Api(tags = "邮件通知")
-@Validated
-@RestController
-@RequestMapping("/api/v1/notify/mail")
-public class MailNotifyController implements MailNotifyFeignApi {
+@Service("notifyServiceImpl")
+public class NotifyServiceImpl {
     /**
      * 邮件发送服务
      */
@@ -37,13 +28,12 @@ public class MailNotifyController implements MailNotifyFeignApi {
     private final TemplateEngine templateEngine;
 
     @Autowired
-    public MailNotifyController(MailNotifyService mailNotifyService, TemplateEngine templateEngine) {
+    public NotifyServiceImpl(MailNotifyService mailNotifyService, TemplateEngine templateEngine) {
         this.mailNotifyService = mailNotifyService;
         this.templateEngine = templateEngine;
     }
 
-    @Override
-    public Result<String> notifyAccountAuthorizeCode(@RequestBody AccountAuthorizeCodeEntity authorizeCodeEntity) {
+    public String send(AccountAuthorizeCodeEntity authorizeCodeEntity) {
         // 验证邮箱格式
         AssertUtil.isTrue(Validator.isEmail(authorizeCodeEntity.getAccount())
                 , GlobalResult.EMAIL_NOT_CORRECT);
@@ -51,8 +41,7 @@ public class MailNotifyController implements MailNotifyFeignApi {
         String content = templateEngine.getTemplate("/notify/mail/notifyAccountAuthorizeCode.html")
                 .render(BeanUtil.beanToMap(authorizeCodeEntity));
         // 发送邮件
-        String messageId = mailNotifyService.send(authorizeCodeEntity.getAccount()
+        return mailNotifyService.send(authorizeCodeEntity.getAccount()
                 , "Fantasy-验证码", content, true);
-        return Result.ok(messageId);
     }
 }

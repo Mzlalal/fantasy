@@ -13,12 +13,12 @@ import com.mzlalal.base.entity.oauth2.ClientEntity;
 import com.mzlalal.base.entity.oauth2.vo.OauthCodeVo;
 import com.mzlalal.base.entity.oauth2.vo.OauthVo;
 import com.mzlalal.base.entity.oauth2.vo.TokenVo;
-import com.mzlalal.base.feign.notify.MailNotifyFeignApi;
 import com.mzlalal.base.feign.oauth2.OauthFeignApi;
 import com.mzlalal.base.oauth2.Oauth2Context;
 import com.mzlalal.base.util.AssertUtil;
 import com.mzlalal.oauth2.config.oauth2.enums.GrantResponseEnum;
 import com.mzlalal.oauth2.service.ClientService;
+import com.mzlalal.oauth2.service.impl.NotifyServiceImpl;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +45,7 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("/api/v1/oauth")
 public class OauthController implements OauthFeignApi {
 
-    private final MailNotifyFeignApi mailNotifyFeignApi;
+    private final NotifyServiceImpl notifyService;
 
     private final ClientService clientService;
 
@@ -55,11 +55,11 @@ public class OauthController implements OauthFeignApi {
 
     @Autowired
     public OauthController(ClientService clientService, BCryptPasswordEncoder passwordEncoder
-            , RedisTemplate<String, Object> redisTemplate, MailNotifyFeignApi mailNotifyFeignApi) {
+            , RedisTemplate<String, Object> redisTemplate, NotifyServiceImpl notifyService) {
         this.clientService = clientService;
         this.passwordEncoder = passwordEncoder;
         this.redisTemplate = redisTemplate;
-        this.mailNotifyFeignApi = mailNotifyFeignApi;
+        this.notifyService = notifyService;
     }
 
     @Override
@@ -83,7 +83,7 @@ public class OauthController implements OauthFeignApi {
                 .authorizeCode(String.valueOf(randomInt))
                 .build();
         // 发送请求
-        return mailNotifyFeignApi.notifyAccountAuthorizeCode(authorizeCodeEntity);
+        return Result.ok(notifyService.send(authorizeCodeEntity));
     }
 
     @Override
