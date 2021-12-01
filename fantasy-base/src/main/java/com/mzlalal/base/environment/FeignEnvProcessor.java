@@ -25,17 +25,19 @@ import java.util.Properties;
 public class FeignEnvProcessor implements EnvironmentPostProcessor {
 
     /**
-     * FeignUrl的模板
+     * 微服务配置的名字
+     * 每个微服务对应一个配置: url = "${fantasy-oauth2.feign.service.config}"
      */
-    private final String feignServiceUrlTemplate = "http://localhost:{}/";
+    private final String serviceConfigKey = "{}.feign.service.config";
+    /**
+     * 微服务配置的名字
+     * 每个微服务对应一个配置: url = "${fantasy-oauth2.feign.service.config}" -> url = "http://localhost:9000/fantasy-oauth2"
+     */
+    private final String serviceConfigValue = "http://localhost:{}/{}";
     /**
      * 微服务swagger文档地址
      */
     private final String serviceSwaggerUrl = "http://localhost:{}/{}/doc.html";
-    /**
-     * 微服务配置路径
-     */
-    private final String feignServiceConfig = "{}.feign.service.config";
     /**
      * 是否已经加载
      * 使用了bootstrap启动,导致EnvironmentPostProcessor执行两次
@@ -63,22 +65,27 @@ public class FeignEnvProcessor implements EnvironmentPostProcessor {
         }
         // 加载配置文件
         Properties feignProperties = PropertiesLoaderUtils.loadAllProperties("feign-service.properties");
-        // 获取运行的微服务
+        // 获取需要本地运行的微服务名称
         String serviceIds = feignProperties.getProperty("feign.service.ids");
         // 获取微服务名称切割成数组
         List<String> serviceIdList = StrUtil.split(serviceIds, ",");
         // Feign配置
         Map<String, Object> feignConfig = MapUtil.newHashMap(serviceIdList.size());
-        // 遍历请求微服务的swagger文档地址
+        // 遍历请求微服务swagger文档地址
         serviceIdList.parallelStream().forEach(serviceId -> {
             // 服务端口
             String servicePort = feignProperties.getProperty(serviceId + ".service.port");
-            // 应用名相同直接设置
+            // 微服务的URL指向配置名
+            String feignServiceConfigKey = StrUtil.format(this.serviceConfigKey, serviceId);
+            // URL配置
+            String feignServiceConfigValue = StrUtil.format(this.serviceConfigValue, servicePort, serviceId);
+            // 先放入配置中,若微服务未启动则覆盖为空
+            feignConfig.put(feignServiceConfigKey, feignServiceConfigValue);
+            // 微服务名相同直接设置
             if (StrUtil.equals(serviceId, applicationName)) {
-                // 添加URL配置
-                String feignServiceUrl = StrUtil.format(feignServiceUrlTemplate, servicePort);
-                // 添加到配置中
-                feignConfig.put(StrUtil.format(feignServiceConfig, serviceId), feignServiceUrl);
+                // 打印信息
+                System.out.println(StrUtil.format("^_^本地{}服务已启动，当前应用可以和{}微服务本地调试。{}->{}"
+                        , serviceId, serviceId, serviceId, feignServiceConfigValue));
                 return;
             }
             // 请求swagger路径
@@ -89,17 +96,16 @@ public class FeignEnvProcessor implements EnvironmentPostProcessor {
             try {
                 response = HttpRequest.get(serviceRequestUrl).timeout(1500).execute();
             } catch (Exception ignored) {
-            }
-            // 返回成功
-            if (response != null && response.isOk()) {
-                // 添加URL配置
-                String feignServiceUrl = StrUtil.format(feignServiceUrlTemplate, servicePort);
-                // 添加到配置中
-                feignConfig.put(StrUtil.format(feignServiceConfig, serviceId), feignServiceUrl);
-
-                System.out.println(StrUtil.format("^_^本地{}服务已启动，当前应用可以和{}微服务本地调试。", serviceId, serviceId));
-            } else {
+                // 微服务未启动,覆盖为空
+                feignConfig.put(feignServiceConfigKey, "");
+                // 打印信息
                 System.out.println((StrUtil.format("-_-本地{}服务没有启动，当前应用无法和{}微服务调试。", serviceId, serviceId)));
+            }
+            // 查看返回
+            if (response != null && response.isOk()) {
+                // 打印信息
+                System.out.println(StrUtil.format("^_^本地{}服务已启动，当前应用可以和{}微服务本地调试。{} -> {}"
+                        , serviceId, serviceId, serviceId, feignServiceConfigValue));
             }
         });
         // 添加到环境中

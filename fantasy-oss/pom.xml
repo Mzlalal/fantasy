@@ -168,7 +168,7 @@
                     </from>
                     <to>
                         <!--构建镜像名称，阿里云镜像仓库地址-->
-                        <image>registry.cn-hangzhou.aliyuncs.com/mzlalal/fantasy-oauth</image>
+                        <image>registry.cn-hangzhou.aliyuncs.com/mzlalal/fantasy-oss</image>
                         <!--阿里云镜像仓库账号密码-->
                         <auth>
                             <username>影子之城啊</username>
