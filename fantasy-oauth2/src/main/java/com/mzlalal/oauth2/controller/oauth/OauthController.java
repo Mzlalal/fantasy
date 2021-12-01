@@ -1,7 +1,6 @@
 package com.mzlalal.oauth2.controller.oauth;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.mzlalal.base.common.GlobalConstant;
@@ -70,7 +69,7 @@ public class OauthController implements OauthFeignApi {
         // 获取授权类型
         String[] grantTypeArray = StrUtil.splitToArray(client.getResponseType(), ",");
         // 不存在这输出异常
-        AssertUtil.isTrue(ArrayUtil.contains(grantTypeArray, oauthCodeVo.getGrantType())
+        AssertUtil.arrayNotContains(grantTypeArray, oauthCodeVo.getResponseType()
                 , GlobalResult.OAUTH_RESPONSE_TYPE_NOT_CORRECT);
         // 随机数
         int randomInt = RandomUtil.randomInt(10001, 99999);

@@ -31,5 +31,5 @@ public class OauthCodeVo extends BaseEntity {
 
     @ApiModelProperty("授权类型:password-密码(直接返回TOKEN) mail-邮件验证码(二次验证)")
     @NotBlank(message = "授权类型不能为空")
-    private String grantType;
+    private String responseType;
 }
