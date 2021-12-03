@@ -58,11 +58,8 @@ public class FeignEnvProcessor implements EnvironmentPostProcessor {
         String activeProfile = environment.getProperty("spring.profiles.active");
         // 应用名
         String applicationName = environment.getProperty("spring.application.name");
+        // 生产环境
         String productProfile = "product";
-        // 生产环境直接退出
-        if (productProfile.equals(activeProfile)) {
-            return;
-        }
         // 加载配置文件
         Properties feignProperties = PropertiesLoaderUtils.loadAllProperties("feign-service.properties");
         // 获取需要本地运行的微服务名称
@@ -73,13 +70,19 @@ public class FeignEnvProcessor implements EnvironmentPostProcessor {
         Map<String, Object> feignConfig = MapUtil.newHashMap(serviceIdList.size());
         // 遍历请求微服务swagger文档地址
         serviceIdList.parallelStream().forEach(serviceId -> {
-            // 服务端口
+            // 微服务端口
             String servicePort = feignProperties.getProperty(serviceId + ".service.port");
             // 微服务的URL指向配置名
             String feignServiceConfigKey = StrUtil.format(this.serviceConfigKey, serviceId);
-            // URL配置
+            // 生产环境直接覆盖为空
+            if (productProfile.equals(activeProfile)) {
+                // 微服务未启动,覆盖为空
+                feignConfig.put(feignServiceConfigKey, "");
+                return;
+            }
+            // 微服务URL配置值
             String feignServiceConfigValue = StrUtil.format(this.serviceConfigValue, servicePort, serviceId);
-            // 先放入配置中,若微服务未启动则覆盖为空
+            // 放入配置中,下方微服务未启动则覆盖为空
             feignConfig.put(feignServiceConfigKey, feignServiceConfigValue);
             // 微服务名相同直接设置
             if (StrUtil.equals(serviceId, applicationName)) {
