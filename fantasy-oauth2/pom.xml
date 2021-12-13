@@ -208,12 +208,6 @@
                                 --spring.profiles.active=product
                             </arg>
                             <arg>
-                                --spring.cloud.nacos.config.server-addr=172.18.0.1:8848
-                            </arg>
-                            <arg>
-                                --spring.cloud.nacos.discovery.server-addr=172.18.0.1:8848
-                            </arg>
-                            <arg>
                                 --user.timezone=GMT+08
                             </arg>
                         </args>
