@@ -14,11 +14,11 @@
 
     <!-- 系统日志输出 -->
     <appender name="file_info" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${log.path}/@package.name@/info/info.log</file>
+        <file>${log.path}/${spring.application.name}/info/info.log</file>
         <!-- 循环政策：基于时间创建日志文件 -->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- 日志文件名格式 -->
-            <fileNamePattern>${log.path}/@package.name@/info/info.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${log.path}/${spring.application.name}/info/info.%d{yyyy-MM-dd}.log</fileNamePattern>
             <!-- 日志最大的历史 30天 -->
             <maxHistory>30</maxHistory>
         </rollingPolicy>
@@ -29,11 +29,11 @@
 
     <!-- 系统异常日志输出 -->
     <appender name="file_error" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${log.path}/@package.name@/error/error.log</file>
+        <file>${log.path}/${spring.application.name}/error/error.log</file>
         <!-- 循环政策：基于时间创建日志文件 -->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- 日志文件名格式 -->
-            <fileNamePattern>${log.path}/@package.name@/error/error.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${log.path}/${spring.application.name}/error/error.%d{yyyy-MM-dd}.log</fileNamePattern>
             <!-- 日志最大的历史 30天 -->
             <maxHistory>30</maxHistory>
         </rollingPolicy>
@@ -59,7 +59,7 @@
         <from>mzlalalal@163.com</from>
         <to>541616661@qq.com</to>
         <password>RCLLJOPAWFIFORWK</password>
-        <subject>warning:[@env@]@package.name@</subject>
+        <subject>warning:[${spring.profiles.active}]${spring.application.name}</subject>
         <asynchronousSending>true</asynchronousSending>
         <layout class="ch.qos.logback.classic.html.HTMLLayout"/>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
