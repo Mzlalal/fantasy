@@ -1,8 +1,8 @@
 package com.mzlalal.base.oauth2;
 
+import com.alibaba.nacos.api.config.annotation.NacosConfigurationProperties;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotBlank;
@@ -15,7 +15,7 @@ import javax.validation.constraints.NotBlank;
  **/
 @Data
 @Component
-@PropertySource(value = "classpath:${spring.profiles.active}/oauth/oauth.properties", encoding = "UTF-8")
+@NacosConfigurationProperties(dataId = "${spring.application.name}-oauth.properties")
 @ConfigurationProperties(prefix = "mz.oauth")
 public class Oauth2Property {
 
