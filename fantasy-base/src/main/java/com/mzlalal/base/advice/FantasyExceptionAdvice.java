@@ -11,6 +11,7 @@ import com.mzlalal.base.common.GlobalResult;
 import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.exception.BoomException;
 import feign.FeignException;
+import javassist.ClassPool;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,9 +71,12 @@ public class FantasyExceptionAdvice {
         String format = "\n\t请求路径:{}\n\t代码位置:{}\n\t请求参数:{}\n\t异常信息:{}";
         // 处理堆栈错误信息
         String classLine = this.printStack(cause);
+        // 请求参数,非请求体
+        String requestParam = JSON.toJSONString(ServletUtil.getParamMap(request));
+        // 异常信息
+        String exceptionMessage = ExceptionUtil.getMessage(cause);
         // 打印自定义错误信息
-        log.error(StrUtil.format(format, request.getRequestURL(), classLine
-                , JSON.toJSONString(ServletUtil.getParamMap(request)), ExceptionUtil.getMessage(cause)));
+        log.error(StrUtil.format(format, request.getRequestURL(), classLine, requestParam, exceptionMessage));
     }
 
     /**
@@ -98,7 +102,7 @@ public class FantasyExceptionAdvice {
         }
         // 返回格式化信息
         return StrUtil.format("{}({}.java:{})", stack.getClassName()
-                , Class.forName(stack.getClassName()).getSimpleName(), stack.getLineNumber());
+                , ClassPool.getDefault().get(stack.getClassName()).getSimpleName(), stack.getLineNumber());
     }
 
     /**
