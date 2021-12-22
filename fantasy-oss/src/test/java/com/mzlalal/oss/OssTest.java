@@ -8,7 +8,6 @@ import io.minio.errors.MinioException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
 
 import java.io.File;
 import java.util.List;
@@ -18,7 +17,6 @@ import java.util.List;
  * @date 2021/9/06 13:44
  **/
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = OssApplication.class)
-@TestPropertySource("classpath:application-dev.properties")
 public class OssTest {
 
     @Autowired
