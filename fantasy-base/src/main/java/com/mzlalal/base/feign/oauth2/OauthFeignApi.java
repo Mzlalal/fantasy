@@ -35,7 +35,7 @@ public interface OauthFeignApi {
     /**
      * 登录
      *
-     * @param oauthVo 授权参数
+     * @param oauthVo 请求授权参数VO
      * @return Result<BaseEntity>
      */
     @ApiOperation("登录")
@@ -45,7 +45,7 @@ public interface OauthFeignApi {
     /**
      * 获取令牌
      *
-     * @param tokenVo 授权参数
+     * @param tokenVo 置换TOKEN参数
      * @return Result<BaseEntity>
      */
     @ApiOperation("获取令牌")

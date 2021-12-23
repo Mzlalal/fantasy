@@ -8,7 +8,7 @@ import lombok.*;
 import javax.validation.constraints.NotBlank;
 
 /**
- * TOKEN参数
+ * 根据授权码置换TOKEN参数
  *
  * @author Mzlalal88
  * @date 2021/7/30 17:45
@@ -17,7 +17,7 @@ import javax.validation.constraints.NotBlank;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ApiModel("授权参数")
+@ApiModel("置换TOKEN参数")
 @EqualsAndHashCode(callSuper = true)
 public class TokenVo extends BaseEntity {
 

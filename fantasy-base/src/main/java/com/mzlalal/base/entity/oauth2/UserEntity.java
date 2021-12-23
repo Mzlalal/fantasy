@@ -15,13 +15,13 @@ import lombok.NoArgsConstructor;
 import java.util.Date;
 
 /**
- * DTO
+ * 用户DTO
  *
  * @author Mzlalal
  * @date 2021-07-29 20:36:48
  */
 @Data
-@ApiModel("DTO")
+@ApiModel("用户DTO")
 @TableName("t_user")
 @NoArgsConstructor
 @AllArgsConstructor

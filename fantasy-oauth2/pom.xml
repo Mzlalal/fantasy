@@ -13,14 +13,16 @@
     <description>Fantasy Oauth2 Project for Spring Cloud</description>
     <properties>
         <java.version>1.8</java.version>
-        <package.name>fantasy-oauth2</package.name>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.mzlalal</groupId>
+            <artifactId>mz-system-log-stater</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.mzlalal</groupId>
             <artifactId>mz-notify-service-stater</artifactId>
-            <version>${mz.notify.service.stater.version}</version>
         </dependency>
         <!-- notify需要的模板渲染引擎 -->
         <dependency>
@@ -136,7 +138,7 @@
     </profiles>
 
     <build>
-        <finalName>${package.name}</finalName>
+        <finalName>${name}</finalName>
         <resources>
             <resource>
                 <directory>src/main/java</directory>

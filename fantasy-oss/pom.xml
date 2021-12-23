@@ -122,7 +122,7 @@
     </profiles>
 
     <build>
-        <finalName>${package.name}</finalName>
+        <finalName>${name}</finalName>
         <resources>
             <resource>
                 <directory>src/main/java</directory>

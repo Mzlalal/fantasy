@@ -6,6 +6,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>fantasy-base</module>
+        <module>fantasy-gateway</module>
         <module>fantasy-oauth2</module>
         <module>fantasy-oss</module>
     </modules>
@@ -33,6 +34,7 @@
         <!-- Mz -->
         <mz.fantasy.base.version>${version}</mz.fantasy.base.version>
         <mz.minio.stater.version>1.1.1</mz.minio.stater.version>
+        <mz.system.log.stater.version>1.0.1</mz.system.log.stater.version>
         <mz.mybatis.interceptor.stater.version>1.0.3</mz.mybatis.interceptor.stater.version>
         <mz.repeat.submit.starter.version>1.0.4</mz.repeat.submit.starter.version>
         <mz.notify.service.stater.version>1.0.1</mz.notify.service.stater.version>
@@ -44,6 +46,11 @@
                 <groupId>com.mzlalal</groupId>
                 <artifactId>fantasy-base</artifactId>
                 <version>${mz.fantasy.base.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mzlalal</groupId>
+                <artifactId>mz-system-log-stater</artifactId>
+                <version>${mz.system.log.stater.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.mzlalal</groupId>

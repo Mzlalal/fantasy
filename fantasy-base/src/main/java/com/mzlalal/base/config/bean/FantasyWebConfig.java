@@ -2,7 +2,6 @@ package com.mzlalal.base.config.bean;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mzlalal.base.interceptor.FantasyActionReportInterceptor;
 import com.mzlalal.base.interceptor.Oauth2ServerInterceptor;
 import com.mzlalal.base.oauth2.Oauth2Property;
 import org.springframework.context.annotation.Bean;
@@ -40,12 +39,6 @@ public class FantasyWebConfig implements WebMvcConfigurer {
         registry.addInterceptor(oauth2ServerInterceptor)
                 .addPathPatterns(oauth2ServerInterceptor.getIncludePath())
                 .excludePathPatterns(oauth2ServerInterceptor.getExcludePath());
-
-        // 请求参数拦截器
-        FantasyActionReportInterceptor fantasyActionReportInterceptor = new FantasyActionReportInterceptor();
-        registry.addInterceptor(fantasyActionReportInterceptor)
-                .addPathPatterns(fantasyActionReportInterceptor.getIncludePath())
-                .excludePathPatterns(fantasyActionReportInterceptor.getExcludePath());
     }
 
     /**

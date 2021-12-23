@@ -4,7 +4,6 @@ import com.github.xiaoymin.knife4j.spring.extension.OpenApiExtensionResolver;
 import com.mzlalal.base.common.GlobalConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -23,7 +22,7 @@ import java.util.List;
  * @author Mzlalal
  * @date 2021年6月20日 23:12:16
  **/
-public abstract class BaseFantasySwagger2Config implements WebMvcConfigurer {
+public abstract class BaseFantasySwagger2Config {
 
     /**
      * 引入Knife4j提供的扩展类

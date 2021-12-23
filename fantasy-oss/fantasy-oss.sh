@@ -1,6 +1,6 @@
 #!/bin/bash
 # 应用名称
-app=fly-security-oauth
+app=fantasy-oss
 # JVM的启动参数
 app_opts="-Dfile.encoding=UTF-8 -Xms64m -Xmx64m -Xss256k"
 # 备份的数量 最少是1

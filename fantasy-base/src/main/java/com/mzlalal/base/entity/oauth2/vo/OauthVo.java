@@ -15,7 +15,7 @@ import javax.validation.constraints.NotBlank;
  * @date 2021/7/28 14:34
  */
 @Data
-@ApiModel("授权参数")
+@ApiModel("请求授权参数VO")
 @EqualsAndHashCode(callSuper = true)
 public class OauthVo extends BaseEntity {
 
