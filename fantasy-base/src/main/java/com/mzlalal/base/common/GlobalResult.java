@@ -20,10 +20,6 @@ import java.lang.reflect.InvocationTargetException;
 public enum GlobalResult {
 
     /**
-     * 服务器繁忙
-     */
-    REQ_NOT_FOUNT(404, "请求找不到了，请稍后再试"),
-    /**
      * 授权失败
      */
     OAUTH_FAIL(401, "应用授权失败"),
@@ -32,13 +28,9 @@ public enum GlobalResult {
      */
     OAUTH_CANCER(402, "用户取消授权"),
     /**
-     * 非法的授权方式grantType
+     * 服务器繁忙
      */
-    OAUTH_RESPONSE_TYPE_NOT_CORRECT(413, "非法的授权方式(responseType)"),
-    /**
-     * 非法的授权方式validateType
-     */
-    OAUTH_VALIDATE_TYPE_NOT_CORRECT(414, "非法的授权方式(validateType)"),
+    REQ_NOT_FOUNT(404, "请求找不到了，请稍后再试"),
     /**
      * dataType不是json
      */
@@ -51,6 +43,18 @@ public enum GlobalResult {
      * 授权验证码不正确,请重新登录
      */
     OAUTH_CODE_NOT_CORRECT(412, "授权验证码不正确，请重新登录"),
+    /**
+     * 非法的授权方式grantType
+     */
+    OAUTH_RESPONSE_TYPE_NOT_CORRECT(413, "非法的授权方式(responseType)"),
+    /**
+     * 非法的授权方式validateType
+     */
+    OAUTH_VALIDATE_TYPE_NOT_CORRECT(414, "非法的授权方式(validateType)"),
+    /**
+     * 授权方式为空
+     */
+    RESPONSE_TYPE_NOT_CORRECT(415, "授权方式为空(responseType)"),
     /**
      * 服务器繁忙
      */

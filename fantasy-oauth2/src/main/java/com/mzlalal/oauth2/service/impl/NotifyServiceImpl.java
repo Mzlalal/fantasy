@@ -33,6 +33,12 @@ public class NotifyServiceImpl {
         this.templateEngine = templateEngine;
     }
 
+    /**
+     * 发送邮件
+     *
+     * @param authorizeCodeEntity 验证码信息
+     * @return 邮件ID
+     */
     public String send(AccountAuthorizeCodeEntity authorizeCodeEntity) {
         // 验证邮箱格式
         AssertUtil.isTrue(Validator.isEmail(authorizeCodeEntity.getAccount())

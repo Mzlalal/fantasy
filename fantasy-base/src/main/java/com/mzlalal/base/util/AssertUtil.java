@@ -3,6 +3,7 @@ package com.mzlalal.base.util;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.StrUtil;
 import com.mzlalal.base.common.GlobalResult;
 
 import java.util.Collection;
@@ -37,6 +38,18 @@ public class AssertUtil extends Assert {
      */
     public static void notNull(Object obj, GlobalResult resultCode) {
         if (obj == null) {
+            throw resultCode.boom();
+        }
+    }
+
+    /**
+     * 字符串为空字符串则抛出异常
+     *
+     * @param str        字符串
+     * @param resultCode 全局状态码
+     */
+    public static void notBlank(String str, GlobalResult resultCode) {
+        if (StrUtil.isBlank(str)) {
             throw resultCode.boom();
         }
     }

@@ -63,6 +63,8 @@ public class OauthController implements OauthFeignApi {
 
     @Override
     public Result<String> authorizeCode(@RequestBody OauthCodeVo oauthCodeVo) {
+        // 检查授权方式是否为空
+        AssertUtil.notBlank(oauthCodeVo.getResponseType(), GlobalResult.RESPONSE_TYPE_NOT_CORRECT);
         // 检查客户端
         ClientEntity client = clientService.getOneByClientId(oauthCodeVo.getClientId());
         AssertUtil.notNull(client, GlobalResult.OAUTH_FAIL);
