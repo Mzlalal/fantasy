@@ -15,6 +15,7 @@ import org.springframework.core.io.support.PropertiesLoaderUtils;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Feign启动设置服务地址
@@ -44,7 +45,26 @@ public class FeignEnvProcessor implements EnvironmentPostProcessor {
      * 如果加载过了,则改为true
      */
     private static boolean alreadyLoaded = false;
+    /**
+     * 本地已启动的服务ID列表
+     */
+    private static final List<String> localStartedServiceIdList = new CopyOnWriteArrayList<>();
+    /**
+     * feign的端口配置(feign-service.properties)
+     */
+    private static Properties feignProperties;
 
+    /**
+     * 1.获取需要动态调整feign url的服务列表
+     * 2.根据服务列表查询本地服务的swagger地址,判断服务其否启动
+     * 3.先设置feign url为动态调整后的值(若服务遍历serviceId为自身服务则直接设置动态url然后跳过)
+     * 4.若swagger访问不到则替换为空(为空时使用feign的负载均衡访问服务列表中的服务)
+     * 5.添加本地启动的服务至localStartedServiceIdList,给网关使用
+     * 6.feign url添加到环境变量中提供给spring容器试用
+     *
+     * @param environment 环境
+     * @param application 应用
+     */
     @Override
     @SneakyThrows
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
@@ -61,7 +81,7 @@ public class FeignEnvProcessor implements EnvironmentPostProcessor {
         // 生产环境
         String productProfile = "product";
         // 加载配置文件
-        Properties feignProperties = PropertiesLoaderUtils.loadAllProperties("feign-service.properties");
+        feignProperties = PropertiesLoaderUtils.loadAllProperties("feign-service.properties");
         // 获取需要本地运行的微服务名称
         String serviceIds = feignProperties.getProperty("feign.service.ids");
         // 获取微服务名称切割成数组
@@ -72,6 +92,11 @@ public class FeignEnvProcessor implements EnvironmentPostProcessor {
         serviceIdList.parallelStream().forEach(serviceId -> {
             // 微服务端口
             String servicePort = feignProperties.getProperty(serviceId + ".service.port");
+            // 为空跳过
+            if (StrUtil.isBlank(servicePort)) {
+                System.out.println("服务ID:" + serviceId + "未设置feign访问端口(请查看feign-service.properties)");
+                return;
+            }
             // 微服务的URL指向配置名
             String feignServiceConfigKey = StrUtil.format(this.serviceConfigKey, serviceId);
             // 生产环境直接覆盖为空
@@ -93,26 +118,46 @@ public class FeignEnvProcessor implements EnvironmentPostProcessor {
             }
             // 请求swagger路径
             String serviceRequestUrl = StrUtil.format(serviceSwaggerUrl, servicePort, serviceId);
-            // 发送请求,1.5秒超时
-            HttpResponse response = null;
             // 丢弃异常
             try {
-                response = HttpRequest.get(serviceRequestUrl).timeout(1500).execute();
+                // 发送请求,1.5秒超时
+                HttpResponse response = HttpRequest.get(serviceRequestUrl).timeout(1500).execute();
+                // 查看返回
+                if (response != null && response.isOk()) {
+                    // 添加到已启动的本地服务列表
+                    localStartedServiceIdList.add(serviceId);
+                    // 打印信息
+                    System.out.println(StrUtil.format("^_^本地{}服务已启动，当前应用可以和{}微服务本地调试。{} -> {}"
+                            , serviceId, serviceId, serviceId, feignServiceConfigValue));
+                }
             } catch (Exception ignored) {
                 // 微服务未启动,覆盖为空
                 feignConfig.put(feignServiceConfigKey, "");
                 // 打印信息
                 System.out.println((StrUtil.format("-_-本地{}服务没有启动，当前应用无法和{}微服务调试。", serviceId, serviceId)));
             }
-            // 查看返回
-            if (response != null && response.isOk()) {
-                // 打印信息
-                System.out.println(StrUtil.format("^_^本地{}服务已启动，当前应用可以和{}微服务本地调试。{} -> {}"
-                        , serviceId, serviceId, serviceId, feignServiceConfigValue));
-            }
         });
         // 添加到环境中
         environment.getPropertySources()
                 .addLast(new MapPropertySource("feign.config", feignConfig));
+    }
+
+    /**
+     * 获取服务列表ID集合
+     *
+     * @return List<String> (CopyOnWriteArrayList)
+     */
+    public static List<String> getLocalStartedServiceIdList() {
+        return localStartedServiceIdList;
+    }
+
+    /**
+     * 根据服务ID获取feign的端口配置(feign-service.properties)
+     *
+     * @param serviceId 服务ID
+     * @return String
+     */
+    public static String getFeignPort(String serviceId) {
+        return feignProperties.getProperty(serviceId + ".service.port");
     }
 }

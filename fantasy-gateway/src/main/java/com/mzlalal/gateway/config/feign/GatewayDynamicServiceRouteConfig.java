@@ -1,0 +1,40 @@
+package com.mzlalal.gateway.config.feign;
+
+import cn.hutool.core.util.StrUtil;
+import com.mzlalal.base.environment.FeignEnvProcessor;
+import com.mzlalal.base.util.AssertUtil;
+import org.springframework.cloud.gateway.route.RouteLocator;
+import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+/**
+ * 网关动态配置访问注册中心服务或本地服务
+ *
+ * @author Mzlalal
+ * @date 2022/1/14 23:22
+ */
+@Configuration
+public class GatewayDynamicServiceRouteConfig {
+
+    @Bean
+    public RouteLocator dynamicServiceRouteLocator(RouteLocatorBuilder routeLocatorBuilder) {
+        // 获取总路由配置
+        RouteLocatorBuilder.Builder routes = routeLocatorBuilder.routes();
+        // 获取需要动态设置路由的服务
+        for (String serviceId : FeignEnvProcessor.getLocalStartedServiceIdList()) {
+            // 获取feign访问端口
+            String feignPort = FeignEnvProcessor.getFeignPort(serviceId);
+            // 错误信息
+            String message = "服务ID:{}未设置feign访问端口(请查看feign-service.properties)";
+            // 不能为空
+            AssertUtil.notBlank(feignPort, message, serviceId);
+            // 本地服务启动时直接访问本地服务,本地服务未启动访问注册中心的服务
+            routes.route(serviceId, route -> route
+                    .path(StrUtil.format("/{}/**", serviceId))
+                    .uri(StrUtil.format("http://localhost:{}", feignPort)))
+                    .build();
+        }
+        return routes.build();
+    }
+}
