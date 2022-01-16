@@ -63,7 +63,7 @@
         <from>mzlalalal@163.com</from>
         <to>541616661@qq.com</to>
         <password>RCLLJOPAWFIFORWK</password>
-        <subject>warning:[${spring.profiles.active}]${spring.application.name}</subject>
+        <subject>ERROR:[PRODUCT]${spring.application.name}</subject>
         <asynchronousSending>true</asynchronousSending>
         <layout class="ch.qos.logback.classic.html.HTMLLayout"/>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">

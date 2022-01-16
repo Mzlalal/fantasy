@@ -34,12 +34,21 @@ public class SwaggerResourceConfig implements SwaggerResourcesProvider {
      */
     private final GatewayProperties gatewayProperties;
 
+    /**
+     * 外部微服务swagger可能存在多个group的情况
+     * 有解决思路为能够用gateway配置去处理,暂不去实现
+     *
+     * @return List<SwaggerResource>
+     */
     @Override
     public List<SwaggerResource> get() {
         List<SwaggerResource> resourceList = new ArrayList<>();
         List<String> routeList = new ArrayList<>();
+        // 获取路由定义
         routeLocator.getRoutes().subscribe(route -> routeList.add(route.getId()));
-        gatewayProperties.getRoutes().stream().filter(routeDefinition -> routeList.contains(routeDefinition.getId()))
+        // 遍历gateway配置
+        gatewayProperties.getRoutes().stream()
+                .filter(routeDefinition -> routeList.contains(routeDefinition.getId()))
                 .forEach(route -> route.getPredicates().stream()
                         // 匹配存在Path的服务
                         .filter(predicateDefinition -> ("Path").equalsIgnoreCase(predicateDefinition.getName()))

@@ -41,7 +41,7 @@ public class Result<T> implements Serializable {
     /**
      * 错误信息
      */
-    private static final String STATE_FAIL_MSG = "操作失败";
+    private static final String STATE_FAIL_MSG = "服务器繁忙，请稍后再试";
 
     @ApiModelProperty(value = "返回状态", example = "200")
     private Integer state;

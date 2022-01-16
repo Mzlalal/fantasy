@@ -41,8 +41,7 @@ public class SwaggerHandler {
         this.securityConfiguration = securityConfiguration;
         this.uiConfiguration = uiConfiguration;
     }
-
-
+    
     @GetMapping("/swagger-resources/configuration/security")
     public Mono<ResponseEntity<SecurityConfiguration>> securityConfiguration() {
         return Mono.just(new ResponseEntity<>(Optional.ofNullable(securityConfiguration)

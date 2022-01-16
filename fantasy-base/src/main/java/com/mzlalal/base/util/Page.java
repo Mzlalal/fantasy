@@ -20,19 +20,18 @@ import java.util.List;
 @ApiModel("分页数据")
 @EqualsAndHashCode(callSuper = true)
 public class Page<T> extends BaseEntity {
-    private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("总行数")
     private long totalCount;
 
     @ApiModelProperty("每页记录数")
-    private int pageSize;
+    private long pageSize;
 
     @ApiModelProperty("总页数")
-    private int totalPage;
+    private long totalPage;
 
     @ApiModelProperty("当前页数")
-    private int currPage;
+    private long currPage;
 
     @ApiModelProperty("列表数据")
     private List<T> list;
@@ -44,12 +43,12 @@ public class Page<T> extends BaseEntity {
      * @param totalCount 总记录数
      * @param pageInfo   分页参数
      */
-    public Page(List<T> list, Long totalCount, PageInfo pageInfo) {
+    public Page(List<T> list, long totalCount, PageInfo pageInfo) {
         this.list = list;
         this.totalCount = totalCount;
         this.pageSize = pageInfo.getPageSize();
         this.currPage = pageInfo.getCurrPage();
-        this.totalPage = (int) Math.ceil((double) totalCount / pageSize);
+        this.totalPage = (long) Math.ceil((double) totalCount / pageSize);
     }
 
     /**
@@ -60,5 +59,14 @@ public class Page<T> extends BaseEntity {
      */
     public static <T> Page<T> empty(PageInfo pageInfo) {
         return new Page<>(new ArrayList<>(), 0L, pageInfo);
+    }
+
+    /**
+     * 空分页信息
+     *
+     * @return 空分页信息
+     */
+    public static <T> Page<T> empty() {
+        return new Page<>(new ArrayList<>(), 0L, new PageInfo());
     }
 }

@@ -18,7 +18,10 @@ import java.lang.reflect.InvocationTargetException;
 @Slf4j
 @Getter
 public enum GlobalResult {
-
+    /**
+     * 授权失败
+     */
+    SUCCESS(200, "操作成功"),
     /**
      * 授权失败
      */
