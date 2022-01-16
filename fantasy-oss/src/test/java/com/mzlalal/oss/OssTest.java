@@ -25,7 +25,7 @@ public class OssTest {
     @Test
     public void loopFileUploadToAli() {
         // 根路径
-        String rootPath = "E:\\iCloudPhoto\\iCloud 照片";
+        String rootPath = "D:\\tempfiles\\photo\\fantasy-oss";
         if (!FileUtil.exist(rootPath)) {
             System.out.println("文件夹不存在");
             return;

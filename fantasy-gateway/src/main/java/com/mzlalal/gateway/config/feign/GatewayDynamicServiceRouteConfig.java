@@ -22,17 +22,15 @@ public class GatewayDynamicServiceRouteConfig {
         // 获取总路由配置
         RouteLocatorBuilder.Builder routes = routeLocatorBuilder.routes();
         // 获取需要动态设置路由的服务
-        for (String serviceId : FeignEnvProcessor.getLocalStartedServiceIdList()) {
+        for (String serviceId : FeignEnvProcessor.getLocalServiceStartedIdList()) {
             // 获取feign访问端口
-            String feignPort = FeignEnvProcessor.getFeignPort(serviceId);
-            // 错误信息
-            String message = "服务ID:{}未设置feign访问端口(请查看feign-service.properties)";
-            // 不能为空
-            AssertUtil.notBlank(feignPort, message, serviceId);
+            String servicePort = FeignEnvProcessor.getServicePort(serviceId);
+            AssertUtil.notBlank(servicePort, "serviceId:{}未设置feign访问端口(请检查feign-service.properties)"
+                    , serviceId);
             // 本地服务启动时直接访问本地服务,本地服务未启动访问注册中心的服务
             routes.route(serviceId, route -> route
                     .path(StrUtil.format("/{}/**", serviceId))
-                    .uri(StrUtil.format("http://localhost:{}", feignPort)))
+                    .uri(StrUtil.format("http://localhost:{}", servicePort)))
                     .build();
         }
         return routes.build();
