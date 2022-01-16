@@ -23,7 +23,7 @@ public class Page<T> extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("总行数")
-    private int totalCount;
+    private long totalCount;
 
     @ApiModelProperty("每页记录数")
     private int pageSize;
@@ -44,7 +44,7 @@ public class Page<T> extends BaseEntity {
      * @param totalCount 总记录数
      * @param pageInfo   分页参数
      */
-    public Page(List<T> list, int totalCount, PageInfo pageInfo) {
+    public Page(List<T> list, Long totalCount, PageInfo pageInfo) {
         this.list = list;
         this.totalCount = totalCount;
         this.pageSize = pageInfo.getPageSize();
@@ -59,6 +59,6 @@ public class Page<T> extends BaseEntity {
      * @return 空分页信息
      */
     public static <T> Page<T> empty(PageInfo pageInfo) {
-        return new Page<>(new ArrayList<>(), 0, pageInfo);
+        return new Page<>(new ArrayList<>(), 0L, pageInfo);
     }
 }

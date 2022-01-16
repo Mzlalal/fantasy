@@ -31,13 +31,13 @@ public interface BaseService<T> extends IService<T> {
      * @param log    日志
      * @return int 总行数
      */
-    default Integer getTotalResult(Future<Integer> future, Log log) {
+    default Long getTotalResult(Future<Long> future, Log log) {
         // 获取结果
         try {
             return future.get();
         } catch (InterruptedException | ExecutionException e) {
             log.error("获取Future异常", e);
         }
-        return 0;
+        return 0L;
     }
 }

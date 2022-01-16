@@ -27,11 +27,11 @@ public class ClientServiceImpl extends ServiceImpl<ClientDao, ClientEntity> impl
         // 查询参数
         QueryWrapper<ClientEntity> wrapper = new QueryWrapper<>(po.getEntity());
         // 异步查询总行数 selectList一定要在future之后
-        Future<Integer> future = ThreadUtil.execAsync(() -> baseMapper.selectCount(wrapper));
+        Future<Long> future = ThreadUtil.execAsync(() -> baseMapper.selectCount(wrapper));
         // 查询结果集
         List<ClientEntity> entityList = baseMapper.selectList(wrapper);
         // 获取总行数结果
-        Integer count = this.getTotalResult(future, log);
+        Long count = this.getTotalResult(future, log);
         // 返回结果
         return new Page<>(entityList, count, po.getPageInfo());
     }
