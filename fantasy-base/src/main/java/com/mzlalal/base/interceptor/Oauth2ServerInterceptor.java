@@ -34,6 +34,8 @@ public class Oauth2ServerInterceptor implements HandlerInterceptor {
             // oauth
             "/api/v1/oauth/logout", "/api/v1/oauth/token", "/api/v1/oauth/authorize"
             , "/api/v1/oauth/authorize.code", "/api/v1/notify/**", "/oauth/callback"
+            // ignore controller
+            , "/ignore/**"
             // doc swagger
             , "/doc.html", "/webjars/**", "/v2/api-docs", "/swagger-resources", "/swagger-resources/**"
             // static resource
