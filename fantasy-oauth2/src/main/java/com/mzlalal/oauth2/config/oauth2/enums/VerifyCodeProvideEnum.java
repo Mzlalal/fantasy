@@ -1,5 +1,8 @@
 package com.mzlalal.oauth2.config.oauth2.enums;
 
+import cn.hutool.captcha.CaptchaUtil;
+import cn.hutool.captcha.ShearCaptcha;
+import cn.hutool.core.codec.Base64;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
@@ -46,6 +49,29 @@ public enum VerifyCodeProvideEnum {
                     .build();
             // 发送邮箱验证码
             return Result.ok(notifyService.send(verifyCodeEntity));
+        }
+    },
+    /**
+     * 文本密码登录使用传统的图片验证码
+     * 图片验证码使用base64返回
+     */
+    PASSWORD() {
+        /**
+         * string redis
+         */
+        private final StringRedisTemplate redisTemplate = SpringUtil.getBean(StringRedisTemplate.class);
+
+        @Override
+        public Result<String> generateVerifyCode(String username) {
+            // 定义图形验证码的长、宽、验证码字符数、干扰线宽度
+            ShearCaptcha captcha = CaptchaUtil.createShearCaptcha(200, 100, 4, 4);
+            // 图形验证码写出，可以写出到文件，也可以写出到流
+            String encode = Base64.encode(captcha.getImageBytes());
+            // 验证码最多过期时间15分钟
+            redisTemplate.opsForValue()
+                    .set(GlobalConstant.passwordCodeRedisKey(username), captcha.getCode(), 15, TimeUnit.MINUTES);
+            // 返回base64给前端渲染
+            return Result.ok(encode);
         }
     };
 

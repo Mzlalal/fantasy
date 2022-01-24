@@ -27,6 +27,43 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
  */
 public enum GrantResponseEnum {
     /**
+     * 邮箱授权登录
+     */
+    MAIL() {
+        /**
+         * redis授权码服务
+         */
+        private final RedisAuthCodeService redisAuthCodeService = SpringUtil.getBean(RedisAuthCodeService.class);
+        /**
+         * redis令牌服务
+         */
+        private final RedisTokenService redisTokenService = SpringUtil.getBean(RedisTokenService.class);
+
+        @Override
+        public Result<BaseEntity> processGrant(OauthVo oauthVo) {
+            // 验证邮箱授权码
+            String authCode = GrantProvideEnum.MAIL.processLogin(oauthVo.getUsername(), oauthVo.getPassword());
+            // 回调URL格式
+            String redirectUriFormat = "{}?code={}&responseType={}&state={}";
+            // 格式化
+            String redirectUri = StrUtil.format(redirectUriFormat, oauthVo.getRedirectUri()
+                    , authCode, GlobalConstant.MAIL, oauthVo.getState());
+            // 返回结果
+            return Result.ok(GrantCodeVo.builder()
+                    .redirectUri(redirectUri)
+                    .build());
+        }
+
+        @Override
+        public Result<BaseEntity> processToken(OauthVo oauthVo, ClientEntity client) {
+            // 根据邮箱验证码获取用户信息
+            UserEntity entity = redisAuthCodeService.consume(oauthVo.getPassword());
+            // 生成token
+            AccessToken accessToken = redisTokenService.createAccessToken(entity, client);
+            return Result.ok(accessToken);
+        }
+    },
+    /**
      * 密码授权登录
      */
     PASSWORD() {
@@ -67,43 +104,6 @@ public enum GrantResponseEnum {
         @Override
         public Result<BaseEntity> processToken(OauthVo oauthVo, ClientEntity clientEntity) {
             throw GlobalResult.OAUTH_FAIL.boom();
-        }
-    },
-    /**
-     * 邮箱授权登录
-     */
-    MAIL() {
-        /**
-         * redis授权码服务
-         */
-        private final RedisAuthCodeService redisAuthCodeService = SpringUtil.getBean(RedisAuthCodeService.class);
-        /**
-         * redis令牌服务
-         */
-        private final RedisTokenService redisTokenService = SpringUtil.getBean(RedisTokenService.class);
-
-        @Override
-        public Result<BaseEntity> processGrant(OauthVo oauthVo) {
-            // 验证邮箱授权码
-            String authCode = GrantProvideEnum.MAIL.processLogin(oauthVo.getUsername(), oauthVo.getPassword());
-            // 回调URL格式
-            String redirectUriFormat = "{}?code={}&responseType={}&state={}";
-            // 格式化
-            String redirectUri = StrUtil.format(redirectUriFormat, oauthVo.getRedirectUri()
-                    , authCode, GlobalConstant.MAIL, oauthVo.getState());
-            // 返回结果
-            return Result.ok(GrantCodeVo.builder()
-                    .redirectUri(redirectUri)
-                    .build());
-        }
-
-        @Override
-        public Result<BaseEntity> processToken(OauthVo oauthVo, ClientEntity client) {
-            // 根据邮箱验证码获取用户信息
-            UserEntity entity = redisAuthCodeService.consume(oauthVo.getPassword());
-            // 生成token
-            AccessToken accessToken = redisTokenService.createAccessToken(entity, client);
-            return Result.ok(accessToken);
         }
     };
 

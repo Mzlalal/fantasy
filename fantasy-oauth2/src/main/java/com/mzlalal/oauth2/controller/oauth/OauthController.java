@@ -6,6 +6,7 @@ import com.mzlalal.base.common.GlobalResult;
 import com.mzlalal.base.entity.global.BaseEntity;
 import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.oauth2.ClientEntity;
+import com.mzlalal.base.entity.oauth2.vo.CheckVerifyCodeVo;
 import com.mzlalal.base.entity.oauth2.vo.OauthVo;
 import com.mzlalal.base.entity.oauth2.vo.VerifyCodeVo;
 import com.mzlalal.base.feign.oauth2.OauthFeignApi;
@@ -18,6 +19,7 @@ import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -49,17 +51,23 @@ public class OauthController implements OauthFeignApi {
      * string=>对象 redis操作模板
      */
     private final RedisTemplate<String, Object> redisTemplate;
+    /**
+     * string redis操作模板
+     */
+    private final StringRedisTemplate stringRedisTemplate;
 
     @Autowired
     public OauthController(ClientVerifyResponseTypeService clientVerifyResponseTypeService
-            , BCryptPasswordEncoder passwordEncoder, RedisTemplate<String, Object> redisTemplate) {
+            , BCryptPasswordEncoder passwordEncoder, RedisTemplate<String, Object> redisTemplate
+            , StringRedisTemplate stringRedisTemplate) {
         this.clientVerifyResponseTypeService = clientVerifyResponseTypeService;
         this.passwordEncoder = passwordEncoder;
         this.redisTemplate = redisTemplate;
+        this.stringRedisTemplate = stringRedisTemplate;
     }
 
     @Override
-    public Result<String> verifyCode(@RequestBody VerifyCodeVo verifyCodeVo) {
+    public Result<String> verifyCode(@Validated @RequestBody VerifyCodeVo verifyCodeVo) {
         // 检查授权方式
         String responseType = verifyCodeVo.getResponseType();
         clientVerifyResponseTypeService.verifyResponseType(verifyCodeVo.getClientId(), responseType);
@@ -68,7 +76,21 @@ public class OauthController implements OauthFeignApi {
     }
 
     @Override
-    public Result<BaseEntity> authorize(@RequestBody OauthVo oauthVo) {
+    public Result<String> checkVerifyCode(@Validated @RequestBody CheckVerifyCodeVo checkVerifyCodeVo) {
+        // 获取验证码
+        String redisVal = stringRedisTemplate.opsForValue().
+                get(GlobalConstant.passwordCodeRedisKey(checkVerifyCodeVo.getUsername()));
+        // 验证码为空直接返回失败 验证码相等则返回成功
+        if (StrUtil.isNotBlank(redisVal) && StrUtil.equals(redisVal, checkVerifyCodeVo.getCode())) {
+            return Result.ok();
+        }
+        // 返回失败
+        Result<String> base64Result = VerifyCodeProvideEnum.PASSWORD.generateVerifyCode(checkVerifyCodeVo.getUsername());
+        return Result.failMsg(base64Result.getData());
+    }
+
+    @Override
+    public Result<BaseEntity> authorize(@Validated @RequestBody OauthVo oauthVo) {
         // 检查授权方式
         ClientEntity client = clientVerifyResponseTypeService.verifyResponseType(oauthVo.getClientId(), oauthVo.getResponseType());
         // 重定向地址为空,则设置默认的重新地址
@@ -80,7 +102,7 @@ public class OauthController implements OauthFeignApi {
     }
 
     @Override
-    public Result<BaseEntity> createToken(@RequestBody OauthVo oauthVo) {
+    public Result<BaseEntity> createToken(@Validated @RequestBody OauthVo oauthVo) {
         // 检查授权方式
         String responseType = oauthVo.getResponseType();
         ClientEntity client = clientVerifyResponseTypeService.verifyResponseType(oauthVo.getClientId(), responseType);

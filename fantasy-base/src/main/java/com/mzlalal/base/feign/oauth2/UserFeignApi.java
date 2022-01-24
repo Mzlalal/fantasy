@@ -30,7 +30,7 @@ public interface UserFeignApi {
      */
     @ApiOperation("查看列表")
     @RequestMapping(value = "/list", method = RequestMethod.POST)
-    @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 1)
+    @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 10)
     Result<UserEntity> list(@RequestBody Po<UserEntity> po);
 
     /**
@@ -41,7 +41,7 @@ public interface UserFeignApi {
      */
     @ApiOperation("查看详情")
     @RequestMapping(value = "/info/{id}", method = RequestMethod.GET)
-    @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 2)
+    @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 20)
     Result<UserEntity> info(@PathVariable("id") Long id);
 
     /**
@@ -52,7 +52,7 @@ public interface UserFeignApi {
      */
     @ApiOperation("保存")
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 3)
+    @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 30)
     Result<Void> save(@RequestBody UserEntity user);
 
     /**
@@ -63,7 +63,7 @@ public interface UserFeignApi {
      */
     @ApiOperation("更新")
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 4)
+    @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 40)
     Result<Void> update(@RequestBody UserEntity user);
 
     /**
@@ -74,6 +74,6 @@ public interface UserFeignApi {
      */
     @ApiOperation("删除")
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 5)
+    @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 50)
     Result<Void> delete(@RequestBody Long[] ids);
 }

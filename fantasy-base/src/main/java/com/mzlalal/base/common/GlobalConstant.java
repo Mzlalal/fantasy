@@ -37,32 +37,42 @@ public interface GlobalConstant {
     String PASSWORD = "password";
 
     /**
-     * 邮箱redis key
+     * 邮箱 redis key
      *
      * @param mail 电子邮箱地址
-     * @return mail:code:{mail}
+     * @return String fantasy:mail:code:{mail}
      */
     static String mailCodeRedisKey(String mail) {
-        return "mail:code:" + mail;
+        return "fantasy:mail:code:" + mail;
+    }
+
+    /**
+     * 手机号登录验证码 redis key
+     *
+     * @param mobile 手机号
+     * @return String fantasy:mail:code:{mail}
+     */
+    static String passwordCodeRedisKey(String mobile) {
+        return "fantasy:password:code:" + mobile;
     }
 
     /**
      * 用户 token redis key
      *
      * @param token 电子邮箱地址
-     * @return user:token:{token}
+     * @return String fantasy:user:token:{token}
      */
     static String tokenRedisKey(String token) {
-        return "user:token:" + token;
+        return "fantasy:user:token:" + token;
     }
 
     /**
      * 用户名登录错误次数
      *
      * @param username 用户名
-     * @return login:error:{username}
+     * @return String fantasy:login:error:{username}
      */
     static String loginErrorRedisKey(String username) {
-        return "login:error:" + username;
+        return "fantasy:login:error:" + username;
     }
 }
