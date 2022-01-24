@@ -15,17 +15,17 @@ import javax.validation.constraints.NotBlank;
  */
 @Data
 @Builder
-@ApiModel("token")
+@ApiModel("验证码信息")
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class AccountAuthorizeCodeEntity extends BaseEntity {
+public class VerifyCodeEntity extends BaseEntity {
 
-    @NotBlank(message = "邮箱账户不能为空")
-    @ApiModelProperty(value = "邮箱账户", example = "xx@xx.xx")
-    private String account;
+    @NotBlank(message = "账户不能为空,例:手机号码/邮箱")
+    @ApiModelProperty(value = "账户")
+    private String username;
 
-    @NotBlank(message = "授权码不能为空")
-    @ApiModelProperty(value = "授权码")
-    private String authorizeCode;
+    @NotBlank(message = "验证码不能为空")
+    @ApiModelProperty(value = "验证码")
+    private String code;
 }

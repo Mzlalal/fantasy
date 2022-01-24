@@ -19,6 +19,19 @@ import java.util.Collection;
 public class AssertUtil extends Assert {
 
     /**
+     * 校验字符串是否相等
+     *
+     * @param str1       字符串1
+     * @param str2       字符串2
+     * @param resultCode 全局状态码
+     */
+    public static void equals(String str1, String str2, GlobalResult resultCode) {
+        if (!StrUtil.equals(str1, str2)) {
+            throw resultCode.boom();
+        }
+    }
+
+    /**
      * 为false则抛出异常
      *
      * @param flag       判断

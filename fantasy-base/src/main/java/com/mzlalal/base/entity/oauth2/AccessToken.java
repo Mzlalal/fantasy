@@ -15,7 +15,7 @@ import java.util.Date;
  */
 @Data
 @Builder
-@ApiModel("token")
+@ApiModel("用户Token")
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)

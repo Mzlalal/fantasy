@@ -19,9 +19,9 @@ import java.io.Serializable;
  **/
 @Data
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @ApiModel("返回结果包装类")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Result<T> implements Serializable {
 
     private static final long serialVersionUID = -7552064024010817950L;

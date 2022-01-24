@@ -18,8 +18,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**
  * 授权方式枚举类
- * auth   ->  response  ->   provide  -> token 或者 token code
- * 授权开始 ->  授权类型  -> 授权校验方式 -> 返回令牌或者授权码
+ * 登录后使用此枚举创建用户TOKEN
+ * auth   ->  response  ->   provide  -> createToken 或者 createToken code
+ * 授权开始 ->  授权方式  -> 授权校验方式 -> 返回令牌或者授权码
  *
  * @author Mzlalal88
  * @date 2021/7/26 11:04
@@ -49,7 +50,7 @@ public enum GrantResponseEnum {
         @Override
         public Result<BaseEntity> processGrant(OauthVo oauthVo) {
             // 密码直接授权
-            String authCode = GrantProvideEnum.PASSWORD.validate(oauthVo.getUsername(), oauthVo.getGrantValue());
+            String authCode = GrantProvideEnum.PASSWORD.processLogin(oauthVo.getUsername(), oauthVo.getPassword());
             // 消费授权码,获取用户信息
             UserEntity userEntity = redisAuthCodeService.consume(authCode);
             // 查询客户端
@@ -69,7 +70,7 @@ public enum GrantResponseEnum {
         }
     },
     /**
-     * 授权码登录
+     * 邮箱授权登录
      */
     MAIL() {
         /**
@@ -84,7 +85,7 @@ public enum GrantResponseEnum {
         @Override
         public Result<BaseEntity> processGrant(OauthVo oauthVo) {
             // 验证邮箱授权码
-            String authCode = GrantProvideEnum.MAIL.validate(oauthVo.getUsername(), oauthVo.getGrantValue());
+            String authCode = GrantProvideEnum.MAIL.processLogin(oauthVo.getUsername(), oauthVo.getPassword());
             // 回调URL格式
             String redirectUriFormat = "{}?code={}&responseType={}&state={}";
             // 格式化
@@ -98,8 +99,8 @@ public enum GrantResponseEnum {
 
         @Override
         public Result<BaseEntity> processToken(OauthVo oauthVo, ClientEntity client) {
-            // 验证二次授权码
-            UserEntity entity = redisAuthCodeService.consume(oauthVo.getGrantValue());
+            // 根据邮箱验证码获取用户信息
+            UserEntity entity = redisAuthCodeService.consume(oauthVo.getPassword());
             // 生成token
             AccessToken accessToken = redisTokenService.createAccessToken(entity, client);
             return Result.ok(accessToken);
@@ -107,19 +108,19 @@ public enum GrantResponseEnum {
     };
 
     /**
-     * 处理授权
+     * 根据用户名加密码/验证码判断授权是否成功
      *
      * @param oauthVo 参数
-     * @return Result
+     * @return Result<BaseEntity>
      */
     public abstract Result<BaseEntity> processGrant(OauthVo oauthVo);
 
     /**
-     * 处理结果
+     * 授权校验成功后生成用户TOKEN
      *
      * @param oauthVo 参数
      * @param client  客户端
-     * @return Result
+     * @return Result<BaseEntity>
      */
     public abstract Result<BaseEntity> processToken(OauthVo oauthVo, ClientEntity client);
 
@@ -127,7 +128,7 @@ public enum GrantResponseEnum {
      * 根据授权方式type获取
      *
      * @param type 授权方式
-     * @return GrantEnum
+     * @return GrantResponseEnum
      */
     public static GrantResponseEnum getEnum(String type) {
         for (GrantResponseEnum value : GrantResponseEnum.values()) {

@@ -13,9 +13,9 @@ import lombok.*;
  */
 @Data
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @ApiModel("上传文件返回结果")
+@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class UploadFileEntity extends BaseEntity {
 

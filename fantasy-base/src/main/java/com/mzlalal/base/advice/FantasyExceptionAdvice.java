@@ -43,7 +43,6 @@ import java.util.Set;
 @RestControllerAdvice
 @ResponseStatus(HttpStatus.OK)
 public class FantasyExceptionAdvice {
-
     /**
      * request请求
      */
@@ -58,6 +57,7 @@ public class FantasyExceptionAdvice {
     protected void printExceptionAndParams(Exception cause) {
         // 打印原始报错
         log.error("", ExceptionUtil.getRootCause(cause));
+        // 打印自定义报错信息
         this.printCustomMessage(cause);
     }
 
@@ -68,7 +68,7 @@ public class FantasyExceptionAdvice {
      */
     protected void printCustomMessage(Exception cause) {
         // 输出格式
-        String format = "\n\t请求路径:{}\n\t代码位置:{}\n\t请求参数:{}\n\t异常信息:{}";
+        String format = "\n\t请求路径:{}{}\n\t请求参数:{}\n\t异常信息:{}";
         // 处理堆栈错误信息
         String classLine = this.printStack(cause);
         // 请求参数,非请求体
@@ -90,19 +90,21 @@ public class FantasyExceptionAdvice {
         // 获取异常的所有的堆栈信息
         StackTraceElement[] stackTraceElementArray = exception.getStackTrace();
         // 设置默认
-        StackTraceElement stack = stackTraceElementArray[0];
-        for (StackTraceElement item : stackTraceElementArray) {
-            String className = item.getClassName();
+        StringBuilder sb = new StringBuilder();
+        for (StackTraceElement stack : stackTraceElementArray) {
+            // 获取类名
+            String className = stack.getClassName();
             // base包抛出的类不需要
             if (!StrUtil.containsAny(className, "com.mzlalal.base", "$")
                     && StrUtil.contains(className, "com.mzlalal")) {
-                stack = item;
-                break;
+                sb.append("\n\t代码位置:")
+                        .append(StrUtil.format("{}({}.java:{})", stack.getClassName()
+                                , ClassPool.getDefault().get(stack.getClassName()).getSimpleName(), stack.getLineNumber()
+                        ));
             }
         }
         // 返回格式化信息
-        return StrUtil.format("{}({}.java:{})", stack.getClassName()
-                , ClassPool.getDefault().get(stack.getClassName()).getSimpleName(), stack.getLineNumber());
+        return sb.toString();
     }
 
     /**

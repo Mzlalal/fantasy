@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * VO
@@ -39,9 +38,9 @@ public class ClientVo implements Serializable {
     @ApiModelProperty("重定向地址")
     private String redirectUri;
     /**
-     * 授权类型
+     * 授权方式
      */
-    @ApiModelProperty("授权类型")
+    @ApiModelProperty("授权方式")
     private String grantType;
     /**
      * 授权范围

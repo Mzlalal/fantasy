@@ -3,8 +3,7 @@ package com.mzlalal.base.entity.oauth2.vo;
 import com.mzlalal.base.entity.global.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 
@@ -15,14 +14,16 @@ import javax.validation.constraints.NotBlank;
  * @date 2021/7/28 14:34
  */
 @Data
+@Builder
 @ApiModel("请求授权参数VO")
+@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class OauthVo extends BaseEntity {
 
     private static final long serialVersionUID = -8043411261618997959L;
 
     @ApiModelProperty("用户名")
-    @NotBlank(message = "用户名不能为空")
     private String username;
 
     @ApiModelProperty("客户端ID")
@@ -32,13 +33,13 @@ public class OauthVo extends BaseEntity {
     @ApiModelProperty("私匙")
     private String clientSecret;
 
-    @ApiModelProperty("授权类型:password-密码(直接返回TOKEN) mail-邮件验证码(二次验证)")
-    @NotBlank(message = "授权类型不能为空")
+    @ApiModelProperty("授权方式,例:password-密码(直接返回TOKEN) mail-邮件验证码(二次验证)")
+    @NotBlank(message = "授权方式不能为空")
     private String responseType;
 
-    @ApiModelProperty("验证码:password-密码 mail-邮件验证码")
-    @NotBlank(message = "授权验证码不能为空")
-    private String grantValue;
+    @ApiModelProperty("密码,例:文本密码/邮件验证码")
+    @NotBlank(message = "密码不能为空")
+    private String password;
 
     @ApiModelProperty("重定向地址")
     private String redirectUri;

@@ -4,7 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.lang.Validator;
 import cn.hutool.extra.template.TemplateEngine;
 import com.mzlalal.base.common.GlobalResult;
-import com.mzlalal.base.entity.notify.AccountAuthorizeCodeEntity;
+import com.mzlalal.base.entity.notify.VerifyCodeEntity;
 import com.mzlalal.base.util.AssertUtil;
 import com.mzlalal.notify.service.MailNotifyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
  * @date 2021/12/1 21:22
  */
 @Service("notifyServiceImpl")
-public class NotifyServiceImpl {
+public class NotifyService {
     /**
      * 邮件发送服务
      */
@@ -28,7 +28,7 @@ public class NotifyServiceImpl {
     private final TemplateEngine templateEngine;
 
     @Autowired
-    public NotifyServiceImpl(MailNotifyService mailNotifyService, TemplateEngine templateEngine) {
+    public NotifyService(MailNotifyService mailNotifyService, TemplateEngine templateEngine) {
         this.mailNotifyService = mailNotifyService;
         this.templateEngine = templateEngine;
     }
@@ -36,18 +36,18 @@ public class NotifyServiceImpl {
     /**
      * 发送邮件
      *
-     * @param authorizeCodeEntity 验证码信息
+     * @param verifyCodeEntity 验证码信息
      * @return 邮件ID
      */
-    public String send(AccountAuthorizeCodeEntity authorizeCodeEntity) {
+    public String send(VerifyCodeEntity verifyCodeEntity) {
         // 验证邮箱格式
-        AssertUtil.isTrue(Validator.isEmail(authorizeCodeEntity.getAccount())
+        AssertUtil.isTrue(Validator.isEmail(verifyCodeEntity.getUsername())
                 , GlobalResult.EMAIL_NOT_CORRECT);
         // 渲染文本
-        String content = templateEngine.getTemplate("/notify/mail/notifyAccountAuthorizeCode.html")
-                .render(BeanUtil.beanToMap(authorizeCodeEntity));
+        String content = templateEngine.getTemplate("/notify/mail/accountMailVerifyCode.html")
+                .render(BeanUtil.beanToMap(verifyCodeEntity));
         // 发送邮件
-        return mailNotifyService.send(authorizeCodeEntity.getAccount()
-                , "Fantasy-验证码", content, true);
+        return mailNotifyService.send(verifyCodeEntity.getUsername()
+                , "Fantasy-登录验证码", content, true);
     }
 }

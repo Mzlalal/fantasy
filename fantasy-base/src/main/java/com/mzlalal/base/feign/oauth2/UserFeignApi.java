@@ -7,6 +7,7 @@ import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oauth2.UserEntity;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.core.Ordered;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +30,7 @@ public interface UserFeignApi {
      */
     @ApiOperation("查看列表")
     @RequestMapping(value = "/list", method = RequestMethod.POST)
-    @ApiOperationSupport(order = 1)
+    @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 1)
     Result<UserEntity> list(@RequestBody Po<UserEntity> po);
 
     /**
@@ -40,7 +41,7 @@ public interface UserFeignApi {
      */
     @ApiOperation("查看详情")
     @RequestMapping(value = "/info/{id}", method = RequestMethod.GET)
-    @ApiOperationSupport(order = 2)
+    @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 2)
     Result<UserEntity> info(@PathVariable("id") Long id);
 
     /**
@@ -51,7 +52,7 @@ public interface UserFeignApi {
      */
     @ApiOperation("保存")
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    @ApiOperationSupport(order = 3)
+    @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 3)
     Result<Void> save(@RequestBody UserEntity user);
 
     /**
@@ -62,7 +63,7 @@ public interface UserFeignApi {
      */
     @ApiOperation("更新")
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    @ApiOperationSupport(order = 4)
+    @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 4)
     Result<Void> update(@RequestBody UserEntity user);
 
     /**
@@ -73,6 +74,6 @@ public interface UserFeignApi {
      */
     @ApiOperation("删除")
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    @ApiOperationSupport(order = 5)
+    @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 5)
     Result<Void> delete(@RequestBody Long[] ids);
 }
