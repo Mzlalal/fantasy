@@ -3,7 +3,8 @@ package com.mzlalal.base.entity.oss;
 import com.mzlalal.base.entity.global.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.NotBlank;
@@ -15,9 +16,6 @@ import javax.validation.constraints.NotBlank;
  * @date 2022/1/18 16:38
  */
 @Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @ApiModel("人名脱敏参数")
 @EqualsAndHashCode(callSuper = true)
 public class DesensitizedNameEntity extends BaseEntity {

@@ -3,9 +3,9 @@ package com.mzlalal.base.feign.oauth2;
 import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.entity.global.BaseEntity;
 import com.mzlalal.base.entity.global.Result;
-import com.mzlalal.base.entity.oauth2.vo.OauthCodeVo;
 import com.mzlalal.base.entity.oauth2.vo.OauthVo;
 import com.mzlalal.base.entity.oauth2.vo.TokenVo;
+import com.mzlalal.base.entity.oauth2.vo.VerifyCodeVo;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,12 +25,12 @@ public interface OauthFeignApi {
     /**
      * 登录验证码
      *
-     * @param oauthCodeVo 登录验证码参数
+     * @param verifyCodeVo 登录验证码参数
      * @return Result<BaseEntity>
      */
     @ApiOperation("登录验证码")
-    @PostMapping("/authorize.code")
-    Result<String> authorizeCode(@RequestBody OauthCodeVo oauthCodeVo);
+    @PostMapping("/verify.code")
+    Result<String> verifyCode(@RequestBody VerifyCodeVo verifyCodeVo);
 
     /**
      * 登录
@@ -59,7 +59,7 @@ public interface OauthFeignApi {
      * @return Result<BaseEntity>
      */
     @ApiOperation("验证令牌")
-    @PostMapping("/checkToken")
+    @PostMapping("/check.token")
     Result<BaseEntity> checkToken(@RequestHeader(GlobalConstant.F_AUTHORIZATION) String token);
 
     /**

@@ -17,7 +17,7 @@ import javax.validation.constraints.NotBlank;
 @Data
 @ApiModel("登录验证码参数")
 @EqualsAndHashCode(callSuper = true)
-public class OauthCodeVo extends BaseEntity {
+public class VerifyCodeVo extends BaseEntity {
 
     private static final long serialVersionUID = -8043411261618997959L;
 

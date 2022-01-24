@@ -29,8 +29,8 @@ import java.util.List;
 public class IgnoreController {
 
     @ApiOperation("根据空格分割人名并脱敏")
-    @PostMapping(value = "/replaceNameBySpace", headers = "content-type=application/x-www-form-urlencoded")
-    public String replaceNameBySpace(@ModelAttribute DesensitizedNameEntity desensitizedEntity) {
+    @PostMapping(value = "/desensitized.name.by.space", headers = "content-type=application/x-www-form-urlencoded")
+    public String desensitizedNameBySpace(@ModelAttribute DesensitizedNameEntity desensitizedEntity) {
         // 验空
         AssertUtil.notBlank(desensitizedEntity.getName(), "数据为空,请从excel对应列复制数据");
 

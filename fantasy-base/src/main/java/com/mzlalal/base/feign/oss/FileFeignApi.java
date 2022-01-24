@@ -27,7 +27,7 @@ public interface FileFeignApi {
      * @throws Exception IO异常
      */
     @ApiOperation("上传文件")
-    @PostMapping(value = "/upload", headers = "content-type=multipart/form-data")
+    @PostMapping(value = "/upload.file", headers = "content-type=multipart/form-data")
     @ApiImplicitParam(name = "file", value = "文件", required = true, dataType = "File", paramType = "form")
     Result<UploadFileEntity> upload(@RequestPart("file") MultipartFile multipartFile) throws Exception;
 }

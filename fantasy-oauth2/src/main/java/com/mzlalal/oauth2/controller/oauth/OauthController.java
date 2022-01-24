@@ -9,9 +9,9 @@ import com.mzlalal.base.entity.global.BaseEntity;
 import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.notify.AccountAuthorizeCodeEntity;
 import com.mzlalal.base.entity.oauth2.ClientEntity;
-import com.mzlalal.base.entity.oauth2.vo.OauthCodeVo;
 import com.mzlalal.base.entity.oauth2.vo.OauthVo;
 import com.mzlalal.base.entity.oauth2.vo.TokenVo;
+import com.mzlalal.base.entity.oauth2.vo.VerifyCodeVo;
 import com.mzlalal.base.feign.oauth2.OauthFeignApi;
 import com.mzlalal.base.oauth2.Oauth2Context;
 import com.mzlalal.base.util.AssertUtil;
@@ -62,25 +62,25 @@ public class OauthController implements OauthFeignApi {
     }
 
     @Override
-    public Result<String> authorizeCode(@RequestBody OauthCodeVo oauthCodeVo) {
+    public Result<String> verifyCode(@RequestBody VerifyCodeVo verifyCodeVo) {
         // 检查授权方式是否为空
-        AssertUtil.notBlank(oauthCodeVo.getResponseType(), GlobalResult.RESPONSE_TYPE_NOT_CORRECT);
+        AssertUtil.notBlank(verifyCodeVo.getResponseType(), GlobalResult.RESPONSE_TYPE_NOT_CORRECT);
         // 检查客户端
-        ClientEntity client = clientService.getOneByClientId(oauthCodeVo.getClientId());
+        ClientEntity client = clientService.getOneByClientId(verifyCodeVo.getClientId());
         AssertUtil.notNull(client, GlobalResult.OAUTH_FAIL);
         // 获取授权类型
         String[] grantTypeArray = StrUtil.splitToArray(client.getResponseType(), ",");
         // 不存在这输出异常
-        AssertUtil.arrayNotContains(grantTypeArray, oauthCodeVo.getResponseType()
+        AssertUtil.arrayNotContains(grantTypeArray, verifyCodeVo.getResponseType()
                 , GlobalResult.OAUTH_RESPONSE_TYPE_NOT_CORRECT);
         // 随机数
         int randomInt = RandomUtil.randomInt(10001, 99999);
         // 过期时间15分钟
         redisTemplate.opsForValue()
-                .set(GlobalConstant.mailCodeRedisKey(oauthCodeVo.getUsername()), randomInt, 15, TimeUnit.MINUTES);
+                .set(GlobalConstant.mailCodeRedisKey(verifyCodeVo.getUsername()), randomInt, 15, TimeUnit.MINUTES);
         // 构建参数
         AccountAuthorizeCodeEntity authorizeCodeEntity = AccountAuthorizeCodeEntity.builder()
-                .account(oauthCodeVo.getUsername())
+                .account(verifyCodeVo.getUsername())
                 .authorizeCode(String.valueOf(randomInt))
                 .build();
         // 发送请求
