@@ -1,6 +1,6 @@
 <configuration scan="true" scanPeriod="60 seconds" debug="false">
     <!-- 日志存放路径 -->
-    <property name="log.path" value="/root/logs"/>
+    <property name="log.path" value="~/logs"/>
     <!-- 当前运行环境 -->
     <springProperty scope="context" name="spring.profiles.active" source="spring.profiles.active"/>
     <!-- 应用名 -->
