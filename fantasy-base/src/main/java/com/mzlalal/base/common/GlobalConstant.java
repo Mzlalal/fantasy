@@ -1,5 +1,8 @@
 package com.mzlalal.base.common;
 
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
+
 /**
  * 全局常量类
  *
@@ -35,6 +38,16 @@ public interface GlobalConstant {
      * 密码
      */
     String PASSWORD = "password";
+
+    /**
+     * UUID与clientId绑定的授权码 redis key
+     *
+     * @param clientId 机构ID
+     * @return String fantasy:{clientId}:{uuid}
+     */
+    static String clientIdAuthCodeRedisKey(String clientId) {
+        return StrUtil.format("fantasy:{}:{}", clientId, IdUtil.fastSimpleUUID());
+    }
 
     /**
      * 邮箱 redis key

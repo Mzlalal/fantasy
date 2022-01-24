@@ -6,6 +6,7 @@ import cn.hutool.extra.spring.SpringUtil;
 import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.common.GlobalResult;
 import com.mzlalal.base.entity.oauth2.UserEntity;
+import com.mzlalal.base.entity.oauth2.vo.OauthVo;
 import com.mzlalal.base.util.AssertUtil;
 import com.mzlalal.oauth2.config.oauth2.service.RedisAuthCodeService;
 import com.mzlalal.oauth2.service.UserService;
@@ -40,7 +41,9 @@ public enum GrantProvideEnum {
         private final StringRedisTemplate redisTemplate = SpringUtil.getBean(StringRedisTemplate.class);
 
         @Override
-        public String processLogin(String username, String password) {
+        public String processLogin(OauthVo oauthVo) {
+            // 用户名
+            String username = oauthVo.getUsername();
             // 邮箱格式
             AssertUtil.isTrue(Validator.isEmail(username), GlobalResult.EMAIL_NOT_CORRECT);
             // 用户名的邮箱验证码redis key
@@ -50,11 +53,11 @@ public enum GrantProvideEnum {
             // 删除只能使用一次
             redisTemplate.delete(mailCodeRedisKey);
             // 验证码是否正确
-            AssertUtil.equals(redisCode, password, GlobalResult.VALIDATE_CODE_NOT_RIGHT);
+            AssertUtil.equals(redisCode, oauthVo.getPassword(), GlobalResult.VALIDATE_CODE_NOT_RIGHT);
             // 查询用户信息
             UserEntity userEntity = userService.findOneByMail(username).orElseThrow(GlobalResult.EMAIL_NOT_FOUNT::boom);
             // 存储用户信息并返回授权码
-            return redisAuthCodeService.store(userEntity);
+            return redisAuthCodeService.store(oauthVo.getClientId(), userEntity);
         }
     },
     /**
@@ -75,18 +78,19 @@ public enum GrantProvideEnum {
         private final RedisAuthCodeService redisAuthCodeService = SpringUtil.getBean(RedisAuthCodeService.class);
 
         @Override
-        public String processLogin(String username, String password) {
+        public String processLogin(OauthVo oauthVo) {
+            // 用户名
+            String username = oauthVo.getUsername();
             // 手机格式
             AssertUtil.isTrue(Validator.isMobile(username), GlobalResult.MOBILE_NOT_CORRECT);
             // 查询用户信息
             UserEntity userEntity = userService.findOneByMobile(username)
                     .orElseThrow(GlobalResult.MOBILE_NOT_FOUNT::boom);
-            // 存储用户信息和授权码
-            if (passwordEncoder.matches(password, userEntity.getPassword())) {
-                return redisAuthCodeService.store(userEntity);
-            }
             // 密码不正确
-            throw GlobalResult.PASSWORD_NOT_RIGHT.boom();
+            AssertUtil.isTrue(passwordEncoder.matches(oauthVo.getPassword(), userEntity.getPassword()),
+                    GlobalResult.PASSWORD_NOT_RIGHT);
+            // 存储用户信息和授权码
+            return redisAuthCodeService.store(oauthVo.getClientId(), userEntity);
         }
     };
 
@@ -94,11 +98,10 @@ public enum GrantProvideEnum {
      * 验证用户名与密码
      * 密码可以是邮箱验证码,文本密码,短信验证码等
      *
-     * @param username 用户名
-     * @param password 文本密码/验证码
+     * @param oauthVo 授权信息
      * @return String
      */
-    public abstract String processLogin(String username, String password);
+    public abstract String processLogin(OauthVo oauthVo);
 
     /**
      * 根据授权方式type获取

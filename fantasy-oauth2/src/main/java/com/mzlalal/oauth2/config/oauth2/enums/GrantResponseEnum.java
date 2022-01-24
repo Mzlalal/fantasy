@@ -41,8 +41,8 @@ public enum GrantResponseEnum {
 
         @Override
         public Result<BaseEntity> processGrant(OauthVo oauthVo) {
-            // 验证邮箱授权码
-            String authCode = GrantProvideEnum.MAIL.processLogin(oauthVo.getUsername(), oauthVo.getPassword());
+            // 验证邮箱授权码,存储用户信息在authCode中
+            String authCode = GrantProvideEnum.MAIL.processLogin(oauthVo);
             // 回调URL格式
             String redirectUriFormat = "{}?code={}&responseType={}&state={}";
             // 格式化
@@ -86,8 +86,8 @@ public enum GrantResponseEnum {
 
         @Override
         public Result<BaseEntity> processGrant(OauthVo oauthVo) {
-            // 密码直接授权
-            String authCode = GrantProvideEnum.PASSWORD.processLogin(oauthVo.getUsername(), oauthVo.getPassword());
+            // 文本密码授权,存储用户信息在authCode中,直接取出来返回
+            String authCode = GrantProvideEnum.PASSWORD.processLogin(oauthVo);
             // 消费授权码,获取用户信息
             UserEntity userEntity = redisAuthCodeService.consume(authCode);
             // 查询客户端

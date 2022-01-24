@@ -1,7 +1,7 @@
 package com.mzlalal.oauth2.config.oauth2.service;
 
 import cn.hutool.core.lang.Assert;
-import cn.hutool.core.util.IdUtil;
+import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.common.GlobalResult;
 import com.mzlalal.base.entity.oauth2.UserEntity;
 import com.mzlalal.base.util.AssertUtil;
@@ -32,15 +32,17 @@ public class RedisAuthCodeService {
     /**
      * 存储用户信息
      *
+     * @param clientId   客户端ID
      * @param userEntity 用户信息
+     * @return String 存储用户信息的redisauthCode授权码
      */
-    public String store(UserEntity userEntity) {
+    public String store(String clientId, UserEntity userEntity) {
         // 创建UUID
-        String code = IdUtil.fastSimpleUUID();
+        String authCode = GlobalConstant.clientIdAuthCodeRedisKey(clientId);
         // 存储
-        redisTemplate.opsForValue().setIfAbsent(code, userEntity, 15, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().setIfAbsent(authCode, userEntity, 15, TimeUnit.MINUTES);
         // 返回授权码
-        return code;
+        return authCode;
     }
 
     /**

@@ -77,15 +77,16 @@ public class OauthController implements OauthFeignApi {
 
     @Override
     public Result<String> checkVerifyCode(@Validated @RequestBody CheckVerifyCodeVo checkVerifyCodeVo) {
+        String username = checkVerifyCodeVo.getUsername();
         // 获取验证码
         String redisVal = stringRedisTemplate.opsForValue().
-                get(GlobalConstant.passwordCodeRedisKey(checkVerifyCodeVo.getUsername()));
+                get(GlobalConstant.passwordCodeRedisKey(username));
         // 验证码为空直接返回失败 验证码相等则返回成功
         if (StrUtil.isNotBlank(redisVal) && StrUtil.equals(redisVal, checkVerifyCodeVo.getCode())) {
             return Result.ok();
         }
         // 返回失败
-        Result<String> base64Result = VerifyCodeProvideEnum.PASSWORD.generateVerifyCode(checkVerifyCodeVo.getUsername());
+        Result<String> base64Result = VerifyCodeProvideEnum.PASSWORD.generateVerifyCode(username);
         return Result.failMsg(base64Result.getData());
     }
 
