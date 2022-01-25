@@ -36,7 +36,7 @@ public enum VerifyCodeProvideEnum {
         private final StringRedisTemplate redisTemplate = SpringUtil.getBean(StringRedisTemplate.class);
 
         @Override
-        public Result<String> generateVerifyCode(String username) {
+        public Result<String> createVerifyCode(String username) {
             // 随机数
             int randomInt = RandomUtil.randomInt(10001, 99999);
             // 过期时间15分钟
@@ -62,7 +62,7 @@ public enum VerifyCodeProvideEnum {
         private final StringRedisTemplate redisTemplate = SpringUtil.getBean(StringRedisTemplate.class);
 
         @Override
-        public Result<String> generateVerifyCode(String username) {
+        public Result<String> createVerifyCode(String username) {
             // 定义图形验证码的长、宽、验证码字符数、干扰线宽度
             ShearCaptcha captcha = CaptchaUtil.createShearCaptcha(200, 100, 4, 4);
             // 图形验证码写出，可以写出到文件，也可以写出到流
@@ -82,7 +82,7 @@ public enum VerifyCodeProvideEnum {
      * @param username 用户名
      * @return Result<String>
      */
-    public abstract Result<String> generateVerifyCode(String username);
+    public abstract Result<String> createVerifyCode(String username);
 
     /**
      * 根据验证码方式type获取
@@ -97,6 +97,6 @@ public enum VerifyCodeProvideEnum {
                 return value;
             }
         }
-        throw GlobalResult.OAUTH_VALIDATE_TYPE_NOT_CORRECT.boom();
+        throw GlobalResult.OAUTH_RESPONSE_TYPE_NOT_CORRECT.boom();
     }
 }

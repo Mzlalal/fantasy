@@ -53,6 +53,7 @@ public enum GlobalResult {
     /**
      * 非法的授权方式validateType
      */
+    @Deprecated
     OAUTH_VALIDATE_TYPE_NOT_CORRECT(414, "非法的授权方式(validateType)"),
     /**
      * 授权方式为空

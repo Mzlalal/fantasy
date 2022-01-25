@@ -2,16 +2,15 @@ package com.mzlalal.oauth2.controller.oauth;
 
 import cn.hutool.core.util.StrUtil;
 import com.mzlalal.base.common.GlobalConstant;
-import com.mzlalal.base.common.GlobalResult;
 import com.mzlalal.base.entity.global.BaseEntity;
 import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.oauth2.ClientEntity;
+import com.mzlalal.base.entity.oauth2.req.CreateTokenReq;
 import com.mzlalal.base.entity.oauth2.vo.CheckVerifyCodeVo;
 import com.mzlalal.base.entity.oauth2.vo.OauthVo;
 import com.mzlalal.base.entity.oauth2.vo.VerifyCodeVo;
 import com.mzlalal.base.feign.oauth2.OauthFeignApi;
 import com.mzlalal.base.oauth2.Oauth2Context;
-import com.mzlalal.base.util.AssertUtil;
 import com.mzlalal.oauth2.config.oauth2.enums.GrantResponseEnum;
 import com.mzlalal.oauth2.config.oauth2.enums.VerifyCodeProvideEnum;
 import com.mzlalal.oauth2.service.impl.ClientVerifyResponseTypeService;
@@ -68,16 +67,22 @@ public class OauthController implements OauthFeignApi {
 
     @Override
     public Result<String> verifyCode(@Validated @RequestBody VerifyCodeVo verifyCodeVo) {
-        // 检查授权方式
+        // 授权方式
         String responseType = verifyCodeVo.getResponseType();
         clientVerifyResponseTypeService.verifyResponseType(verifyCodeVo.getClientId(), responseType);
-        // 发送验证码
-        return VerifyCodeProvideEnum.getEnum(responseType).generateVerifyCode(verifyCodeVo.getUsername());
+        // 用户名
+        String username = verifyCodeVo.getUsername();
+        GrantResponseEnum.getEnum(responseType).verifyUsername(username);
+        // 生成验证码
+        return VerifyCodeProvideEnum.getEnum(responseType).createVerifyCode(username);
     }
 
     @Override
     public Result<String> checkVerifyCode(@Validated @RequestBody CheckVerifyCodeVo checkVerifyCodeVo) {
+        // 用户名
         String username = checkVerifyCodeVo.getUsername();
+        // 固定为文本密码校验
+        GrantResponseEnum.PASSWORD.verifyUsername(username);
         // 获取验证码
         String redisVal = stringRedisTemplate.opsForValue().
                 get(GlobalConstant.passwordCodeRedisKey(username));
@@ -86,32 +91,30 @@ public class OauthController implements OauthFeignApi {
             return Result.ok();
         }
         // 返回失败
-        Result<String> base64Result = VerifyCodeProvideEnum.PASSWORD.generateVerifyCode(username);
+        Result<String> base64Result = VerifyCodeProvideEnum.PASSWORD.createVerifyCode(username);
         return Result.failMsg(base64Result.getData());
     }
 
     @Override
     public Result<BaseEntity> authorize(@Validated @RequestBody OauthVo oauthVo) {
-        // 检查授权方式
-        ClientEntity client = clientVerifyResponseTypeService.verifyResponseType(oauthVo.getClientId(), oauthVo.getResponseType());
+        // 授权方式
+        String responseType = oauthVo.getResponseType();
+        ClientEntity client = clientVerifyResponseTypeService.verifyResponseType(oauthVo.getClientId(), responseType);
         // 重定向地址为空,则设置默认的重新地址
         if (StrUtil.isBlank(oauthVo.getRedirectUri())) {
             oauthVo.setRedirectUri(client.getRedirectUri());
         }
         // 获取授权码
-        return GrantResponseEnum.getEnum(oauthVo.getResponseType()).processGrant(oauthVo);
+        return GrantResponseEnum.getEnum(responseType).createCallback(oauthVo, client);
     }
 
     @Override
-    public Result<BaseEntity> createToken(@Validated @RequestBody OauthVo oauthVo) {
+    public Result<BaseEntity> createToken(@Validated @RequestBody CreateTokenReq createTokenReq) {
         // 检查授权方式
-        String responseType = oauthVo.getResponseType();
-        ClientEntity client = clientVerifyResponseTypeService.verifyResponseType(oauthVo.getClientId(), responseType);
-        // 私匙
-        String clientSecret = client.getClientSecret();
-        AssertUtil.isTrue(passwordEncoder.matches(oauthVo.getClientSecret(), clientSecret), GlobalResult.OAUTH_FAIL);
+        String responseType = createTokenReq.getResponseType();
+        ClientEntity client = clientVerifyResponseTypeService.verifyResponseType(createTokenReq.getClientId(), responseType);
         // 获取授权码
-        return GrantResponseEnum.getEnum(responseType).processToken(oauthVo, client);
+        return GrantResponseEnum.getEnum(responseType).createAccessToken(createTokenReq, client);
     }
 
     @Override

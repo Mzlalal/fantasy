@@ -1,5 +1,6 @@
 package com.mzlalal.oauth2.config.oauth2.enums;
 
+import cn.hutool.core.lang.Validator;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import com.mzlalal.base.common.GlobalConstant;
@@ -9,11 +10,15 @@ import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.oauth2.AccessToken;
 import com.mzlalal.base.entity.oauth2.ClientEntity;
 import com.mzlalal.base.entity.oauth2.UserEntity;
+import com.mzlalal.base.entity.oauth2.req.CreateTokenReq;
 import com.mzlalal.base.entity.oauth2.vo.GrantCodeVo;
 import com.mzlalal.base.entity.oauth2.vo.OauthVo;
-import com.mzlalal.oauth2.config.oauth2.service.RedisAuthCodeService;
+import com.mzlalal.base.util.AssertUtil;
+import com.mzlalal.oauth2.config.oauth2.service.RedisAuthorizeCodeService;
 import com.mzlalal.oauth2.config.oauth2.service.RedisTokenService;
 import com.mzlalal.oauth2.service.ClientService;
+import com.mzlalal.oauth2.service.UserService;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**
@@ -33,21 +38,59 @@ public enum GrantResponseEnum {
         /**
          * redis授权码服务
          */
-        private final RedisAuthCodeService redisAuthCodeService = SpringUtil.getBean(RedisAuthCodeService.class);
+        private final RedisAuthorizeCodeService redisAuthorizeCodeService = SpringUtil.getBean(RedisAuthorizeCodeService.class);
         /**
          * redis令牌服务
          */
         private final RedisTokenService redisTokenService = SpringUtil.getBean(RedisTokenService.class);
+        /**
+         * 用户服务
+         */
+        private final UserService userService = SpringUtil.getBean(UserService.class);
+        /**
+         * redis授权码服务
+         */
+        private final StringRedisTemplate redisTemplate = SpringUtil.getBean(StringRedisTemplate.class);
+        /**
+         * 密码工具
+         */
+        private final BCryptPasswordEncoder passwordEncoder = SpringUtil.getBean(BCryptPasswordEncoder.class);
 
         @Override
-        public Result<BaseEntity> processGrant(OauthVo oauthVo) {
-            // 验证邮箱授权码,存储用户信息在authCode中
-            String authCode = GrantProvideEnum.MAIL.processLogin(oauthVo);
+        public void verifyUsername(String username) {
+            // 邮箱格式
+            AssertUtil.isTrue(Validator.isEmail(username), GlobalResult.EMAIL_NOT_CORRECT);
+        }
+
+        @Override
+        public String createAuthorizeCode(OauthVo oauthVo) {
+            // 用户名
+            String username = oauthVo.getUsername();
+            // 邮箱格式
+            AssertUtil.isTrue(Validator.isEmail(username), GlobalResult.EMAIL_NOT_CORRECT);
+            // 用户名的邮箱验证码redis key
+            String mailCodeRedisKey = GlobalConstant.mailCodeRedisKey(username);
+            // 获取验证码
+            String redisCode = redisTemplate.opsForValue().get(mailCodeRedisKey);
+            // 删除只能使用一次
+            redisTemplate.delete(mailCodeRedisKey);
+            // 验证码是否正确
+            AssertUtil.equals(redisCode, oauthVo.getPassword(), GlobalResult.VALIDATE_CODE_NOT_RIGHT);
+            // 查询用户信息
+            UserEntity userEntity = userService.findOneByMail(username).orElseThrow(GlobalResult.EMAIL_NOT_FOUNT::boom);
+            // 存储用户信息并返回授权码
+            return redisAuthorizeCodeService.store(oauthVo.getClientId(), userEntity);
+        }
+
+        @Override
+        public Result<BaseEntity> createCallback(OauthVo oauthVo, ClientEntity client) {
+            // 验证邮箱授权码登录,存储用户信息在authCode中
+            String authorizeCode = this.createAuthorizeCode(oauthVo);
             // 回调URL格式
             String redirectUriFormat = "{}?code={}&responseType={}&state={}";
             // 格式化
             String redirectUri = StrUtil.format(redirectUriFormat, oauthVo.getRedirectUri()
-                    , authCode, GlobalConstant.MAIL, oauthVo.getState());
+                    , authorizeCode, GlobalConstant.MAIL, oauthVo.getState());
             // 返回结果
             return Result.ok(GrantCodeVo.builder()
                     .redirectUri(redirectUri)
@@ -55,9 +98,13 @@ public enum GrantResponseEnum {
         }
 
         @Override
-        public Result<BaseEntity> processToken(OauthVo oauthVo, ClientEntity client) {
+        public Result<BaseEntity> createAccessToken(CreateTokenReq createTokenReq, ClientEntity client) {
+            // 私匙不正确
+            if (!passwordEncoder.matches(createTokenReq.getClientSecret(), client.getClientSecret())) {
+                throw GlobalResult.OAUTH_FAIL.boom();
+            }
             // 根据邮箱验证码获取用户信息
-            UserEntity entity = redisAuthCodeService.consume(oauthVo.getPassword());
+            UserEntity entity = redisAuthorizeCodeService.consume(createTokenReq.getAuthorizeCode());
             // 生成token
             AccessToken accessToken = redisTokenService.createAccessToken(entity, client);
             return Result.ok(accessToken);
@@ -74,7 +121,7 @@ public enum GrantResponseEnum {
         /**
          * redis授权码服务
          */
-        private final RedisAuthCodeService redisAuthCodeService = SpringUtil.getBean(RedisAuthCodeService.class);
+        private final RedisAuthorizeCodeService redisAuthorizeCodeService = SpringUtil.getBean(RedisAuthorizeCodeService.class);
         /**
          * redis令牌服务
          */
@@ -83,15 +130,39 @@ public enum GrantResponseEnum {
          * 密码工具
          */
         private final BCryptPasswordEncoder passwordEncoder = SpringUtil.getBean(BCryptPasswordEncoder.class);
+        /**
+         * 用户服务
+         */
+        private final UserService userService = SpringUtil.getBean(UserService.class);
 
         @Override
-        public Result<BaseEntity> processGrant(OauthVo oauthVo) {
-            // 文本密码授权,存储用户信息在authCode中,直接取出来返回
-            String authCode = GrantProvideEnum.PASSWORD.processLogin(oauthVo);
+        public void verifyUsername(String username) {
+            // 手机格式
+            AssertUtil.isTrue(Validator.isMobile(username), GlobalResult.MOBILE_NOT_CORRECT);
+        }
+
+        @Override
+        public String createAuthorizeCode(OauthVo oauthVo) {
+            // 用户名
+            String username = oauthVo.getUsername();
+            // 手机格式
+            AssertUtil.isTrue(Validator.isMobile(username), GlobalResult.MOBILE_NOT_CORRECT);
+            // 查询用户信息
+            UserEntity userEntity = userService.findOneByMobile(username)
+                    .orElseThrow(GlobalResult.MOBILE_NOT_FOUNT::boom);
+            // 密码不正确
+            AssertUtil.isTrue(passwordEncoder.matches(oauthVo.getPassword(), userEntity.getPassword()),
+                    GlobalResult.PASSWORD_NOT_RIGHT);
+            // 存储用户信息和授权码
+            return redisAuthorizeCodeService.store(oauthVo.getClientId(), userEntity);
+        }
+
+        @Override
+        public Result<BaseEntity> createCallback(OauthVo oauthVo, ClientEntity client) {
+            // 文本密码授权登录,存储用户信息在authCode中,直接取出来返回
+            String authorizeCode = this.createAuthorizeCode(oauthVo);
             // 消费授权码,获取用户信息
-            UserEntity userEntity = redisAuthCodeService.consume(authCode);
-            // 查询客户端
-            ClientEntity client = clientService.getOneByClientId(oauthVo.getClientId());
+            UserEntity userEntity = redisAuthorizeCodeService.consume(authorizeCode);
             // 私匙不正确
             if (!passwordEncoder.matches(oauthVo.getClientSecret(), client.getClientSecret())) {
                 throw GlobalResult.OAUTH_FAIL.boom();
@@ -102,27 +173,44 @@ public enum GrantResponseEnum {
         }
 
         @Override
-        public Result<BaseEntity> processToken(OauthVo oauthVo, ClientEntity clientEntity) {
+        public Result<BaseEntity> createAccessToken(CreateTokenReq createTokenReq, ClientEntity clientEntity) {
             throw GlobalResult.OAUTH_FAIL.boom();
         }
     };
 
     /**
+     * 验证用户名格式是否正确
+     *
+     * @param username 用户名
+     */
+    public abstract void verifyUsername(String username);
+
+    /**
+     * 验证用户名与密码
+     * 密码可以是邮箱验证码,文本密码,短信验证码等
+     *
+     * @param oauthVo 授权信息
+     * @return String
+     */
+    public abstract String createAuthorizeCode(OauthVo oauthVo);
+
+    /**
      * 根据用户名加密码/验证码判断授权是否成功
      *
      * @param oauthVo 参数
+     * @param client  客户端信息
      * @return Result<BaseEntity>
      */
-    public abstract Result<BaseEntity> processGrant(OauthVo oauthVo);
+    public abstract Result<BaseEntity> createCallback(OauthVo oauthVo, ClientEntity client);
 
     /**
      * 授权校验成功后生成用户TOKEN
      *
-     * @param oauthVo 参数
-     * @param client  客户端
+     * @param createTokenReq 参数
+     * @param client         客户端信息
      * @return Result<BaseEntity>
      */
-    public abstract Result<BaseEntity> processToken(OauthVo oauthVo, ClientEntity client);
+    public abstract Result<BaseEntity> createAccessToken(CreateTokenReq createTokenReq, ClientEntity client);
 
     /**
      * 根据授权方式type获取

@@ -24,6 +24,7 @@ public class OauthVo extends BaseEntity {
     private static final long serialVersionUID = -8043411261618997959L;
 
     @ApiModelProperty("用户名")
+    @NotBlank(message = "用户名不能为空")
     private String username;
 
     @ApiModelProperty("客户端ID")

@@ -4,6 +4,7 @@ import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.entity.global.BaseEntity;
 import com.mzlalal.base.entity.global.Result;
+import com.mzlalal.base.entity.oauth2.req.CreateTokenReq;
 import com.mzlalal.base.entity.oauth2.vo.CheckVerifyCodeVo;
 import com.mzlalal.base.entity.oauth2.vo.OauthVo;
 import com.mzlalal.base.entity.oauth2.vo.VerifyCodeVo;
@@ -30,12 +31,12 @@ import org.springframework.web.bind.annotation.RequestHeader;
 public interface OauthFeignApi {
 
     /**
-     * 登录验证码
+     * 生成登录验证码
      *
      * @param verifyCodeVo 登录验证码参数
      * @return Result<String>
      */
-    @ApiOperation("登录验证码")
+    @ApiOperation(value = "登录验证码", notes = "密码登录生成base64图片验证码,邮件登录发送邮件验证码等")
     @PostMapping("/verify.code")
     @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 10)
     Result<String> verifyCode(@Validated @RequestBody VerifyCodeVo verifyCodeVo);
@@ -46,7 +47,7 @@ public interface OauthFeignApi {
      * @param checkVerifyCodeVo 文本密码登录校验验证码参数
      * @return Result<String>
      */
-    @ApiOperation(value = "校验文本登录验证码", notes = "此接口是可选的,若想实现在第一次文本密码登录失败后显示验证码" +
+    @ApiOperation(value = "校验验证码", notes = "此接口是可选的,若想实现在第一次文本密码登录失败后显示验证码" +
             ",应在对应情境下请求/api/v1/oauth/verify.code接口,根据responseType=password来生成base64图片校验码" +
             ",此接口验证码比对正确则返回成功" +
             ",若用户验证码没生成过或生成了过期(验证码值在缓存中15分钟过期)或者比对失败则直接返回新的base64图片至data中")
@@ -61,7 +62,7 @@ public interface OauthFeignApi {
      * @param oauthVo 请求授权参数VO
      * @return Result<BaseEntity>
      */
-    @ApiOperation("登录")
+    @ApiOperation(value = "登录", notes = "根据用户名及验证码生成授权码/根据用户名及密码登录直接生成用户令牌")
     @PostMapping("/authorize")
     @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 20)
     Result<BaseEntity> authorize(@Validated @RequestBody OauthVo oauthVo);
@@ -69,13 +70,13 @@ public interface OauthFeignApi {
     /**
      * 根据授权码(UUID)获取令牌
      *
-     * @param oauthVo 置换TOKEN参数
+     * @param createTokenReq 置换TOKEN参数
      * @return Result<BaseEntity>
      */
-    @ApiOperation("获取令牌")
+    @ApiOperation("根据授权码生成用户令牌")
     @PostMapping("/create.token")
     @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 30)
-    Result<BaseEntity> createToken(@Validated @RequestBody OauthVo oauthVo);
+    Result<BaseEntity> createToken(@Validated @RequestBody CreateTokenReq createTokenReq);
 
     /**
      * 验证令牌是否有效
