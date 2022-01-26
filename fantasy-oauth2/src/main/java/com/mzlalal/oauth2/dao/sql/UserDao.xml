@@ -4,7 +4,7 @@
 <mapper namespace="com.mzlalal.oauth2.dao.UserDao">
 
     <!-- 可根据自己的需求，是否要使用 -->
-    <resultMap type="com.mzlalal.base.entity.oauth2.UserEntity" id="userMap">
+    <resultMap type="com.mzlalal.base.entity.oauth2.dto.UserEntity" id="userMap">
         <result property="id" column="id"/>
         <result property="username" column="username"/>
         <result property="password" column="password"/>
@@ -19,13 +19,13 @@
         <result property="tenantId" column="tenant_id"/>
     </resultMap>
 
-    <select id="findOneByMobile" resultType="com.mzlalal.base.entity.oauth2.UserEntity">
+    <select id="findOneByMobile" resultType="com.mzlalal.base.entity.oauth2.dto.UserEntity">
         select *
         from t_user
         where mobile = #{mobile}
     </select>
 
-    <select id="findOneByMail" resultType="com.mzlalal.base.entity.oauth2.UserEntity">
+    <select id="findOneByMail" resultType="com.mzlalal.base.entity.oauth2.dto.UserEntity">
         select *
         from t_user
         where mail = #{mail}

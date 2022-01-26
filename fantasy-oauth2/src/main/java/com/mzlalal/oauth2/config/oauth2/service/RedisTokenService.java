@@ -7,9 +7,9 @@ import cn.hutool.core.util.BooleanUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.mzlalal.base.common.GlobalConstant;
-import com.mzlalal.base.entity.oauth2.AccessToken;
-import com.mzlalal.base.entity.oauth2.ClientEntity;
-import com.mzlalal.base.entity.oauth2.UserEntity;
+import com.mzlalal.base.entity.oauth2.dto.ClientEntity;
+import com.mzlalal.base.entity.oauth2.dto.UserEntity;
+import com.mzlalal.base.entity.oauth2.vo.AccessToken;
 import com.mzlalal.oauth2.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * redis存储token和用户信息
  *
- * @author Mzlalal88
+ * @author Mzlalal
  * @date 2021/7/28 16:54
  */
 @Component

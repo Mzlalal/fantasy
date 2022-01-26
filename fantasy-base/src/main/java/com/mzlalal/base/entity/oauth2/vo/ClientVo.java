@@ -7,15 +7,15 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * VO
+ * 客户端VO
  *
  * @author Mzlalal
  * @date 2021-07-29 20:36:47
  */
 @Data
-@ApiModel("Vo")
+@ApiModel("客户端VO")
 public class ClientVo implements Serializable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -2879143853513564520L;
 
     /**
      * ID

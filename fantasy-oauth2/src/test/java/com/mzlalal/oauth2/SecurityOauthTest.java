@@ -15,6 +15,8 @@ public class SecurityOauthTest {
     @Test
     public void passwordTest() {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        System.out.println(bCryptPasswordEncoder.encode(UUID.randomUUID().toString()));
+        String uuid = UUID.randomUUID().toString();
+        System.out.println(uuid);
+        System.out.println(bCryptPasswordEncoder.encode(uuid));
     }
 }

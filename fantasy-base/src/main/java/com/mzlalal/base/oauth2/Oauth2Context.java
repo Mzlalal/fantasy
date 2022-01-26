@@ -1,11 +1,11 @@
 package com.mzlalal.base.oauth2;
 
-import com.mzlalal.base.entity.oauth2.UserEntity;
+import com.mzlalal.base.entity.oauth2.dto.UserEntity;
 
 /**
  * 用户上下文
  *
- * @author Mzlalal88
+ * @author Mzlalal
  * @date 2021/7/26 10:49
  */
 public class Oauth2Context {

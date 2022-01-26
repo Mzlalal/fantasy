@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 授权回调
  *
- * @author Mzlalal88
+ * @author Mzlalal
  * @date 2021/8/3 11:20
  */
 @Slf4j

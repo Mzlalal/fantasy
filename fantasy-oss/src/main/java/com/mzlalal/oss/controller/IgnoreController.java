@@ -2,7 +2,7 @@ package com.mzlalal.oss.controller;
 
 import cn.hutool.core.util.DesensitizedUtil;
 import cn.hutool.core.util.StrUtil;
-import com.mzlalal.base.entity.oss.DesensitizedNameEntity;
+import com.mzlalal.base.entity.oss.req.DesensitizedNameReq;
 import com.mzlalal.base.util.AssertUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -30,22 +30,22 @@ public class IgnoreController {
 
     @ApiOperation("根据空格分割人名并脱敏")
     @PostMapping(value = "/desensitized.name.by.space", headers = "content-type=application/x-www-form-urlencoded")
-    public String desensitizedNameBySpace(@ModelAttribute DesensitizedNameEntity desensitizedEntity) {
+    public String desensitizedNameBySpace(@ModelAttribute DesensitizedNameReq desensitizedReq) {
         // 验空
-        AssertUtil.notBlank(desensitizedEntity.getName(), "数据为空,请从excel对应列复制数据");
+        AssertUtil.notBlank(desensitizedReq.getName(), "数据为空,请从excel对应列复制数据");
 
         // 切割数据
-        List<String> nameList = StrUtil.split(desensitizedEntity.getName(), StrUtil.SPACE);
+        List<String> nameList = StrUtil.split(desensitizedReq.getName(), StrUtil.SPACE);
         AssertUtil.notEmpty(nameList, "数据为空,请从excel对应列复制数据");
 
         // 脱敏符号
-        String replaceSymbol = desensitizedEntity.processReplaceSymbol();
+        String replaceSymbol = desensitizedReq.processReplaceSymbol();
         // 返回结果
         StringBuilder sb = new StringBuilder();
         // 遍历姓名
         for (String item : nameList) {
             // 姓名最大长度
-            if (StrUtil.length(item) > desensitizedEntity.getMaxNumberOfName()) {
+            if (StrUtil.length(item) > desensitizedReq.getMaxNumberOfName()) {
                 sb.append(item).append("\n");
                 continue;
             }

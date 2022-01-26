@@ -4,7 +4,7 @@
 <mapper namespace="com.mzlalal.oauth2.dao.ClientDao">
 
     <!-- 可根据自己的需求，是否要使用 -->
-    <resultMap type="com.mzlalal.base.entity.oauth2.ClientEntity" id="clientMap">
+    <resultMap type="com.mzlalal.base.entity.oauth2.dto.ClientEntity" id="clientMap">
         <result property="id" column="id"/>
         <result property="clientId" column="client_id"/>
         <result property="clientSecret" column="client_secret"/>

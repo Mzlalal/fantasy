@@ -7,7 +7,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 /**
  * bean注册
  *
- * @author Mzlalal88
+ * @author Mzlalal
  * @date 2021/7/28 14:04
  */
 @Configuration

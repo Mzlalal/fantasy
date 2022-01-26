@@ -2,7 +2,7 @@ package com.mzlalal.oauth2.controller.oauth;
 
 import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.global.po.Po;
-import com.mzlalal.base.entity.oauth2.UserEntity;
+import com.mzlalal.base.entity.oauth2.dto.UserEntity;
 import com.mzlalal.base.feign.oauth2.UserFeignApi;
 import com.mzlalal.oauth2.service.UserService;
 import io.swagger.annotations.Api;

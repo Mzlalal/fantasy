@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mzlalal.base.entity.global.po.Po;
-import com.mzlalal.base.entity.oauth2.UserEntity;
+import com.mzlalal.base.entity.oauth2.dto.UserEntity;
 import com.mzlalal.base.util.Page;
 import com.mzlalal.oauth2.dao.UserDao;
 import com.mzlalal.oauth2.service.UserService;

@@ -1,4 +1,4 @@
-package com.mzlalal.base.entity.oauth2.vo;
+package com.mzlalal.base.entity.oauth2.req;
 
 import com.mzlalal.base.entity.global.BaseEntity;
 import io.swagger.annotations.ApiModel;
@@ -9,16 +9,15 @@ import lombok.EqualsAndHashCode;
 import javax.validation.constraints.NotBlank;
 
 /**
- * oauth登录验证码参数
+ * 生成登录验证码参数
  *
- * @author Mzlalal88
+ * @author Mzlalal
  * @date 2021/7/28 14:34
  */
 @Data
-@ApiModel("登录验证码参数")
+@ApiModel("生成验证码参数")
 @EqualsAndHashCode(callSuper = true)
-public class VerifyCodeVo extends BaseEntity {
-
+public class VerifyCodeReq extends BaseEntity {
     private static final long serialVersionUID = -8043411261618997959L;
 
     @ApiModelProperty("用户名")

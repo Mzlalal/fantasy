@@ -3,7 +3,7 @@ package com.mzlalal.oauth2.config.oauth2.service;
 import cn.hutool.core.lang.Assert;
 import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.common.GlobalResult;
-import com.mzlalal.base.entity.oauth2.UserEntity;
+import com.mzlalal.base.entity.oauth2.dto.UserEntity;
 import com.mzlalal.base.util.AssertUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;

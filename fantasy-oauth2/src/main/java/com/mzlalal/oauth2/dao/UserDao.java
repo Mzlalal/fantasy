@@ -1,7 +1,7 @@
 package com.mzlalal.oauth2.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.mzlalal.base.entity.oauth2.UserEntity;
+import com.mzlalal.base.entity.oauth2.dto.UserEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

@@ -3,7 +3,7 @@ package com.mzlalal.base.interceptor;
 import cn.hutool.core.util.StrUtil;
 import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.common.GlobalResult;
-import com.mzlalal.base.entity.oauth2.UserEntity;
+import com.mzlalal.base.entity.oauth2.dto.UserEntity;
 import com.mzlalal.base.oauth2.Oauth2Context;
 import com.mzlalal.base.oauth2.Oauth2Property;
 import com.mzlalal.base.util.FilterUtil;
@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
  * 如果TOKEN存在则存储用户信息
  * 如果TOKEN不存在则提示用户未登录
  *
- * @author Mzlalal88
+ * @author Mzlalal
  * @date 2021/7/26 10:42
  */
 public class Oauth2ServerInterceptor implements HandlerInterceptor {

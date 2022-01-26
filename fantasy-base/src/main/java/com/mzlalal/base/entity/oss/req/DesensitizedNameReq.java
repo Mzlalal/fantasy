@@ -1,4 +1,4 @@
-package com.mzlalal.base.entity.oss;
+package com.mzlalal.base.entity.oss.req;
 
 import com.mzlalal.base.entity.global.BaseEntity;
 import io.swagger.annotations.ApiModel;
@@ -18,7 +18,8 @@ import javax.validation.constraints.NotBlank;
 @Data
 @ApiModel("人名脱敏参数")
 @EqualsAndHashCode(callSuper = true)
-public class DesensitizedNameEntity extends BaseEntity {
+public class DesensitizedNameReq extends BaseEntity {
+    private static final long serialVersionUID = 2175016931124244291L;
 
     @NotBlank
     @ApiModelProperty(value = "从excel复制的列数据", required = true)

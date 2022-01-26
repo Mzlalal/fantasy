@@ -1,19 +1,18 @@
 package com.mzlalal.base.entity.global;
 
 import cn.hutool.core.util.ObjectUtil;
-import io.swagger.annotations.ApiModel;
 
 import java.io.Serializable;
 
 /**
  * 基础entity
+ * 继承本类有序列化和克隆
  *
  * @author Mzlalal
  * @date 2021/6/22 20:27
  **/
-@ApiModel("基类")
 public class BaseEntity implements Serializable, Cloneable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1769948409042193972L;
 
     /**
      * 复制一个互不干扰的新的实体

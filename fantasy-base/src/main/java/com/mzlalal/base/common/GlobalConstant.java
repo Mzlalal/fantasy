@@ -56,21 +56,23 @@ public interface GlobalConstant {
     /**
      * 邮箱 redis key
      *
-     * @param mail 电子邮箱地址
-     * @return String fantasy:mail:code:{mail}
+     * @param clientId 客户端
+     * @param mail     电子邮箱地址
+     * @return String fantasy:mail:code:{clientId}:{mail}
      */
-    static String mailCodeRedisKey(String mail) {
-        return "fantasy:mail:code:" + mail;
+    static String clientIdMailCodeRedisKey(String clientId, String mail) {
+        return StrUtil.format("fantasy:mail:code:{}:{}", clientId, mail);
     }
 
     /**
      * 手机号登录验证码 redis key
      *
-     * @param mobile 手机号
-     * @return String fantasy:mail:code:{mail}
+     * @param clientId 客户端ID
+     * @param mobile   手机号
+     * @return String fantasy:password:code:{clientId}:{mobile}
      */
-    static String passwordCodeRedisKey(String mobile) {
-        return "fantasy:password:code:" + mobile;
+    static String clientIdPasswordCodeRedisKey(String clientId, String mobile) {
+        return StrUtil.format("fantasy:password:code:{}:{}", clientId, mobile);
     }
 
     /**

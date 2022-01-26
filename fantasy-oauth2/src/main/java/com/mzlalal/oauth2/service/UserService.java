@@ -1,6 +1,6 @@
 package com.mzlalal.oauth2.service;
 
-import com.mzlalal.base.entity.oauth2.UserEntity;
+import com.mzlalal.base.entity.oauth2.dto.UserEntity;
 import com.mzlalal.base.service.BaseService;
 
 import java.util.Optional;

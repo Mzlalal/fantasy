@@ -4,7 +4,7 @@ import cn.hutool.core.thread.ThreadUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mzlalal.base.entity.global.po.Po;
-import com.mzlalal.base.entity.oauth2.ClientEntity;
+import com.mzlalal.base.entity.oauth2.dto.ClientEntity;
 import com.mzlalal.base.util.Page;
 import com.mzlalal.oauth2.dao.ClientDao;
 import com.mzlalal.oauth2.service.ClientService;

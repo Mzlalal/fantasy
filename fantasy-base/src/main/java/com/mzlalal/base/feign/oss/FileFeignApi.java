@@ -2,7 +2,7 @@ package com.mzlalal.base.feign.oss;
 
 import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.entity.global.Result;
-import com.mzlalal.base.entity.oss.UploadFileEntity;
+import com.mzlalal.base.entity.oss.vo.UploadFileVo;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -29,5 +29,5 @@ public interface FileFeignApi {
     @ApiOperation("上传文件")
     @PostMapping(value = "/upload.file", headers = "content-type=multipart/form-data")
     @ApiImplicitParam(name = "file", value = "文件", required = true, dataType = "File", paramType = "form")
-    Result<UploadFileEntity> upload(@RequestPart("file") MultipartFile multipartFile) throws Exception;
+    Result<UploadFileVo> upload(@RequestPart("file") MultipartFile multipartFile) throws Exception;
 }

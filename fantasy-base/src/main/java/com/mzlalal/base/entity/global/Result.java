@@ -19,7 +19,7 @@ import java.io.Serializable;
  **/
 @Data
 @Builder
-@ApiModel("返回结果包装类")
+@ApiModel("API返回结果")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Result<T> implements Serializable {
@@ -76,11 +76,11 @@ public class Result<T> implements Serializable {
     }
 
     public static <T> Result<T> fail() {
-        return Result.<T>builder().state(STATE_FAIL).msg(STATE_OK_MSG).build();
+        return Result.<T>builder().state(STATE_FAIL).msg(STATE_FAIL_MSG).build();
     }
 
     public static <T> Result<T> fail(T entity) {
-        return Result.<T>builder().state(STATE_FAIL).msg(STATE_OK_MSG).data(entity).build();
+        return Result.<T>builder().state(STATE_FAIL).msg(STATE_FAIL_MSG).data(entity).build();
     }
 
     public static <T> Result<T> failMsg(String msg) {

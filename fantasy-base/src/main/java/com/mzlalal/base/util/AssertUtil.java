@@ -13,7 +13,7 @@ import java.util.Collection;
  * 自定义全局错误码
  * 继承 hutool 断言
  *
- * @author Mzlalal88
+ * @author Mzlalal
  * @date 2021/8/2 16:04
  */
 public class AssertUtil extends Assert {

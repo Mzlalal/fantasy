@@ -2,13 +2,14 @@ package com.mzlalal.oauth2.controller.oauth;
 
 import cn.hutool.core.util.StrUtil;
 import com.mzlalal.base.common.GlobalConstant;
+import com.mzlalal.base.common.GlobalResult;
 import com.mzlalal.base.entity.global.BaseEntity;
 import com.mzlalal.base.entity.global.Result;
-import com.mzlalal.base.entity.oauth2.ClientEntity;
+import com.mzlalal.base.entity.oauth2.dto.ClientEntity;
+import com.mzlalal.base.entity.oauth2.req.CheckVerifyCodeReq;
 import com.mzlalal.base.entity.oauth2.req.CreateTokenReq;
-import com.mzlalal.base.entity.oauth2.vo.CheckVerifyCodeVo;
-import com.mzlalal.base.entity.oauth2.vo.OauthVo;
-import com.mzlalal.base.entity.oauth2.vo.VerifyCodeVo;
+import com.mzlalal.base.entity.oauth2.req.OauthReq;
+import com.mzlalal.base.entity.oauth2.req.VerifyCodeReq;
 import com.mzlalal.base.feign.oauth2.OauthFeignApi;
 import com.mzlalal.base.oauth2.Oauth2Context;
 import com.mzlalal.oauth2.config.oauth2.enums.GrantResponseEnum;
@@ -19,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 授权Controller
  *
- * @author Mzlalal88
+ * @author Mzlalal
  * @date 2021/7/28 14:26
  */
 @Slf4j
@@ -43,10 +43,6 @@ public class OauthController implements OauthFeignApi {
      */
     private final ClientVerifyResponseTypeService clientVerifyResponseTypeService;
     /**
-     * 密码加密
-     */
-    private final BCryptPasswordEncoder passwordEncoder;
-    /**
      * string=>对象 redis操作模板
      */
     private final RedisTemplate<String, Object> redisTemplate;
@@ -57,55 +53,55 @@ public class OauthController implements OauthFeignApi {
 
     @Autowired
     public OauthController(ClientVerifyResponseTypeService clientVerifyResponseTypeService
-            , BCryptPasswordEncoder passwordEncoder, RedisTemplate<String, Object> redisTemplate
+            , RedisTemplate<String, Object> redisTemplate
             , StringRedisTemplate stringRedisTemplate) {
         this.clientVerifyResponseTypeService = clientVerifyResponseTypeService;
-        this.passwordEncoder = passwordEncoder;
         this.redisTemplate = redisTemplate;
         this.stringRedisTemplate = stringRedisTemplate;
     }
 
     @Override
-    public Result<String> verifyCode(@Validated @RequestBody VerifyCodeVo verifyCodeVo) {
+    public Result<String> verifyCode(@Validated @RequestBody VerifyCodeReq verifyCodeReq) {
         // 授权方式
-        String responseType = verifyCodeVo.getResponseType();
-        clientVerifyResponseTypeService.verifyResponseType(verifyCodeVo.getClientId(), responseType);
+        String responseType = verifyCodeReq.getResponseType();
+        clientVerifyResponseTypeService.verifyResponseType(verifyCodeReq.getClientId(), responseType);
         // 用户名
-        String username = verifyCodeVo.getUsername();
+        String username = verifyCodeReq.getUsername();
         GrantResponseEnum.getEnum(responseType).verifyUsername(username);
         // 生成验证码
-        return VerifyCodeProvideEnum.getEnum(responseType).createVerifyCode(username);
+        return VerifyCodeProvideEnum.getEnum(responseType).createVerifyCode(username, verifyCodeReq.getClientId());
     }
 
     @Override
-    public Result<String> checkVerifyCode(@Validated @RequestBody CheckVerifyCodeVo checkVerifyCodeVo) {
-        // 用户名
-        String username = checkVerifyCodeVo.getUsername();
-        // 固定为文本密码校验
+    public Result<String> checkVerifyCode(@Validated @RequestBody CheckVerifyCodeReq checkVerifyCodeReq) {
+        // 用户名 固定为文本密码格式校验
+        String username = checkVerifyCodeReq.getUsername();
         GrantResponseEnum.PASSWORD.verifyUsername(username);
+        // 校验客户端
+        String clientId = checkVerifyCodeReq.getClientId();
+        clientVerifyResponseTypeService.verifyResponseType(clientId, GrantResponseEnum.PASSWORD.name());
         // 获取验证码
         String redisVal = stringRedisTemplate.opsForValue().
-                get(GlobalConstant.passwordCodeRedisKey(username));
+                get(GlobalConstant.clientIdPasswordCodeRedisKey(clientId, username));
         // 验证码为空直接返回失败 验证码相等则返回成功
-        if (StrUtil.isNotBlank(redisVal) && StrUtil.equals(redisVal, checkVerifyCodeVo.getCode())) {
+        if (StrUtil.isNotBlank(redisVal) && StrUtil.equals(redisVal, checkVerifyCodeReq.getCode())) {
             return Result.ok();
         }
         // 返回失败
-        Result<String> base64Result = VerifyCodeProvideEnum.PASSWORD.createVerifyCode(username);
-        return Result.failMsg(base64Result.getData());
+        return GlobalResult.VALIDATE_CODE_NOT_RIGHT.result();
     }
 
     @Override
-    public Result<BaseEntity> authorize(@Validated @RequestBody OauthVo oauthVo) {
+    public Result<BaseEntity> authorize(@Validated @RequestBody OauthReq oauthReq) {
         // 授权方式
-        String responseType = oauthVo.getResponseType();
-        ClientEntity client = clientVerifyResponseTypeService.verifyResponseType(oauthVo.getClientId(), responseType);
+        String responseType = oauthReq.getResponseType();
+        ClientEntity client = clientVerifyResponseTypeService.verifyResponseType(oauthReq.getClientId(), responseType);
         // 重定向地址为空,则设置默认的重新地址
-        if (StrUtil.isBlank(oauthVo.getRedirectUri())) {
-            oauthVo.setRedirectUri(client.getRedirectUri());
+        if (StrUtil.isBlank(oauthReq.getRedirectUri())) {
+            oauthReq.setRedirectUri(client.getRedirectUri());
         }
         // 获取授权码
-        return GrantResponseEnum.getEnum(responseType).createCallback(oauthVo, client);
+        return GrantResponseEnum.getEnum(responseType).createCallback(oauthReq, client);
     }
 
     @Override

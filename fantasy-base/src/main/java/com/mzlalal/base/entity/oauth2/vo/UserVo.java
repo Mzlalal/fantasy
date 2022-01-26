@@ -13,9 +13,9 @@ import java.io.Serializable;
  * @date 2021-07-29 20:36:48
  */
 @Data
-@ApiModel("用户Vo")
+@ApiModel("用户VO")
 public class UserVo implements Serializable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 641413141597915087L;
 
     @ApiModelProperty("ID")
     private Long id;

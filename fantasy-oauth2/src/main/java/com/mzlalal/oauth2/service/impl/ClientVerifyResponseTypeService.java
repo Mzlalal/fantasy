@@ -2,7 +2,7 @@ package com.mzlalal.oauth2.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.mzlalal.base.common.GlobalResult;
-import com.mzlalal.base.entity.oauth2.ClientEntity;
+import com.mzlalal.base.entity.oauth2.dto.ClientEntity;
 import com.mzlalal.base.util.AssertUtil;
 import com.mzlalal.oauth2.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +48,7 @@ public class ClientVerifyResponseTypeService {
         // 获取授权方式
         String[] grantTypeArray = StrUtil.splitToArray(client.getResponseType(), ",");
         // 不存在数组中则抛出异常
-        AssertUtil.arrayNotContains(grantTypeArray, responseType, GlobalResult.OAUTH_RESPONSE_TYPE_NOT_CORRECT);
+        AssertUtil.arrayNotContains(grantTypeArray, responseType.toLowerCase(), GlobalResult.OAUTH_RESPONSE_TYPE_NOT_CORRECT);
         // 返回client
         return client;
     }

@@ -1,7 +1,7 @@
 package com.mzlalal.oss.controller;
 
 import com.mzlalal.base.entity.global.Result;
-import com.mzlalal.base.entity.oss.UploadFileEntity;
+import com.mzlalal.base.entity.oss.vo.UploadFileVo;
 import com.mzlalal.base.feign.oss.FileFeignApi;
 import com.mzlalal.minio.service.MinioService;
 import io.swagger.annotations.Api;
@@ -34,11 +34,11 @@ public class FileController implements FileFeignApi {
     }
 
     @Override
-    public Result<UploadFileEntity> upload(@RequestPart("file") MultipartFile multipartFile) throws Exception {
+    public Result<UploadFileVo> upload(@RequestPart("file") MultipartFile multipartFile) throws Exception {
         // 上传
         String path = minioService.upload(multipartFile.getOriginalFilename(), multipartFile.getInputStream());
         // 构建返回结果
-        UploadFileEntity entity = UploadFileEntity.builder()
+        UploadFileVo entity = UploadFileVo.builder()
                 .path(path)
                 .size(multipartFile.getSize())
                 .build();

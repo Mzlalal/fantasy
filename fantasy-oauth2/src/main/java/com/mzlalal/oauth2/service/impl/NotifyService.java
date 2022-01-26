@@ -4,7 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.lang.Validator;
 import cn.hutool.extra.template.TemplateEngine;
 import com.mzlalal.base.common.GlobalResult;
-import com.mzlalal.base.entity.notify.VerifyCodeEntity;
+import com.mzlalal.base.entity.notify.req.SendMailCodeReq;
 import com.mzlalal.base.util.AssertUtil;
 import com.mzlalal.notify.service.MailNotifyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,20 +34,20 @@ public class NotifyService {
     }
 
     /**
-     * 发送邮件
+     * 发送验证码邮件给用户
      *
-     * @param verifyCodeEntity 验证码信息
+     * @param sendMailCodeReq 邮件验证码参数
      * @return 邮件ID
      */
-    public String send(VerifyCodeEntity verifyCodeEntity) {
+    public String send(SendMailCodeReq sendMailCodeReq) {
         // 验证邮箱格式
-        AssertUtil.isTrue(Validator.isEmail(verifyCodeEntity.getUsername())
+        AssertUtil.isTrue(Validator.isEmail(sendMailCodeReq.getUsername())
                 , GlobalResult.EMAIL_NOT_CORRECT);
         // 渲染文本
         String content = templateEngine.getTemplate("/notify/mail/accountMailVerifyCode.html")
-                .render(BeanUtil.beanToMap(verifyCodeEntity));
+                .render(BeanUtil.beanToMap(sendMailCodeReq));
         // 发送邮件
-        return mailNotifyService.send(verifyCodeEntity.getUsername()
+        return mailNotifyService.send(sendMailCodeReq.getUsername()
                 , "Fantasy-登录验证码", content, true);
     }
 }
