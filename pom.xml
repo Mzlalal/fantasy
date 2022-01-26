@@ -135,7 +135,7 @@
                     <configuration>
                         <!-- 相当于 Dockerfile 中的 FROM -->
                         <from>
-                            <image>openjdk:alpine</image>
+                            <image>airdock/oraclejdk:1.8</image>
                         </from>
                         <to>
                             <!-- 构建镜像名称，阿里云镜像仓库地址 -->
