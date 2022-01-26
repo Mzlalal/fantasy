@@ -1,16 +1,9 @@
 package com.mzlalal.base.config.bean;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mzlalal.base.interceptor.Oauth2ServerInterceptor;
 import com.mzlalal.base.oauth2.Oauth2Property;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -39,35 +32,5 @@ public class FantasyWebConfig implements WebMvcConfigurer {
         registry.addInterceptor(oauth2ServerInterceptor)
                 .addPathPatterns(oauth2ServerInterceptor.getIncludePath())
                 .excludePathPatterns(oauth2ServerInterceptor.getExcludePath());
-    }
-
-    /**
-     * 跨域请求拦截放行
-     *
-     * @return CorsFilter
-     */
-    @Bean
-    public CorsFilter corsFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowCredentials(true);
-        corsConfiguration.addAllowedOrigin("*");
-        corsConfiguration.addAllowedHeader("*");
-        corsConfiguration.addAllowedMethod("*");
-        corsConfiguration.setMaxAge(10000L);
-        source.registerCorsConfiguration("/**", corsConfiguration);
-        return new CorsFilter(source);
-    }
-
-    /**
-     * 删除返回为空的数据
-     *
-     * @return ObjectMapper jackson配置对象映射
-     */
-    @Deprecated
-    public ObjectMapper jacksonObjectMapper() {
-        Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
-        ObjectMapper objectMapper = builder.createXmlMapper(false).build();
-        return objectMapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
     }
 }

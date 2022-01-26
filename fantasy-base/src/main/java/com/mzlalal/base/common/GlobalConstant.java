@@ -38,6 +38,10 @@ public interface GlobalConstant {
      * 密码
      */
     String PASSWORD = "password";
+    /**
+     * 生产环境
+     */
+    String PRODUCT = "product";
 
     /**
      * UUID与clientId绑定的授权码 redis key

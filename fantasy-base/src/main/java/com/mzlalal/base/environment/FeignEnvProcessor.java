@@ -4,6 +4,7 @@ import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
+import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.util.AssertUtil;
 import lombok.SneakyThrows;
 import org.springframework.boot.SpringApplication;
@@ -56,10 +57,6 @@ public class FeignEnvProcessor implements EnvironmentPostProcessor {
      * xx.service.port->本地服务启动的端口
      */
     private static Properties feignServiceProperties;
-    /**
-     * 生产环境
-     */
-    private static final String PRODUCT = "product";
 
     /**
      * 1.获取需要动态调整feign url的服务列表
@@ -102,7 +99,7 @@ public class FeignEnvProcessor implements EnvironmentPostProcessor {
             // 微服务的URL指向配置名
             String feignUrlKey = StrUtil.format(this.feignUrlFormat, serviceId);
             // 生产环境直接覆盖为空
-            if (PRODUCT.equals(activeProfile)) {
+            if (GlobalConstant.PRODUCT.equals(activeProfile)) {
                 // 为空时获取会获取注册中心服务列表
                 feignConfig.put(feignUrlKey, "");
                 return;
