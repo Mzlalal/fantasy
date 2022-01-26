@@ -163,12 +163,12 @@
                                 <jvmFlag>-Xmx64M</jvmFlag>
                                 <jvmFlag>-XX:+HeapDumpOnOutOfMemoryError</jvmFlag>
                                 <!--suppress UnresolvedMavenProperty -->
-                                <jvmFlag>-XX:HeapDumpPath=~/logs/dump/${jib.name}-dump-%t.log</jvmFlag>
+                                <jvmFlag>-XX:HeapDumpPath=/root/logs/dump/${jib.name}-dump-%t.log</jvmFlag>
                                 <jvmFlag>-verbose:gc</jvmFlag>
                                 <jvmFlag>-XX:+PrintGCDetails</jvmFlag>
                                 <jvmFlag>-XX:+PrintGCDateStamps</jvmFlag>
                                 <!--suppress UnresolvedMavenProperty -->
-                                <jvmFlag>-Xloggc:~/logs/gc/${jib.name}-gc-%t.log</jvmFlag>
+                                <jvmFlag>-Xloggc:/root/logs/gc/${jib.name}-gc-%t.log</jvmFlag>
                             </jvmFlags>
                             <args>
                                 <arg>
