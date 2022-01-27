@@ -15,6 +15,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import java.util.Collections;
+
 /**
  * base类加载注册
  *
@@ -57,16 +59,17 @@ public class FantasyBaseBeanConfig {
 
     /**
      * 跨域请求拦截放行
+     * gateway配置了全局跨域,此增加跨域配置方法弃用
      *
      * @return CorsFilter
      */
-    @Bean
+    @Deprecated
     public CorsFilter corsFilter() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowCredentials(true);
-        corsConfiguration.addAllowedOriginPattern("*");
-        corsConfiguration.addAllowedHeader("*");
-        corsConfiguration.addAllowedMethod("*");
+        corsConfiguration.setAllowedOriginPatterns(Collections.singletonList(CorsConfiguration.ALL));
+        corsConfiguration.addAllowedHeader(CorsConfiguration.ALL);
+        corsConfiguration.addAllowedMethod(CorsConfiguration.ALL);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfiguration);
