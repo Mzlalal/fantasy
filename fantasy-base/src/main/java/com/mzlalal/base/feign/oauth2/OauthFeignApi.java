@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
  * @author Mzlalal
  * @date 2021/7/28 14:28
  */
-@FeignClient(name = "OauthFeignApi", url = "${fantasy-oauth2.feign.url}/api/v1/oauth")
+@FeignClient(name = "OauthFeignApi", url = "${fantasy-oauth2.feign.url}", path = "/api/v1/oauth")
 public interface OauthFeignApi {
 
     /**

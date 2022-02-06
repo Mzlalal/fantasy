@@ -15,7 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @author Mzlalal
  * @date 2021/9/24 10:04
  */
-@FeignClient(name = "FileFeignApi", url = "${fantasy-oss.feign.url}/api/v1/oss/file")
+@FeignClient(name = "FileFeignApi", url = "${fantasy-oss.feign.url}", path = "/api/v1/oss/file")
 public interface FileFeignApi {
 
     /**

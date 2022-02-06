@@ -119,6 +119,10 @@
                     // 回调地址
                     this.authorizeCallback(res.data.redirectUri);
                 }).catch(res => {
+                    // 启用验证码按钮
+                    this.verifyCodeBtn = true;
+                    // 禁用登录按钮
+                    this.loginBtn = false;
                     if (res.data && res.data.msg) {
                         this.msg = res.data.msg;
                     } else {
@@ -135,6 +139,10 @@
                 }).then(res => {
                     console.log(res);
                 }).catch(res => {
+                    // 启用验证码按钮
+                    this.verifyCodeBtn = true;
+                    // 禁用登录按钮
+                    this.loginBtn = false;
                     if (res.data && res.data.msg) {
                         this.msg = res.data.msg;
                     } else {
