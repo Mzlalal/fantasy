@@ -1,6 +1,5 @@
 package com.mzlalal.base.feign.oss;
 
-import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.oss.vo.UploadFileVo;
 import io.swagger.annotations.ApiImplicitParam;
@@ -16,7 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @author Mzlalal
  * @date 2021/9/24 10:04
  */
-@FeignClient(name = GlobalConstant.FANTASY_OSS + "/api/v1/oss/file", url = "${fantasy-oss.feign.url}")
+@FeignClient(name = "FileFeignApi", url = "${fantasy-oss.feign.url}/api/v1/oss/file")
 public interface FileFeignApi {
 
     /**

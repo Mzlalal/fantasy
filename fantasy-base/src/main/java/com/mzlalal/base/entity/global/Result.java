@@ -23,7 +23,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Result<T> implements Serializable {
-
     private static final long serialVersionUID = -7552064024010817950L;
 
     /**

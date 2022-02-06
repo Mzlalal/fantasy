@@ -41,7 +41,7 @@ public class Oauth2ServerInterceptor implements HandlerInterceptor {
             // doc swagger
             , "/doc.html", "/webjars/**", "/v2/api-docs", "/swagger-resources", "/swagger-resources/**"
             // static resource
-            , "**/**.js", "**/**.css", "**/**.html", "**/**.ico", "/error"};
+            , "**/**.js", "**/**.css", "**/**.html", "**/**.ico", "/error", "/favicon.ico"};
 
     /**
      * 需要登录验证的网址

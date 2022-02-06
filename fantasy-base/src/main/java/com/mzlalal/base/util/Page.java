@@ -4,8 +4,10 @@ import com.mzlalal.base.entity.global.BaseEntity;
 import com.mzlalal.base.entity.global.po.PageInfo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,8 +20,11 @@ import java.util.List;
  */
 @Data
 @ApiModel("分页数据")
+@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class Page<T> extends BaseEntity {
+    private static final long serialVersionUID = -5147772644595658362L;
 
     @ApiModelProperty("总行数")
     private long totalCount;

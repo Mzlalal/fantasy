@@ -37,8 +37,8 @@ public enum VerifyCodeProvideEnum {
 
         @Override
         public Result<String> createVerifyCode(String username, String clientId) {
-            // 随机数
-            int randomInt = RandomUtil.randomInt(10001, 99999);
+            // 随机四位数
+            int randomInt = RandomUtil.randomInt(1001, 9999);
             // 过期时间15分钟
             redisTemplate.opsForValue()
                     .set(GlobalConstant.clientIdMailCodeRedisKey(clientId, username), String.valueOf(randomInt), 15, TimeUnit.MINUTES);

@@ -1,7 +1,6 @@
 package com.mzlalal.base.feign.client;
 
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
-import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oauth2.dto.ClientEntity;
@@ -19,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @author Mzlalal
  * @date 2021-08-23 09:55:38
  **/
-@FeignClient(name = GlobalConstant.FANTASY_OAUTH2 + "/api/v1/oauth/client", url = "${fantasy-oauth2.feign.url}")
+@FeignClient(name = "ClientFeignApi", url = "${fantasy-oauth2.feign.url}/api/v1/oauth/client")
 public interface ClientFeignApi {
 
     /**
