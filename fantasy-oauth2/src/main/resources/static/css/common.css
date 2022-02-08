@@ -3,6 +3,29 @@ body {
     background-color: white;
 }
 
+/* 背景颜色 */
+.background-color-dingding {
+    background-image: none;
+    background-color: #18b4ed;
+    color: white;
+    font-size: 16px;
+}
+
+/* 文本行高50px */
+.text-line-height-50px {
+    line-height: 50px;
+}
+
+/* 文本行高70px */
+.text-line-height-70px {
+    line-height: 70px;
+}
+
+/* 文本行高100px */
+.text-line-height-100px {
+    line-height: 100px;
+}
+
 /* 文本居中 */
 .text-center {
     text-align: center;
@@ -13,9 +36,25 @@ body {
     margin-top: 1em;
 }
 
+/* 向下边距1em */
+.margin-bottom-1em {
+    margin-bottom: 1em;
+}
+
+/* 向上,向下边距1em */
+.margin-top-bottom-1em {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
 /* 自动高度 */
 .height-auto {
     height: auto;
+}
+
+/* 滚动条 */
+.overflow-auto {
+    overflow: auto;
 }
 
 /* 可以设置不同的进入和离开动画 */

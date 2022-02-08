@@ -8,8 +8,15 @@
     // 添加请求拦截器
     axios.interceptors.request.use(function (config) {
         // 发送请求之前可以对config再次处理
-        // 在这里对URL进行拦截,增加basePath
-        config.url = win.gateway + config.url;
+        // 判断是否是HTTP开头,若不是则增加gateway地址
+        if (config.url && !config.url.startsWith("http")) {
+            // 在这里对URL进行拦截,增加gateway地址
+            config.url = win.gateway + config.url;
+        }
+        // 增加TOKEN头
+        if (!config.headers['F-Authorization']) {
+            config.headers['F-Authorization'] = localStorage.getItem("user.access.token");
+        }
         // 继续往下执行
         return config;
     }, function (error) {

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, initial-scale=1.0, user-scalable=no">
+    <title>Fantasy-登录</title>
+    <link rel="stylesheet" href="css/plugin/frozen.css"/>
+    <link rel="stylesheet" href="css/common.css"/>
+    <script src="js/plugin/axios.min.js"></script>
+    <script src="js/plugin/vue.min.js"></script>
+    <script src="js/CommonUtil.js"></script>
+</head>
+<style>
+
+</style>
+<body>
+<div id="app">
+    <div class="ui-form ui-border-t margin-top-1em">
+        <div class="ui-tooltips-cnt ui-border-b text-c enter">
+            <label class="ui-txt-highlight">
+                Fantasy
+            </label>
+        </div>
+        <ul class="ui-row ui-whitespace overflow-auto" style="max-height: 180px;">
+            <li class="ui-col ui-col-25 margin-top-1em">
+                <div class="ui-avatar-lg background-color-dingding text-line-height-70px text-center">陈龙飞</div>
+            </li>
+        </ul>
+        <ul class="ui-list ui-list-function ui-border-tb overflow-auto" style="max-height: calc(100vh - 180px - 46px)">
+            <li>
+                <div class="ui-list-info ui-border-t">
+                    <p class="ui-nowrap">2022年2月8日 14:50:32</p>
+                    <p>陈龙飞双行头像</p>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+</body>
+<script>
+    const vm = new Vue({
+        el: "#app",
+        data: {},
+        methods: {},
+        created() {
+        }
+    });
+</script>
+
+</html>

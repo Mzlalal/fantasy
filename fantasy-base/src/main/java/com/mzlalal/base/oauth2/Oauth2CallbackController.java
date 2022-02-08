@@ -1,8 +1,8 @@
 package com.mzlalal.base.oauth2;
 
-import com.mzlalal.base.entity.global.BaseEntity;
 import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.oauth2.req.CreateTokenReq;
+import com.mzlalal.base.entity.oauth2.vo.AccessToken;
 import com.mzlalal.base.feign.oauth2.OauthFeignApi;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +39,7 @@ public class Oauth2CallbackController {
      * @return AccessToken
      */
     @RequestMapping("/callback")
-    public Result<BaseEntity> callback(String code, String responseType, String state) {
+    public Result<AccessToken> callback(String code, String responseType, String state) {
         // 根据tokenVO请求
         CreateTokenReq createTokenReq = CreateTokenReq.builder()
                 .clientId(oauth2Property.getClientId())

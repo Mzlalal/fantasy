@@ -98,7 +98,7 @@ public enum GrantResponseEnum {
         }
 
         @Override
-        public Result<BaseEntity> createAccessToken(CreateTokenReq createTokenReq, ClientEntity client) {
+        public Result<AccessToken> createAccessToken(CreateTokenReq createTokenReq, ClientEntity client) {
             // 私匙不正确
             if (!passwordEncoder.matches(createTokenReq.getClientSecret(), client.getClientSecret())) {
                 throw GlobalResult.OAUTH_FAIL.boom();
@@ -173,7 +173,7 @@ public enum GrantResponseEnum {
         }
 
         @Override
-        public Result<BaseEntity> createAccessToken(CreateTokenReq createTokenReq, ClientEntity clientEntity) {
+        public Result<AccessToken> createAccessToken(CreateTokenReq createTokenReq, ClientEntity clientEntity) {
             throw GlobalResult.OAUTH_FAIL.boom();
         }
     };
@@ -210,7 +210,7 @@ public enum GrantResponseEnum {
      * @param client         客户端信息
      * @return Result<BaseEntity>
      */
-    public abstract Result<BaseEntity> createAccessToken(CreateTokenReq createTokenReq, ClientEntity client);
+    public abstract Result<AccessToken> createAccessToken(CreateTokenReq createTokenReq, ClientEntity client);
 
     /**
      * 根据授权方式type获取

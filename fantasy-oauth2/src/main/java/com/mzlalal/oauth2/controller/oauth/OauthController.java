@@ -10,19 +10,17 @@ import com.mzlalal.base.entity.oauth2.req.CheckVerifyCodeReq;
 import com.mzlalal.base.entity.oauth2.req.CreateTokenReq;
 import com.mzlalal.base.entity.oauth2.req.OauthReq;
 import com.mzlalal.base.entity.oauth2.req.VerifyCodeReq;
+import com.mzlalal.base.entity.oauth2.vo.AccessToken;
 import com.mzlalal.base.feign.oauth2.OauthFeignApi;
-import com.mzlalal.base.oauth2.Oauth2Context;
 import com.mzlalal.oauth2.config.oauth2.enums.GrantResponseEnum;
 import com.mzlalal.oauth2.config.oauth2.enums.VerifyCodeProvideEnum;
 import com.mzlalal.oauth2.service.impl.ClientVerifyResponseTypeService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -43,20 +41,14 @@ public class OauthController implements OauthFeignApi {
      */
     private final ClientVerifyResponseTypeService clientVerifyResponseTypeService;
     /**
-     * string=>对象 redis操作模板
-     */
-    private final RedisTemplate<String, Object> redisTemplate;
-    /**
      * string redis操作模板
      */
     private final StringRedisTemplate stringRedisTemplate;
 
     @Autowired
     public OauthController(ClientVerifyResponseTypeService clientVerifyResponseTypeService
-            , RedisTemplate<String, Object> redisTemplate
             , StringRedisTemplate stringRedisTemplate) {
         this.clientVerifyResponseTypeService = clientVerifyResponseTypeService;
-        this.redisTemplate = redisTemplate;
         this.stringRedisTemplate = stringRedisTemplate;
     }
 
@@ -105,22 +97,11 @@ public class OauthController implements OauthFeignApi {
     }
 
     @Override
-    public Result<BaseEntity> createToken(@Validated @RequestBody CreateTokenReq createTokenReq) {
+    public Result<AccessToken> createToken(@Validated @RequestBody CreateTokenReq createTokenReq) {
         // 检查授权方式
         String responseType = createTokenReq.getResponseType();
         ClientEntity client = clientVerifyResponseTypeService.verifyResponseType(createTokenReq.getClientId(), responseType);
         // 获取授权码
         return GrantResponseEnum.getEnum(responseType).createAccessToken(createTokenReq, client);
-    }
-
-    @Override
-    public Result<BaseEntity> checkToken(@RequestHeader(GlobalConstant.F_AUTHORIZATION) String token) {
-        return Result.ok(Oauth2Context.get());
-    }
-
-    @Override
-    public Result<Void> logout(@RequestHeader(GlobalConstant.F_AUTHORIZATION) String token) {
-        redisTemplate.delete(GlobalConstant.tokenRedisKey(token));
-        return Result.ok();
     }
 }

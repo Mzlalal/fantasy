@@ -8,14 +8,13 @@ import com.mzlalal.base.entity.oauth2.req.CheckVerifyCodeReq;
 import com.mzlalal.base.entity.oauth2.req.CreateTokenReq;
 import com.mzlalal.base.entity.oauth2.req.OauthReq;
 import com.mzlalal.base.entity.oauth2.req.VerifyCodeReq;
+import com.mzlalal.base.entity.oauth2.vo.AccessToken;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.core.Ordered;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 
 /**
  * 登录授权feign
@@ -27,7 +26,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
  * @author Mzlalal
  * @date 2021/7/28 14:28
  */
-@FeignClient(name = "OauthFeignApi", url = "${fantasy-oauth2.feign.url}", path = "/api/v1/oauth")
+@FeignClient(contextId = "OauthFeignApi", name = GlobalConstant.FANTASY_OAUTH2, url = "${fantasy-oauth2.feign.url}"
+        , path = "/api/v1/oauth")
 public interface OauthFeignApi {
 
     /**
@@ -76,28 +76,5 @@ public interface OauthFeignApi {
     @ApiOperation("根据授权码生成用户令牌")
     @PostMapping("/create.token")
     @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 30)
-    Result<BaseEntity> createToken(@Validated @RequestBody CreateTokenReq createTokenReq);
-
-    /**
-     * 验证令牌是否有效
-     *
-     * @param token 令牌
-     * @return Result<BaseEntity>
-     */
-    @ApiOperation("验证令牌")
-    @PostMapping("/check.token")
-    @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 40)
-    Result<BaseEntity> checkToken(@RequestHeader(GlobalConstant.F_AUTHORIZATION) String token);
-
-    /**
-     * 登出
-     * 删除令牌
-     *
-     * @param token createToken
-     * @return Result
-     */
-    @ApiOperation("注销登出")
-    @GetMapping("/logout")
-    @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 50)
-    Result<Void> logout(@RequestHeader(GlobalConstant.F_AUTHORIZATION) String token);
+    Result<AccessToken> createToken(@Validated @RequestBody CreateTokenReq createTokenReq);
 }
