@@ -9,6 +9,7 @@
         <module>fantasy-gateway</module>
         <module>fantasy-oauth2</module>
         <module>fantasy-oss</module>
+        <module>fantasy-card</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, initial-scale=1.0, user-scalable=no">
-    <title>Fantasy</title>
+    <title>斗也都得</title>
     <link rel="stylesheet" href="css/plugin/frozen.css"/>
     <link rel="stylesheet" href="css/common.css"/>
     <script src="js/plugin/axios.min.js"></script>
@@ -19,7 +19,7 @@
     <div class="ui-form ui-border-t margin-top-1em">
         <div class="ui-tooltips-cnt ui-border-b text-center">
             <label class="ui-txt-highlight">
-                Fantasy
+                斗也都得
             </label>
         </div>
         <div class="ui-tooltips-cnt ui-border-b text-center height-auto">
@@ -63,29 +63,11 @@
                       fill="#333333" p-id="1735"></path>
             </svg>
         </div>
-        <div class="ui-form-item ui-border-b">
-            <input type="text" @input="clearMsg" @blur="rememberUsername" v-model="username" placeholder="请输入邮箱">
-        </div>
-        <div class="ui-form-item ui-border-b">
-            <input type="text" @input="enableLoginBtn" v-model="password" placeholder="请输入收到的验证码">
-        </div>
         <div class="ui-btn-wrap">
-            <button class="ui-btn-lg ui-btn-primary" @click="login"
-                    v-bind:class="{ 'disabled': !loginBtn }" :disabled="!loginBtn">
-                登录
+            <button class="ui-btn-lg ui-btn-primary" disabled>
+                {{msg}}
             </button>
         </div>
-        <transition name="slide-fade">
-            <div class="ui-tooltips ui-tooltips-guide ui-tooltips-function">
-                <div class="ui-tooltips-cnt ui-border-b">
-                    <i></i>{{msg}}
-                    <button class="ui-btn-s" @click="verifyCode"
-                            v-bind:class="{ 'disabled': !verifyCodeBtn }" :disabled="!verifyCodeBtn">
-                        发送验证码
-                    </button>
-                </div>
-            </div>
-        </transition>
     </div>
 </div>
 </body>
@@ -93,42 +75,36 @@
     const vm = new Vue({
         el: "#app",
         data: {
-            loginBtn: false,
-            verifyCodeBtn: true,
-            reqClientId: "",
-            username: "",
-            password: "",
-            msg: "使用邮箱验证码登录",
-            mailMsg: "使用邮箱验证码登录",
+            msg: "正在验证授权,请稍候...",
         },
         methods: {
-            // 登录
-            login() {
-                // 禁用登录按钮
-                this.loginBtn = false;
+            // 请求回调地址
+            authorizeCallback() {
+                // 获取URL上的授权码
+                let code = commonUtil.getUrlPara("code");
+                // 获取URL上的授权方式
+                let responseType = commonUtil.getUrlPara("responseType");
                 // 请求参数,和form或者input使用v-model绑定
                 const param = {
-                    "clientId": this.reqClientId,
-                    "responseType": "mail",
+                    "code": code,
+                    "responseType": responseType,
                     "state": "",
-                    "password": this.password,
-                    "clientSecret": "",
-                    "redirectUri": "",
-                    "username": this.username
                 };
                 // 请求接口
                 axios({
                     method: "post",
-                    url: "/fantasy-oauth2/api/v1/oauth/authorize",
-                    data: param
+                    url: "/fantasy-card/oauth/callback",
+                    data: param,
                 }).then(res => {
-                    // 跳转地址
-                    window.location = res.data.redirectUri;
+                    this.msg = "登录成功,正在跳转,请稍候...";
+                    // 记住用户TOKEN
+                    if (res.data && res.data.accessToken) {
+                        localStorage.setItem("user.access.token", res.data.accessToken);
+                    }
+                    // 保存用户信息
+                    this.rememberUser();
+                    // 跳转界面
                 }).catch(res => {
-                    // 启用验证码按钮
-                    this.enableVerifyBtn();
-                    // 置空验证码
-                    this.password = "";
                     if (res.data && res.data.msg) {
                         this.msg = res.data.msg;
                     } else {
@@ -136,79 +112,30 @@
                     }
                 })
             },
-            // 发送邮箱验证码
-            verifyCode() {
-                // 请求参数,和form或者input使用v-model绑定
-                const param = {
-                    "clientId": this.reqClientId,
-                    "responseType": "mail",
-                    "username": this.username
-                };
-                // 禁用验证码按钮
-                this.verifyCodeBtn = false;
-                // 禁用登录按钮
-                this.loginBtn = false;
-                // 更改信息
-                this.msg = "请稍候...";
+            rememberUser() {
                 // 请求接口
                 axios({
                     method: "post",
-                    url: "/fantasy-oauth2/api/v1/oauth/verify.code",
-                    data: param
+                    url: "/fantasy-oauth2/api/v1/token/check.token",
                 }).then(res => {
-                    // 启用登录按钮
-                    this.enableLoginBtn();
-                    // 更改信息
-                    this.msg = "已发送";
+                    if (res.data) {
+                        localStorage.setItem("user.info", JSON.stringify(res.data));
+                    }
                 }).catch(res => {
-                    // 启用验证码按钮
-                    this.enableVerifyBtn();
+                    console.log("请求用户信息失败");
+                    console.log(res);
+                    // 查看返回消息
                     if (res.data && res.data.msg) {
                         this.msg = res.data.msg;
                     } else {
                         this.msg = "服务器繁忙,请稍后再试";
                     }
                 })
-            },
-            // 清空信息
-            clearMsg() {
-                // 设置成默认消息
-                this.msg = this.mailMsg;
-                // 启用验证码按钮
-                this.enableVerifyBtn();
-            },
-            // 启动登录按钮,禁用验证码
-            enableLoginBtn() {
-                // 禁用验证码按钮
-                this.verifyCodeBtn = false;
-                // 启用登录按钮
-                this.loginBtn = true;
-            },
-            // 启动验证码,禁用登录按钮
-            enableVerifyBtn() {
-                // 启用验证码按钮
-                this.verifyCodeBtn = true;
-                // 禁用登录按钮
-                this.loginBtn = false;
-            },
-            // 记住用户邮箱
-            rememberUsername() {
-                // 记住用户名
-                if (this.username) {
-                    localStorage.setItem("username.mail", this.username);
-                }
-            },
+            }
         },
         created() {
-            // 如果URL有clientId,优先使用URL上的clientId
-            let urlClientId = commonUtil.getUrlPara("clientId");
-            // 赋值
-            this.reqClientId = urlClientId == null ? clientId : urlClientId;
-            // 获取本地缓存的邮箱
-            let cacheUsername = localStorage.getItem("username.mail");
-            if (cacheUsername) {
-                this.username = cacheUsername;
-            }
+            // 验证授权码
+            this.authorizeCallback();
         }
     });
 </script>

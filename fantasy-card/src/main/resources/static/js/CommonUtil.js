@@ -3,7 +3,7 @@
     // 请求服务器的网关
     win.gateway = "http://gateway.mzlalal.icu";
     // 客户端ID
-    win.clientId = "fantasy-oauth2";
+    win.clientId = "fantasy-card";
     // https://www.axios-http.cn/docs/interceptors 拦截器文档
     // 添加请求拦截器
     axios.interceptors.request.use(function (config) {
