@@ -27,7 +27,7 @@ public class ClientEntity extends BaseEntity {
 
     @TableId
     @ApiModelProperty("ID")
-    private Long id;
+    private String id;
 
     @ApiModelProperty("应用ID")
     private String clientId;

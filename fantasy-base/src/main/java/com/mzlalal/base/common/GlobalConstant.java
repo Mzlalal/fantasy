@@ -19,6 +19,10 @@ public interface GlobalConstant {
      */
     String FANTASY_OSS = "fantasy-oss";
     /**
+     * 棋牌室应用名
+     */
+    String FANTASY_CARD = "fantasy-card";
+    /**
      * 字典应用名
      */
     String FANTASY_DICT = "fantasy-dict";
@@ -42,6 +46,14 @@ public interface GlobalConstant {
      * 生产环境
      */
     String PRODUCT = "product";
+    /**
+     * 启用
+     */
+    String STATUS_ON = "1";
+    /**
+     * 启用
+     */
+    String STATUS_OFF = "0";
 
     /**
      * UUID与clientId绑定的授权码 redis key
@@ -50,7 +62,7 @@ public interface GlobalConstant {
      * @return String fantasy:{clientId}:{uuid}
      */
     static String clientIdAuthCodeRedisKey(String clientId) {
-        return StrUtil.format("fantasy:{}:{}", clientId, IdUtil.fastSimpleUUID());
+        return StrUtil.format("fantasy:{}:{}" , clientId, IdUtil.fastSimpleUUID());
     }
 
     /**
@@ -72,7 +84,17 @@ public interface GlobalConstant {
      * @return String fantasy:password:code:{clientId}:{mobile}
      */
     static String clientIdPasswordCodeRedisKey(String clientId, String mobile) {
-        return StrUtil.format("fantasy:password:code:{}:{}", clientId, mobile);
+        return StrUtil.format("fantasy:password:code:{}:{}" , clientId, mobile);
+    }
+
+    /**
+     * 房间ID redis key
+     *
+     * @param roomId 房间ID
+     * @return String fantasy:room:{roomId}
+     */
+    static String roomIdRedisKey(String roomId) {
+        return "fantasy:room:" + roomId;
     }
 
     /**

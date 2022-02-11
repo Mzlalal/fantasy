@@ -31,7 +31,7 @@ public class UserEntity extends BaseEntity {
 
     @TableId
     @ApiModelProperty("ID")
-    private Long id;
+    private String id;
 
     @ApiModelProperty("用户名")
     private String username;

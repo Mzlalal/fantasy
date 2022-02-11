@@ -108,6 +108,10 @@ public enum GlobalResult {
      */
     MOBILE_NOT_CORRECT(1007, "手机格式不正确"),
     /**
+     * 另一端登录
+     */
+    ANOTHER_LOGIN(1008, "另一端登录，连接断开"),
+    /**
      * 文件上传失败
      */
     FILE_UPLOAD_FAIL(1100, "文件上传失败，请稍后再试");

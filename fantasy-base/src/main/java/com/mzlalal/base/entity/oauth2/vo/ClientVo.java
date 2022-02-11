@@ -21,7 +21,7 @@ public class ClientVo implements Serializable {
      * ID
      */
     @ApiModelProperty("ID")
-    private Long id;
+    private String id;
     /**
      * 应用ID
      */

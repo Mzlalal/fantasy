@@ -14,9 +14,9 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  *
  * @author Mzlalal
  */
+@EnableDiscoveryClient
 @MapperScan(basePackages = "com.mzlalal.oauth2.dao")
 @EnableFeignClients(basePackages = {"com.mzlalal.base.feign"})
-@EnableDiscoveryClient
 @SpringBootApplication(scanBasePackages = {"com.mzlalal.base", "com.mzlalal.oauth2"})
 public class SecurityOauthApplication {
 

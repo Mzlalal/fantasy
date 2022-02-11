@@ -43,5 +43,5 @@ public interface UserService extends BaseService<UserEntity> {
      * @param userEntity 用户信息
      * @return true 成功 false失败
      */
-    boolean updateAccessTokenById(Long id, UserEntity userEntity);
+    boolean updateAccessTokenById(String id, UserEntity userEntity);
 }

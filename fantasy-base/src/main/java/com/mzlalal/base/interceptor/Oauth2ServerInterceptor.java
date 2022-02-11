@@ -22,9 +22,13 @@ import javax.servlet.http.HttpServletResponse;
  * @date 2021/7/26 10:42
  */
 public class Oauth2ServerInterceptor implements HandlerInterceptor {
-
+    /**
+     * string=>对象 redis操作模板
+     */
     private final RedisTemplate<String, Object> redisTemplate;
-
+    /**
+     * oauth配置(nacos配置中心)
+     */
     private final Oauth2Property oauth2Property;
 
     /**
@@ -32,7 +36,7 @@ public class Oauth2ServerInterceptor implements HandlerInterceptor {
      */
     private final String[] excludePath = new String[]{
             // oauth
-            "/api/v1/oauth/**", "/oauth/callback"
+            "/api/v1/oauth/**" , "/oauth/callback"
             // notify message without token
             , "/api/v1/notify/**"
             // ignore controller

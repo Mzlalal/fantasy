@@ -16,7 +16,7 @@
 </style>
 <body>
 <div id="app">
-    <div class="ui-form ui-border-t margin-top-1em">
+    <div class="ui-form ui-border-t">
         <div class="ui-tooltips-cnt ui-border-b text-center">
             <label class="ui-txt-highlight">
                 斗也都得
@@ -121,6 +121,10 @@
                     if (res.data) {
                         localStorage.setItem("user.info", JSON.stringify(res.data));
                     }
+                    // 跳转
+                    setTimeout(() => {
+                        window.location = gateway + "/fantasy-card/qi-pai-ji-fen.html";
+                    }, 1000)
                 }).catch(res => {
                     console.log("请求用户信息失败");
                     console.log(res);

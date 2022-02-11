@@ -49,14 +49,14 @@ public class RedisAuthorizeCodeService {
      * 消费用户信息
      * 授权码只能用一次
      *
-     * @param code 授权码
+     * @param authorizeCode 授权码
      * @return userEntity 用户信息
      */
-    public UserEntity consume(String code) {
+    public UserEntity consume(String authorizeCode) {
         // 获取用户信息
-        UserEntity userEntity = (UserEntity) redisTemplate.opsForValue().get(code);
+        UserEntity userEntity = (UserEntity) redisTemplate.opsForValue().get(authorizeCode);
         // 删除授权码 只能使用一次
-        redisTemplate.delete(code);
+        redisTemplate.delete(authorizeCode);
         // coded对应的用户信息不存在或者过期
         AssertUtil.notNull(userEntity, GlobalResult.OAUTH_CODE_NOT_CORRECT);
         return userEntity;

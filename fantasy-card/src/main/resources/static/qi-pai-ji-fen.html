@@ -16,22 +16,29 @@
 </style>
 <body>
 <div id="app">
-    <div class="ui-form ui-border-t margin-top-1em">
-        <div class="ui-tooltips-cnt ui-border-b text-c enter">
-            <label class="ui-txt-highlight">
+    <div class="ui-form ui-border-t">
+        <div class="ui-tooltips-cnt ui-border-b text-center">
+            <label>
                 斗也斗得
             </label>
         </div>
         <ul class="ui-row ui-whitespace overflow-auto" style="max-height: 180px;">
-            <li class="ui-col ui-col-25 margin-top-1em">
-                <div class="ui-avatar-lg background-color-dingding text-line-height-70px text-center">陈龙飞</div>
+            <li class="ui-col ui-col-25 margin-top-1em" v-for="player in playerList">
+                <div class="ui-avatar-lg background-dingding text-line-height-70px text-center background-A-c"
+                     v-bind:class="{'background-B-c': player.playerStatus !== '1'}">
+                    {{player.playerName}}
+                </div>
+                <div class="text-center width-70px font-weight-bolder">
+                    {{player.playerScore}}
+                </div>
             </li>
         </ul>
-        <ul class="ui-list ui-list-function ui-border-tb overflow-auto" style="max-height: calc(100vh - 180px - 46px)">
-            <li>
-                <div class="ui-list-info ui-border-t">
-                    <p class="ui-nowrap">2022年2月8日 14:50:32</p>
-                    <p>陈龙飞双行头像</p>
+        <ul class="ui-list ui-list-function ui-border-tb overflow-auto margin-top-1em"
+            style="max-height: calc(100vh - 180px - 46px)" @scroll="onScroll" ref="scrollTarget">
+            <li v-for="item in messageList">
+                <div class="ui-list-info ui-border-t" v-bind:class="{'from-myself':item.from === userId}">
+                    <p class="ui-nowrap">{{item.time}}</p>
+                    <p v-html="item.msg"></p>
                 </div>
             </li>
         </ul>
@@ -39,11 +46,71 @@
 </div>
 </body>
 <script>
+    // 获取房间号
+    let roomId = "1";
+    // 获取用户TOKEN
+    let accessToken = localStorage.getItem("user.access.token");
+    // 连接websocket
+    // const ws = new WebSocket("ws://127.0.0.1:9020/websocket/stat.score/" + roomId + "/" + accessToken);
+    const ws = new WebSocket("ws://" + location.host + "/fantasy-card/websocket/stat.score/" + roomId + "/" + accessToken);
+
+    // 连接
+    ws.onopen = function (evt) {
+        console.log("connection open ...");
+
+        // 收到消息
+        ws.onmessage = function (evt) {
+            // 返回信息反序列化
+            let res = JSON.parse(evt.data);
+            console.log(res);
+            // 设置vue变量
+            vm.playerList = commonUtil.getPageList(res);
+            // 消息列表
+            vm.messageList.push({"msg": res.msg, "time": res.time, "from": res.from});
+            // 新消息的滚动
+            vm.scrollToBottom();
+        };
+
+        // 关闭
+        ws.onclose = function (evt) {
+            console.log("connection closed ...");
+        };
+    };
+
     const vm = new Vue({
         el: "#app",
-        data: {},
-        methods: {},
+        data: {
+            userId: "",
+            autoScroll: true,
+            playerList: [],
+            messageList: [],
+        },
+        methods: {
+            // 监听滚动
+            onScroll() {
+                // 滚动条高度 - 距离顶部的距离 - 像素高度
+                let scrollBottom = this.$refs.scrollTarget.scrollHeight - this.$refs.scrollTarget.scrollTop - this.$refs.scrollTarget.offsetHeight;
+                // 如果滚动到底部小于50px了则自动滚动
+                this.autoScroll = scrollBottom < 50;
+            },
+            // 来新消息,判断是否滚动
+            scrollToBottom() {
+                if (!this.autoScroll) {
+                    return;
+                }
+                // 自动滚动
+                setTimeout(() => {
+                    this.$refs.scrollTarget.scrollTop = this.$refs.scrollTarget.scrollHeight;
+                })
+            }
+        },
         created() {
+            // 获取用户ID
+            let userInfo = localStorage.getItem("user.info");
+            if (userInfo) {
+                userInfo = JSON.parse(userInfo)
+                this.userId = userInfo.id;
+            }
         }
     });
 </script>

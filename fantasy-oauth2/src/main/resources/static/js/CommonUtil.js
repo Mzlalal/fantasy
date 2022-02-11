@@ -1,7 +1,9 @@
 (function (win, axios) {
     // gateway interceptors可以配置在common.js中提供出来使用,提供了一个CommonUtil.js参考,估计不能直接导入使用
     // 请求服务器的网关
-    win.gateway = "http://gateway.mzlalal.icu";
+    // win.gateway = "http://127.0.0.1:9999";
+    // win.gateway = "http://gateway.mzlalal.icu";
+    win.gateway = "http://" + location.host;
     // 客户端ID
     win.clientId = "fantasy-oauth2";
     // https://www.axios-http.cn/docs/interceptors 拦截器文档
@@ -45,11 +47,19 @@
 
     // 暴露commonUtil
     win.commonUtil = {
+        // 获取URL上的参数
         getUrlPara: function (name) {
             var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
             var r = window.location.search.substr(1).match(reg);
             if (r != null) return unescape(r[2]);
         },
+        // 获取res的pageInfo中的集合,若为空则返回[]空数组
+        getPageList: function (res) {
+            if (res && res.pageInfo && res.pageInfo.list) {
+                return res.pageInfo.list;
+            }
+            return [];
+        }
     }
 })(window, window.axios);
 

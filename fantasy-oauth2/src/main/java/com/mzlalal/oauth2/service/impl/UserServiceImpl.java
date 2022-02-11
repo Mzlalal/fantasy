@@ -56,9 +56,9 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     }
 
     @Override
-    public boolean updateAccessTokenById(@NotNull(message = "用户ID不能为空") Long id, UserEntity userEntity) {
+    public boolean updateAccessTokenById(@NotNull(message = "用户ID不能为空") String id, UserEntity userEntity) {
         UpdateWrapper<UserEntity> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.eq("id", id);
+        updateWrapper.eq("id" , id);
         return this.update(userEntity, updateWrapper);
     }
 }
