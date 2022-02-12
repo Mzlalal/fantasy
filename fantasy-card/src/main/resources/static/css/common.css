@@ -46,6 +46,16 @@ body {
     }
 }
 
+/* 宽度100% */
+.width-100p {
+    width: 100%;
+}
+
+/* 填充0 */
+.padding-0 {
+    padding: 0 !important;
+}
+
 /* 文本行高50px */
 .text-line-height-50px {
     line-height: 50px;

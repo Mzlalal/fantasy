@@ -1,6 +1,7 @@
 package com.mzlalal.card.service;
 
 import com.mzlalal.base.entity.card.dto.RoomPlayerEntity;
+import com.mzlalal.base.entity.card.req.TransferScoreReq;
 import com.mzlalal.base.entity.oauth2.dto.UserEntity;
 import com.mzlalal.base.service.BaseService;
 
@@ -48,4 +49,11 @@ public interface RoomPlayerService extends BaseService<RoomPlayerEntity> {
      * @param status 状态
      */
     void updatePlayerStatus(String roomId, String userId, String status);
+
+    /**
+     * 转账分数
+     *
+     * @param transferScoreReq 转账分数请求
+     */
+    void transferScore(TransferScoreReq transferScoreReq);
 }

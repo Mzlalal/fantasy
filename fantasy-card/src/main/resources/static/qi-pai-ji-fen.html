@@ -23,7 +23,8 @@
             </label>
         </div>
         <ul class="ui-row ui-whitespace overflow-auto" style="max-height: 180px;">
-            <li class="ui-col ui-col-25 margin-top-1em" v-for="player in playerList">
+            <li class="ui-col ui-col-25 margin-top-1em" v-for="player in playerList"
+                @click="selectTransferTarget(player)">
                 <div class="ui-avatar-lg background-dingding text-line-height-70px text-center background-A-c"
                      v-bind:class="{'background-B-c': player.playerStatus !== '1'}">
                     {{player.playerName}}
@@ -35,6 +36,13 @@
         </ul>
         <ul class="ui-list ui-list-function ui-border-tb overflow-auto margin-top-1em"
             style="max-height: calc(100vh - 180px - 46px)" @scroll="onScroll" ref="scrollTarget">
+            <transition name="slide-fade">
+                <div class="ui-tooltips ui-tooltips-warn" v-if="tips">
+                    <div class="ui-tooltips-cnt ui-border-b">
+                        <i></i>{{tips}}
+                    </div>
+                </div>
+            </transition>
             <li v-for="item in messageList">
                 <div class="ui-list-info ui-border-t" v-bind:class="{'from-myself':item.from === userId}">
                     <p class="ui-nowrap">{{item.time}}</p>
@@ -43,11 +51,33 @@
             </li>
         </ul>
     </div>
+    <transition name="slide-fade">
+        <div class="ui-dialog show" v-if="currentSelectedPlayer">
+            <div class="ui-dialog-cnt">
+                <div class="ui-dialog-bd">
+                    <h3>
+                        转账给
+                        <span class="username-display">
+                            {{currentSelectedPlayer && currentSelectedPlayer.playerName}}
+                        </span>
+                    </h3>
+                </div>
+                <div class="ui-form-item ui-border-b">
+                    <input type="tel" class="text-center width-100p padding-0" minlength="1" maxlength="4"
+                           v-model="transferAmount" placeholder="请输入转账数额"/>
+                </div>
+                <div class="ui-dialog-ft">
+                    <button type="button" data-role="button" @click="cancelTransfer">取消</button>
+                    <button type="button" data-role="button" @click="confirmTransfer">确定</button>
+                </div>
+            </div>
+        </div>
+    </transition>
 </div>
 </body>
 <script>
     // 获取房间号
-    let roomId = "1";
+    let roomId = localStorage.getItem("user.room.id") || "1";
     // 获取用户TOKEN
     let accessToken = localStorage.getItem("user.access.token");
     // 连接websocket
@@ -80,9 +110,21 @@
     const vm = new Vue({
         el: "#app",
         data: {
+            // 提示
+            tips: "",
+            // 用户ID
             userId: "",
+            // 用户名称
+            username: "",
+            // 是否自动滚动
             autoScroll: true,
+            // 转账数额
+            transferAmount: "",
+            // 当前选中的选手
+            currentSelectedPlayer: null,
+            // 选手列表
             playerList: [],
+            // 历史消息
             messageList: [],
         },
         methods: {
@@ -102,6 +144,60 @@
                 setTimeout(() => {
                     this.$refs.scrollTarget.scrollTop = this.$refs.scrollTarget.scrollHeight;
                 })
+            },
+            // 选中转账对象
+            selectTransferTarget(player) {
+                if (player.id === this.userId) {
+                    this.tips = "不能对自己转账";
+                    return;
+                }
+                if (player.playerStatus === "1") {
+                    this.tips = "";
+                    this.currentSelectedPlayer = player;
+                    return;
+                }
+                this.tips = "不能对已下桌的人转账";
+            },
+            // 确认转账
+            confirmTransfer() {
+                if (this.transferAmount > 9999) {
+                    alert("转账数额不能大于9999");
+                    return;
+                }
+                if (this.transferAmount < 1) {
+                    alert("转账数额不能小于1");
+                    return;
+                }
+                let message = "<span class='username-display'>" + this.username
+                    + "</span>向<span class='username-display'>" + this.currentSelectedPlayer.playerName
+                    + "</span>转账了<span class='username-display'>" + this.transferAmount + "</span>积分";
+                const param = {
+                    "roomId": roomId,
+                    "from": this.userId,
+                    "to": this.currentSelectedPlayer.id,
+                    "change": this.transferAmount,
+                    "message": message,
+                }
+                axios({
+                    method: "post",
+                    url: "/fantasy-card/api/v1/card/room.player/transfer.score",
+                    data: param
+                }).then(res => {
+                    // 隐藏窗口
+                    this.cancelTransfer();
+                    // 置空
+                    this.transferAmount = "";
+                }).catch(res => {
+                    if (res.data && res.data.msg) {
+                        alert(res.data.msg)
+                    } else {
+                        alert("服务器繁忙,请稍后再试")
+                    }
+                })
+            },
+            // 取消转账(隐藏窗口)
+            cancelTransfer() {
+                this.currentSelectedPlayer = null;
             }
         },
         created() {
@@ -110,6 +206,7 @@
             if (userInfo) {
                 userInfo = JSON.parse(userInfo)
                 this.userId = userInfo.id;
+                this.username = userInfo.username;
             }
         }
     });

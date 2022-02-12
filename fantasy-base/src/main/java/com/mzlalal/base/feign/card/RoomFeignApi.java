@@ -7,6 +7,7 @@ import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.global.po.Po;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.core.Ordered;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @author Mzlalal
  * @date 2022-02-11 09:18:06
  **/
-@FeignClient(contextId = "RoomFeignApi" , name = GlobalConstant.FANTASY_CARD, url = "${fantasy-card.feign.url}"
+@FeignClient(contextId = "RoomFeignApi", name = GlobalConstant.FANTASY_CARD, url = "${fantasy-card.feign.url}"
         , path = "/api/v1/room")
 public interface RoomFeignApi {
 
@@ -29,7 +30,7 @@ public interface RoomFeignApi {
      * @return Result
      */
     @ApiOperation("查看列表")
-    @RequestMapping(value = "/list" , method = RequestMethod.POST)
+    @RequestMapping(value = "/list", method = RequestMethod.POST)
     @ApiOperationSupport(order = 1)
     Result<RoomEntity> list(@RequestBody Po<RoomEntity> po);
 
@@ -40,8 +41,8 @@ public interface RoomFeignApi {
      * @return Result
      */
     @ApiOperation("查看详情")
-    @RequestMapping(value = "/info/{id}" , method = RequestMethod.GET)
-    @ApiOperationSupport(order = 2)
+    @RequestMapping(value = "/info/{id}", method = RequestMethod.GET)
+    @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 20)
     Result<RoomEntity> info(@PathVariable("id") Long id);
 
     /**
@@ -51,8 +52,8 @@ public interface RoomFeignApi {
      * @return Result
      */
     @ApiOperation("保存")
-    @RequestMapping(value = "/save" , method = RequestMethod.POST)
-    @ApiOperationSupport(order = 3)
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 30)
     Result<Void> save(@RequestBody RoomEntity room);
 
     /**
@@ -62,8 +63,8 @@ public interface RoomFeignApi {
      * @return Result
      */
     @ApiOperation("更新")
-    @RequestMapping(value = "/update" , method = RequestMethod.POST)
-    @ApiOperationSupport(order = 4)
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 40)
     Result<Void> update(@RequestBody RoomEntity room);
 
     /**
@@ -73,7 +74,7 @@ public interface RoomFeignApi {
      * @return Result
      */
     @ApiOperation("删除")
-    @RequestMapping(value = "/delete" , method = RequestMethod.POST)
-    @ApiOperationSupport(order = 5)
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 50)
     Result<Void> delete(@RequestBody Long[] ids);
 }

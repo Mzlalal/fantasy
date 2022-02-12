@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.mzlalal.security.oauth.dao.RoomPlayerDao">
+<mapper namespace="com.mzlalal.card.dao.RoomPlayerDao">
 
     <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="com.mzlalal.base.entity.card.dto.RoomPlayerEntity" id="roomPlayerMap">
@@ -13,5 +13,12 @@
         <result property="roomName" column="room_name"/>
     </resultMap>
 
+    <update id="addPlayerScore">
+        update t_room_player set player_score = player_score + #{change} where room_id = #{roomId} and id = #{userId}
+    </update>
+
+    <update id="subPlayerScore">
+        update t_room_player set player_score = player_score - #{change} where room_id = #{roomId} and id = #{userId}
+    </update>
 
 </mapper>

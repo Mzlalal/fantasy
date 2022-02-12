@@ -23,7 +23,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WsResult<T> implements Serializable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 4078455689905861656L;
 
     /**
      * 正确状态

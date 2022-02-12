@@ -64,10 +64,12 @@
             </svg>
         </div>
         <div class="ui-form-item ui-border-b">
-            <input type="text" @input="clearMsg" @blur="rememberUsername" v-model="username" placeholder="请输入邮箱">
+            <input type="email" class="width-100p" @input="clearMsg" @blur="rememberUsername"
+                   v-model="username" placeholder="请输入邮箱"/>
         </div>
         <div class="ui-form-item ui-border-b">
-            <input type="text" @input="enableLoginBtn" v-model="password" placeholder="请输入收到的验证码">
+            <input type="text" class="width-100p" @input="enableLoginBtn"
+                   v-model="password" placeholder="请输入收到的验证码"/>
         </div>
         <div class="ui-btn-wrap">
             <button class="ui-btn-lg ui-btn-primary" @click="login"
@@ -75,17 +77,15 @@
                 登录
             </button>
         </div>
-        <transition name="slide-fade">
-            <div class="ui-tooltips ui-tooltips-guide ui-tooltips-function">
-                <div class="ui-tooltips-cnt ui-border-b">
-                    <i></i>{{msg}}
-                    <button class="ui-btn-s" @click="verifyCode"
-                            v-bind:class="{ 'disabled': !verifyCodeBtn }" :disabled="!verifyCodeBtn">
-                        发送验证码
-                    </button>
-                </div>
+        <div class="ui-tooltips ui-tooltips-guide ui-tooltips-function">
+            <div class="ui-tooltips-cnt ui-border-b">
+                <i></i>{{msg}}
+                <button class="ui-btn-s" @click="verifyCode"
+                        v-bind:class="{ 'disabled': !verifyCodeBtn }" :disabled="!verifyCodeBtn">
+                    发送验证码
+                </button>
             </div>
-        </transition>
+        </div>
     </div>
 </div>
 </body>
@@ -93,12 +93,19 @@
     const vm = new Vue({
         el: "#app",
         data: {
+            // 登录按钮
             loginBtn: false,
+            // 验证码牛
             verifyCodeBtn: true,
+            // 请求的客户端ID
             reqClientId: "",
+            // 用户名
             username: "",
+            // 密码
             password: "",
+            // 显示信息
             msg: "使用邮箱验证码登录",
+            // 邮箱默认显示信息
             mailMsg: "使用邮箱验证码登录",
         },
         methods: {

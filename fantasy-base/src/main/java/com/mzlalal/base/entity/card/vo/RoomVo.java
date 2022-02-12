@@ -16,7 +16,7 @@ import java.util.Date;
 @Data
 @ApiModel("Vo")
 public class RoomVo implements Serializable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -191205199168415856L;
 
     /**
      * ID

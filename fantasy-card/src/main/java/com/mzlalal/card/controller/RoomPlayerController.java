@@ -1,6 +1,7 @@
 package com.mzlalal.card.controller;
 
 import com.mzlalal.base.entity.card.dto.RoomPlayerEntity;
+import com.mzlalal.base.entity.card.req.TransferScoreReq;
 import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.feign.card.RoomPlayerFeignApi;
@@ -8,6 +9,7 @@ import com.mzlalal.base.util.Page;
 import com.mzlalal.card.service.RoomPlayerService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -67,6 +69,12 @@ public class RoomPlayerController implements RoomPlayerFeignApi {
             return Result.ok();
         }
         return Result.fail();
+    }
+
+    @Override
+    public Result<Void> transferScore(@Validated @RequestBody TransferScoreReq transferScoreReq) {
+        roomPlayerService.transferScore(transferScoreReq);
+        return Result.ok();
     }
 
 }

@@ -5,8 +5,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mzlalal.base.common.GlobalConstant;
+import com.mzlalal.base.common.GlobalResult;
 import com.mzlalal.base.entity.card.dto.RoomEntity;
 import com.mzlalal.base.entity.card.dto.RoomPlayerEntity;
+import com.mzlalal.base.entity.card.req.TransferScoreReq;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oauth2.dto.UserEntity;
 import com.mzlalal.base.util.AssertUtil;
@@ -14,7 +16,11 @@ import com.mzlalal.base.util.Page;
 import com.mzlalal.card.dao.RoomPlayerDao;
 import com.mzlalal.card.service.RoomPlayerService;
 import com.mzlalal.card.service.RoomService;
+import com.mzlalal.card.service.websocket.session.UserSessionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 import java.util.concurrent.Future;
@@ -28,12 +34,21 @@ import java.util.concurrent.Future;
 @Service("roomPlayerServiceImpl")
 public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayerEntity> implements RoomPlayerService {
     /**
-     * 房间服务
+     * 房间操作
      */
     private final RoomService roomService;
+    /**
+     * websocket用户会话操作
+     */
+    private UserSessionService userSessionService;
 
     public RoomPlayerServiceImpl(RoomService roomService) {
         this.roomService = roomService;
+    }
+
+    @Autowired
+    public void setUserSessionService(UserSessionService userSessionService) {
+        this.userSessionService = userSessionService;
     }
 
     /**
@@ -131,5 +146,33 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
         RoomPlayerEntity entity = RoomPlayerEntity.builder().playerStatus(status).build();
         // 更新
         AssertUtil.isTrue(this.update(entity, updateWrapper), "更新用户状态失败,可能未加入房间");
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public synchronized void transferScore(@Validated TransferScoreReq transferScoreReq) {
+        String roomId = transferScoreReq.getRoomId();
+        String from = transferScoreReq.getFrom();
+        String to = transferScoreReq.getTo();
+        Integer change = transferScoreReq.getChange();
+
+        // 检查发起人状态
+        RoomPlayerEntity fromPlayer = this.getOneByRoomIdAndUserId(roomId, from);
+        AssertUtil.equals(fromPlayer.getPlayerStatus(), GlobalConstant.STATUS_ON, GlobalResult.SUB_PLAYER_STATUS_OFF);
+
+        // 检查接收人状态
+        RoomPlayerEntity toPlayer = this.getOneByRoomIdAndUserId(roomId, to);
+        AssertUtil.equals(toPlayer.getPlayerStatus(), GlobalConstant.STATUS_ON, GlobalResult.ADD_PLAYER_STATUS_OFF);
+
+        // 扣除发起人分数
+        int sub = baseMapper.subPlayerScore(roomId, from, change);
+        AssertUtil.isTrue(sub > 0, GlobalResult.SUB_SCORE_FAIL);
+
+        // 增加接收人分数
+        int add = baseMapper.addPlayerScore(roomId, to, change);
+        AssertUtil.isTrue(add > 0, GlobalResult.ADD_SCORE_FAIL);
+
+        // 发送消息到房间
+        userSessionService.broadcast(roomId, from, transferScoreReq.getMessage());
     }
 }

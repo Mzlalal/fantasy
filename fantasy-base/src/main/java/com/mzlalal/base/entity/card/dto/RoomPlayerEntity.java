@@ -21,7 +21,7 @@ import lombok.*;
 @TableName("t_room_player")
 @EqualsAndHashCode(callSuper = true)
 public class RoomPlayerEntity extends BaseEntity {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2204355865868864707L;
 
     /**
      * ID

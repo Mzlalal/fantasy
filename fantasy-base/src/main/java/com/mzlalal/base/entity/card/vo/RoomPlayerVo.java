@@ -15,7 +15,7 @@ import java.io.Serializable;
 @Data
 @ApiModel("房间内的选手VO")
 public class RoomPlayerVo implements Serializable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -3123926843031753167L;
 
     /**
      * ID

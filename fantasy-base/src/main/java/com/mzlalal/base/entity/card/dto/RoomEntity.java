@@ -25,7 +25,7 @@ import java.util.Date;
 @TableName("t_room")
 @EqualsAndHashCode(callSuper = true)
 public class RoomEntity extends BaseEntity {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -3290488096046399525L;
 
     /**
      * ID
