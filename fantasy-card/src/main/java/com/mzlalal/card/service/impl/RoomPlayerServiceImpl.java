@@ -30,7 +30,6 @@ import org.springframework.validation.annotation.Validated;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Future;
-import java.util.stream.Collectors;
 
 /**
  * 房间内的选手ServiceImpl
@@ -51,9 +50,9 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
     /**
      * string=>对象 redis操作模板
      */
-    private final RedisTemplate<String, WsResult<Void>> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
 
-    public RoomPlayerServiceImpl(RoomService roomService, RedisTemplate<String, WsResult<Void>> redisTemplate) {
+    public RoomPlayerServiceImpl(RoomService roomService, RedisTemplate<String, Object> redisTemplate) {
         this.roomService = roomService;
         this.redisTemplate = redisTemplate;
     }
@@ -191,14 +190,23 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
     @Override
     public List<WsResult<Void>> queryRoomPlayerHistoryMessage(PlayerHistoryMessageReq req) {
         // 获取成员
-        Set<WsResult<Void>> members = redisTemplate.opsForSet().members(req.getRoomId());
+        Set<Object> memberSet = redisTemplate.opsForSet().members(req.getRoomId());
         // 为空返回空集合
-        if (CollUtil.isEmpty(members)) {
-            return CollUtil.newArrayList();
+        List<WsResult<Void>> historyList = CollUtil.newArrayList();
+        if (CollUtil.isEmpty(memberSet)) {
+            return historyList;
         }
-        // 过滤from为当前选手ID的集合
-        return members.parallelStream()
-                .filter(item -> StrUtil.equals(item.getFrom(), req.getFrom()))
-                .collect(Collectors.toList());
+        // 遍历过滤
+        for (Object member : memberSet) {
+            if (member instanceof WsResult) {
+                // 强转类型
+                WsResult<Void> wsResult = (WsResult<Void>) member;
+                // 过滤from为当前选手ID的集合
+                if (StrUtil.equals(wsResult.getFrom(), req.getFrom())) {
+                    historyList.add(wsResult);
+                }
+            }
+        }
+        return historyList;
     }
 }
