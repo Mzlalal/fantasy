@@ -35,7 +35,7 @@
             </li>
         </ul>
         <ul class="ui-list ui-list-function ui-border-tb overflow-auto margin-top-1em"
-            style="max-height: calc(100vh - 180px - 46px)" @scroll="onScroll" ref="scrollTarget">
+            style="max-height: calc(100vh - 270px)" @scroll="onScroll" ref="scrollTarget">
             <transition name="slide-fade">
                 <div class="ui-tooltips ui-tooltips-warn" v-if="tips">
                     <div class="ui-tooltips-cnt ui-border-b">
@@ -63,8 +63,10 @@
                     </h3>
                 </div>
                 <div class="ui-form-item ui-border-b">
-                    <input type="tel" class="text-center width-100p padding-0" minlength="1" maxlength="4"
-                           v-model="transferAmount" placeholder="请输入转账数额"/>
+                    <div class="ui-input ui-input-text">
+                        <input type="tel" class="text-center padding-0" v-model="transferAmount"
+                               minlength="1" maxlength="4" placeholder="请输入转账数额"/>
+                    </div>
                 </div>
                 <div class="ui-dialog-ft">
                     <button type="button" data-role="button" @click="cancelTransfer">取消</button>
@@ -80,32 +82,59 @@
     let roomId = localStorage.getItem("user.room.id") || "1";
     // 获取用户TOKEN
     let accessToken = localStorage.getItem("user.access.token");
+    // websocket对象
+    let ws;
+
+    // 窗口激活
+    function windowActivatedFunction() {
+        vm.tips = "进入了房间";
+        // 连接websocket
+        connectWebsocket();
+    }
+
+    // 窗口失活
+    function windowDeactivatedFunction() {
+        vm.tips = "退出了房间";
+        // 关闭websocket
+        if (ws && typeof (ws.close) === 'function') {
+            ws.close();
+        }
+    }
+
     // 连接websocket
-    // const ws = new WebSocket("ws://127.0.0.1:9020/websocket/stat.score/" + roomId + "/" + accessToken);
-    const ws = new WebSocket("ws://" + location.host + "/fantasy-card/websocket/stat.score/" + roomId + "/" + accessToken);
+    function connectWebsocket() {
+        // websocket状态正常
+        if (ws && ws.readyState === 1) {
+            return;
+        }
+        // 连接websocket
+        // const ws = new WebSocket("ws://127.0.0.1:9020/websocket/stat.score/" + roomId + "/" + accessToken);
+        ws = new WebSocket("ws://" + location.host + "/fantasy-card/websocket/stat.score/" + roomId + "/" + accessToken);
 
-    // 连接
-    ws.onopen = function (evt) {
-        console.log("connection open ...");
+        // 连接
+        ws.onopen = function (evt) {
+            console.log("connection open ...");
 
-        // 收到消息
-        ws.onmessage = function (evt) {
-            // 返回信息反序列化
-            let res = JSON.parse(evt.data);
-            console.log(res);
-            // 设置vue变量
-            vm.playerList = commonUtil.getPageList(res);
-            // 消息列表
-            vm.messageList.push({"msg": res.msg, "time": res.time, "from": res.from});
-            // 新消息的滚动
-            vm.scrollToBottom();
+            // 收到消息
+            ws.onmessage = function (evt) {
+                // 返回信息反序列化
+                let res = JSON.parse(evt.data);
+                console.log(res);
+                // 设置vue变量
+                vm.playerList = commonUtil.getPageList(res);
+                // 消息列表
+                vm.messageList.push({"msg": res.msg, "time": res.time, "from": res.from});
+                // 新消息的滚动
+                vm.scrollToBottom();
+            };
+
+            // 关闭
+            ws.onclose = function (evt) {
+                vm.messageList = [];
+                console.log("connection closed ...");
+            };
         };
-
-        // 关闭
-        ws.onclose = function (evt) {
-            console.log("connection closed ...");
-        };
-    };
+    }
 
     const vm = new Vue({
         el: "#app",
@@ -178,6 +207,9 @@
                     "change": this.transferAmount,
                     "message": message,
                 }
+                // 隐藏窗口
+                this.cancelTransfer();
+                // 请求
                 axios({
                     method: "post",
                     url: "/fantasy-card/api/v1/card/room.player/transfer.score",
@@ -185,8 +217,6 @@
                 }).then(res => {
                     // 隐藏窗口
                     this.cancelTransfer();
-                    // 置空
-                    this.transferAmount = "";
                 }).catch(res => {
                     if (res.data && res.data.msg) {
                         alert(res.data.msg)
@@ -197,6 +227,9 @@
             },
             // 取消转账(隐藏窗口)
             cancelTransfer() {
+                // 转账数额置空
+                this.transferAmount = "";
+                // 已选中选手置空
                 this.currentSelectedPlayer = null;
             }
         },
@@ -208,6 +241,9 @@
                 this.userId = userInfo.id;
                 this.username = userInfo.username;
             }
+
+            // 连接websocket
+            connectWebsocket();
         }
     });
 </script>

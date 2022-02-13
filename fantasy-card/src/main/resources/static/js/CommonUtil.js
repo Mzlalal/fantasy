@@ -61,6 +61,29 @@
             return [];
         }
     }
+
+    // 事件
+    win.hiddenProperty = 'hidden' in document ? 'hidden' : 'webkitHidden' in document ? 'webkitHidden' : 'mozHidden' in document ? 'mozHidden' : null;
+    win.visibilityChangeEvent = hiddenProperty.replace(/hidden/i, 'visibilitychange');
+    // 事件处理方法
+    win.onVisibilityChange = function () {
+        if (!document[hiddenProperty]) {
+            // 页面激活
+            console.log("the current window is activated")
+            if (typeof (windowActivatedFunction) === 'function') {
+                windowActivatedFunction();
+            }
+        } else {
+            console.log("the current window is deactivated")
+            // 页面失活
+            if (typeof (windowDeactivatedFunction) === 'function') {
+                windowDeactivatedFunction();
+            }
+        }
+    };
+    // 当前窗口得到焦点
+    document.addEventListener(visibilityChangeEvent, onVisibilityChange);
+
 })(window, window.axios);
 
 // 时间增加Format格式化函数
