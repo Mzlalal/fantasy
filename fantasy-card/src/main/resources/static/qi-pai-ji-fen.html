@@ -87,14 +87,12 @@
 
     // 窗口激活
     function windowActivatedFunction() {
-        vm.tips = "进入了房间";
         // 连接websocket
         connectWebsocket();
     }
 
     // 窗口失活
     function windowDeactivatedFunction() {
-        vm.tips = "退出了房间";
         // 关闭websocket
         if (ws && typeof (ws.close) === 'function') {
             ws.close();
@@ -130,7 +128,6 @@
 
             // 关闭
             ws.onclose = function (evt) {
-                vm.messageList = [];
                 console.log("connection closed ...");
             };
         };

@@ -1,6 +1,8 @@
 package com.mzlalal.card.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.thread.ThreadUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -8,7 +10,9 @@ import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.common.GlobalResult;
 import com.mzlalal.base.entity.card.dto.RoomEntity;
 import com.mzlalal.base.entity.card.dto.RoomPlayerEntity;
+import com.mzlalal.base.entity.card.req.PlayerHistoryMessageReq;
 import com.mzlalal.base.entity.card.req.TransferScoreReq;
+import com.mzlalal.base.entity.global.WsResult;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oauth2.dto.UserEntity;
 import com.mzlalal.base.util.AssertUtil;
@@ -18,12 +22,15 @@ import com.mzlalal.card.service.RoomPlayerService;
 import com.mzlalal.card.service.RoomService;
 import com.mzlalal.card.service.websocket.session.UserSessionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 /**
  * 房间内的选手ServiceImpl
@@ -41,9 +48,14 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
      * websocket用户会话操作
      */
     private UserSessionService userSessionService;
+    /**
+     * string=>对象 redis操作模板
+     */
+    private final RedisTemplate<String, WsResult<Void>> redisTemplate;
 
-    public RoomPlayerServiceImpl(RoomService roomService) {
+    public RoomPlayerServiceImpl(RoomService roomService, RedisTemplate<String, WsResult<Void>> redisTemplate) {
         this.roomService = roomService;
+        this.redisTemplate = redisTemplate;
     }
 
     @Autowired
@@ -174,5 +186,19 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
 
         // 发送消息到房间
         userSessionService.broadcast(roomId, from, transferScoreReq.getMessage());
+    }
+
+    @Override
+    public List<WsResult<Void>> queryRoomPlayerHistoryMessage(PlayerHistoryMessageReq req) {
+        // 获取成员
+        Set<WsResult<Void>> members = redisTemplate.opsForSet().members(req.getRoomId());
+        // 为空返回空集合
+        if (CollUtil.isEmpty(members)) {
+            return CollUtil.newArrayList();
+        }
+        // 过滤from为当前选手ID的集合
+        return members.parallelStream()
+                .filter(item -> StrUtil.equals(item.getFrom(), req.getFrom()))
+                .collect(Collectors.toList());
     }
 }

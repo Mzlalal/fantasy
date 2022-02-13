@@ -1,8 +1,11 @@
 package com.mzlalal.card.controller;
 
 import com.mzlalal.base.entity.card.dto.RoomPlayerEntity;
+import com.mzlalal.base.entity.card.req.PlayerHistoryMessageReq;
 import com.mzlalal.base.entity.card.req.TransferScoreReq;
 import com.mzlalal.base.entity.global.Result;
+import com.mzlalal.base.entity.global.WsResult;
+import com.mzlalal.base.entity.global.po.PageInfo;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.feign.card.RoomPlayerFeignApi;
 import com.mzlalal.base.util.Page;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
+import java.util.List;
 
 /**
  * 房间内的选手信息controller
@@ -72,9 +76,18 @@ public class RoomPlayerController implements RoomPlayerFeignApi {
     }
 
     @Override
-    public Result<Void> transferScore(@Validated @RequestBody TransferScoreReq transferScoreReq) {
-        roomPlayerService.transferScore(transferScoreReq);
+    public Result<Void> transferScore(@Validated @RequestBody TransferScoreReq req) {
+        roomPlayerService.transferScore(req);
         return Result.ok();
+    }
+
+    @Override
+    public Result<WsResult<Void>> queryRoomPlayerHistoryMessage(@Validated @RequestBody PlayerHistoryMessageReq req) {
+        // 获取历史消息
+        List<WsResult<Void>> historyList = roomPlayerService.queryRoomPlayerHistoryMessage(req);
+        // 封装到分页信息
+        Page<WsResult<Void>> page = new Page<>(historyList, historyList.size(), new PageInfo());
+        return Result.ok(page);
     }
 
 }

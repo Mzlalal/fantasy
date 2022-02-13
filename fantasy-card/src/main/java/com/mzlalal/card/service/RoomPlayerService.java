@@ -1,7 +1,9 @@
 package com.mzlalal.card.service;
 
 import com.mzlalal.base.entity.card.dto.RoomPlayerEntity;
+import com.mzlalal.base.entity.card.req.PlayerHistoryMessageReq;
 import com.mzlalal.base.entity.card.req.TransferScoreReq;
+import com.mzlalal.base.entity.global.WsResult;
 import com.mzlalal.base.entity.oauth2.dto.UserEntity;
 import com.mzlalal.base.service.BaseService;
 
@@ -56,4 +58,12 @@ public interface RoomPlayerService extends BaseService<RoomPlayerEntity> {
      * @param transferScoreReq 转账分数请求
      */
     void transferScore(TransferScoreReq transferScoreReq);
+
+    /**
+     * 根据房间ID,选手ID查询历史消息
+     *
+     * @param req 查询房间选手的历史消息请求
+     * @return List<WsResult>
+     */
+    List<WsResult<Void>> queryRoomPlayerHistoryMessage(PlayerHistoryMessageReq req);
 }

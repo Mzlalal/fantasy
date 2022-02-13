@@ -160,5 +160,17 @@ public class UserSessionService {
                 log.error(JSON.toJSONString(pathParameterMap) + "关闭意外出错", e);
             }
         });
+        // 保存消息
+        this.saveRoomMessage(roomId, result);
+    }
+
+    /**
+     * 保存房间消息
+     *
+     * @param roomId 房间ID
+     * @param result 消息
+     */
+    public void saveRoomMessage(String roomId, WsResult<?> result) {
+        redisTemplate.opsForSet().add(roomId, result);
     }
 }
