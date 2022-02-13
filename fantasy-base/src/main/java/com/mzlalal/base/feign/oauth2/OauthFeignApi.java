@@ -2,13 +2,13 @@ package com.mzlalal.base.feign.oauth2;
 
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.mzlalal.base.common.GlobalConstant;
-import com.mzlalal.base.entity.global.BaseEntity;
 import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.oauth2.req.CheckVerifyCodeReq;
 import com.mzlalal.base.entity.oauth2.req.CreateTokenReq;
 import com.mzlalal.base.entity.oauth2.req.OauthReq;
 import com.mzlalal.base.entity.oauth2.req.VerifyCodeReq;
 import com.mzlalal.base.entity.oauth2.vo.AccessToken;
+import com.mzlalal.base.entity.oauth2.vo.RedirectUriVo;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.core.Ordered;
@@ -65,7 +65,7 @@ public interface OauthFeignApi {
     @ApiOperation(value = "登录", notes = "根据用户名及验证码生成授权码/根据用户名及密码登录直接生成用户令牌")
     @PostMapping("/authorize")
     @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 20)
-    Result<BaseEntity> authorize(@Validated @RequestBody OauthReq oauthReq);
+    Result<RedirectUriVo> authorize(@Validated @RequestBody OauthReq oauthReq);
 
     /**
      * 根据授权码(UUID)获取令牌

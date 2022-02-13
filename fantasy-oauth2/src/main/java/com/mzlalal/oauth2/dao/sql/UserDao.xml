@@ -12,10 +12,10 @@
         <result property="header" column="header"/>
         <result property="mail" column="mail"/>
         <result property="accessToken" column="access_token"/>
-        <result property="refreshToken" column="access_token"/>
+        <result property="refreshToken" column="refresh_token"/>
         <result property="expireAt" column="expire_at"/>
-        <result property="roleId" column="role_id"/>
         <result property="isHide" column="is_hide"/>
+        <result property="roleId" column="role_id"/>
         <result property="tenantId" column="tenant_id"/>
     </resultMap>
 

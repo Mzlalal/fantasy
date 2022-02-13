@@ -18,7 +18,7 @@
 <div id="app">
     <div class="ui-form ui-border-t">
         <div class="ui-tooltips-cnt ui-border-b text-center">
-            <label class="ui-txt-highlight">
+            <label>
                 Fantasy
             </label>
         </div>
@@ -63,6 +63,16 @@
                       fill="#333333" p-id="1735"></path>
             </svg>
         </div>
+        <div class="ui-tab">
+            <ul class="ui-tab-nav ui-border-b ">
+                <li>
+                    <a :href="'/fantasy-oauth2/mi-ma-deng-lu.html?clientId=' + reqClientId">
+                        <span>密码登录</span>
+                    </a>
+                </li>
+                <li class="current"><span>邮箱登录</span></li>
+            </ul>
+        </div>
         <div class="ui-form-item ui-border-b">
             <input type="email" class="width-100p" @input="clearMsg" @blur="rememberUsername"
                    v-model="username" placeholder="请输入邮箱"/>
@@ -79,10 +89,10 @@
         </div>
         <div class="ui-tooltips ui-tooltips-guide ui-tooltips-function">
             <div class="ui-tooltips-cnt ui-border-b">
-                <i></i>{{msg}}
+                <i></i>{{tips}}
                 <button class="ui-btn-s" @click="verifyCode"
                         v-bind:class="{ 'disabled': !verifyCodeBtn }" :disabled="!verifyCodeBtn">
-                    发送验证码
+                    📬发送验证码
                 </button>
             </div>
         </div>
@@ -95,7 +105,7 @@
         data: {
             // 登录按钮
             loginBtn: false,
-            // 验证码牛
+            // 验证码按钮
             verifyCodeBtn: true,
             // 请求的客户端ID
             reqClientId: "",
@@ -104,9 +114,9 @@
             // 密码
             password: "",
             // 显示信息
-            msg: "使用邮箱验证码登录",
+            tips: "使用邮箱验证码登录",
             // 邮箱默认显示信息
-            mailMsg: "使用邮箱验证码登录",
+            mailDefaultTips: "使用邮箱验证码登录",
         },
         methods: {
             // 登录
@@ -137,9 +147,9 @@
                     // 置空验证码
                     this.password = "";
                     if (res.data && res.data.msg) {
-                        this.msg = res.data.msg;
+                        this.tips = res.data.msg;
                     } else {
-                        this.msg = "服务器繁忙,请稍后再试";
+                        this.tips = "服务器繁忙,请稍后再试";
                     }
                 })
             },
@@ -156,7 +166,7 @@
                 // 禁用登录按钮
                 this.loginBtn = false;
                 // 更改信息
-                this.msg = "请稍候...";
+                this.tips = "请稍候...";
                 // 请求接口
                 axios({
                     method: "post",
@@ -166,25 +176,25 @@
                     // 启用登录按钮
                     this.enableLoginBtn();
                     // 更改信息
-                    this.msg = "已发送";
+                    this.tips = "已发送";
                 }).catch(res => {
                     // 启用验证码按钮
                     this.enableVerifyBtn();
                     if (res.data && res.data.msg) {
-                        this.msg = res.data.msg;
+                        this.tips = res.data.msg;
                     } else {
-                        this.msg = "服务器繁忙,请稍后再试";
+                        this.tips = "服务器繁忙,请稍后再试";
                     }
                 })
             },
             // 清空信息
             clearMsg() {
                 // 设置成默认消息
-                this.msg = this.mailMsg;
+                this.tips = this.mailDefaultTips;
                 // 启用验证码按钮
                 this.enableVerifyBtn();
             },
-            // 启动登录按钮,禁用验证码
+            // 启动登录按钮
             enableLoginBtn() {
                 // 启用登录按钮
                 this.loginBtn = true;

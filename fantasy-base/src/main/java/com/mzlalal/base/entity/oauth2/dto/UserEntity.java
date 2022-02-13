@@ -66,25 +66,9 @@ public class UserEntity extends BaseEntity {
     @ApiModelProperty("租户ID")
     private String tenantId;
 
-    @ApiModelProperty("创建人ID")
-    @TableField(fill = FieldFill.INSERT)
-    private Long createBy;
-
-    @ApiModelProperty("创建人")
-    @TableField(fill = FieldFill.INSERT)
-    private String createName;
-
     @ApiModelProperty("创建时间")
     @TableField(fill = FieldFill.INSERT)
     private Date createTime;
-
-    @ApiModelProperty("更新人ID")
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private Long updateBy;
-
-    @ApiModelProperty("更新人")
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private String updateName;
 
     @ApiModelProperty("更新时间")
     @TableField(fill = FieldFill.INSERT_UPDATE)

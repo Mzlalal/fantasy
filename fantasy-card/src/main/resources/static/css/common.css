@@ -102,6 +102,22 @@ body {
     width: 70px;
 }
 
+/* 宽度80px */
+.width-80px {
+    width: 80px;
+}
+
+
+/* 宽度90px */
+.width-90px {
+    width: 90px;
+}
+
+/* 宽度100px */
+.width-100px {
+    width: 100px;
+}
+
 /* 加粗 */
 .font-weight-bolder {
     font-weight: bolder;

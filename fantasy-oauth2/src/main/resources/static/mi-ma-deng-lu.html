@@ -63,10 +63,37 @@
                       fill="#333333" p-id="1735"></path>
             </svg>
         </div>
+        <div class="ui-tab">
+            <ul class="ui-tab-nav ui-border-b ">
+                <li class="current"><span>密码登录</span></li>
+                <li>
+                    <a :href="'/fantasy-oauth2/you-xiang-deng-lu.html?clientId=' + reqClientId">
+                        <span>邮箱登录</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="ui-form-item ui-border-b">
+            <input type="text" class="width-100p" @blur="rememberUsername"
+                   v-model="username" placeholder="请输入手机号"/>
+        </div>
+        <div class="ui-form-item ui-border-b">
+            <input type="password" class="width-100p" @input="enableLoginBtn"
+                   v-model="password" placeholder="请输入密码"/>
+        </div>
         <div class="ui-btn-wrap">
-            <button class="ui-btn-lg ui-btn-primary">
-                {{tips}}
+            <button class="ui-btn-lg ui-btn-primary" @click="login"
+                    v-bind:class="{ 'disabled': !loginBtn }" :disabled="!loginBtn">
+                登录
             </button>
+        </div>
+        <div class="ui-tooltips ui-tooltips-guide ui-tooltips-function">
+            <div class="ui-tooltips-cnt ui-border-b">
+                <i></i>{{tips}}
+                <button class="ui-btn-s">
+                    👉注册
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -75,67 +102,73 @@
     const vm = new Vue({
         el: "#app",
         data: {
-            msg: "正在验证授权,请稍候...",
+            // 登录按钮
+            loginBtn: false,
+            // 请求的客户端ID
+            reqClientId: "",
+            // 用户名
+            username: "",
+            // 密码
+            password: "",
+            // 显示信息
+            tips: "没有账号点击按钮快速注册",
         },
         methods: {
-            // 请求回调地址
-            authorizeCallback() {
-                // 获取URL上的授权码
-                let code = commonUtil.getUrlPara("code");
-                // 获取URL上的授权方式
-                let responseType = commonUtil.getUrlPara("responseType");
+            // 登录
+            login() {
+                // 禁用登录按钮
+                this.loginBtn = false;
                 // 请求参数,和form或者input使用v-model绑定
                 const param = {
-                    "code": code,
-                    "responseType": responseType,
+                    "clientId": this.reqClientId,
+                    "responseType": "password",
                     "state": "",
+                    "password": this.password,
+                    "clientSecret": "",
+                    "redirectUri": "",
+                    "username": this.username
                 };
                 // 请求接口
                 axios({
                     method: "post",
-                    url: "/fantasy-oauth2/oauth/callback",
-                    data: param,
+                    url: "/fantasy-oauth2/api/v1/oauth/authorize",
+                    data: param
                 }).then(res => {
-                    this.msg = "登录成功,正在跳转,请稍候...";
-                    // 记住用户TOKEN
-                    if (res.data && res.data.accessToken) {
-                        localStorage.setItem("user.access.token", res.data.accessToken);
-                    }
-                    // 保存用户信息
-                    this.rememberUser();
-                    // 跳转界面
+                    // 跳转地址
+                    window.location = res.data.redirectUri;
                 }).catch(res => {
+                    // 置空验证码
+                    this.password = "";
                     if (res.data && res.data.msg) {
-                        this.msg = res.data.msg;
+                        this.tips = res.data.msg;
                     } else {
-                        this.msg = "服务器繁忙,请稍后再试";
+                        this.tips = "服务器繁忙,请稍后再试";
                     }
                 })
             },
-            rememberUser() {
-                // 请求接口
-                axios({
-                    method: "post",
-                    url: "/fantasy-oauth2/api/v1/token/check.token",
-                }).then(res => {
-                    if (res.data) {
-                        localStorage.setItem("user.info", JSON.stringify(res.data));
-                    }
-                }).catch(res => {
-                    console.log("请求用户信息失败");
-                    console.log(res);
-                    // 查看返回消息
-                    if (res.data && res.data.msg) {
-                        this.msg = res.data.msg;
-                    } else {
-                        this.msg = "服务器繁忙,请稍后再试";
-                    }
-                })
-            }
+            // 记住用户邮箱
+            rememberUsername() {
+                // 记住用户名
+                if (this.username) {
+                    localStorage.setItem("username.mobile", this.username);
+                }
+            },
+            // 启动登录按钮
+            enableLoginBtn() {
+                // 启用登录按钮
+                this.loginBtn = true;
+            },
         },
         created() {
-            // 验证授权码
-            this.authorizeCallback();
+            // 如果URL有clientId,优先使用URL上的clientId
+            let urlClientId = commonUtil.getUrlPara("clientId");
+            // 赋值
+            this.reqClientId = urlClientId == null ? clientId : urlClientId;
+            // 获取本地缓存的邮箱
+            let cacheUsername = localStorage.getItem("username.mobile");
+            if (cacheUsername) {
+                this.username = cacheUsername;
+            }
         }
     });
 </script>

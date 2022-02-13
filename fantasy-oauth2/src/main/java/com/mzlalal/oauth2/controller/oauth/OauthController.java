@@ -3,7 +3,6 @@ package com.mzlalal.oauth2.controller.oauth;
 import cn.hutool.core.util.StrUtil;
 import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.common.GlobalResult;
-import com.mzlalal.base.entity.global.BaseEntity;
 import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.oauth2.dto.ClientEntity;
 import com.mzlalal.base.entity.oauth2.req.CheckVerifyCodeReq;
@@ -11,6 +10,7 @@ import com.mzlalal.base.entity.oauth2.req.CreateTokenReq;
 import com.mzlalal.base.entity.oauth2.req.OauthReq;
 import com.mzlalal.base.entity.oauth2.req.VerifyCodeReq;
 import com.mzlalal.base.entity.oauth2.vo.AccessToken;
+import com.mzlalal.base.entity.oauth2.vo.RedirectUriVo;
 import com.mzlalal.base.feign.oauth2.OauthFeignApi;
 import com.mzlalal.oauth2.config.oauth2.enums.GrantResponseEnum;
 import com.mzlalal.oauth2.config.oauth2.enums.VerifyCodeProvideEnum;
@@ -84,7 +84,7 @@ public class OauthController implements OauthFeignApi {
     }
 
     @Override
-    public Result<BaseEntity> authorize(@Validated @RequestBody OauthReq oauthReq) {
+    public Result<RedirectUriVo> authorize(@Validated @RequestBody OauthReq oauthReq) {
         // 授权方式
         String responseType = oauthReq.getResponseType();
         ClientEntity client = clientVerifyResponseTypeService.verifyResponseType(oauthReq.getClientId(), responseType);
@@ -93,7 +93,7 @@ public class OauthController implements OauthFeignApi {
             oauthReq.setRedirectUri(client.getRedirectUri());
         }
         // 获取授权码
-        return GrantResponseEnum.getEnum(responseType).createCallback(oauthReq, client);
+        return GrantResponseEnum.getEnum(responseType).createCallback(oauthReq);
     }
 
     @Override
