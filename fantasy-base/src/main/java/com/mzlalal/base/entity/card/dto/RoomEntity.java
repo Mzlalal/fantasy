@@ -34,20 +34,10 @@ public class RoomEntity extends BaseEntity {
     @ApiModelProperty("ID")
     private String id;
     /**
-     * 房间号
-     */
-    @ApiModelProperty("房间号")
-    private String code;
-    /**
      * 房间名
      */
     @ApiModelProperty("房间名")
     private String name;
-    /**
-     * 在线人数
-     */
-    @ApiModelProperty("在线人数")
-    private Integer online;
     /**
      * 创建时间
      */

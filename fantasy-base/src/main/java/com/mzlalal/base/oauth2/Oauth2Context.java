@@ -1,5 +1,6 @@
 package com.mzlalal.base.oauth2;
 
+import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.entity.oauth2.dto.UserEntity;
 
 /**
@@ -30,6 +31,18 @@ public class Oauth2Context {
      */
     public static UserEntity get() {
         return CONTEXT.get();
+    }
+
+    /**
+     * 获取用户租户信息
+     *
+     * @return String 租户
+     */
+    public static String getTenantId() {
+        if (CONTEXT.get() != null) {
+            return CONTEXT.get().getTenantId();
+        }
+        return GlobalConstant.DEFAULT_TENANT_ID;
     }
 
     /**

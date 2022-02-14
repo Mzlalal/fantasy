@@ -11,7 +11,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 /**
@@ -33,13 +35,17 @@ public class UserEntity extends BaseEntity {
     @ApiModelProperty("ID")
     private String id;
 
+    @Length(min = 1, max = 8, message = "用户名长度需要在1和8之间")
+    @NotBlank(message = "用户名不能为空")
     @ApiModelProperty("用户名")
     private String username;
 
+    @NotBlank(message = "密码不能为空")
     @ApiModelProperty("密码")
     private String password;
 
-    @ApiModelProperty("手机号码")
+    @NotBlank(message = "手机号不能为空")
+    @ApiModelProperty("手机号")
     private String mobile;
 
     @ApiModelProperty("头像")

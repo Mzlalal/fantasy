@@ -54,6 +54,10 @@ public interface GlobalConstant {
      * 启用
      */
     String STATUS_OFF = "0";
+    /**
+     * 启用
+     */
+    String DEFAULT_TENANT_ID = "PUBLIC";
 
     /**
      * UUID与clientId绑定的授权码 redis key

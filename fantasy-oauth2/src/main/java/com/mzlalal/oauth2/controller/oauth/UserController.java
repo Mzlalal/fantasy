@@ -1,13 +1,17 @@
 package com.mzlalal.oauth2.controller.oauth;
 
+import cn.hutool.core.util.StrUtil;
 import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oauth2.dto.UserEntity;
 import com.mzlalal.base.feign.oauth2.UserFeignApi;
+import com.mzlalal.oauth2.config.oauth2.enums.GrantResponseEnum;
 import com.mzlalal.oauth2.service.UserService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,15 +27,24 @@ import java.util.Collections;
  */
 @Slf4j
 @Api(tags = "用户")
+@Validated
 @RestController
 @RequestMapping("/api/v1/oauth/user")
 public class UserController implements UserFeignApi {
 
+    /**
+     * 用户操作
+     */
     private final UserService userService;
+    /**
+     * 密码加密操作
+     */
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -45,7 +58,18 @@ public class UserController implements UserFeignApi {
     }
 
     @Override
-    public Result<Void> save(@RequestBody UserEntity user) {
+    public Result<Void> save(@Validated @RequestBody UserEntity user) {
+        // 验证手机号格式是否正确
+        GrantResponseEnum.PASSWORD.verifyUsername(user.getMobile());
+        // 验证邮箱是否正确
+        if (StrUtil.isNotBlank(user.getMail())) {
+            GrantResponseEnum.MAIL.verifyUsername(user.getMail());
+        }
+
+        // 默认角色
+        user.setRoleId(10000L);
+        // 密码加密
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userService.save(user) ? Result.ok() : Result.fail();
     }
 
