@@ -24,7 +24,7 @@
         </div>
         <div class="ui-tooltips-cnt ui-border-b text-center height-auto">
             <?xml version="1.0" encoding="UTF-8"?>
-            <svg width="200" height="200" viewBox="0 0 43 43" version="1.1" xmlns="http://www.w3.org/2000/svg">
+            <svg width="150" height="150" viewBox="0 0 43 43" version="1.1" xmlns="http://www.w3.org/2000/svg">
                 <title>10</title>
                 <g id="卡片" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                     <g id="Apple-TV" transform="translate(-1122.000000, -305.000000)">
@@ -83,39 +83,39 @@
         </div>
         <div class="ui-form ui-border-t">
             <div class="ui-form-item ui-border-b">
-                <label class="width-80px">
+                <label class="width-80px username-display">
                     用户名
                 </label>
-                <input type="text" placeholder="请输入用户名">
+                <input v-model="username" type="text" placeholder="请输入用户名">
             </div>
             <div class="ui-form-item ui-border-b">
-                <label class="width-80px">
+                <label class="width-80px username-display">
                     手机号
                 </label>
-                <input type="tel" placeholder="请输入手机号">
+                <input v-model="mobile" type="tel" placeholder="请输入手机号">
             </div>
             <div class="ui-form-item ui-border-b">
                 <label class="width-80px">
                     电子邮箱
                 </label>
-                <input type="email" placeholder="请输入电子邮箱">
+                <input v-model="mail" type="email" placeholder="请输入电子邮箱">
             </div>
             <div class="ui-form-item ui-border-b">
-                <label class="width-80px">
+                <label class="width-80px username-display">
                     用户密码
                 </label>
-                <input type="password" placeholder="请输入用户密码">
+                <input v-model="password" type="password" placeholder="请输入用户密码">
             </div>
             <div class="ui-form-item ui-border-b">
-                <label class="width-80px">
+                <label class="width-80px username-display">
                     确认密码
                 </label>
-                <input type="password" placeholder="请再次输入相同的密码">
+                <input v-model="confirmPassword" type="password" placeholder="请再次输入相同的密码">
             </div>
         </div>
         <div class="ui-btn-wrap">
-            <button class="ui-btn-lg ui-btn-primary" @click="login"
-                    v-bind:class="{ 'disabled': !loginBtn }" :disabled="!loginBtn">
+            <button class="ui-btn-lg ui-btn-primary" @click="registerFun"
+                    v-bind:class="{ 'disabled': !registerBtn }" :disabled="!registerBtn">
                 立即注册
             </button>
         </div>
@@ -131,43 +131,58 @@
     const vm = new Vue({
         el: "#app",
         data: {
-            // 登录按钮
-            loginBtn: false,
+            // 注册按钮
+            registerBtn: true,
             // 请求的客户端ID
             reqClientId: "",
             // 用户名
             username: "",
+            // 手机号
+            mobile: "",
+            // 邮箱
+            mail: "",
             // 密码
             password: "",
+            // 确认密码
+            confirmPassword: "",
             // 显示信息
             tips: "",
         },
         methods: {
-            // 登录
-            login() {
+            // 注册
+            registerFun() {
                 // 禁用登录按钮
-                this.loginBtn = false;
+                this.registerBtn = false;
+                // 校验密码和确认密码是否相同
+                if (this.password !== this.confirmPassword) {
+                    // 提示
+                    this.tips = "两次密码输入不相同";
+                    // 启用登录按钮
+                    this.registerBtn = true;
+                    return;
+                }
                 // 请求参数,和form或者input使用v-model绑定
                 const param = {
-                    "clientId": this.reqClientId,
-                    "responseType": "password",
-                    "state": "",
+                    "username": this.username,
+                    "mobile": this.mobile,
                     "password": this.password,
-                    "clientSecret": "",
-                    "redirectUri": "",
-                    "username": this.username
+                    "mail": this.mail
                 };
                 // 请求接口
                 axios({
                     method: "post",
-                    url: "/fantasy-oauth2/api/v1/oauth/authorize",
+                    url: "/fantasy-oauth2/api/v1/oauth/user/save",
                     data: param
                 }).then(res => {
                     // 跳转地址
-                    window.location = res.data.redirectUri;
+                    this.tips = "注册成功,两秒后跳转到首页";
+                    setTimeout(() => {
+                        window.location = "/fantasy-oauth2/mi-ma-deng-lu.html?clientId=" + this.reqClientId;
+                    }, 2000)
                 }).catch(res => {
-                    // 置空验证码
-                    this.password = "";
+                    // 禁用登录按钮
+                    this.registerBtn = true;
+                    // 提示信息
                     if (res.data && res.data.msg) {
                         this.tips = res.data.msg;
                     } else {
@@ -175,29 +190,12 @@
                     }
                 })
             },
-            // 记住用户邮箱
-            rememberUsername() {
-                // 记住用户名
-                if (this.username) {
-                    localStorage.setItem("username.mobile", this.username);
-                }
-            },
-            // 启动登录按钮
-            enableLoginBtn() {
-                // 启用登录按钮
-                this.loginBtn = true;
-            },
         },
         created() {
             // 如果URL有clientId,优先使用URL上的clientId
             let urlClientId = commonUtil.getUrlPara("clientId");
             // 赋值
             this.reqClientId = urlClientId == null ? clientId : urlClientId;
-            // 获取本地缓存的邮箱
-            let cacheUsername = localStorage.getItem("username.mobile");
-            if (cacheUsername) {
-                this.username = cacheUsername;
-            }
         }
     });
 </script>

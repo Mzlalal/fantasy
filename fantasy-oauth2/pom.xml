@@ -21,6 +21,10 @@
     <dependencies>
         <dependency>
             <groupId>com.mzlalal</groupId>
+            <artifactId>mz-mybatis-interceptor-stater</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.mzlalal</groupId>
             <artifactId>mz-system-log-stater</artifactId>
         </dependency>
         <dependency>

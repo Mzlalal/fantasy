@@ -5,7 +5,7 @@
     // win.gateway = "http://gateway.mzlalal.icu";
     win.gateway = "http://" + location.host;
     // 客户端ID
-    win.clientId = "fantasy-oauth2";
+    win.clientId = "fantasy-card";
     // https://www.axios-http.cn/docs/interceptors 拦截器文档
     // 添加请求拦截器
     axios.interceptors.request.use(function (config) {
@@ -61,6 +61,45 @@
             return [];
         }
     }
+
+    // 事件
+    win.hiddenProperty = 'hidden' in document ? 'hidden' : 'webkitHidden' in document ? 'webkitHidden' : 'mozHidden' in document ? 'mozHidden' : null;
+    win.visibilityChangeEvent = hiddenProperty.replace(/hidden/i, 'visibilitychange');
+    // 事件处理方法
+    win.onVisibilityChange = function () {
+        if (!document[hiddenProperty]) {
+            // 页面激活
+            console.log("the current window is activated")
+            if (typeof (windowActivatedFunction) === 'function') {
+                windowActivatedFunction();
+            }
+        } else {
+            console.log("the current window is deactivated")
+            // 页面失活
+            if (typeof (windowDeactivatedFunction) === 'function') {
+                windowDeactivatedFunction();
+            }
+        }
+    };
+    // 当前窗口得到焦点
+    document.addEventListener(visibilityChangeEvent, onVisibilityChange);
+
+    // 禁止双指放大
+    document.documentElement.addEventListener('touchstart', function (event) {
+        if (event.touches.length > 1) {
+            event.preventDefault();
+        }
+    }, false);
+
+    // 禁止双击放大
+    let lastTouchEnd = 0;
+    document.documentElement.addEventListener('touchend', function (event) {
+        const now = Date.now();
+        if (now - lastTouchEnd <= 300) {
+            event.preventDefault();
+        }
+        lastTouchEnd = now;
+    }, false);
 })(window, window.axios);
 
 // 时间增加Format格式化函数
