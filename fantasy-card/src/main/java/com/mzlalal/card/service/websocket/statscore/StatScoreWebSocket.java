@@ -65,7 +65,8 @@ public class StatScoreWebSocket {
         // 保存用户至房间
         roomPlayerService.initPlayer(roomId, user);
         // 上桌消息
-        String message = StrUtil.format("<span class=\"username-display\">{}</span>加入了房间", user.getUsername());
+        String message = StrUtil.format(GlobalConstant.USERNAME_DISPLAY + "加入了房间"
+                , user.getUsername());
         userSessionService.broadcast(roomId, userId, message);
     }
 
@@ -95,7 +96,7 @@ public class StatScoreWebSocket {
         // 用户退出房间
         roomPlayerService.updatePlayerStatus(roomId, userId, GlobalConstant.STATUS_OFF);
         // 下桌消息
-        String message = StrUtil.format("<span class=\"username-display\">{}</span>退出了房间", user.getUsername());
+        String message = StrUtil.format(GlobalConstant.USERNAME_DISPLAY + "退出了房间", user.getUsername());
         userSessionService.broadcast(roomId, userId, message);
     }
 

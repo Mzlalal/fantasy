@@ -48,13 +48,12 @@ public interface RoomFeignApi {
     /**
      * 保存
      *
-     * @param room 实体
      * @return Result
      */
     @ApiOperation("保存")
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 30)
-    Result<Void> save(@RequestBody RoomEntity room);
+    Result<RoomEntity> save();
 
     /**
      * 更新
@@ -76,5 +75,5 @@ public interface RoomFeignApi {
     @ApiOperation("删除")
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 50)
-    Result<Void> delete(@RequestBody Long[] ids);
+    Result<Void> delete(@RequestBody String[] ids);
 }

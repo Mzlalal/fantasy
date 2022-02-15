@@ -47,6 +47,29 @@
             <p>暂无房间</p>
         </section>
     </div>
+    <div class="ui-dialog show" v-if="existRoom">
+        <div class="ui-dialog-cnt">
+            <div class="ui-dialog-bd">
+                <h3>房间已经存在</h3>
+                <p>你于{{existRoom.createTime}}创建了房间
+                    <br/>重新开房请选择关闭房间</p>
+            </div>
+            <div class="ui-dialog-ft">
+                <button type="button" v-on:click.stop="closeRoom(existRoom.id)"> 关闭房间
+                </button>
+                <button type="button" class="btn-recommand username-display"
+                        v-on:click.stop="joinRoom(existRoom)">继续加入
+                </button>
+            </div>
+        </div>
+    </div>
+    <footer class="ui-footer ui-footer-btn">
+        <ul class="ui-tiled ui-border-t">
+            <li @click="createRoom" class="ui-border-r">
+                <div>创建房间</div>
+            </li>
+        </ul>
+    </footer>
 </div>
 </body>
 <script>
@@ -59,7 +82,9 @@
             // 搜索关键字
             searchKeyword: null,
             // 房间列表
-            roomList: []
+            roomList: [],
+            // 已存在房间
+            existRoom: null
         },
         methods: {
             // 加载房间列表
@@ -102,6 +127,49 @@
                 // 获取焦点
                 setTimeout(() => {
                     this.$refs.searchInput.focus();
+                })
+            },
+            // 创建房间
+            createRoom() {
+                // 请求
+                axios({
+                    method: "post",
+                    url: "/fantasy-card/api/v1/card/room/save",
+                }).then(res => {
+                    // 加入房间
+                    this.joinRoom(res.data);
+                }).catch(res => {
+                    // 已存在房间
+                    if (res.data.state === 1205) {
+                        this.existRoom = res.data.data;
+                        return;
+                    }
+                    if (res.data && res.data.msg) {
+                        alert(res.data.msg)
+                    } else {
+                        alert("服务器繁忙,请稍后再试")
+                    }
+                })
+            },
+            // 关闭房间
+            closeRoom(roomId) {
+                const param = [roomId];
+                // 请求
+                axios({
+                    method: "post",
+                    url: "/fantasy-card/api/v1/card/room/delete",
+                    data: param
+                }).then(res => {
+                    // 关闭弹窗
+                    this.existRoom = null;
+                    // 重新查询房间
+                    this.initRoomList();
+                }).catch(res => {
+                    if (res.data && res.data.msg) {
+                        alert(res.data.msg)
+                    } else {
+                        alert("服务器繁忙,请稍后再试")
+                    }
                 })
             }
         },

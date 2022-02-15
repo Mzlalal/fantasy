@@ -76,5 +76,5 @@ public interface ClientFeignApi {
     @ApiOperation("删除")
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 50)
-    Result<Void> delete(@RequestBody Long[] ids);
+    Result<Void> delete(@RequestBody String[] ids);
 }

@@ -34,6 +34,30 @@ public class Oauth2Context {
     }
 
     /**
+     * 获取用户ID
+     *
+     * @return String userId
+     */
+    public static String getUserId() {
+        if (CONTEXT.get() != null) {
+            return CONTEXT.get().getId();
+        }
+        return GlobalConstant.DEFAULT_TENANT_ID;
+    }
+
+    /**
+     * 获取用户姓名
+     *
+     * @return String 用户名
+     */
+    public static String getUsername() {
+        if (CONTEXT.get() != null) {
+            return CONTEXT.get().getUsername();
+        }
+        return GlobalConstant.DEFAULT_TENANT_ID;
+    }
+
+    /**
      * 获取用户租户信息
      *
      * @return String 租户

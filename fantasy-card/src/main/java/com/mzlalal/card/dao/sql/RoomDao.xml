@@ -6,6 +6,7 @@
     <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="com.mzlalal.base.entity.card.dto.RoomEntity" id="roomMap">
         <result property="id" column="id"/>
+        <result property="code" column="code"/>
         <result property="name" column="name"/>
         <result property="createTime" column="create_time"/>
     </resultMap>

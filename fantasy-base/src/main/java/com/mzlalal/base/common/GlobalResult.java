@@ -130,7 +130,11 @@ public enum GlobalResult {
     /**
      * 扣除分数失败
      */
-    ADD_PLAYER_STATUS_OFF(1204, "操作失败，接收人已经下桌");
+    ADD_PLAYER_STATUS_OFF(1204, "操作失败，接收人已经下桌"),
+    /**
+     * 房间已经存在
+     */
+    ROOM_EXIST(1205, "房间已经存在");
 
     /**
      * 状态

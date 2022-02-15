@@ -1,5 +1,6 @@
 package com.mzlalal.oauth2.controller.oauth;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.global.po.Po;
@@ -16,8 +17,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Collections;
 
 /**
  * 用户controller
@@ -79,8 +78,8 @@ public class UserController implements UserFeignApi {
     }
 
     @Override
-    public Result<Void> delete(@RequestBody Long[] ids) {
-        return userService.removeByIds(Collections.singletonList(ids)) ? Result.ok() : Result.fail();
+    public Result<Void> delete(@RequestBody String[] ids) {
+        return userService.removeByIds(CollUtil.newArrayList(ids)) ? Result.ok() : Result.fail();
     }
 
 }

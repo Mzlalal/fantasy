@@ -1,4 +1,4 @@
 
-# Fantasy Rainbow
+# Fantasy Card
 
-## 尺墨飞虹
+## 斗也斗得

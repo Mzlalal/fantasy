@@ -58,6 +58,10 @@ public interface GlobalConstant {
      * 启用
      */
     String DEFAULT_TENANT_ID = "PUBLIC";
+    /**
+     * 用户展示名HTML
+     */
+    String USERNAME_DISPLAY = "<span class=\"username-display\">{}</span>";
 
     /**
      * UUID与clientId绑定的授权码 redis key
@@ -66,7 +70,7 @@ public interface GlobalConstant {
      * @return String fantasy:{clientId}:{uuid}
      */
     static String clientIdAuthCodeRedisKey(String clientId) {
-        return StrUtil.format("fantasy:{}:{}" , clientId, IdUtil.fastSimpleUUID());
+        return StrUtil.format("fantasy:{}:{}", clientId, IdUtil.fastSimpleUUID());
     }
 
     /**
@@ -88,7 +92,7 @@ public interface GlobalConstant {
      * @return String fantasy:password:code:{clientId}:{mobile}
      */
     static String clientIdPasswordCodeRedisKey(String clientId, String mobile) {
-        return StrUtil.format("fantasy:password:code:{}:{}" , clientId, mobile);
+        return StrUtil.format("fantasy:password:code:{}:{}", clientId, mobile);
     }
 
     /**

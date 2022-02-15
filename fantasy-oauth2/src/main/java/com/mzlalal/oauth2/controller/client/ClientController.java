@@ -1,5 +1,6 @@
 package com.mzlalal.oauth2.controller.client;
 
+import cn.hutool.core.collection.CollUtil;
 import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oauth2.dto.ClientEntity;
@@ -11,8 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Collections;
 
 /**
  * 客户端controller
@@ -53,8 +52,8 @@ public class ClientController implements ClientFeignApi {
     }
 
     @Override
-    public Result<Void> delete(@RequestBody Long[] ids) {
-        return clientService.removeByIds(Collections.singletonList(ids)) ? Result.ok() : Result.fail();
+    public Result<Void> delete(@RequestBody String[] ids) {
+        return clientService.removeByIds(CollUtil.newArrayList(ids)) ? Result.ok() : Result.fail();
     }
 
 }

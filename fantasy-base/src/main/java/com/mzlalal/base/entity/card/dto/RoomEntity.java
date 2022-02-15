@@ -36,6 +36,11 @@ public class RoomEntity extends BaseEntity {
     /**
      * 房间名
      */
+    @ApiModelProperty("房间号")
+    private Integer code;
+    /**
+     * 房间名
+     */
     @ApiModelProperty("房间名")
     private String name;
     /**

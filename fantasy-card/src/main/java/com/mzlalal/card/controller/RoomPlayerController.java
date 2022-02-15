@@ -1,5 +1,6 @@
 package com.mzlalal.card.controller;
 
+import cn.hutool.core.collection.CollUtil;
 import com.mzlalal.base.entity.card.dto.RoomPlayerEntity;
 import com.mzlalal.base.entity.card.req.PlayerHistoryMessageReq;
 import com.mzlalal.base.entity.card.req.TransferScoreReq;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -68,8 +68,8 @@ public class RoomPlayerController implements RoomPlayerFeignApi {
     }
 
     @Override
-    public Result<Void> delete(@RequestBody Long[] ids) {
-        if (roomPlayerService.removeByIds(Collections.singletonList(ids))) {
+    public Result<Void> delete(@RequestBody String[] ids) {
+        if (roomPlayerService.removeByIds(CollUtil.newArrayList(ids))) {
             return Result.ok();
         }
         return Result.fail();

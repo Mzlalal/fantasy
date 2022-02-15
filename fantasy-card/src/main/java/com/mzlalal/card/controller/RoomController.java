@@ -1,9 +1,15 @@
 package com.mzlalal.card.controller;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
+import com.mzlalal.base.common.GlobalConstant;
+import com.mzlalal.base.common.GlobalResult;
 import com.mzlalal.base.entity.card.dto.RoomEntity;
 import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.feign.card.RoomFeignApi;
+import com.mzlalal.base.oauth2.Oauth2Context;
 import com.mzlalal.base.util.Page;
 import com.mzlalal.card.service.RoomService;
 import io.swagger.annotations.Api;
@@ -12,8 +18,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Collections;
 
 /**
  * 房间controller
@@ -46,9 +50,27 @@ public class RoomController implements RoomFeignApi {
     }
 
     @Override
-    public Result<Void> save(@RequestBody RoomEntity room) {
+    public Result<RoomEntity> save() {
+        // 用户名
+        String username = Oauth2Context.getUsername();
+        // 用户ID
+        String userId = Oauth2Context.getUserId();
+        // 判断房间是否存在
+        RoomEntity existRoom = roomService.getById(userId);
+        // 存在直接返回
+        if (existRoom != null) {
+            return GlobalResult.ROOM_EXIST.result(existRoom);
+        }
+        // 房间号
+        int code = RandomUtil.randomInt(1000, 9999);
+        // 格式房间名
+        String roomName = StrUtil.format(GlobalConstant.USERNAME_DISPLAY + "</span>（{}）的房间"
+                , username, code);
+        // 创建房间
+        RoomEntity room = RoomEntity.builder().id(userId).name(roomName).code(code).build();
+        // 报错到数据库
         if (roomService.save(room)) {
-            return Result.ok();
+            return Result.ok(room);
         }
         return Result.fail();
     }
@@ -62,8 +84,8 @@ public class RoomController implements RoomFeignApi {
     }
 
     @Override
-    public Result<Void> delete(@RequestBody Long[] ids) {
-        if (roomService.removeByIds(Collections.singletonList(ids))) {
+    public Result<Void> delete(@RequestBody String[] ids) {
+        if (roomService.removeByIds(CollUtil.newArrayList(ids))) {
             return Result.ok();
         }
         return Result.fail();
