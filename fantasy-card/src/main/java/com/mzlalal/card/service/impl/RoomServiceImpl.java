@@ -1,6 +1,7 @@
 package com.mzlalal.card.service.impl;
 
 import cn.hutool.core.thread.ThreadUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mzlalal.base.entity.card.dto.RoomEntity;
@@ -31,7 +32,12 @@ public class RoomServiceImpl extends ServiceImpl<RoomDao, RoomEntity> implements
     @Override
     public Page<RoomEntity> queryPage(Po<RoomEntity> po) {
         // 查询参数
-        QueryWrapper<RoomEntity> wrapper = new QueryWrapper<>(po.getEntity());
+        QueryWrapper<RoomEntity> wrapper = new QueryWrapper<>();
+        // 房间名
+        String name = po.getEntity().getName();
+        if (StrUtil.isNotBlank(name)) {
+            wrapper.like("name", name);
+        }
         // 异步查询总行数 selectList一定要在future之后
         Future<Long> future = ThreadUtil.execAsync(() -> baseMapper.selectCount(wrapper));
         // 查询结果集
