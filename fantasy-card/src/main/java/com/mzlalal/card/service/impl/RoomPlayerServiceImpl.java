@@ -11,6 +11,7 @@ import com.mzlalal.base.common.GlobalResult;
 import com.mzlalal.base.entity.card.dto.RoomEntity;
 import com.mzlalal.base.entity.card.dto.RoomPlayerEntity;
 import com.mzlalal.base.entity.card.req.PlayerHistoryMessageReq;
+import com.mzlalal.base.entity.card.req.PlayerOutOrJoinRoomReq;
 import com.mzlalal.base.entity.card.req.TransferScoreReq;
 import com.mzlalal.base.entity.global.WsResult;
 import com.mzlalal.base.entity.global.po.Po;
@@ -97,39 +98,75 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
     }
 
     @Override
-    public RoomPlayerEntity initPlayer(String roomId, UserEntity user) {
+    public void initPlayer(String roomId, UserEntity user) {
         // 校验用户
         AssertUtil.notNull(user, "用户不存在");
         String userId = user.getId();
+        String username = user.getUsername();
         // 检验房间
         RoomEntity room = roomService.getById(roomId);
         AssertUtil.notNull(room, "房间不存在");
 
-        // 判断是否历史上桌
+        // 是否已上桌
         RoomPlayerEntity existPlayer = this.getOneByRoomIdAndUserId(roomId, userId);
         if (existPlayer != null) {
-            // 下桌,重新上桌
-            if (GlobalConstant.STATUS_OFF.equals(existPlayer.getPlayerStatus())) {
-                existPlayer.setPlayerStatus(GlobalConstant.STATUS_ON);
-                // 更新数据库状态
-                this.updatePlayerStatus(roomId, userId, GlobalConstant.STATUS_ON);
-            }
-            return existPlayer;
+            // 进入房间消息
+            String message = StrUtil.format(GlobalConstant.USERNAME_DISPLAY + "进入了房间"
+                    , user.getUsername());
+            userSessionService.broadcast(roomId, userId, message);
+            return;
         }
 
         // 未上桌,初始化选手信息
         RoomPlayerEntity roomPlayer = RoomPlayerEntity.builder()
                 .id(userId)
-                .playerName(user.getUsername())
+                .playerName(username)
                 .playerScore(0)
                 .playerStatus(GlobalConstant.STATUS_ON)
                 .roomId(roomId)
                 .roomName(room.getName())
                 .build();
+        AssertUtil.isTrue(this.save(roomPlayer), "上桌失败,请稍后再试");
 
-        // 保存选手信息
-        AssertUtil.isTrue(this.save(roomPlayer), "加入房间失败,请稍后再试");
-        return roomPlayer;
+        // 上桌消息
+        PlayerOutOrJoinRoomReq req = PlayerOutOrJoinRoomReq.builder()
+                .roomId(roomId)
+                .userId(userId)
+                .username(username)
+                .build();
+        this.playerJoinRoom(req);
+    }
+
+    @Override
+    public void playerJoinRoom(PlayerOutOrJoinRoomReq req) {
+        // 用户ID
+        String userId = req.getUserId();
+        // 房间ID
+        String roomId = req.getRoomId();
+
+        // 用户退出房间
+        this.updatePlayerStatus(roomId, userId, GlobalConstant.STATUS_ON);
+
+        // 上桌消息
+        String message = StrUtil.format(GlobalConstant.USERNAME_DISPLAY + "上桌了" , req.getUsername());
+        // 广播消息
+        userSessionService.broadcast(roomId, userId, message);
+    }
+
+    @Override
+    public void playerOutRoom(@Validated PlayerOutOrJoinRoomReq req) {
+        // 用户ID
+        String userId = req.getUserId();
+        // 房间ID
+        String roomId = req.getRoomId();
+
+        // 用户退出房间
+        this.updatePlayerStatus(roomId, userId, GlobalConstant.STATUS_OFF);
+
+        // 下桌消息
+        String message = StrUtil.format(GlobalConstant.USERNAME_DISPLAY + "下桌了" , req.getUsername());
+        // 广播消息
+        userSessionService.broadcast(roomId, userId, message);
     }
 
     @Override
@@ -155,6 +192,7 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
 
         // 需要更新的值
         RoomPlayerEntity entity = RoomPlayerEntity.builder().playerStatus(status).build();
+
         // 更新
         AssertUtil.isTrue(this.update(entity, updateWrapper), "更新用户状态失败,可能未加入房间");
     }

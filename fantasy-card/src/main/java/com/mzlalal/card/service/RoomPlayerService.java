@@ -2,6 +2,7 @@ package com.mzlalal.card.service;
 
 import com.mzlalal.base.entity.card.dto.RoomPlayerEntity;
 import com.mzlalal.base.entity.card.req.PlayerHistoryMessageReq;
+import com.mzlalal.base.entity.card.req.PlayerOutOrJoinRoomReq;
 import com.mzlalal.base.entity.card.req.TransferScoreReq;
 import com.mzlalal.base.entity.global.WsResult;
 import com.mzlalal.base.entity.oauth2.dto.UserEntity;
@@ -31,9 +32,22 @@ public interface RoomPlayerService extends BaseService<RoomPlayerEntity> {
      *
      * @param roomId 房间ID
      * @param user   用户信息
-     * @return RoomPlayerEntity
      */
-    RoomPlayerEntity initPlayer(String roomId, UserEntity user);
+    void initPlayer(String roomId, UserEntity user);
+
+    /**
+     * 用户加入房间
+     *
+     * @param req 请求
+     */
+    void playerJoinRoom(PlayerOutOrJoinRoomReq req);
+
+    /**
+     * 用户退出房间
+     *
+     * @param req 请求
+     */
+    void playerOutRoom(PlayerOutOrJoinRoomReq req);
 
     /**
      * 根据房间号统计房间内的选手信息

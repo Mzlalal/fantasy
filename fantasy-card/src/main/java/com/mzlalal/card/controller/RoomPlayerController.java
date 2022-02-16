@@ -3,6 +3,7 @@ package com.mzlalal.card.controller;
 import cn.hutool.core.collection.CollUtil;
 import com.mzlalal.base.entity.card.dto.RoomPlayerEntity;
 import com.mzlalal.base.entity.card.req.PlayerHistoryMessageReq;
+import com.mzlalal.base.entity.card.req.PlayerOutOrJoinRoomReq;
 import com.mzlalal.base.entity.card.req.TransferScoreReq;
 import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.global.WsResult;
@@ -73,6 +74,18 @@ public class RoomPlayerController implements RoomPlayerFeignApi {
             return Result.ok();
         }
         return Result.fail();
+    }
+
+    @Override
+    public Result<Void> playerJoinRoom(PlayerOutOrJoinRoomReq req) {
+        roomPlayerService.playerJoinRoom(req);
+        return Result.ok();
+    }
+
+    @Override
+    public Result<Void> playerOutRoom(@Validated @RequestBody PlayerOutOrJoinRoomReq req) {
+        roomPlayerService.playerOutRoom(req);
+        return Result.ok();
     }
 
     @Override

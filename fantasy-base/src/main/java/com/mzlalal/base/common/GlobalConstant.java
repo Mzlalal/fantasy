@@ -51,7 +51,7 @@ public interface GlobalConstant {
      */
     String STATUS_ON = "1";
     /**
-     * 启用
+     * 禁用
      */
     String STATUS_OFF = "0";
     /**

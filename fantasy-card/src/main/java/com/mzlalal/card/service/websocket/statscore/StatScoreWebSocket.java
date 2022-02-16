@@ -1,9 +1,7 @@
 package com.mzlalal.card.service.websocket.statscore;
 
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import com.alibaba.fastjson.JSON;
-import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.common.GlobalResult;
 import com.mzlalal.base.entity.oauth2.dto.UserEntity;
 import com.mzlalal.card.service.RoomPlayerService;
@@ -64,10 +62,6 @@ public class StatScoreWebSocket {
         userSessionService.saveByRoomIdAndUserId(roomId, userId, session);
         // 保存用户至房间
         roomPlayerService.initPlayer(roomId, user);
-        // 上桌消息
-        String message = StrUtil.format(GlobalConstant.USERNAME_DISPLAY + "加入了房间"
-                , user.getUsername());
-        userSessionService.broadcast(roomId, userId, message);
     }
 
     /**
@@ -93,11 +87,6 @@ public class StatScoreWebSocket {
         String userId = user.getId();
         // 根据房间ID和用户ID关闭会话
         userSessionService.closeByRoomIdAndUserId(roomId, userId);
-        // 用户退出房间
-        roomPlayerService.updatePlayerStatus(roomId, userId, GlobalConstant.STATUS_OFF);
-        // 下桌消息
-        String message = StrUtil.format(GlobalConstant.USERNAME_DISPLAY + "退出了房间", user.getUsername());
-        userSessionService.broadcast(roomId, userId, message);
     }
 
     /**

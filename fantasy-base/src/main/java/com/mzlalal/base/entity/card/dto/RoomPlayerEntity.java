@@ -37,7 +37,7 @@ public class RoomPlayerEntity extends BaseEntity {
     /**
      * 选手状态=0-下桌结算,1-上桌
      */
-    @ApiModelProperty("选手状态=0-下桌结算,1-上桌")
+    @ApiModelProperty("选手状态=0-下桌,1-上桌")
     private String playerStatus;
     /**
      * 选手积分

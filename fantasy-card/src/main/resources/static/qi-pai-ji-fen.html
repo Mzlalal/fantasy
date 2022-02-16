@@ -16,10 +16,11 @@
 </style>
 <body>
 <div id="app">
-    <header class="ui-header ui-header-positive ui-border-b">
-        <a class="position-left" href="/fantasy-card/fang-jian-lie-biao.html">返回</a>
-        <h1>{{roomCode || "斗也斗的"}}</h1>
-        <span class="position-right">我要下桌</span>
+    <header class="ui-header ui-header-positive ui-border-b text-center">
+        <a class="position-left username-display" href="/fantasy-card/fang-jian-lie-biao.html">返回</a>
+        <span class="font-weight-bolder font-weight-20px">{{roomCode || "斗也斗的"}}</span>
+        <span class="position-right username-display" @click="playerOutRoom" v-if="userStatus === '1'">我要下桌</span>
+        <span class="position-right" @click="playerJoinRoom" v-if="userStatus === '0'">我要上桌</span>
     </header>
     <div class="ui-form ui-border-t ui-container">
         <ul class="ui-row ui-whitespace overflow-auto" style="max-height: 220px;">
@@ -64,7 +65,7 @@
                 </div>
                 <div class="ui-form-item ui-border-b">
                     <div class="ui-input ui-input-text">
-                        <input type="tel" class="text-center padding-0" v-model="transferAmount"
+                        <input type="number" class="text-center padding-0" v-model="transferAmount"
                                minlength="1" maxlength="4" placeholder="请输入转账数额"/>
                     </div>
                 </div>
@@ -120,6 +121,12 @@
                 console.log(res);
                 // 设置vue变量
                 vm.playerList = commonUtil.getPageList(res);
+                // 遍历当前用户的上桌状态
+                vm.playerList.forEach(item => {
+                    if (vm.userId === item.id) {
+                        vm.userStatus = item.playerStatus;
+                    }
+                })
                 // 消息列表
                 vm.messageList.push({"msg": res.msg, "time": res.time, "from": res.from});
                 // 新消息的滚动
@@ -142,6 +149,8 @@
             userId: "",
             // 用户名称
             username: "",
+            // 用户上桌状态
+            userStatus: null,
             // 房间号
             roomCode: null,
             // 是否自动滚动
@@ -216,6 +225,50 @@
                 }).then(res => {
                     // 隐藏窗口
                     this.cancelTransfer();
+                }).catch(res => {
+                    if (res.data && res.data.msg) {
+                        alert(res.data.msg)
+                    } else {
+                        alert("服务器繁忙,请稍后再试")
+                    }
+                })
+            },
+            // 用户下桌
+            playerOutRoom() {
+                const param = {
+                    "roomId": roomId,
+                    "userId": this.userId,
+                    "username": this.username,
+                }
+                // 请求
+                axios({
+                    method: "post",
+                    url: "/fantasy-card/api/v1/card/room.player/player.out.room",
+                    data: param
+                }).then(res => {
+
+                }).catch(res => {
+                    if (res.data && res.data.msg) {
+                        alert(res.data.msg)
+                    } else {
+                        alert("服务器繁忙,请稍后再试")
+                    }
+                })
+            },
+            // 用户上桌
+            playerJoinRoom() {
+                const param = {
+                    "roomId": roomId,
+                    "userId": this.userId,
+                    "username": this.username,
+                }
+                // 请求
+                axios({
+                    method: "post",
+                    url: "/fantasy-card/api/v1/card/room.player/player.join.room",
+                    data: param
+                }).then(res => {
+
                 }).catch(res => {
                     if (res.data && res.data.msg) {
                         alert(res.data.msg)

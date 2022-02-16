@@ -31,9 +31,9 @@ public class Oauth2MetaObjectConfig extends BaseMetaObjectInterceptor {
         String tenantId = Oauth2Context.getTenantId();
         // 基础参数列表
         return MapUtil.<String, Object>builder()
-                .put("createTime", now)
-                .put("updateTime", now)
-                .put("tenantId", tenantId)
+                .put("createTime" , now)
+                .put("updateTime" , now)
+                .put("tenantId" , tenantId)
                 .build();
     }
 }

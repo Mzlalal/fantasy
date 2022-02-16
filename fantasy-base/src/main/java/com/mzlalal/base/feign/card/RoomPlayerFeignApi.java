@@ -4,6 +4,7 @@ import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.entity.card.dto.RoomPlayerEntity;
 import com.mzlalal.base.entity.card.req.PlayerHistoryMessageReq;
+import com.mzlalal.base.entity.card.req.PlayerOutOrJoinRoomReq;
 import com.mzlalal.base.entity.card.req.TransferScoreReq;
 import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.global.WsResult;
@@ -77,9 +78,27 @@ public interface RoomPlayerFeignApi {
      * @return Result
      */
     @ApiOperation("删除")
-    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @RequestMapping(value = "/delete" , method = RequestMethod.POST)
     @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 50)
     Result<Void> delete(@RequestBody String[] ids);
+
+    /**
+     * 房间内的选手下桌请求
+     *
+     * @param req 房间内的选手下桌请求
+     */
+    @ApiOperation("房间内的选手下桌")
+    @RequestMapping(value = "/player.join.room" , method = RequestMethod.POST)
+    Result<Void> playerJoinRoom(@RequestBody PlayerOutOrJoinRoomReq req);
+
+    /**
+     * 房间内的选手下桌请求
+     *
+     * @param req 房间内的选手下桌请求
+     */
+    @ApiOperation("房间内的选手下桌")
+    @RequestMapping(value = "/player.out.room" , method = RequestMethod.POST)
+    Result<Void> playerOutRoom(@RequestBody PlayerOutOrJoinRoomReq req);
 
     /**
      * 转账分数
@@ -88,7 +107,7 @@ public interface RoomPlayerFeignApi {
      * @return Result
      */
     @ApiOperation("转账分数")
-    @RequestMapping(value = "/transfer.score", method = RequestMethod.POST)
+    @RequestMapping(value = "/transfer.score" , method = RequestMethod.POST)
     Result<Void> transferScore(@RequestBody TransferScoreReq req);
 
     /**

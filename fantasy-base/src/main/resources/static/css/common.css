@@ -5,14 +5,20 @@ body {
 
 /* 名称显示 */
 .username-display {
-    color: #18b4ed;
+    color: #18b4ed !important;
     font-weight: bolder;
+}
+
+/* 头部显示 */
+.ui-header-positive {
+    background-color: white;
+    color: #18b4ed;
 }
 
 /* 定位右边 */
 .position-right {
     display: block;
-    position: absolute;
+    position: fixed;
     right: 10px;
     top: 0;
 }
@@ -20,7 +26,7 @@ body {
 /* 定位左边 */
 .position-left {
     display: block;
-    position: absolute;
+    position: fixed;
     left: 10px;
     top: 0;
 }
@@ -141,6 +147,16 @@ body {
 /* 加粗 */
 .font-weight-bolder {
     font-weight: bolder;
+}
+
+/* 字体18像素 */
+.font-weight-18px {
+    font-size: 18px;
+}
+
+/* 字体18像素 */
+.font-weight-20px {
+    font-size: 20px;
 }
 
 /* 自动高度 */
