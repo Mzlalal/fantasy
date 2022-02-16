@@ -16,13 +16,13 @@
 </style>
 <body>
 <div id="app">
-    <div class="ui-form ui-border-t">
-        <div class="ui-tooltips-cnt ui-border-b text-center">
-            <label>
-                斗也斗得
-            </label>
-        </div>
-        <ul class="ui-row ui-whitespace overflow-auto" style="max-height: 180px;">
+    <header class="ui-header ui-header-positive ui-border-b">
+        <a class="position-left" href="/fantasy-card/fang-jian-lie-biao.html">返回</a>
+        <h1>{{roomCode || "斗也斗的"}}</h1>
+        <span class="position-right">我要下桌</span>
+    </header>
+    <div class="ui-form ui-border-t ui-container">
+        <ul class="ui-row ui-whitespace overflow-auto" style="max-height: 220px;">
             <li class="ui-col ui-col-25 margin-top-1em" v-for="player in playerList"
                 @click="selectTransferTarget(player)">
                 <div class="ui-avatar-lg background-dingding text-line-height-70px text-center background-A-c"
@@ -34,15 +34,15 @@
                 </div>
             </li>
         </ul>
-        <ul class="ui-list ui-list-function ui-border-tb overflow-auto margin-top-1em"
-            style="max-height: calc(100vh - 270px)" @scroll="onScroll" ref="scrollTarget">
-            <transition name="slide-fade">
-                <div class="ui-tooltips ui-tooltips-warn" v-if="tips">
-                    <div class="ui-tooltips-cnt ui-border-b">
-                        <i></i>{{tips}}
-                    </div>
+        <transition name="slide-fade">
+            <div class="ui-tooltips ui-tooltips-warn" v-if="tips">
+                <div class="ui-tooltips-cnt ui-border-b">
+                    <i></i>{{tips}}
                 </div>
-            </transition>
+            </div>
+        </transition>
+        <ul class="ui-list ui-list-function ui-border-tb overflow-auto margin-top-1em"
+            style="max-height: calc(100vh - 300px)" @scroll="onScroll" ref="scrollTarget">
             <li v-for="item in messageList">
                 <div class="ui-list-info ui-border-t" v-bind:class="{'from-myself':item.from === userId}">
                     <p class="ui-nowrap">{{item.time}}</p>
@@ -142,6 +142,8 @@
             userId: "",
             // 用户名称
             username: "",
+            // 房间号
+            roomCode: null,
             // 是否自动滚动
             autoScroll: true,
             // 转账数额
@@ -237,6 +239,11 @@
                 userInfo = JSON.parse(userInfo)
                 this.userId = userInfo.id;
                 this.username = userInfo.username;
+            }
+            // 获取房间号
+            let roomCode = localStorage.getItem("user.room.code");
+            if (roomCode) {
+                this.roomCode = roomCode;
             }
 
             // 连接websocket
