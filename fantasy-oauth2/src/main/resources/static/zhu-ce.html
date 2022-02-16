@@ -176,6 +176,14 @@
                 }).then(res => {
                     // 跳转地址
                     this.tips = "注册成功,两秒后跳转到首页";
+                    // 记住用户手机号
+                    if (this.username) {
+                        localStorage.setItem("username.mobile", this.username);
+                    }
+                    // 记住用户邮箱
+                    if (this.mail) {
+                        localStorage.setItem("username.mail", this.mail);
+                    }
                     setTimeout(() => {
                         window.location = "/fantasy-oauth2/mi-ma-deng-lu.html?clientId=" + this.reqClientId;
                     }, 2000)
