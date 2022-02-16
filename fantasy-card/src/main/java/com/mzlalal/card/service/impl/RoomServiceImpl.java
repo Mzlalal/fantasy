@@ -4,15 +4,12 @@ import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.entity.card.dto.RoomEntity;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.util.AssertUtil;
 import com.mzlalal.base.util.Page;
 import com.mzlalal.card.dao.RoomDao;
-import com.mzlalal.card.service.RoomPlayerService;
 import com.mzlalal.card.service.RoomService;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,20 +24,6 @@ import java.util.concurrent.Future;
  */
 @Service("roomServiceImpl")
 public class RoomServiceImpl extends ServiceImpl<RoomDao, RoomEntity> implements RoomService {
-
-    /**
-     * 房间内的选手操作
-     */
-    private final RoomPlayerService roomPlayerService;
-    /**
-     * string redis操作模板
-     */
-    private final StringRedisTemplate stringRedisTemplate;
-
-    public RoomServiceImpl(RoomPlayerService roomPlayerService, StringRedisTemplate stringRedisTemplate) {
-        this.roomPlayerService = roomPlayerService;
-        this.stringRedisTemplate = stringRedisTemplate;
-    }
 
     /**
      * 根据 PagePara 查询分页
@@ -72,10 +55,5 @@ public class RoomServiceImpl extends ServiceImpl<RoomDao, RoomEntity> implements
     public void closeRoom(String roomId) {
         // 删除房间
         AssertUtil.isTrue(baseMapper.deleteById(roomId) > 0, "关闭房间失败,可能房间不存在");
-        // 删除选手
-        roomPlayerService.closeRoom(roomId);
-        // 删除房间消息
-        String redisKey = GlobalConstant.roomMessageRedisKey(roomId);
-        stringRedisTemplate.delete(redisKey);
     }
 }

@@ -84,7 +84,7 @@ public interface RoomPlayerService extends BaseService<RoomPlayerEntity> {
     /**
      * 关闭房间
      *
-     * @param roomId 房间ID
+     * @param ids 房间ID
      */
-    void closeRoom(String roomId);
+    void closeRoom(String[] ids);
 }

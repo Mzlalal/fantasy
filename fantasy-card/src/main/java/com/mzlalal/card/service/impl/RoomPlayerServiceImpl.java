@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Future;
@@ -253,12 +254,24 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
     }
 
     @Override
-    public void closeRoom(String roomId) {
-        // 删除房间ID内的所有选手
-        RoomPlayerEntity entity = RoomPlayerEntity.builder().roomId(roomId).build();
-        QueryWrapper<RoomPlayerEntity> queryWrapper = new QueryWrapper<>(entity);
+    @Transactional(rollbackFor = Exception.class)
+    public void closeRoom(String[] ids) {
+        // 房间ID集合
+        AssertUtil.notEmpty(ids, "房间ID集合不能为空");
+        ArrayList<String> roomIdList = CollUtil.newArrayList(ids);
 
-        // 删除
-        baseMapper.delete(queryWrapper);
+        // 删除房间内的所有选手
+        QueryWrapper<RoomPlayerEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("room_id" , roomIdList);
+        AssertUtil.isTrue(baseMapper.delete(queryWrapper) > 0, "关闭房间失败,可能房间不存在");
+
+        // 删除房间
+        roomService.removeByIds(roomIdList);
+
+        // 删除房间redis消息
+        for (String roomId : roomIdList) {
+            String redisKey = GlobalConstant.roomMessageRedisKey(roomId);
+            redisTemplate.delete(redisKey);
+        }
     }
 }

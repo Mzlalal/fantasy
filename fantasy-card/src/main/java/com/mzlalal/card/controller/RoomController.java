@@ -1,6 +1,5 @@
 package com.mzlalal.card.controller;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.mzlalal.base.common.GlobalConstant;
@@ -11,6 +10,7 @@ import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.feign.card.RoomFeignApi;
 import com.mzlalal.base.oauth2.Oauth2Context;
 import com.mzlalal.base.util.Page;
+import com.mzlalal.card.service.RoomPlayerService;
 import com.mzlalal.card.service.RoomService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +32,12 @@ public class RoomController implements RoomFeignApi {
 
     private final RoomService roomService;
 
+    private final RoomPlayerService roomPlayerService;
+
     @Autowired
-    public RoomController(RoomService roomService) {
+    public RoomController(RoomService roomService, RoomPlayerService roomPlayerService) {
         this.roomService = roomService;
+        this.roomPlayerService = roomPlayerService;
     }
 
     @Override
@@ -85,10 +88,8 @@ public class RoomController implements RoomFeignApi {
 
     @Override
     public Result<Void> delete(@RequestBody String[] ids) {
-        if (roomService.removeByIds(CollUtil.newArrayList(ids))) {
-            return Result.ok();
-        }
-        return Result.fail();
+        roomPlayerService.closeRoom(ids);
+        return Result.ok();
     }
 
 }
