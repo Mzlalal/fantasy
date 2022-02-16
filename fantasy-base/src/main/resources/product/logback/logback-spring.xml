@@ -1,6 +1,6 @@
 <configuration scan="true" scanPeriod="60 seconds" debug="false">
     <!-- 日志存放路径 -->
-    <property name="log.path" value="~/logs"/>
+    <property name="log.path" value="/root/logs"/>
     <!-- 当前运行环境 -->
     <springProperty scope="context" name="spring.profiles.active" source="spring.profiles.active"/>
     <!-- 应用名 -->
@@ -74,7 +74,7 @@
     <!-- 系统模块日志级别控制  -->
     <logger name="com.mzlalal" level="info"/>
     <!-- Spring日志级别控制  -->
-    <logger name="org.springframework" level="warn"/>
+    <logger name="org.springframework" level="info"/>
 
     <!--系统操作日志-->
     <root level="info">
