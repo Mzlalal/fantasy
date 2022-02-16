@@ -80,13 +80,13 @@ public class UserSessionService {
                 oldSession.getBasicRemote().sendText(JSON.toJSONString(GlobalResult.ANOTHER_LOGIN.result()));
                 oldSession.close();
             } catch (IOException e) {
-                log.error(JSON.toJSONString(oldSession.getPathParameters()) + "关闭意外出错", e);
+                log.error(JSON.toJSONString(oldSession.getPathParameters()) + "关闭意外出错" , e);
             }
         }
         // 保存用户会话
         UserSessionManager.put(userId, session);
-        // 保存用户ID至房间中
-        String roomIdRedisKey = GlobalConstant.roomIdRedisKey(roomId);
+        // 保存用户会话至redis房间中
+        String roomIdRedisKey = GlobalConstant.roomSessionRedisKey(roomId);
         stringRedisTemplate.opsForSet().add(roomIdRedisKey, userId);
     }
 
@@ -99,8 +99,8 @@ public class UserSessionService {
     public void closeByRoomIdAndUserId(String roomId, String userId) {
         // 保存用户会话
         UserSessionManager.remove(userId);
-        // 保存用户ID至房间中
-        String roomIdRedisKey = GlobalConstant.roomIdRedisKey(roomId);
+        // 保存用户会话至redis房间中
+        String roomIdRedisKey = GlobalConstant.roomSessionRedisKey(roomId);
         stringRedisTemplate.opsForSet().remove(roomIdRedisKey, userId);
     }
 
@@ -113,7 +113,7 @@ public class UserSessionService {
      */
     public void broadcast(String roomId, String from, String message) {
         // 查询当前房间内的选手信息
-        List<RoomPlayerEntity> roomPlayerList = roomPlayerService.queryRoomPlayerByRoomId(roomId);
+        List<RoomPlayerEntity> roomPlayerList = roomPlayerService.getRoomPlayerListByRoomId(roomId);
         if (CollUtil.isEmpty(roomPlayerList)) {
             return;
         }
@@ -139,7 +139,7 @@ public class UserSessionService {
             return;
         }
         // 获取当前房间的人员
-        String roomIdRedisKey = GlobalConstant.roomIdRedisKey(roomId);
+        String roomIdRedisKey = GlobalConstant.roomSessionRedisKey(roomId);
         Set<String> memberSet = stringRedisTemplate.opsForSet().members(roomIdRedisKey);
         // 房间没有选手了
         if (CollUtil.isEmpty(memberSet)) {
@@ -157,7 +157,7 @@ public class UserSessionService {
             try {
                 session.getBasicRemote().sendText(JSON.toJSONString(result));
             } catch (IOException e) {
-                log.error(JSON.toJSONString(pathParameterMap) + "关闭意外出错", e);
+                log.error(JSON.toJSONString(pathParameterMap) + "关闭意外出错" , e);
             }
         });
         // 保存消息

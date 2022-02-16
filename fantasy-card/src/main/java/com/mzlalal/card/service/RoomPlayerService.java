@@ -33,7 +33,7 @@ public interface RoomPlayerService extends BaseService<RoomPlayerEntity> {
      * @param roomId 房间ID
      * @param user   用户信息
      */
-    void initPlayer(String roomId, UserEntity user);
+    void playerInit(String roomId, UserEntity user);
 
     /**
      * 用户加入房间
@@ -55,7 +55,7 @@ public interface RoomPlayerService extends BaseService<RoomPlayerEntity> {
      * @param roomId 房间ID
      * @return StatScoreVo
      */
-    List<RoomPlayerEntity> queryRoomPlayerByRoomId(String roomId);
+    List<RoomPlayerEntity> getRoomPlayerListByRoomId(String roomId);
 
     /**
      * 更新用户状态
@@ -64,7 +64,7 @@ public interface RoomPlayerService extends BaseService<RoomPlayerEntity> {
      * @param userId 用户ID
      * @param status 状态
      */
-    void updatePlayerStatus(String roomId, String userId, String status);
+    void updateStatus(String roomId, String userId, String status);
 
     /**
      * 转账分数
@@ -79,5 +79,12 @@ public interface RoomPlayerService extends BaseService<RoomPlayerEntity> {
      * @param req 查询房间选手的历史消息请求
      * @return List<WsResult>
      */
-    List<WsResult<Void>> queryRoomPlayerHistoryMessage(PlayerHistoryMessageReq req);
+    List<WsResult<Void>> getRoomHistoryMessage(PlayerHistoryMessageReq req);
+
+    /**
+     * 关闭房间
+     *
+     * @param roomId 房间ID
+     */
+    void closeRoom(String roomId);
 }

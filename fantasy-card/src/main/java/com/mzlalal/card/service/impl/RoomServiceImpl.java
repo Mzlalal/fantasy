@@ -4,12 +4,17 @@ import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.entity.card.dto.RoomEntity;
 import com.mzlalal.base.entity.global.po.Po;
+import com.mzlalal.base.util.AssertUtil;
 import com.mzlalal.base.util.Page;
 import com.mzlalal.card.dao.RoomDao;
+import com.mzlalal.card.service.RoomPlayerService;
 import com.mzlalal.card.service.RoomService;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.concurrent.Future;
@@ -24,6 +29,20 @@ import java.util.concurrent.Future;
 public class RoomServiceImpl extends ServiceImpl<RoomDao, RoomEntity> implements RoomService {
 
     /**
+     * 房间内的选手操作
+     */
+    private final RoomPlayerService roomPlayerService;
+    /**
+     * string redis操作模板
+     */
+    private final StringRedisTemplate stringRedisTemplate;
+
+    public RoomServiceImpl(RoomPlayerService roomPlayerService, StringRedisTemplate stringRedisTemplate) {
+        this.roomPlayerService = roomPlayerService;
+        this.stringRedisTemplate = stringRedisTemplate;
+    }
+
+    /**
      * 根据 PagePara 查询分页
      *
      * @param po 分页参数
@@ -36,7 +55,7 @@ public class RoomServiceImpl extends ServiceImpl<RoomDao, RoomEntity> implements
         // 房间名
         String name = po.getEntity().getName();
         if (StrUtil.isNotBlank(name)) {
-            wrapper.like("name", name);
+            wrapper.like("name" , name);
         }
         // 异步查询总行数 selectList一定要在future之后
         Future<Long> future = ThreadUtil.execAsync(() -> baseMapper.selectCount(wrapper));
@@ -46,5 +65,17 @@ public class RoomServiceImpl extends ServiceImpl<RoomDao, RoomEntity> implements
         Long count = this.getTotalResult(future, log);
         // 返回结果
         return new Page<>(entityList, count, po.getPageInfo());
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void closeRoom(String roomId) {
+        // 删除房间
+        AssertUtil.isTrue(baseMapper.deleteById(roomId) > 0, "关闭房间失败,可能房间不存在");
+        // 删除选手
+        roomPlayerService.closeRoom(roomId);
+        // 删除房间消息
+        String redisKey = GlobalConstant.roomMessageRedisKey(roomId);
+        stringRedisTemplate.delete(redisKey);
     }
 }

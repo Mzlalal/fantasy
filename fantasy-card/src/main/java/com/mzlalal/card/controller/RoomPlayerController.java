@@ -97,7 +97,7 @@ public class RoomPlayerController implements RoomPlayerFeignApi {
     @Override
     public Result<WsResult<Void>> queryRoomPlayerHistoryMessage(@Validated @RequestBody PlayerHistoryMessageReq req) {
         // 获取历史消息
-        List<WsResult<Void>> historyList = roomPlayerService.queryRoomPlayerHistoryMessage(req);
+        List<WsResult<Void>> historyList = roomPlayerService.getRoomHistoryMessage(req);
         // 封装到分页信息
         Page<WsResult<Void>> page = new Page<>(historyList, historyList.size(), new PageInfo());
         return Result.ok(page);

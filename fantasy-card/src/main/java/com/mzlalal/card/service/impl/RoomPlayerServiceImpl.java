@@ -31,6 +31,7 @@ import org.springframework.validation.annotation.Validated;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 房间内的选手ServiceImpl
@@ -98,7 +99,7 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
     }
 
     @Override
-    public void initPlayer(String roomId, UserEntity user) {
+    public void playerInit(String roomId, UserEntity user) {
         // 校验用户
         AssertUtil.notNull(user, "用户不存在");
         String userId = user.getId();
@@ -145,7 +146,7 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
         String roomId = req.getRoomId();
 
         // 用户退出房间
-        this.updatePlayerStatus(roomId, userId, GlobalConstant.STATUS_ON);
+        this.updateStatus(roomId, userId, GlobalConstant.STATUS_ON);
 
         // 上桌消息
         String message = StrUtil.format(GlobalConstant.USERNAME_DISPLAY + "上桌了" , req.getUsername());
@@ -161,7 +162,7 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
         String roomId = req.getRoomId();
 
         // 用户退出房间
-        this.updatePlayerStatus(roomId, userId, GlobalConstant.STATUS_OFF);
+        this.updateStatus(roomId, userId, GlobalConstant.STATUS_OFF);
 
         // 下桌消息
         String message = StrUtil.format(GlobalConstant.USERNAME_DISPLAY + "下桌了" , req.getUsername());
@@ -170,7 +171,7 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
     }
 
     @Override
-    public List<RoomPlayerEntity> queryRoomPlayerByRoomId(String roomId) {
+    public List<RoomPlayerEntity> getRoomPlayerListByRoomId(String roomId) {
         // 使用roomId查询
         RoomPlayerEntity queryEntity = RoomPlayerEntity.builder()
                 .roomId(roomId)
@@ -182,7 +183,7 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
     }
 
     @Override
-    public void updatePlayerStatus(String roomId, String userId, String status) {
+    public void updateStatus(String roomId, String userId, String status) {
         // where条件房间ID与用户ID
         RoomPlayerEntity updateEntity = RoomPlayerEntity.builder()
                 .roomId(roomId)
@@ -226,9 +227,12 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
     }
 
     @Override
-    public List<WsResult<Void>> queryRoomPlayerHistoryMessage(PlayerHistoryMessageReq req) {
+    public List<WsResult<Void>> getRoomHistoryMessage(PlayerHistoryMessageReq req) {
         // 获取成员
-        Set<Object> memberSet = redisTemplate.opsForSet().members(req.getRoomId());
+        String redisKey = GlobalConstant.roomMessageRedisKey(req.getRoomId());
+        Set<Object> memberSet = redisTemplate.opsForSet().members(GlobalConstant.roomMessageRedisKey(req.getRoomId()));
+        // 设置为一天过期
+        redisTemplate.expire(redisKey, 1, TimeUnit.DAYS);
         // 为空返回空集合
         List<WsResult<Void>> historyList = CollUtil.newArrayList();
         if (CollUtil.isEmpty(memberSet)) {
@@ -246,5 +250,15 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
             }
         }
         return historyList;
+    }
+
+    @Override
+    public void closeRoom(String roomId) {
+        // 删除房间ID内的所有选手
+        RoomPlayerEntity entity = RoomPlayerEntity.builder().roomId(roomId).build();
+        QueryWrapper<RoomPlayerEntity> queryWrapper = new QueryWrapper<>(entity);
+
+        // 删除
+        baseMapper.delete(queryWrapper);
     }
 }

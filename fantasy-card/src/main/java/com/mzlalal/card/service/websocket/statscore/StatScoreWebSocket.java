@@ -61,7 +61,7 @@ public class StatScoreWebSocket {
         // 根据房间ID和用户ID保存会话
         userSessionService.saveByRoomIdAndUserId(roomId, userId, session);
         // 保存用户至房间
-        roomPlayerService.initPlayer(roomId, user);
+        roomPlayerService.playerInit(roomId, user);
     }
 
     /**
