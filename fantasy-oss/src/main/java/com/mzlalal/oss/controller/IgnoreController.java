@@ -30,22 +30,22 @@ public class IgnoreController {
 
     @ApiOperation("根据空格分割人名并脱敏")
     @PostMapping(value = "/desensitized.name.by.space", headers = "content-type=application/x-www-form-urlencoded")
-    public String desensitizedNameBySpace(@ModelAttribute DesensitizedNameReq desensitizedReq) {
+    public String desensitizedNameBySpace(@ModelAttribute DesensitizedNameReq req) {
         // 验空
-        AssertUtil.notBlank(desensitizedReq.getName(), "数据为空,请从excel对应列复制数据");
+        AssertUtil.notBlank(req.getName(), "数据为空,请从excel对应列复制数据");
 
         // 切割数据
-        List<String> nameList = StrUtil.split(desensitizedReq.getName(), StrUtil.SPACE);
+        List<String> nameList = StrUtil.split(req.getName(), StrUtil.SPACE);
         AssertUtil.notEmpty(nameList, "数据为空,请从excel对应列复制数据");
 
         // 脱敏符号
-        String replaceSymbol = desensitizedReq.processReplaceSymbol();
+        String replaceSymbol = req.processReplaceSymbol();
         // 返回结果
         StringBuilder sb = new StringBuilder();
         // 遍历姓名
         for (String item : nameList) {
             // 姓名最大长度
-            if (StrUtil.length(item) > desensitizedReq.getMaxNumberOfName()) {
+            if (StrUtil.length(item) > req.getMaxNumberOfName()) {
                 sb.append(item).append("\n");
                 continue;
             }

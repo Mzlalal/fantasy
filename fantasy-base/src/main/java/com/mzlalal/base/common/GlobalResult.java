@@ -51,10 +51,9 @@ public enum GlobalResult {
      */
     OAUTH_RESPONSE_TYPE_NOT_CORRECT(413, "非法的授权方式(responseType)"),
     /**
-     * 非法的授权方式validateType
+     * 当前未登录
      */
-    @Deprecated
-    OAUTH_VALIDATE_TYPE_NOT_CORRECT(414, "非法的授权方式(validateType)"),
+    USER_NOT_LOGIN(414, "当前未登录"),
     /**
      * 授权方式为空
      */
@@ -75,10 +74,6 @@ public enum GlobalResult {
      * 数据已存在
      */
     DUPLICATE_KEY(600, "数据已存在"),
-    /**
-     * 当前未登录
-     */
-    USER_NOT_LOGIN(1000, "当前未登录"),
     /**
      * 手机未注册
      */

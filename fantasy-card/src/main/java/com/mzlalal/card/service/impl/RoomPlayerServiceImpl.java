@@ -201,11 +201,11 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public synchronized void transferScore(@Validated TransferScoreReq transferScoreReq) {
-        String roomId = transferScoreReq.getRoomId();
-        String from = transferScoreReq.getFrom();
-        String to = transferScoreReq.getTo();
-        Integer change = transferScoreReq.getChange();
+    public synchronized void transferScore(@Validated TransferScoreReq req) {
+        String roomId = req.getRoomId();
+        String from = req.getFrom();
+        String to = req.getTo();
+        Integer change = req.getChange();
 
         // 检查发起人状态
         RoomPlayerEntity fromPlayer = this.getOneByRoomIdAndUserId(roomId, from);
@@ -224,7 +224,7 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
         AssertUtil.isTrue(add > 0, GlobalResult.ADD_SCORE_FAIL);
 
         // 发送消息到房间
-        userSessionService.broadcast(roomId, from, transferScoreReq.getMessage());
+        userSessionService.broadcast(roomId, from, req.getMessage());
     }
 
     @Override

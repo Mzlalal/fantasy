@@ -33,18 +33,18 @@ public interface OauthFeignApi {
     /**
      * 生成登录验证码
      *
-     * @param verifyCodeReq 登录验证码参数
+     * @param req 登录验证码参数
      * @return Result<String>
      */
     @ApiOperation(value = "登录验证码", notes = "密码登录生成base64图片验证码,邮件登录发送邮件验证码等")
     @PostMapping("/verify.code")
     @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 10)
-    Result<String> verifyCode(@Validated @RequestBody VerifyCodeReq verifyCodeReq);
+    Result<String> verifyCode(@Validated @RequestBody VerifyCodeReq req);
 
     /**
      * 文本密码登录校验验证码
      *
-     * @param checkVerifyCodeReq 文本密码登录校验验证码参数
+     * @param req 文本密码登录校验验证码参数
      * @return Result<String>
      */
     @ApiOperation(value = "校验验证码", notes = "此接口是可选的,若想实现在第一次文本密码登录失败后显示验证码" +
@@ -53,28 +53,28 @@ public interface OauthFeignApi {
             ",若用户验证码没生成过或生成了过期(验证码值在缓存中15分钟过期)或者比对失败则直接返回新的base64图片至data中")
     @PostMapping("/check.verify.code")
     @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 11)
-    Result<String> checkVerifyCode(@Validated @RequestBody CheckVerifyCodeReq checkVerifyCodeReq);
+    Result<String> checkVerifyCode(@Validated @RequestBody CheckVerifyCodeReq req);
 
     /**
      * 根据用户名及密码校验登录
      * 密码可以是邮箱验证码,图片验证码,短信验证码等
      *
-     * @param oauthReq 请求授权参数VO
+     * @param req 请求授权参数VO
      * @return Result<BaseEntity>
      */
     @ApiOperation(value = "登录", notes = "根据用户名及验证码生成授权码/根据用户名及密码登录直接生成用户令牌")
     @PostMapping("/authorize")
     @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 20)
-    Result<RedirectUriVo> authorize(@Validated @RequestBody OauthReq oauthReq);
+    Result<RedirectUriVo> authorize(@Validated @RequestBody OauthReq req);
 
     /**
      * 根据授权码(UUID)获取令牌
      *
-     * @param createTokenReq 置换TOKEN参数
+     * @param req 置换TOKEN参数
      * @return Result<BaseEntity>
      */
     @ApiOperation("根据授权码生成用户令牌")
     @PostMapping("/create.token")
     @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 30)
-    Result<AccessToken> createToken(@Validated @RequestBody CreateTokenReq createTokenReq);
+    Result<AccessToken> createToken(@Validated @RequestBody CreateTokenReq req);
 }

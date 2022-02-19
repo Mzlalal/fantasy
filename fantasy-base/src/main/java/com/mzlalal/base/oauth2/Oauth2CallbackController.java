@@ -38,17 +38,17 @@ public class Oauth2CallbackController {
     /**
      * 回调
      *
-     * @param oauthCallbackReq 授权码请求参数
+     * @param req 授权码请求参数
      * @return AccessToken
      */
     @PostMapping("/callback")
-    public Result<AccessToken> callback(@Validated @RequestBody OauthCallbackReq oauthCallbackReq) {
+    public Result<AccessToken> callback(@Validated @RequestBody OauthCallbackReq req) {
         // 根据tokenVO请求
         CreateTokenReq createTokenReq = CreateTokenReq.builder()
                 .clientId(oauth2Property.getClientId())
                 .clientSecret(oauth2Property.getClientSecret())
-                .responseType(oauthCallbackReq.getResponseType())
-                .authorizeCode(oauthCallbackReq.getCode())
+                .responseType(req.getResponseType())
+                .authorizeCode(req.getCode())
                 .build();
         return oauthFeignApi.createToken(createTokenReq);
     }

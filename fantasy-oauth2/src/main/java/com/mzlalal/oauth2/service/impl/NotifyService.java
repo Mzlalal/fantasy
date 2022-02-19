@@ -36,18 +36,18 @@ public class NotifyService {
     /**
      * 发送验证码邮件给用户
      *
-     * @param sendMailCodeReq 邮件验证码参数
+     * @param req 邮件验证码参数
      * @return 邮件ID
      */
-    public String send(SendMailCodeReq sendMailCodeReq) {
+    public String send(SendMailCodeReq req) {
         // 验证邮箱格式
-        AssertUtil.isTrue(Validator.isEmail(sendMailCodeReq.getUsername())
+        AssertUtil.isTrue(Validator.isEmail(req.getUsername())
                 , GlobalResult.EMAIL_NOT_CORRECT);
         // 渲染文本
         String content = templateEngine.getTemplate("/notify/mail/accountMailVerifyCode.html")
-                .render(BeanUtil.beanToMap(sendMailCodeReq));
+                .render(BeanUtil.beanToMap(req));
         // 发送邮件
-        return mailNotifyService.send(sendMailCodeReq.getUsername()
+        return mailNotifyService.send(req.getUsername()
                 , "Fantasy-登录验证码", content, true);
     }
 }

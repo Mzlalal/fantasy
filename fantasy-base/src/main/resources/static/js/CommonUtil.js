@@ -35,6 +35,17 @@
             // 传递接口返回的结果给then方法
             return res.data;
         }
+        // 需要重定向到登录界面的方法
+        let redirectState = [411, 412, 414]
+        // 避免了then方法中每次都需要判断state=200
+        if (res.data && redirectState.includes(res.data.state)) {
+            // 1.5s后跳转到登录页
+            setTimeout(() => {
+                window.location = res.data.data;
+            }, 1500)
+            // 传递接口返回的结果给then方法
+            return res.data;
+        }
         // 业务状态错误直接使用catch方法
         return Promise.reject(res);
     }, function (error) {

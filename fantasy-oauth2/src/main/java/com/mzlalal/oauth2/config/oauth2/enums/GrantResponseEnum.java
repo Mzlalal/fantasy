@@ -53,23 +53,23 @@ public enum GrantResponseEnum {
         }
 
         @Override
-        public String createAuthorizeCode(OauthReq oauthReq) {
+        public String createAuthorizeCode(OauthReq req) {
             // 用户名
-            String username = oauthReq.getUsername();
+            String username = req.getUsername();
             // 邮箱格式
             this.verifyUsername(username);
             // 用户名的邮箱验证码redis key
-            String mailCodeRedisKey = GlobalConstant.clientIdMailCodeRedisKey(oauthReq.getClientId(), username);
+            String mailCodeRedisKey = GlobalConstant.clientIdMailCodeRedisKey(req.getClientId(), username);
             // 获取验证码
             String redisCode = redisTemplate.opsForValue().get(mailCodeRedisKey);
             // 删除只能使用一次
             redisTemplate.delete(mailCodeRedisKey);
             // 验证码是否正确
-            AssertUtil.equals(redisCode, oauthReq.getPassword(), GlobalResult.VALIDATE_CODE_NOT_RIGHT);
+            AssertUtil.equals(redisCode, req.getPassword(), GlobalResult.VALIDATE_CODE_NOT_RIGHT);
             // 查询用户信息
             UserEntity userEntity = userService.findOneByMail(username).orElseThrow(GlobalResult.EMAIL_NOT_FOUNT::boom);
             // 存储用户信息并返回授权码
-            return redisAuthorizeCodeService.store(oauthReq.getClientId(), userEntity);
+            return redisAuthorizeCodeService.store(req.getClientId(), userEntity);
         }
     },
     /**
@@ -97,19 +97,19 @@ public enum GrantResponseEnum {
         }
 
         @Override
-        public String createAuthorizeCode(OauthReq oauthReq) {
+        public String createAuthorizeCode(OauthReq req) {
             // 用户名
-            String username = oauthReq.getUsername();
+            String username = req.getUsername();
             // 手机格式
             this.verifyUsername(username);
             // 查询用户信息
             UserEntity userEntity = userService.findOneByMobile(username)
                     .orElseThrow(GlobalResult.MOBILE_NOT_FOUNT::boom);
             // 密码不正确
-            AssertUtil.isTrue(passwordEncoder.matches(oauthReq.getPassword(), userEntity.getPassword()),
+            AssertUtil.isTrue(passwordEncoder.matches(req.getPassword(), userEntity.getPassword()),
                     GlobalResult.PASSWORD_NOT_RIGHT);
             // 存储用户信息和授权码
-            return redisAuthorizeCodeService.store(oauthReq.getClientId(), userEntity);
+            return redisAuthorizeCodeService.store(req.getClientId(), userEntity);
         }
     };
 
@@ -124,25 +124,25 @@ public enum GrantResponseEnum {
      * 验证用户名与密码
      * 密码可以是邮箱验证码,文本密码,短信验证码等
      *
-     * @param oauthReq 授权信息
+     * @param req 授权信息
      * @return String
      */
-    public abstract String createAuthorizeCode(OauthReq oauthReq);
+    public abstract String createAuthorizeCode(OauthReq req);
 
     /**
      * 根据用户名加密码/验证码判断授权是否成功
      *
-     * @param oauthReq 参数
+     * @param req 参数
      * @return Result<BaseEntity>
      */
-    public Result<RedirectUriVo> createCallback(OauthReq oauthReq) {
+    public Result<RedirectUriVo> createCallback(OauthReq req) {
         // 验证邮箱授权码登录,存储用户信息在authCode中
-        String authorizeCode = this.createAuthorizeCode(oauthReq);
+        String authorizeCode = this.createAuthorizeCode(req);
         // 回调URL格式
         String redirectUriFormat = "{}?code={}&responseType={}&state={}";
         // 格式化
-        String redirectUri = StrUtil.format(redirectUriFormat, oauthReq.getRedirectUri()
-                , authorizeCode, oauthReq.getResponseType(), oauthReq.getState());
+        String redirectUri = StrUtil.format(redirectUriFormat, req.getRedirectUri()
+                , authorizeCode, req.getResponseType(), req.getState());
         // 返回结果
         return Result.ok(RedirectUriVo.builder()
                 .redirectUri(redirectUri)
