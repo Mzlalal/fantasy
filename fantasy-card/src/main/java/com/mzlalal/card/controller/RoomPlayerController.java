@@ -2,11 +2,10 @@ package com.mzlalal.card.controller;
 
 import cn.hutool.core.collection.CollUtil;
 import com.mzlalal.base.entity.card.dto.RoomPlayerEntity;
-import com.mzlalal.base.entity.card.req.PlayerHistoryMessageReq;
 import com.mzlalal.base.entity.card.req.PlayerOutOrJoinRoomReq;
 import com.mzlalal.base.entity.card.req.TransferScoreReq;
+import com.mzlalal.base.entity.card.vo.HistoryMessageVo;
 import com.mzlalal.base.entity.global.Result;
-import com.mzlalal.base.entity.global.WsResult;
 import com.mzlalal.base.entity.global.po.PageInfo;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.feign.card.RoomPlayerFeignApi;
@@ -95,11 +94,11 @@ public class RoomPlayerController implements RoomPlayerFeignApi {
     }
 
     @Override
-    public Result<WsResult<Void>> queryRoomPlayerHistoryMessage(@Validated @RequestBody PlayerHistoryMessageReq req) {
+    public Result<HistoryMessageVo> queryRoomPlayerHistoryMessage() {
         // 获取历史消息
-        List<WsResult<Void>> historyList = roomPlayerService.getRoomHistoryMessage(req);
+        List<HistoryMessageVo> historyMessageVoList = roomPlayerService.queryPlayerHistoryMessage();
         // 封装到分页信息
-        Page<WsResult<Void>> page = new Page<>(historyList, historyList.size(), new PageInfo());
+        Page<HistoryMessageVo> page = new Page<>(historyMessageVoList, historyMessageVoList.size(), new PageInfo());
         return Result.ok(page);
     }
 

@@ -60,6 +60,10 @@ public class RedisTokenService {
                 return BeanUtil.copyProperties(userEntity, AccessToken.class);
             }
         }
+        // 删除旧的刷新TOKEN
+        if (StrUtil.isNotBlank(userEntity.getRefreshToken())) {
+            redisTemplate.delete(GlobalConstant.tokenRedisKey(userEntity.getRefreshToken()));
+        }
         // 如果不存在则创建TOKEN并存储在redis
         AccessToken accessToken = AccessToken.builder()
                 .accessToken(IdUtil.fastSimpleUUID())

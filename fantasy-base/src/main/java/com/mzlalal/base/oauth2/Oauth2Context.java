@@ -1,7 +1,9 @@
 package com.mzlalal.base.oauth2;
 
 import com.mzlalal.base.common.GlobalConstant;
+import com.mzlalal.base.common.GlobalResult;
 import com.mzlalal.base.entity.oauth2.dto.UserEntity;
+import com.mzlalal.base.util.AssertUtil;
 
 /**
  * 用户上下文
@@ -39,10 +41,8 @@ public class Oauth2Context {
      * @return String userId
      */
     public static String getUserId() {
-        if (CONTEXT.get() != null) {
-            return CONTEXT.get().getId();
-        }
-        return GlobalConstant.DEFAULT_TENANT_ID;
+        AssertUtil.notNull(CONTEXT.get(), GlobalResult.USER_NOT_LOGIN);
+        return CONTEXT.get().getId();
     }
 
     /**
@@ -51,10 +51,8 @@ public class Oauth2Context {
      * @return String 用户名
      */
     public static String getUsername() {
-        if (CONTEXT.get() != null) {
-            return CONTEXT.get().getUsername();
-        }
-        return GlobalConstant.DEFAULT_TENANT_ID;
+        AssertUtil.notNull(CONTEXT.get(), GlobalResult.USER_NOT_LOGIN);
+        return CONTEXT.get().getUsername();
     }
 
     /**

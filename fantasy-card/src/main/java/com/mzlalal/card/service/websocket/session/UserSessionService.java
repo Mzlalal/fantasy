@@ -1,10 +1,13 @@
 package com.mzlalal.card.service.websocket.session;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.common.GlobalResult;
 import com.mzlalal.base.entity.card.dto.RoomPlayerEntity;
+import com.mzlalal.base.entity.card.vo.HistoryMessageVo;
 import com.mzlalal.base.entity.global.WsResult;
 import com.mzlalal.base.entity.oauth2.dto.UserEntity;
 import com.mzlalal.card.service.RoomPlayerService;
@@ -80,7 +83,7 @@ public class UserSessionService {
                 oldSession.getBasicRemote().sendText(JSON.toJSONString(GlobalResult.ANOTHER_LOGIN.result()));
                 oldSession.close();
             } catch (IOException e) {
-                log.error(JSON.toJSONString(oldSession.getPathParameters()) + "关闭意外出错" , e);
+                log.error(JSON.toJSONString(oldSession.getPathParameters()) + "关闭意外出错", e);
             }
         }
         // 保存用户会话
@@ -105,6 +108,25 @@ public class UserSessionService {
     }
 
     /**
+     * 发送房间内的选手消息
+     *
+     * @param roomId 房间ID
+     */
+    public void sendRoomPlayerMessage(String roomId) {
+        // 查询当前房间内的选手信息
+        List<RoomPlayerEntity> roomPlayerList = roomPlayerService.getRoomPlayerListByRoomId(roomId);
+        if (CollUtil.isEmpty(roomPlayerList)) {
+            return;
+        }
+        // 发送消息
+        WsResult<RoomPlayerEntity> result = WsResult.ok();
+        // 房间内的选手信息
+        result.getPageInfo().setList(roomPlayerList);
+        // 广播
+        this.broadcast(roomId, result);
+    }
+
+    /**
      * 广播信息
      *
      * @param roomId  房间ID
@@ -112,6 +134,18 @@ public class UserSessionService {
      * @param message 文本消息
      */
     public void broadcast(String roomId, String from, String message) {
+        this.broadcast(roomId, from, from, message);
+    }
+
+    /**
+     * 广播信息
+     *
+     * @param roomId  房间ID
+     * @param from    发送者
+     * @param to      接收人
+     * @param message 文本消息
+     */
+    public void broadcast(String roomId, String from, String to, String message) {
         // 查询当前房间内的选手信息
         List<RoomPlayerEntity> roomPlayerList = roomPlayerService.getRoomPlayerListByRoomId(roomId);
         if (CollUtil.isEmpty(roomPlayerList)) {
@@ -121,6 +155,8 @@ public class UserSessionService {
         WsResult<RoomPlayerEntity> result = WsResult.okMsg(message);
         // 发送者
         result.setFrom(from);
+        // 接收人
+        result.setTo(to);
         // 房间内的选手信息
         result.getPageInfo().setList(roomPlayerList);
         // 广播
@@ -157,7 +193,7 @@ public class UserSessionService {
             try {
                 session.getBasicRemote().sendText(JSON.toJSONString(result));
             } catch (IOException e) {
-                log.error(JSON.toJSONString(pathParameterMap) + "关闭意外出错" , e);
+                log.error(JSON.toJSONString(pathParameterMap) + "关闭意外出错", e);
             }
         });
         // 保存消息
@@ -171,6 +207,17 @@ public class UserSessionService {
      * @param result 消息
      */
     public void saveRoomMessage(String roomId, WsResult<?> result) {
-        redisTemplate.opsForSet().add(roomId, result);
+        // 返回结果赋值给历史消息
+        HistoryMessageVo historyMessageVo = new HistoryMessageVo();
+        BeanUtil.copyProperties(result, historyMessageVo);
+
+        // 如果from没有则不保存至redis
+        if (StrUtil.isBlank(result.getFrom())) {
+            return;
+        }
+
+        // 保存到redis
+        String redisKey = GlobalConstant.roomMessageRedisKey(roomId);
+        redisTemplate.opsForSet().add(redisKey, historyMessageVo);
     }
 }

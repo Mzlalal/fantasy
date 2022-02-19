@@ -54,6 +54,13 @@ public class WsResult<T> implements Serializable {
     @ApiModelProperty("发送人")
     private String from;
 
+    @ApiModelProperty("接收人")
+    private String to;
+
+    public static <T> WsResult<T> ok() {
+        return WsResult.<T>builder().state(STATE_OK).build();
+    }
+
     public static <T> WsResult<T> okMsg(String msg) {
         return WsResult.<T>builder().state(STATE_OK).msg(msg).build();
     }

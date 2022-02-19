@@ -70,7 +70,7 @@ public interface GlobalConstant {
      * @return String fantasy:{clientId}:{uuid}
      */
     static String clientIdAuthCodeRedisKey(String clientId) {
-        return StrUtil.format("fantasy:{}:{}" , clientId, IdUtil.fastSimpleUUID());
+        return StrUtil.format("fantasy:{}:{}", clientId, IdUtil.fastSimpleUUID());
     }
 
     /**
@@ -81,7 +81,7 @@ public interface GlobalConstant {
      * @return String fantasy:mail:code:{clientId}:{mail}
      */
     static String clientIdMailCodeRedisKey(String clientId, String mail) {
-        return StrUtil.format("fantasy:mail:code:{}:{}" , clientId, mail);
+        return StrUtil.format("fantasy:mail:code:{}:{}", clientId, mail);
     }
 
     /**
@@ -92,14 +92,14 @@ public interface GlobalConstant {
      * @return String fantasy:password:code:{clientId}:{mobile}
      */
     static String clientIdPasswordCodeRedisKey(String clientId, String mobile) {
-        return StrUtil.format("fantasy:password:code:{}:{}" , clientId, mobile);
+        return StrUtil.format("fantasy:password:code:{}:{}", clientId, mobile);
     }
 
     /**
      * 房间ID redis key
      *
      * @param roomId 房间ID
-     * @return String fantasy:session:{roomId}
+     * @return String fantasy:room:session:{roomId}
      */
     static String roomSessionRedisKey(String roomId) {
         return "fantasy:room:session:" + roomId;
@@ -109,10 +109,20 @@ public interface GlobalConstant {
      * 房间内的消息 redis key
      *
      * @param roomId 房间ID
-     * @return String fantasy:message:{roomId}
+     * @return String fantasy:room:message:{roomId}
      */
     static String roomMessageRedisKey(String roomId) {
         return "fantasy:room:message:" + roomId;
+    }
+
+    /**
+     * 转账 redis lock key
+     *
+     * @param roomId 房间ID
+     * @return String fantasy:transfer:lock:{roomId}
+     */
+    static String transferLockRedisKey(String roomId) {
+        return "fantasy:transfer:lock:" + roomId;
     }
 
     /**

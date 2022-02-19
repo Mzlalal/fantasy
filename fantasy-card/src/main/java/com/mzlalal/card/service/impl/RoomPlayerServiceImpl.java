@@ -10,18 +10,20 @@ import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.common.GlobalResult;
 import com.mzlalal.base.entity.card.dto.RoomEntity;
 import com.mzlalal.base.entity.card.dto.RoomPlayerEntity;
-import com.mzlalal.base.entity.card.req.PlayerHistoryMessageReq;
 import com.mzlalal.base.entity.card.req.PlayerOutOrJoinRoomReq;
 import com.mzlalal.base.entity.card.req.TransferScoreReq;
-import com.mzlalal.base.entity.global.WsResult;
+import com.mzlalal.base.entity.card.vo.HistoryMessageVo;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oauth2.dto.UserEntity;
+import com.mzlalal.base.oauth2.Oauth2Context;
 import com.mzlalal.base.util.AssertUtil;
 import com.mzlalal.base.util.Page;
 import com.mzlalal.card.dao.RoomPlayerDao;
 import com.mzlalal.card.service.RoomPlayerService;
 import com.mzlalal.card.service.RoomService;
 import com.mzlalal.card.service.websocket.session.UserSessionService;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -54,10 +56,16 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
      * string=>对象 redis操作模板
      */
     private final RedisTemplate<String, Object> redisTemplate;
+    /**
+     * redisson数据源
+     */
+    private final RedissonClient redissonClient;
 
-    public RoomPlayerServiceImpl(RoomService roomService, RedisTemplate<String, Object> redisTemplate) {
+    public RoomPlayerServiceImpl(RoomService roomService, RedisTemplate<String, Object> redisTemplate
+            , RedissonClient redissonClient) {
         this.roomService = roomService;
         this.redisTemplate = redisTemplate;
+        this.redissonClient = redissonClient;
     }
 
     @Autowired
@@ -112,10 +120,8 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
         // 是否已上桌
         RoomPlayerEntity existPlayer = this.getOneByRoomIdAndUserId(roomId, userId);
         if (existPlayer != null) {
-            // 进入房间消息
-            String message = StrUtil.format(GlobalConstant.USERNAME_DISPLAY + "进入了房间"
-                    , user.getUsername());
-            userSessionService.broadcast(roomId, userId, message);
+            // 发送房间内的选手状态
+            userSessionService.sendRoomPlayerMessage(roomId);
             return;
         }
 
@@ -150,7 +156,7 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
         this.updateStatus(roomId, userId, GlobalConstant.STATUS_ON);
 
         // 上桌消息
-        String message = StrUtil.format(GlobalConstant.USERNAME_DISPLAY + "上桌了" , req.getUsername());
+        String message = StrUtil.format(GlobalConstant.USERNAME_DISPLAY + "上桌了", req.getUsername());
         // 广播消息
         userSessionService.broadcast(roomId, userId, message);
     }
@@ -166,7 +172,7 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
         this.updateStatus(roomId, userId, GlobalConstant.STATUS_OFF);
 
         // 下桌消息
-        String message = StrUtil.format(GlobalConstant.USERNAME_DISPLAY + "下桌了" , req.getUsername());
+        String message = StrUtil.format(GlobalConstant.USERNAME_DISPLAY + "下桌了", req.getUsername());
         // 广播消息
         userSessionService.broadcast(roomId, userId, message);
     }
@@ -201,52 +207,66 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public synchronized void transferScore(@Validated TransferScoreReq req) {
+    public void transferScore(@Validated TransferScoreReq req) {
         String roomId = req.getRoomId();
         String from = req.getFrom();
         String to = req.getTo();
         Integer change = req.getChange();
 
-        // 检查发起人状态
-        RoomPlayerEntity fromPlayer = this.getOneByRoomIdAndUserId(roomId, from);
-        AssertUtil.equals(fromPlayer.getPlayerStatus(), GlobalConstant.STATUS_ON, GlobalResult.SUB_PLAYER_STATUS_OFF);
+        String lockRedisKey = GlobalConstant.transferLockRedisKey(roomId);
+        RLock lock = redissonClient.getLock(lockRedisKey);
+        try {
+            // 获取锁
+            lock.lock();
 
-        // 检查接收人状态
-        RoomPlayerEntity toPlayer = this.getOneByRoomIdAndUserId(roomId, to);
-        AssertUtil.equals(toPlayer.getPlayerStatus(), GlobalConstant.STATUS_ON, GlobalResult.ADD_PLAYER_STATUS_OFF);
+            // 检查发起人状态
+            RoomPlayerEntity fromPlayer = this.getOneByRoomIdAndUserId(roomId, from);
+            AssertUtil.equals(fromPlayer.getPlayerStatus(), GlobalConstant.STATUS_ON, GlobalResult.SUB_PLAYER_STATUS_OFF);
 
-        // 扣除发起人分数
-        int sub = baseMapper.subPlayerScore(roomId, from, change);
-        AssertUtil.isTrue(sub > 0, GlobalResult.SUB_SCORE_FAIL);
+            // 检查接收人状态
+            RoomPlayerEntity toPlayer = this.getOneByRoomIdAndUserId(roomId, to);
+            AssertUtil.equals(toPlayer.getPlayerStatus(), GlobalConstant.STATUS_ON, GlobalResult.ADD_PLAYER_STATUS_OFF);
 
-        // 增加接收人分数
-        int add = baseMapper.addPlayerScore(roomId, to, change);
-        AssertUtil.isTrue(add > 0, GlobalResult.ADD_SCORE_FAIL);
+            // 扣除发起人分数
+            int sub = baseMapper.subPlayerScore(roomId, from, change);
+            AssertUtil.isTrue(sub > 0, GlobalResult.SUB_SCORE_FAIL);
 
-        // 发送消息到房间
-        userSessionService.broadcast(roomId, from, req.getMessage());
+            // 增加接收人分数
+            int add = baseMapper.addPlayerScore(roomId, to, change);
+            AssertUtil.isTrue(add > 0, GlobalResult.ADD_SCORE_FAIL);
+
+            // 发送消息到房间
+            userSessionService.broadcast(roomId, from, to, req.getMessage());
+        } finally {
+            // 解锁
+            if (lock.isLocked()) {
+                lock.unlock();
+            }
+        }
     }
 
     @Override
-    public List<WsResult<Void>> getRoomHistoryMessage(PlayerHistoryMessageReq req) {
-        // 获取成员
-        String redisKey = GlobalConstant.roomMessageRedisKey(req.getRoomId());
-        Set<Object> memberSet = redisTemplate.opsForSet().members(GlobalConstant.roomMessageRedisKey(req.getRoomId()));
-        // 设置为一天过期
+    public List<HistoryMessageVo> queryPlayerHistoryMessage() {
+        // 用户ID
+        String userId = Oauth2Context.getUserId();
+        // 获取房间内的选手
+        String redisKey = GlobalConstant.roomMessageRedisKey(userId);
+        Set<Object> memberSet = redisTemplate.opsForSet().members(GlobalConstant.roomMessageRedisKey(userId));
+        // 刷新过期时间,一天过期
         redisTemplate.expire(redisKey, 1, TimeUnit.DAYS);
         // 为空返回空集合
-        List<WsResult<Void>> historyList = CollUtil.newArrayList();
+        List<HistoryMessageVo> historyList = CollUtil.newArrayList();
         if (CollUtil.isEmpty(memberSet)) {
             return historyList;
         }
         // 遍历过滤
         for (Object member : memberSet) {
-            if (member instanceof WsResult) {
+            if (member instanceof HistoryMessageVo) {
                 // 强转类型
-                WsResult<Void> wsResult = (WsResult<Void>) member;
+                HistoryMessageVo historyMessageVo = (HistoryMessageVo) member;
                 // 过滤from为当前选手ID的集合
-                if (StrUtil.equals(wsResult.getFrom(), req.getFrom())) {
-                    historyList.add(wsResult);
+                if (StrUtil.equalsAny(userId, historyMessageVo.getFrom(), historyMessageVo.getTo())) {
+                    historyList.add(historyMessageVo);
                 }
             }
         }
@@ -262,7 +282,7 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
 
         // 删除房间内的所有选手
         QueryWrapper<RoomPlayerEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.in("room_id" , roomIdList);
+        queryWrapper.in("room_id", roomIdList);
         AssertUtil.isTrue(baseMapper.delete(queryWrapper) > 0, "关闭房间失败,可能房间不存在");
 
         // 删除房间

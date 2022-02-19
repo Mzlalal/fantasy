@@ -3,11 +3,10 @@ package com.mzlalal.base.feign.card;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.entity.card.dto.RoomPlayerEntity;
-import com.mzlalal.base.entity.card.req.PlayerHistoryMessageReq;
 import com.mzlalal.base.entity.card.req.PlayerOutOrJoinRoomReq;
 import com.mzlalal.base.entity.card.req.TransferScoreReq;
+import com.mzlalal.base.entity.card.vo.HistoryMessageVo;
 import com.mzlalal.base.entity.global.Result;
-import com.mzlalal.base.entity.global.WsResult;
 import com.mzlalal.base.entity.global.po.Po;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -78,7 +77,7 @@ public interface RoomPlayerFeignApi {
      * @return Result
      */
     @ApiOperation("删除")
-    @RequestMapping(value = "/delete" , method = RequestMethod.POST)
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 50)
     Result<Void> delete(@RequestBody String[] ids);
 
@@ -86,18 +85,20 @@ public interface RoomPlayerFeignApi {
      * 房间内的选手下桌请求
      *
      * @param req 房间内的选手下桌请求
+     * @return Result
      */
     @ApiOperation("房间内的选手下桌")
-    @RequestMapping(value = "/player.join.room" , method = RequestMethod.POST)
+    @RequestMapping(value = "/player.join.room", method = RequestMethod.POST)
     Result<Void> playerJoinRoom(@RequestBody PlayerOutOrJoinRoomReq req);
 
     /**
      * 房间内的选手下桌请求
      *
      * @param req 房间内的选手下桌请求
+     * @return Result
      */
     @ApiOperation("房间内的选手下桌")
-    @RequestMapping(value = "/player.out.room" , method = RequestMethod.POST)
+    @RequestMapping(value = "/player.out.room", method = RequestMethod.POST)
     Result<Void> playerOutRoom(@RequestBody PlayerOutOrJoinRoomReq req);
 
     /**
@@ -107,16 +108,15 @@ public interface RoomPlayerFeignApi {
      * @return Result
      */
     @ApiOperation("转账分数")
-    @RequestMapping(value = "/transfer.score" , method = RequestMethod.POST)
+    @RequestMapping(value = "/transfer.score", method = RequestMethod.POST)
     Result<Void> transferScore(@RequestBody TransferScoreReq req);
 
     /**
      * 根据房间ID,选手ID查询历史消息
      *
-     * @param req 查询房间选手的历史消息请求
      * @return List<WsResult>
      */
     @ApiOperation("查询房间选手的历史消息")
     @RequestMapping(value = "/query.room.player.history.message", method = RequestMethod.POST)
-    Result<WsResult<Void>> queryRoomPlayerHistoryMessage(@RequestBody PlayerHistoryMessageReq req);
+    Result<HistoryMessageVo> queryRoomPlayerHistoryMessage();
 }

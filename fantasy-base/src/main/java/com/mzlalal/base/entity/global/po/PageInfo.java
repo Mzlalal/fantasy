@@ -23,12 +23,12 @@ public class PageInfo {
     @Min(value = 1, message = "每页展示的行数pageSize最小不能小于1")
     @Max(value = 50, message = "每页展示的行数pageSize最大不能大于50")
     @ApiModelProperty(value = "每页展示的行数", example = "10")
-    protected int pageSize;
+    protected int pageSize = 10;
 
     /**
      * 当前页
      */
     @Min(value = 1, message = "当前页码最小不能小于1")
     @ApiModelProperty(value = "当前页码", example = "1")
-    protected int currPage;
+    protected int currPage = 1;
 }

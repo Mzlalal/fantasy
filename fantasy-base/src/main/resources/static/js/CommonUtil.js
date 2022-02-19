@@ -43,8 +43,8 @@
             setTimeout(() => {
                 window.location = res.data.data;
             }, 1500)
-            // 传递接口返回的结果给then方法
-            return res.data;
+            // 业务状态错误直接使用catch方法
+            return Promise.reject(res);
         }
         // 业务状态错误直接使用catch方法
         return Promise.reject(res);
