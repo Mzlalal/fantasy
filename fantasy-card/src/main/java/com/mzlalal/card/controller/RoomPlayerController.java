@@ -9,6 +9,7 @@ import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.global.po.PageInfo;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.feign.card.RoomPlayerFeignApi;
+import com.mzlalal.base.util.AssertUtil;
 import com.mzlalal.base.util.Page;
 import com.mzlalal.card.service.RoomPlayerService;
 import io.swagger.annotations.Api;
@@ -76,7 +77,7 @@ public class RoomPlayerController implements RoomPlayerFeignApi {
     }
 
     @Override
-    public Result<Void> playerJoinRoom(PlayerOutOrJoinRoomReq req) {
+    public Result<Void> playerJoinRoom(@Validated @RequestBody PlayerOutOrJoinRoomReq req) {
         roomPlayerService.playerJoinRoom(req);
         return Result.ok();
     }
@@ -94,9 +95,11 @@ public class RoomPlayerController implements RoomPlayerFeignApi {
     }
 
     @Override
-    public Result<HistoryMessageVo> queryRoomPlayerHistoryMessage() {
+    public Result<HistoryMessageVo> queryRoomPlayerHistoryMessage(@PathVariable("roomId") String roomId) {
+        // 验证
+        AssertUtil.notBlank(roomId, "房间ID不能为空");
         // 获取历史消息
-        List<HistoryMessageVo> historyMessageVoList = roomPlayerService.queryPlayerHistoryMessage();
+        List<HistoryMessageVo> historyMessageVoList = roomPlayerService.queryPlayerHistoryMessage(roomId);
         // 封装到分页信息
         Page<HistoryMessageVo> page = new Page<>(historyMessageVoList, historyMessageVoList.size(), new PageInfo());
         return Result.ok(page);

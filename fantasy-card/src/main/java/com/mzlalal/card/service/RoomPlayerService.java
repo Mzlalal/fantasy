@@ -75,9 +75,10 @@ public interface RoomPlayerService extends BaseService<RoomPlayerEntity> {
     /**
      * 根据房间ID,选手ID查询历史消息
      *
+     * @param roomId 房间ID
      * @return List<HistoryMessageVo>
      */
-    List<HistoryMessageVo> queryPlayerHistoryMessage();
+    List<HistoryMessageVo> queryPlayerHistoryMessage(String roomId);
 
     /**
      * 关闭房间

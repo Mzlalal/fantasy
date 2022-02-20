@@ -12,7 +12,10 @@
     <script src="js/CommonUtil.js"></script>
 </head>
 <style>
-
+    /* 此界面弹窗向上偏移 */
+    .ui-dialog-cnt {
+        bottom: calc(15vh);
+    }
 </style>
 <body>
 <div id="app">
@@ -25,18 +28,20 @@
               v-if="userStatus === '0'">我要上桌</span>
     </header>
     <div class="ui-form ui-border-t ui-container">
-        <ul class="ui-row ui-whitespace overflow-auto" style="max-height: 220px;">
-            <li class="ui-col ui-col-25 margin-top-1em" v-for="player in playerList"
-                @click="selectTransferTarget(player)">
-                <div class="ui-avatar-lg background-dingding text-line-height-70px text-center background-A-c"
-                     v-bind:class="{'background-B-c': player.playerStatus !== '1'}">
-                    {{player.playerName}}
-                </div>
-                <div class="text-center width-70px font-weight-bolder">
-                    {{player.playerScore}}
-                </div>
-            </li>
-        </ul>
+        <transition name="slide-fade">
+            <ul class="ui-row ui-whitespace overflow-auto" style="max-height: 220px;" v-if="playerList.length > 0">
+                <li class="ui-col ui-col-25 margin-top-1em" v-for="player in playerList"
+                    @click="selectTransferTarget(player)">
+                    <div class="ui-avatar-lg background-dingding text-line-height-70px text-center background-A-c"
+                         v-bind:class="{'background-B-c': player.playerStatus !== '1'}">
+                        {{player.playerName}}
+                    </div>
+                    <div class="text-center width-70px font-weight-bolder">
+                        {{player.playerScore}}
+                    </div>
+                </li>
+            </ul>
+        </transition>
         <transition name="slide-fade">
             <div class="ui-tooltips ui-tooltips-warn" v-if="tips">
                 <div class="ui-tooltips-cnt ui-border-b">
@@ -54,7 +59,8 @@
                     <ul class="ui-list ui-list-function ui-border-tb overflow-auto"
                         style="max-height: calc(100vh - 300px)" @scroll="onScroll" ref="scrollTarget">
                         <li v-for="item in messageList">
-                            <div class="ui-list-info ui-border-t" v-bind:class="{'from-myself':item.from === userId}">
+                            <div class="ui-list-info ui-border-t"
+                                 v-bind:class="{'from-myself':item.from === userId}">
                                 <p class="ui-nowrap">{{item.time}}</p>
                                 <p v-html="item.msg"></p>
                             </div>
@@ -63,9 +69,10 @@
                 </li>
                 <li v-else>
                     <ul class="ui-list ui-list-function ui-border-tb overflow-auto"
-                        style="max-height: calc(100vh - 300px)" @scroll="onScroll" ref="historyScrollTarget">
+                        style="max-height: calc(100vh - 300px)" @scroll="onScroll" ref="scrollTarget">
                         <li v-for="item in historyMessageList">
-                            <div class="ui-list-info ui-border-t" v-bind:class="{'from-myself':item.from === userId}">
+                            <div class="ui-list-info ui-border-t"
+                                 v-bind:class="{'from-myself':item.from === userId}">
                                 <p class="ui-nowrap">{{item.time}}</p>
                                 <p v-html="item.msg"></p>
                             </div>
@@ -88,8 +95,8 @@
                 </div>
                 <div class="ui-form-item ui-border-b">
                     <div class="ui-input ui-input-text">
-                        <input type="number" class="text-center padding-0" v-model="transferAmount"
-                               minlength="1" maxlength="4" placeholder="请输入转账数额"/>
+                        <input type="tel" class="text-center padding-0" v-model="transferAmount"
+                               minlength="1" maxlength="4" ref="transferAmountInput" placeholder="请输入转账数额"/>
                     </div>
                 </div>
                 <div class="ui-dialog-ft">
@@ -227,6 +234,10 @@
                 if (player.playerStatus === "1") {
                     this.tips = "";
                     this.currentSelectedPlayer = player;
+                    // 获取焦点
+                    this.$nextTick(() => {
+                        this.$refs.transferAmountInput.focus();
+                    })
                     return;
                 }
                 this.tips = "不能对已下桌的人转账";
@@ -324,8 +335,8 @@
             queryHistoryMessageAboutMine() {
                 // 请求
                 axios({
-                    method: "post",
-                    url: "/fantasy-card/api/v1/card/room.player/query.room.player.history.message"
+                    method: "get",
+                    url: "/fantasy-card/api/v1/card/room.player/query.room.player.history.message/" + roomId,
                 }).then(res => {
                     this.historyMessageList = [{"msg": "点击他人头像即可进行转账", "time": "💬", "from": ""}];
                     commonUtil.getPageList(res).forEach(item => {

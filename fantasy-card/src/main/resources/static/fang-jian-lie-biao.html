@@ -128,7 +128,7 @@
                 // 设置搜索框状态
                 this.searchBar = bool;
                 // 获取焦点
-                setTimeout(() => {
+                this.$nextTick(() => {
                     this.$refs.searchInput.focus();
                 })
             },

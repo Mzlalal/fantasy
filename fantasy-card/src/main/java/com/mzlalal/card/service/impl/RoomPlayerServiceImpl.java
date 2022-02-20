@@ -246,12 +246,12 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
     }
 
     @Override
-    public List<HistoryMessageVo> queryPlayerHistoryMessage() {
+    public List<HistoryMessageVo> queryPlayerHistoryMessage(String roomId) {
         // 用户ID
         String userId = Oauth2Context.getUserId();
         // 获取房间内的选手
-        String redisKey = GlobalConstant.roomMessageRedisKey(userId);
-        Set<Object> memberSet = redisTemplate.opsForSet().members(GlobalConstant.roomMessageRedisKey(userId));
+        String redisKey = GlobalConstant.roomMessageRedisKey(roomId);
+        Set<Object> memberSet = redisTemplate.opsForSet().members(redisKey);
         // 刷新过期时间,一天过期
         redisTemplate.expire(redisKey, 1, TimeUnit.DAYS);
         // 为空返回空集合
