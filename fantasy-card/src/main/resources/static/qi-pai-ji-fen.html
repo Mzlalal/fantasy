@@ -95,8 +95,8 @@
                 </div>
                 <div class="ui-form-item ui-border-b">
                     <div class="ui-input ui-input-text">
-                        <input type="tel" class="text-center padding-0" v-model="transferAmount"
-                               minlength="1" maxlength="4" ref="transferAmountInput" placeholder="请输入转账数额"/>
+                        <input type="number" pattern="/d*" class="text-center padding-0" v-model="transferAmount"
+                               ref="transferAmountInput" placeholder="请输入转账数额"/>
                     </div>
                 </div>
                 <div class="ui-dialog-ft">
@@ -336,7 +336,7 @@
                 // 请求
                 axios({
                     method: "get",
-                    url: "/fantasy-card/api/v1/card/room.player/query.room.player.history.message/" + roomId,
+                    url: "/fantasy-card/api/v1/card/room.player/" + roomId + "/query.room.player.history.message",
                 }).then(res => {
                     this.historyMessageList = [{"msg": "点击他人头像即可进行转账", "time": "💬", "from": ""}];
                     commonUtil.getPageList(res).forEach(item => {

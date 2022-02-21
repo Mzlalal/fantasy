@@ -1,6 +1,7 @@
 package com.mzlalal.card.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -35,6 +36,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * 房间内的选手ServiceImpl
@@ -270,6 +272,11 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
                 }
             }
         }
+        // 根据时间排序
+        historyList = historyList.stream()
+                .sorted((t1, t2) -> DateUtil.compare(DateUtil.parseDate(t1.getTime()), DateUtil.parseDate(t2.getTime())))
+                .collect(Collectors.toList());
+        // 翻转
         return historyList;
     }
 

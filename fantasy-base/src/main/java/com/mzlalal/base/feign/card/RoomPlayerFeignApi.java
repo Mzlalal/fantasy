@@ -118,6 +118,6 @@ public interface RoomPlayerFeignApi {
      * @return List<WsResult>
      */
     @ApiOperation("查询房间选手的历史消息")
-    @RequestMapping(value = "/query.room.player.history.message/{roomId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{roomId}/query.room.player.history.message", method = RequestMethod.GET)
     Result<HistoryMessageVo> queryRoomPlayerHistoryMessage(@PathVariable("roomId") String roomId);
 }

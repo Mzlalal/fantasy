@@ -189,7 +189,7 @@ public enum GlobalResult {
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException exception) {
             log.error("GlobalResultCode抛出异常错误", exception);
         }
-        return new RuntimeException();
+        return new RuntimeException("500");
     }
 
     /**

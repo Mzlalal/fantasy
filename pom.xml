@@ -170,13 +170,11 @@
                                 <jvmFlag>-XX:+PrintGCDateStamps</jvmFlag>
                                 <!--suppress UnresolvedMavenProperty -->
                                 <jvmFlag>-Xloggc:/root/logs/gc/${jib.name}-gc-%t.log</jvmFlag>
+                                <jvmFlag>-Duser.timezone=GMT+08</jvmFlag>
                             </jvmFlags>
                             <args>
                                 <arg>
                                     --spring.profiles.active=product
-                                </arg>
-                                <arg>
-                                    --user.timezone=GMT+08
                                 </arg>
                             </args>
                             <!-- 使用当前时间 -->
