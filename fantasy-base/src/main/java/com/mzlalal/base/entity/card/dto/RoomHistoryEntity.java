@@ -38,6 +38,11 @@ public class RoomHistoryEntity extends BaseEntity {
     @ApiModelProperty("ID")
     private String id;
     /**
+     * 房间名
+     */
+    @ApiModelProperty("房间名")
+    private String roomName;
+    /**
      * 房间内的选手ID集合
      */
     @ApiModelProperty("房间内的选手ID集合")

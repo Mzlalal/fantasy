@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, initial-scale=1.0, user-scalable=no">
+    <title>历史记录</title>
+    <link rel="stylesheet" href="css/plugin/frozen.css"/>
+    <link rel="stylesheet" href="css/common.css"/>
+    <script src="js/plugin/axios.min.js"></script>
+    <script src="js/plugin/vue.min.js"></script>
+    <script src="js/CommonUtil.js"></script>
+</head>
+<style>
+
+</style>
+<body>
+<div id="app">
+    <header class="ui-header ui-header-positive ui-border-b text-center">
+        <span class="font-weight-bolder font-weight-20px">斗也斗得</span>
+        <a class="position-right username-display" href="/fantasy-card/fang-jian-lie-biao.html">返回</a>
+    </header>
+    <div class="ui-form ui-border-t ui-container">
+        <ul class="ui-list ui-list-function ui-border-tb">
+            <li v-for="room in roomList">
+                <ul class="ui-list ui-list-function ui-border-tb">
+                    <li>
+                        <div class="ui-list-info ui-border-t">
+                            <h4 class="ui-nowrap" v-html="room.roomName">}</h4>
+                            <p>{{room.createTime}}</p>
+                        </div>
+                        <div class="ui-btn" @click="checkHistoryRoom(room)">查看</div>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+        <section class="ui-notice margin-top-1em" v-if="roomList.length === 0">
+            <i></i>
+            <p>暂无记录</p>
+        </section>
+    </div>
+    <transition name="slide-fade">
+        <div class="ui-dialog show" v-if="historyRoom">
+            <div class="ui-dialog-cnt">
+                <div class="ui-dialog-bd">
+                    <h3>结算榜单</h3>
+                    <ul class="ui-list ui-list-single ui-border-tb">
+                        <li class="ui-border-t" v-for="player in historyRoom.playerStatusSet">
+                            <div class="ui-list-info">
+                                <h4 class="ui-nowrap" v-html="player.playerName"></h4>
+                                <div class="ui-txt-info">{{player.playerScore}}</div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="ui-dialog-ft">
+                    <button type="button" @click="historyRoom = null">确定</button>
+                </div>
+            </div>
+        </div>
+    </transition>
+</div>
+</body>
+<script>
+    const vm = new Vue({
+        el: "#app",
+        data: {
+            roomList: [],
+            historyRoom: null,
+        },
+        methods: {
+            // 加载房间列表
+            initRoomList() {
+                const param = {
+                    "pageInfo": {
+                        "currPage": 1,
+                        "pageSize": 10
+                    }
+                }
+                // 请求
+                axios({
+                    method: "post",
+                    url: "/fantasy-card/api/v1/card/room.history/list",
+                    data: param
+                }).then(res => {
+                    this.roomList = commonUtil.getPageList(res);
+                }).catch(res => {
+                    if (res.data && res.data.msg) {
+                        alert(res.data.msg)
+                    } else {
+                        alert("服务器繁忙,请稍后再试")
+                    }
+                })
+            },
+            // 点击查看按钮
+            checkHistoryRoom(item) {
+                this.historyRoom = item;
+            }
+        },
+        created() {
+            // 加载房间列表
+            this.initRoomList();
+        }
+    });
+</script>
+
+</html>

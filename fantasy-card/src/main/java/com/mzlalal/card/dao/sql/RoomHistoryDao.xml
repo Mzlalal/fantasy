@@ -6,6 +6,7 @@
     <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="com.mzlalal.base.entity.card.dto.RoomHistoryEntity" id="roomHistoryMap">
         <result property="id" column="id"/>
+        <result property="roomName" column="room_name"/>
         <result property="playerIdSet" column="player_id_set"/>
         <result property="playerStatusSet" column="player_status_set"
                 typeHandler="com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler"/>

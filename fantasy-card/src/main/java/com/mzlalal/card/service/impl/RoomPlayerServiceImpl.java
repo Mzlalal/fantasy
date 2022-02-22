@@ -294,10 +294,17 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
         for (String id : ids) {
             // 查询房间内的选手信息
             List<RoomPlayerEntity> playerList = this.queryRoomPlayerListByRoomId(id);
+            if (CollUtil.isEmpty(playerList)) {
+                continue;
+            }
             // 获取用户ID作为字符串
             String playerIdStr = LambdaUtil.getFieldStr(playerList, RoomPlayerEntity::getId);
             // 保存房间历史数据
-            RoomHistoryEntity entity = RoomHistoryEntity.builder().playerIdSet(playerIdStr).playerStatusSet(playerList).build();
+            RoomHistoryEntity entity = RoomHistoryEntity.builder()
+                    .roomName(CollUtil.getFirst(playerList).getRoomName())
+                    .playerIdSet(playerIdStr)
+                    .playerStatusSet(playerList)
+                    .build();
             AssertUtil.isTrue(roomHistoryService.save(entity), "房间结算失败,可能房间不存在");
         }
 
