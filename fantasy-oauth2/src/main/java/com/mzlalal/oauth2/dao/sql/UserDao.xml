@@ -19,19 +19,19 @@
         <result property="tenantId" column="tenant_id"/>
     </resultMap>
 
-    <select id="findOneByMobile" resultType="com.mzlalal.base.entity.oauth2.dto.UserEntity">
+    <select id="queryOneByMobile" resultType="com.mzlalal.base.entity.oauth2.dto.UserEntity">
         select *
         from t_user
         where mobile = #{mobile}
     </select>
 
-    <select id="findOneByMail" resultType="com.mzlalal.base.entity.oauth2.dto.UserEntity">
+    <select id="queryOneByMail" resultType="com.mzlalal.base.entity.oauth2.dto.UserEntity">
         select *
         from t_user
         where mail = #{mail}
     </select>
 
-    <select id="existByMail" resultType="java.lang.Boolean" parameterType="java.lang.String">
+    <select id="queryExistByMail" resultType="java.lang.Boolean" parameterType="java.lang.String">
         select count(mail)
         from t_user
         where mail = #{mail}

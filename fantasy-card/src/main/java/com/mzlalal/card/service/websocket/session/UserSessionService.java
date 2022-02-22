@@ -114,7 +114,7 @@ public class UserSessionService {
      */
     public void sendRoomPlayerMessage(String roomId) {
         // 查询当前房间内的选手信息
-        List<RoomPlayerEntity> roomPlayerList = roomPlayerService.getRoomPlayerListByRoomId(roomId);
+        List<RoomPlayerEntity> roomPlayerList = roomPlayerService.queryRoomPlayerListByRoomId(roomId);
         if (CollUtil.isEmpty(roomPlayerList)) {
             return;
         }
@@ -147,7 +147,7 @@ public class UserSessionService {
      */
     public void broadcast(String roomId, String from, String to, String message) {
         // 查询当前房间内的选手信息
-        List<RoomPlayerEntity> roomPlayerList = roomPlayerService.getRoomPlayerListByRoomId(roomId);
+        List<RoomPlayerEntity> roomPlayerList = roomPlayerService.queryRoomPlayerListByRoomId(roomId);
         if (CollUtil.isEmpty(roomPlayerList)) {
             return;
         }

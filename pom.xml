@@ -14,7 +14,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.5.4</version>
+        <version>2.5.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.mzlalal</groupId>
@@ -29,6 +29,7 @@
         <fastjson.version>1.2.76</fastjson.version>
         <redisson.version>3.15.3</redisson.version>
         <mybatis.plus.version>3.5.0</mybatis.plus.version>
+        <mybatis.page.helper.version>1.4.0</mybatis.page.helper.version>
         <spring.cloud.version>2020.0.3</spring.cloud.version>
         <spring.cloud.alibaba.version>2021.1</spring.cloud.alibaba.version>
         <spring.cloud.nacos.version>2021.1</spring.cloud.nacos.version>
@@ -111,6 +112,11 @@
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-boot-starter</artifactId>
                 <version>${mybatis.plus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.pagehelper</groupId>
+                <artifactId>pagehelper-spring-boot-starter</artifactId>
+                <version>${mybatis.page.helper.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>

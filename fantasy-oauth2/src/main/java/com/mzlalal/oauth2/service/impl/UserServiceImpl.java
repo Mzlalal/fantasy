@@ -1,6 +1,5 @@
 package com.mzlalal.oauth2.service.impl;
 
-import cn.hutool.core.thread.ThreadUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -15,7 +14,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Future;
 
 /**
  * ServiceImpl
@@ -30,29 +28,27 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     public Page<UserEntity> queryPage(Po<UserEntity> po) {
         // 查询参数
         QueryWrapper<UserEntity> wrapper = new QueryWrapper<>(po.getEntity());
-        // 异步查询总行数 selectList一定要在future之后
-        Future<Long> future = ThreadUtil.execAsync(() -> baseMapper.selectCount(wrapper));
+        // 创建分页条件
+        com.github.pagehelper.Page<UserEntity> pageResult = this.createPageQuery(po.getPageInfo());
         // 查询结果集
         List<UserEntity> entityList = baseMapper.selectList(wrapper);
-        // 获取总行数结果
-        Long count = this.getTotalResult(future, log);
         // 返回结果
-        return new Page<>(entityList, count, po.getPageInfo());
+        return new Page<>(entityList, pageResult.getTotal(), po.getPageInfo());
     }
 
     @Override
-    public Optional<UserEntity> findOneByMobile(@NotBlank(message = "手机号不能为空") String mobile) {
-        return baseMapper.findOneByMobile(mobile);
+    public Optional<UserEntity> queryOneByMobile(@NotBlank(message = "手机号不能为空") String mobile) {
+        return baseMapper.queryOneByMobile(mobile);
     }
 
     @Override
-    public Optional<UserEntity> findOneByMail(@NotBlank(message = "邮件不能为空") String mail) {
-        return baseMapper.findOneByMail(mail);
+    public Optional<UserEntity> queryOneByMail(@NotBlank(message = "邮件不能为空") String mail) {
+        return baseMapper.queryOneByMail(mail);
     }
 
     @Override
-    public boolean existByMail(@NotBlank(message = "邮件不能为空") String mail) {
-        return baseMapper.existByMail(mail);
+    public boolean queryExistByMail(@NotBlank(message = "邮件不能为空") String mail) {
+        return baseMapper.queryExistByMail(mail);
     }
 
     @Override

@@ -10,6 +10,7 @@ import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.entity.oauth2.dto.ClientEntity;
 import com.mzlalal.base.entity.oauth2.dto.UserEntity;
 import com.mzlalal.base.entity.oauth2.vo.AccessToken;
+import com.mzlalal.base.util.AssertUtil;
 import com.mzlalal.oauth2.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -75,10 +76,11 @@ public class RedisTokenService {
                 , userEntity, clientEntity.getAccessTokenTime(), TimeUnit.SECONDS);
         // 设置刷新TOKEN
         redisTemplate.opsForValue().setIfAbsent(GlobalConstant.tokenRedisKey(accessToken.getRefreshToken())
-                , "", clientEntity.getRefreshTokenTime(), TimeUnit.SECONDS);
+                , "" , clientEntity.getRefreshTokenTime(), TimeUnit.SECONDS);
         // 更新用户token
         BeanUtil.copyProperties(accessToken, userEntity);
-        userService.updateAccessTokenById(userEntity.getId(), userEntity);
+        AssertUtil.isTrue(userService.updateAccessTokenById(userEntity.getId(), userEntity)
+                , "更新用户登录信息失败,可能是用户不存在");
         return accessToken;
     }
 }

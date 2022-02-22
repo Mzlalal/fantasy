@@ -24,7 +24,7 @@ public interface RoomPlayerService extends BaseService<RoomPlayerEntity> {
      * @param userId 用户ID
      * @return RoomPlayerEntity
      */
-    RoomPlayerEntity getOneByRoomIdAndUserId(String roomId, String userId);
+    RoomPlayerEntity queryOneByRoomIdAndUserId(String roomId, String userId);
 
     /**
      * 初始化房间内的选手
@@ -54,7 +54,7 @@ public interface RoomPlayerService extends BaseService<RoomPlayerEntity> {
      * @param roomId 房间ID
      * @return StatScoreVo
      */
-    List<RoomPlayerEntity> getRoomPlayerListByRoomId(String roomId);
+    List<RoomPlayerEntity> queryRoomPlayerListByRoomId(String roomId);
 
     /**
      * 更新用户状态

@@ -22,7 +22,7 @@ public interface UserDao extends BaseMapper<UserEntity> {
      * @param mobile 手机号
      * @return UserEntity
      */
-    Optional<UserEntity> findOneByMobile(@Param("mobile") String mobile);
+    Optional<UserEntity> queryOneByMobile(@Param("mobile") String mobile);
 
     /**
      * 根据邮箱获取用户信息
@@ -30,7 +30,7 @@ public interface UserDao extends BaseMapper<UserEntity> {
      * @param mail 邮箱
      * @return UserEntity
      */
-    Optional<UserEntity> findOneByMail(@Param("mail") String mail);
+    Optional<UserEntity> queryOneByMail(@Param("mail") String mail);
 
     /**
      * 根据邮箱判断用户是否存在
@@ -38,5 +38,5 @@ public interface UserDao extends BaseMapper<UserEntity> {
      * @param mail 邮箱
      * @return 1存在 0 不存在
      */
-    boolean existByMail(@Param("mail") String mail);
+    boolean queryExistByMail(@Param("mail") String mail);
 }

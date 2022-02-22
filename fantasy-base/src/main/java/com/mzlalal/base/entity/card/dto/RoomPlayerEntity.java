@@ -24,7 +24,7 @@ public class RoomPlayerEntity extends BaseEntity {
     private static final long serialVersionUID = 2204355865868864707L;
 
     /**
-     * ID
+     * ID(用户ID)
      */
     @TableId
     @ApiModelProperty("ID")

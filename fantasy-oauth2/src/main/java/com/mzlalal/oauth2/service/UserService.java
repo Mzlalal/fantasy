@@ -18,7 +18,7 @@ public interface UserService extends BaseService<UserEntity> {
      * @param mobile 手机号
      * @return UserEntity
      */
-    Optional<UserEntity> findOneByMobile(String mobile);
+    Optional<UserEntity> queryOneByMobile(String mobile);
 
     /**
      * 根据邮箱获取用户信息
@@ -26,7 +26,7 @@ public interface UserService extends BaseService<UserEntity> {
      * @param mail 邮箱
      * @return UserEntity
      */
-    Optional<UserEntity> findOneByMail(String mail);
+    Optional<UserEntity> queryOneByMail(String mail);
 
     /**
      * 根据邮箱判断用户是否存在
@@ -34,7 +34,7 @@ public interface UserService extends BaseService<UserEntity> {
      * @param mail 邮箱
      * @return 1存在 0 不存在
      */
-    boolean existByMail(String mail);
+    boolean queryExistByMail(String mail);
 
     /**
      * 根据ID更新用户的访问令牌

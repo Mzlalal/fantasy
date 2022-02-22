@@ -67,7 +67,7 @@ public enum GrantResponseEnum {
             // 验证码是否正确
             AssertUtil.equals(redisCode, req.getPassword(), GlobalResult.VALIDATE_CODE_NOT_RIGHT);
             // 查询用户信息
-            UserEntity userEntity = userService.findOneByMail(username).orElseThrow(GlobalResult.EMAIL_NOT_FOUNT::boom);
+            UserEntity userEntity = userService.queryOneByMail(username).orElseThrow(GlobalResult.EMAIL_NOT_FOUNT::boom);
             // 存储用户信息并返回授权码
             return redisAuthorizeCodeService.store(req.getClientId(), userEntity);
         }
@@ -103,7 +103,7 @@ public enum GrantResponseEnum {
             // 手机格式
             this.verifyUsername(username);
             // 查询用户信息
-            UserEntity userEntity = userService.findOneByMobile(username)
+            UserEntity userEntity = userService.queryOneByMobile(username)
                     .orElseThrow(GlobalResult.MOBILE_NOT_FOUNT::boom);
             // 密码不正确
             AssertUtil.isTrue(passwordEncoder.matches(req.getPassword(), userEntity.getPassword()),

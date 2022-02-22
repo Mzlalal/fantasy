@@ -1,6 +1,5 @@
 package com.mzlalal.oauth2.service.impl;
 
-import cn.hutool.core.thread.ThreadUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mzlalal.base.entity.global.po.Po;
@@ -11,7 +10,6 @@ import com.mzlalal.oauth2.service.ClientService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.concurrent.Future;
 
 /**
  * ServiceImpl
@@ -26,14 +24,12 @@ public class ClientServiceImpl extends ServiceImpl<ClientDao, ClientEntity> impl
     public Page<ClientEntity> queryPage(Po<ClientEntity> po) {
         // 查询参数
         QueryWrapper<ClientEntity> wrapper = new QueryWrapper<>(po.getEntity());
-        // 异步查询总行数 selectList一定要在future之后
-        Future<Long> future = ThreadUtil.execAsync(() -> baseMapper.selectCount(wrapper));
+        // 创建分页条件
+        com.github.pagehelper.Page<ClientEntity> pageResult = this.createPageQuery(po.getPageInfo());
         // 查询结果集
         List<ClientEntity> entityList = baseMapper.selectList(wrapper);
-        // 获取总行数结果
-        Long count = this.getTotalResult(future, log);
         // 返回结果
-        return new Page<>(entityList, count, po.getPageInfo());
+        return new Page<>(entityList, pageResult.getTotal(), po.getPageInfo());
     }
 
     @Override

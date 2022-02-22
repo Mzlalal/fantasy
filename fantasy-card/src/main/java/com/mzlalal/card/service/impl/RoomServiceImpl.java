@@ -1,6 +1,5 @@
 package com.mzlalal.card.service.impl;
 
-import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.concurrent.Future;
 
 /**
  * 房间ServiceImpl
@@ -40,14 +38,12 @@ public class RoomServiceImpl extends ServiceImpl<RoomDao, RoomEntity> implements
         if (StrUtil.isNotBlank(name)) {
             wrapper.like("name" , name);
         }
-        // 异步查询总行数 selectList一定要在future之后
-        Future<Long> future = ThreadUtil.execAsync(() -> baseMapper.selectCount(wrapper));
+        // 创建分页条件
+        com.github.pagehelper.Page<RoomEntity> pageResult = this.createPageQuery(po.getPageInfo());
         // 查询结果集
         List<RoomEntity> entityList = baseMapper.selectList(wrapper);
-        // 获取总行数结果
-        Long count = this.getTotalResult(future, log);
         // 返回结果
-        return new Page<>(entityList, count, po.getPageInfo());
+        return new Page<>(entityList, pageResult.getTotal(), po.getPageInfo());
     }
 
     @Override
