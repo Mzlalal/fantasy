@@ -17,7 +17,7 @@
 <body>
 <div id="app">
     <header class="ui-header ui-header-positive ui-border-b text-center">
-        <span class="font-weight-bolder font-weight-20px">斗也斗得</span>
+        <span class="font-weight-bolder font-weight-20px">历史记录</span>
         <a class="position-right username-display" href="/fantasy-card/fang-jian-lie-biao.html">返回</a>
     </header>
     <div class="ui-form ui-border-t ui-container">
@@ -34,10 +34,14 @@
                 </ul>
             </li>
         </ul>
-        <section class="ui-notice margin-top-1em" v-if="roomList.length === 0">
+        <section class="ui-notice margin-top-1em" v-if="!loading && roomList.length === 0">
             <i></i>
             <p>暂无记录</p>
         </section>
+        <div class="ui-loading-wrap margin-top-1em" v-if="loading">
+            <p>加载中</p>
+            <i class="ui-loading"></i>
+        </div>
     </div>
     <transition name="slide-fade">
         <div class="ui-dialog show" v-if="historyRoom">
@@ -65,16 +69,21 @@
     const vm = new Vue({
         el: "#app",
         data: {
+            // 加载中
+            loading: false,
+            // 房间列表
             roomList: [],
+            // 需要查看的历史房间
             historyRoom: null,
         },
         methods: {
             // 加载房间列表
             initRoomList() {
+                this.loading = true;
                 const param = {
                     "pageInfo": {
                         "currPage": 1,
-                        "pageSize": 10
+                        "pageSize": 20
                     }
                 }
                 // 请求
@@ -83,8 +92,10 @@
                     url: "/fantasy-card/api/v1/card/room.history/list",
                     data: param
                 }).then(res => {
+                    this.loading = false;
                     this.roomList = commonUtil.getPageList(res);
                 }).catch(res => {
+                    this.loading = false;
                     if (res.data && res.data.msg) {
                         alert(res.data.msg)
                     } else {

@@ -42,10 +42,14 @@
                 <div class="ui-btn" @click="joinRoom(room)">加入</div>
             </li>
         </ul>
-        <section class="ui-notice margin-top-1em" v-if="roomList.length === 0">
+        <section class="ui-notice margin-top-1em" v-if="!loading && roomList.length === 0">
             <i></i>
             <p>暂无房间</p>
         </section>
+        <div class="ui-loading-wrap margin-top-1em" v-if="loading">
+            <p>加载中</p>
+            <i class="ui-loading"></i>
+        </div>
     </div>
     <transition name="slide-fade">
         <div class="ui-dialog show" v-if="existRoom" v-on:click.stop="existRoom = null">
@@ -78,7 +82,8 @@
     const vm = new Vue({
         el: "#app",
         data: {
-            //
+            // 加载中
+            loading: false,
             // 搜索框
             searchBar: false,
             // 搜索关键字
@@ -91,13 +96,14 @@
         methods: {
             // 加载房间列表
             initRoomList() {
+                this.loading = true;
                 const param = {
                     "entity": {
                         "name": this.searchKeyword
                     },
                     "pageInfo": {
                         "currPage": 1,
-                        "pageSize": 10
+                        "pageSize": 20
                     }
                 }
                 // 请求
@@ -106,8 +112,10 @@
                     url: "/fantasy-card/api/v1/card/room/list",
                     data: param
                 }).then(res => {
+                    this.loading = false;
                     this.roomList = commonUtil.getPageList(res);
                 }).catch(res => {
+                    this.loading = false;
                     if (res.data && res.data.msg) {
                         alert(res.data.msg)
                     } else {
