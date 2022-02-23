@@ -64,9 +64,6 @@ public class UserController implements UserFeignApi {
         if (StrUtil.isNotBlank(user.getMail())) {
             GrantResponseEnum.MAIL.verifyUsername(user.getMail());
         }
-
-        // 默认角色
-        user.setRoleId(10000L);
         // 密码加密
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userService.save(user) ? Result.ok() : Result.fail();
@@ -74,6 +71,14 @@ public class UserController implements UserFeignApi {
 
     @Override
     public Result<Void> update(@RequestBody UserEntity user) {
+        // 验证手机号格式是否正确
+        GrantResponseEnum.PASSWORD.verifyUsername(user.getMobile());
+        // 验证邮箱是否正确
+        if (StrUtil.isNotBlank(user.getMail())) {
+            GrantResponseEnum.MAIL.verifyUsername(user.getMail());
+        }
+        // 密码加密
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userService.updateById(user) ? Result.ok() : Result.fail();
     }
 
