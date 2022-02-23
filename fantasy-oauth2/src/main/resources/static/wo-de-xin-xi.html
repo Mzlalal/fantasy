@@ -144,7 +144,7 @@
                 // 禁用登录按钮
                 this.updateBtn = false;
                 // 校验密码和确认密码是否相同
-                if (this.password !== this.confirmPassword) {
+                if (this.user.password !== this.user.confirmPassword) {
                     // 提示
                     this.tips = "两次密码输入不相同";
                     // 启用登录按钮
@@ -175,6 +175,8 @@
                     if (this.mail) {
                         localStorage.setItem("username.mail", this.mail);
                     }
+                    // 保存用户信息
+                    localStorage.setItem("user.info", JSON.stringify(this.user));
                     // 跳转回原地址
                     setTimeout(() => {
                         window.location = localStorage.getItem("user.href.from");
@@ -196,6 +198,7 @@
             if (userInfo) {
                 this.user = JSON.parse(userInfo);
                 this.user.password = "";
+                this.user.confirmPassword = "";
             }
         }
     });
