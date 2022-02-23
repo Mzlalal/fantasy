@@ -17,7 +17,7 @@
 <body>
 <div id="app">
     <header class="ui-header ui-header-positive ui-border-b text-center">
-        <span class="position-left username-display">我的信息</span>
+        <span class="position-left username-display" @click="redirectUpdateUserInfo">我的信息</span>
         <span class="font-weight-bolder font-weight-20px">斗也斗得</span>
         <a class="position-right username-display" href="/fantasy-card/li-shi-ji-lu.html">历史记录</a>
     </header>
@@ -183,6 +183,13 @@
                         alert("服务器繁忙,请稍后再试")
                     }
                 })
+            },
+            // 跳转到更新用户信息
+            redirectUpdateUserInfo() {
+                // 保存URL
+                localStorage.setItem("user.href.from", window.location.href);
+                // 跳转到修改信息
+                window.location = "/fantasy-card/wo-de-xin-xi.html";
             }
         },
         created() {

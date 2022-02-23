@@ -355,7 +355,7 @@
             // 获取用户ID
             let userInfo = localStorage.getItem("user.info");
             if (userInfo) {
-                userInfo = JSON.parse(userInfo)
+                userInfo = JSON.parse(userInfo);
                 this.userId = userInfo.id;
                 this.username = userInfo.username;
             }

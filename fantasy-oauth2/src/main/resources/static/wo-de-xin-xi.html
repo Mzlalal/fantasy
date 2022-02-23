@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, initial-scale=1.0, user-scalable=no">
-    <title>用户注册</title>
+    <title>我的信息</title>
     <link rel="stylesheet" href="css/plugin/frozen.css"/>
     <link rel="stylesheet" href="css/common.css"/>
     <script src="js/plugin/axios.min.js"></script>
@@ -86,37 +86,37 @@
                 <label class="width-80px username-display">
                     用户名
                 </label>
-                <input v-model="username" type="text" placeholder="请输入用户名">
+                <input v-model="user.username" type="text" placeholder="请输入用户名">
             </div>
             <div class="ui-form-item ui-border-b">
                 <label class="width-80px username-display">
                     手机号
                 </label>
-                <input v-model="mobile" type="number" placeholder="请输入手机号">
+                <input v-model="user.mobile" type="number" placeholder="请输入手机号">
             </div>
             <div class="ui-form-item ui-border-b">
                 <label class="width-80px">
                     电子邮箱
                 </label>
-                <input v-model="mail" type="email" placeholder="请输邮箱">
+                <input v-model="user.mail" type="email" placeholder="请输入电子邮箱">
             </div>
             <div class="ui-form-item ui-border-b">
                 <label class="width-80px username-display">
                     用户密码
                 </label>
-                <input v-model="password" type="password" placeholder="请输入密码">
+                <input v-model="user.password" type="password" placeholder="请输入密码">
             </div>
             <div class="ui-form-item ui-border-b">
                 <label class="width-80px username-display">
                     确认密码
                 </label>
-                <input v-model="confirmPassword" type="password" placeholder="请再次输入相同的密码">
+                <input v-model="user.confirmPassword" type="password" placeholder="请再次输入相同的密码">
             </div>
         </div>
         <div class="ui-btn-wrap">
-            <button class="ui-btn-lg ui-btn-primary" @click="registerFun"
-                    v-bind:class="{ 'disabled': !registerBtn }" :disabled="!registerBtn">
-                立即注册
+            <button class="ui-btn-lg ui-btn-primary" @click="updateFun"
+                    v-bind:class="{ 'disabled': !updateBtn }" :disabled="!updateBtn">
+                修改
             </button>
         </div>
         <div class="ui-tooltips ui-tooltips-guide ui-tooltips-function" v-if="tips">
@@ -131,51 +131,42 @@
     const vm = new Vue({
         el: "#app",
         data: {
-            // 注册按钮
-            registerBtn: true,
-            // 请求的客户端ID
-            reqClientId: "",
-            // 用户名
-            username: "",
-            // 手机号
-            mobile: "",
-            // 邮箱
-            mail: "",
-            // 密码
-            password: "",
-            // 确认密码
-            confirmPassword: "",
+            // 修改按钮
+            updateBtn: true,
+            // 用户信息
+            user: {},
             // 显示信息
             tips: "",
         },
         methods: {
-            // 注册
-            registerFun() {
+            // 修改用户信息
+            updateFun() {
                 // 禁用登录按钮
-                this.registerBtn = false;
+                this.updateBtn = false;
                 // 校验密码和确认密码是否相同
                 if (this.password !== this.confirmPassword) {
                     // 提示
                     this.tips = "两次密码输入不相同";
                     // 启用登录按钮
-                    this.registerBtn = true;
+                    this.updateBtn = true;
                     return;
                 }
                 // 请求参数,和form或者input使用v-model绑定
                 const param = {
-                    "username": this.username,
-                    "mobile": this.mobile,
-                    "password": this.password,
-                    "mail": this.mail
+                    "id": this.user.id,
+                    "username": this.user.username,
+                    "mobile": this.user.mobile,
+                    "password": this.user.password,
+                    "mail": this.user.mail
                 };
                 // 请求接口
                 axios({
                     method: "post",
-                    url: "/fantasy-oauth2/api/v1/oauth/user/save",
+                    url: "/fantasy-oauth2/api/v1/oauth/user/update",
                     data: param
                 }).then(res => {
                     // 跳转地址
-                    this.tips = "注册成功,两秒后跳转到首页";
+                    this.tips = "修改成功,即将跳转到原地址";
                     // 记住用户手机号
                     if (this.username) {
                         localStorage.setItem("username.mobile", this.username);
@@ -184,12 +175,13 @@
                     if (this.mail) {
                         localStorage.setItem("username.mail", this.mail);
                     }
+                    // 跳转回原地址
                     setTimeout(() => {
-                        window.location = "/fantasy-oauth2/mi-ma-deng-lu.html?clientId=" + this.reqClientId;
+                        window.location = localStorage.getItem("user.href.from");
                     }, 2000)
                 }).catch(res => {
                     // 禁用登录按钮
-                    this.registerBtn = true;
+                    this.updateBtn = true;
                     // 提示信息
                     if (res.data && res.data.msg) {
                         this.tips = res.data.msg;
@@ -200,10 +192,11 @@
             },
         },
         created() {
-            // 如果URL有clientId,优先使用URL上的clientId
-            let urlClientId = commonUtil.getUrlPara("clientId");
-            // 赋值
-            this.reqClientId = urlClientId == null ? clientId : urlClientId;
+            let userInfo = localStorage.getItem("user.info");
+            if (userInfo) {
+                this.user = JSON.parse(userInfo);
+                this.user.password = "";
+            }
         }
     });
 </script>
