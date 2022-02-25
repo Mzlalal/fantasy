@@ -112,6 +112,6 @@ public class StatScoreWebSocket {
         // 用户ID
         String userId = user.getId();
         // 广播信息
-        userSessionService.broadcast(roomId, userId, str);
+        roomPlayerService.broadcast(roomId, userId, "", str);
     }
 }

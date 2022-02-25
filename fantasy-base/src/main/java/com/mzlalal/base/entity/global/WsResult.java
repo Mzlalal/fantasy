@@ -45,7 +45,7 @@ public class WsResult<T> implements Serializable {
 
     @Builder.Default
     @ApiModelProperty("分页数据")
-    private Page<T> pageInfo = Page.empty();
+    private Page<T> page = Page.empty();
 
     @Builder.Default
     @ApiModelProperty("时间")

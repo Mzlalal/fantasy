@@ -86,4 +86,14 @@ public interface RoomPlayerService extends BaseService<RoomPlayerEntity> {
      * @param ids 房间ID
      */
     void closeRoom(String[] ids);
+
+    /**
+     * 广播消息
+     *
+     * @param roomId  房间ID
+     * @param from    发送者
+     * @param to      接受者
+     * @param message 消息
+     */
+    void broadcast(String roomId, String from, String to, String message);
 }

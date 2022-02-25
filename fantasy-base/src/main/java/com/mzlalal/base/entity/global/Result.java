@@ -53,7 +53,7 @@ public class Result<T> implements Serializable {
 
     @Builder.Default
     @ApiModelProperty("分页数据")
-    private Page<T> pageInfo = Page.empty();
+    private Page<T> page = Page.empty();
 
     public static <T> Result<T> ok() {
         return Result.<T>builder().state(STATE_OK).msg(STATE_OK_MSG).build();
@@ -72,7 +72,7 @@ public class Result<T> implements Serializable {
     }
 
     public static <T> Result<T> ok(Page<T> page) {
-        return Result.<T>builder().state(STATE_OK).msg(STATE_OK_MSG).pageInfo(page).build();
+        return Result.<T>builder().state(STATE_OK).msg(STATE_OK_MSG).page(page).build();
     }
 
     public static <T> Result<T> fail() {

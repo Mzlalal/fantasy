@@ -64,10 +64,10 @@
             var r = window.location.search.substr(1).match(reg);
             if (r != null) return unescape(r[2]);
         },
-        // 获取res的pageInfo中的集合,若为空则返回[]空数组
+        // 获取res的page中的集合,若为空则返回[]空数组
         getPageList: function (res) {
-            if (res && res.pageInfo && res.pageInfo.list) {
-                return res.pageInfo.list;
+            if (res && res.page && res.page.list) {
+                return res.page.list;
             }
             return [];
         }

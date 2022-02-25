@@ -1,7 +1,9 @@
 package com.mzlalal.card.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -13,6 +15,7 @@ import com.mzlalal.base.entity.card.dto.RoomPlayerEntity;
 import com.mzlalal.base.entity.card.req.PlayerOutOrJoinRoomReq;
 import com.mzlalal.base.entity.card.req.TransferScoreReq;
 import com.mzlalal.base.entity.card.vo.HistoryMessageVo;
+import com.mzlalal.base.entity.global.WsResult;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oauth2.dto.UserEntity;
 import com.mzlalal.base.oauth2.Oauth2Context;
@@ -23,19 +26,17 @@ import com.mzlalal.card.dao.RoomPlayerDao;
 import com.mzlalal.card.service.RoomHistoryService;
 import com.mzlalal.card.service.RoomPlayerService;
 import com.mzlalal.card.service.RoomService;
-import com.mzlalal.card.service.websocket.session.UserSessionService;
+import com.mzlalal.card.service.websocket.session.manager.UserSessionManager;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.io.IOException;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -56,9 +57,9 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
      */
     private final RoomHistoryService roomHistoryService;
     /**
-     * websocket用户会话操作
+     * string redis操作模板
      */
-    private UserSessionService userSessionService;
+    private final StringRedisTemplate stringRedisTemplate;
     /**
      * string=>对象 redis操作模板
      */
@@ -68,17 +69,14 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
      */
     private final RedissonClient redissonClient;
 
-    public RoomPlayerServiceImpl(RoomService roomService, RoomHistoryService roomHistoryService, RedisTemplate<String, Object> redisTemplate
+    public RoomPlayerServiceImpl(RoomService roomService, RoomHistoryService roomHistoryService
+            , StringRedisTemplate stringRedisTemplate, RedisTemplate<String, Object> redisTemplate
             , RedissonClient redissonClient) {
         this.roomService = roomService;
         this.roomHistoryService = roomHistoryService;
+        this.stringRedisTemplate = stringRedisTemplate;
         this.redisTemplate = redisTemplate;
         this.redissonClient = redissonClient;
-    }
-
-    @Autowired
-    public void setUserSessionService(UserSessionService userSessionService) {
-        this.userSessionService = userSessionService;
     }
 
     /**
@@ -127,7 +125,7 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
         RoomPlayerEntity existPlayer = this.queryOneByRoomIdAndUserId(roomId, userId);
         if (existPlayer != null) {
             // 发送房间内的选手状态
-            userSessionService.sendRoomPlayerMessage(roomId);
+            this.broadcast(roomId, "", "", "");
             return;
         }
 
@@ -162,9 +160,9 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
         this.updateStatus(roomId, userId, GlobalConstant.STATUS_ON);
 
         // 上桌消息
-        String message = StrUtil.format(GlobalConstant.USERNAME_DISPLAY + "上桌了" , req.getUsername());
+        String message = StrUtil.format(GlobalConstant.USERNAME_DISPLAY + "上桌了", req.getUsername());
         // 广播消息
-        userSessionService.broadcast(roomId, userId, message);
+        this.broadcast(roomId, userId, "", message);
     }
 
     @Override
@@ -178,9 +176,9 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
         this.updateStatus(roomId, userId, GlobalConstant.STATUS_OFF);
 
         // 下桌消息
-        String message = StrUtil.format(GlobalConstant.USERNAME_DISPLAY + "下桌了" , req.getUsername());
+        String message = StrUtil.format(GlobalConstant.USERNAME_DISPLAY + "下桌了", req.getUsername());
         // 广播消息
-        userSessionService.broadcast(roomId, userId, message);
+        this.broadcast(roomId, userId, "", message);
     }
 
     @Override
@@ -242,7 +240,7 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
             AssertUtil.isTrue(add > 0, GlobalResult.ADD_SCORE_FAIL);
 
             // 发送消息到房间
-            userSessionService.broadcast(roomId, from, to, req.getMessage());
+            this.broadcast(roomId, from, to, req.getMessage());
         } finally {
             // 解锁
             if (lock.isLocked()) {
@@ -310,7 +308,7 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
 
         // 删除房间内的所有选手
         QueryWrapper<RoomPlayerEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.in("room_id" , roomIdList);
+        queryWrapper.in("room_id", roomIdList);
         AssertUtil.isTrue(baseMapper.delete(queryWrapper) > 0, "关闭房间失败,可能房间不存在");
 
         // 删除房间
@@ -321,5 +319,90 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
             String redisKey = GlobalConstant.roomMessageRedisKey(roomId);
             redisTemplate.delete(redisKey);
         }
+    }
+
+    /**
+     * 广播信息
+     *
+     * @param roomId  房间ID
+     * @param from    发送者
+     * @param to      接收人
+     * @param message 文本消息
+     */
+    @Override
+    public void broadcast(String roomId, String from, String to, String message) {
+        // 查询当前房间内的选手信息
+        List<RoomPlayerEntity> roomPlayerList = this.queryRoomPlayerListByRoomId(roomId);
+        if (CollUtil.isEmpty(roomPlayerList)) {
+            return;
+        }
+        // msg
+        WsResult<RoomPlayerEntity> result = WsResult.okMsg(message);
+        // 发送者
+        result.setFrom(from);
+        // 接收人
+        result.setTo(to);
+        // 房间内的选手信息
+        result.getPage().setList(roomPlayerList);
+        // 广播
+        this.broadcast(roomId, result);
+    }
+
+    /**
+     * 广播信息
+     *
+     * @param roomId 房间ID
+     * @param result 选手分数统计数据
+     */
+    public void broadcast(String roomId, WsResult<?> result) {
+        // result 不能为空
+        if (result == null) {
+            return;
+        }
+        // 获取当前房间的人员
+        String roomIdRedisKey = GlobalConstant.roomSessionRedisKey(roomId);
+        Set<String> memberSet = stringRedisTemplate.opsForSet().members(roomIdRedisKey);
+        // 房间没有选手了
+        if (CollUtil.isEmpty(memberSet)) {
+            return;
+        }
+        // dio当前房间的所有人遍历发送
+        UserSessionManager.getByUserIdSet(memberSet).parallelStream().forEach(session -> {
+            // 如果为空或者非正常状态,跳出
+            if (session == null || !session.isOpen()) {
+                return;
+            }
+            // 获取参数
+            Map<String, String> pathParameterMap = session.getPathParameters();
+            // 发送给其他人
+            try {
+                session.getBasicRemote().sendText(JSON.toJSONString(result));
+            } catch (IOException e) {
+                log.error(JSON.toJSONString(pathParameterMap) + "关闭意外出错", e);
+            }
+        });
+        // 保存消息
+        this.saveRoomMessage(roomId, result);
+    }
+
+    /**
+     * 保存房间消息
+     *
+     * @param roomId 房间ID
+     * @param result 消息
+     */
+    public void saveRoomMessage(String roomId, WsResult<?> result) {
+        // 返回结果赋值给历史消息
+        HistoryMessageVo historyMessageVo = new HistoryMessageVo();
+        BeanUtil.copyProperties(result, historyMessageVo);
+
+        // 如果from没有则不保存至redis
+        if (StrUtil.isBlank(result.getFrom())) {
+            return;
+        }
+
+        // 保存到redis
+        String redisKey = GlobalConstant.roomMessageRedisKey(roomId);
+        redisTemplate.opsForSet().add(redisKey, historyMessageVo);
     }
 }

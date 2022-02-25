@@ -1,28 +1,17 @@
 package com.mzlalal.card.service.websocket.session;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.common.GlobalResult;
-import com.mzlalal.base.entity.card.dto.RoomPlayerEntity;
-import com.mzlalal.base.entity.card.vo.HistoryMessageVo;
-import com.mzlalal.base.entity.global.WsResult;
 import com.mzlalal.base.entity.oauth2.dto.UserEntity;
-import com.mzlalal.card.service.RoomPlayerService;
 import com.mzlalal.card.service.websocket.session.manager.UserSessionManager;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.Session;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * websocket用户会话操作
@@ -41,19 +30,10 @@ public class UserSessionService {
      * string redis操作模板
      */
     private final StringRedisTemplate stringRedisTemplate;
-    /**
-     * 房间内的选手操作
-     */
-    private RoomPlayerService roomPlayerService;
 
     public UserSessionService(RedisTemplate<String, Object> redisTemplate, StringRedisTemplate stringRedisTemplate) {
         this.redisTemplate = redisTemplate;
         this.stringRedisTemplate = stringRedisTemplate;
-    }
-
-    @Autowired
-    public void setRoomPlayerService(RoomPlayerService roomPlayerService) {
-        this.roomPlayerService = roomPlayerService;
     }
 
     /**
@@ -105,119 +85,5 @@ public class UserSessionService {
         // 保存用户会话至redis房间中
         String roomIdRedisKey = GlobalConstant.roomSessionRedisKey(roomId);
         stringRedisTemplate.opsForSet().remove(roomIdRedisKey, userId);
-    }
-
-    /**
-     * 发送房间内的选手消息
-     *
-     * @param roomId 房间ID
-     */
-    public void sendRoomPlayerMessage(String roomId) {
-        // 查询当前房间内的选手信息
-        List<RoomPlayerEntity> roomPlayerList = roomPlayerService.queryRoomPlayerListByRoomId(roomId);
-        if (CollUtil.isEmpty(roomPlayerList)) {
-            return;
-        }
-        // 发送消息
-        WsResult<RoomPlayerEntity> result = WsResult.ok();
-        // 房间内的选手信息
-        result.getPageInfo().setList(roomPlayerList);
-        // 广播
-        this.broadcast(roomId, result);
-    }
-
-    /**
-     * 广播信息
-     *
-     * @param roomId  房间ID
-     * @param from    发送者
-     * @param message 文本消息
-     */
-    public void broadcast(String roomId, String from, String message) {
-        this.broadcast(roomId, from, from, message);
-    }
-
-    /**
-     * 广播信息
-     *
-     * @param roomId  房间ID
-     * @param from    发送者
-     * @param to      接收人
-     * @param message 文本消息
-     */
-    public void broadcast(String roomId, String from, String to, String message) {
-        // 查询当前房间内的选手信息
-        List<RoomPlayerEntity> roomPlayerList = roomPlayerService.queryRoomPlayerListByRoomId(roomId);
-        if (CollUtil.isEmpty(roomPlayerList)) {
-            return;
-        }
-        // msg
-        WsResult<RoomPlayerEntity> result = WsResult.okMsg(message);
-        // 发送者
-        result.setFrom(from);
-        // 接收人
-        result.setTo(to);
-        // 房间内的选手信息
-        result.getPageInfo().setList(roomPlayerList);
-        // 广播
-        this.broadcast(roomId, result);
-    }
-
-    /**
-     * 广播信息
-     *
-     * @param roomId 房间ID
-     * @param result 选手分数统计数据
-     */
-    public void broadcast(String roomId, WsResult<?> result) {
-        // result 不能为空
-        if (result == null) {
-            return;
-        }
-        // 获取当前房间的人员
-        String roomIdRedisKey = GlobalConstant.roomSessionRedisKey(roomId);
-        Set<String> memberSet = stringRedisTemplate.opsForSet().members(roomIdRedisKey);
-        // 房间没有选手了
-        if (CollUtil.isEmpty(memberSet)) {
-            return;
-        }
-        // dio当前房间的所有人遍历发送
-        UserSessionManager.getByUserIdSet(memberSet).parallelStream().forEach(session -> {
-            // 如果为空或者非正常状态,跳出
-            if (session == null || !session.isOpen()) {
-                return;
-            }
-            // 获取参数
-            Map<String, String> pathParameterMap = session.getPathParameters();
-            // 发送给其他人
-            try {
-                session.getBasicRemote().sendText(JSON.toJSONString(result));
-            } catch (IOException e) {
-                log.error(JSON.toJSONString(pathParameterMap) + "关闭意外出错", e);
-            }
-        });
-        // 保存消息
-        this.saveRoomMessage(roomId, result);
-    }
-
-    /**
-     * 保存房间消息
-     *
-     * @param roomId 房间ID
-     * @param result 消息
-     */
-    public void saveRoomMessage(String roomId, WsResult<?> result) {
-        // 返回结果赋值给历史消息
-        HistoryMessageVo historyMessageVo = new HistoryMessageVo();
-        BeanUtil.copyProperties(result, historyMessageVo);
-
-        // 如果from没有则不保存至redis
-        if (StrUtil.isBlank(result.getFrom())) {
-            return;
-        }
-
-        // 保存到redis
-        String redisKey = GlobalConstant.roomMessageRedisKey(roomId);
-        redisTemplate.opsForSet().add(redisKey, historyMessageVo);
     }
 }
