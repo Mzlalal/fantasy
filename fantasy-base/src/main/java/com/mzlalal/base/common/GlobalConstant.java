@@ -64,35 +64,35 @@ public interface GlobalConstant {
     String USERNAME_DISPLAY = "<span class=\"username-display\">{}</span>";
 
     /**
-     * UUID与clientId绑定的授权码 redis key
+     * UUID与clientKey绑定的授权码 redis key
      *
-     * @param clientId 机构ID
-     * @return String fantasy:{clientId}:{uuid}
+     * @param clientKey 客户端ID
+     * @return String fantasy:{clientKey}:{uuid}
      */
-    static String clientIdAuthCodeRedisKey(String clientId) {
-        return StrUtil.format("fantasy:{}:{}", clientId, IdUtil.fastSimpleUUID());
+    static String clientKeyAuthCodeRedisKey(String clientKey) {
+        return StrUtil.format("fantasy:{}:{}" , clientKey, IdUtil.fastSimpleUUID());
     }
 
     /**
      * 邮箱 redis key
      *
-     * @param clientId 客户端
-     * @param mail     电子邮箱地址
-     * @return String fantasy:mail:code:{clientId}:{mail}
+     * @param clientKey 客户端ID
+     * @param mail      电子邮箱地址
+     * @return String fantasy:mail:code:{clientKey}:{mail}
      */
-    static String clientIdMailCodeRedisKey(String clientId, String mail) {
-        return StrUtil.format("fantasy:mail:code:{}:{}", clientId, mail);
+    static String clientKeyMailCodeRedisKey(String clientKey, String mail) {
+        return StrUtil.format("fantasy:mail:code:{}:{}" , clientKey, mail);
     }
 
     /**
      * 手机号登录验证码 redis key
      *
-     * @param clientId 客户端ID
-     * @param mobile   手机号
-     * @return String fantasy:password:code:{clientId}:{mobile}
+     * @param clientKey 客户端ID
+     * @param mobile    手机号
+     * @return String fantasy:password:code:{clientKey}:{mobile}
      */
-    static String clientIdPasswordCodeRedisKey(String clientId, String mobile) {
-        return StrUtil.format("fantasy:password:code:{}:{}", clientId, mobile);
+    static String clientKeyPasswordCodeRedisKey(String clientKey, String mobile) {
+        return StrUtil.format("fantasy:password:code:{}:{}" , clientKey, mobile);
     }
 
     /**

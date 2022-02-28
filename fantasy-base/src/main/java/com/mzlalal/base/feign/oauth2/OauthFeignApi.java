@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author Mzlalal
  * @date 2021/7/28 14:28
  */
-@FeignClient(contextId = "OauthFeignApi", name = GlobalConstant.FANTASY_OAUTH2, url = "${fantasy-oauth2.feign.url}"
+@FeignClient(contextId = "OauthFeignApi" , name = GlobalConstant.FANTASY_OAUTH2, url = "${fantasy-oauth2.feign.url}"
         , path = "/api/v1/oauth")
 public interface OauthFeignApi {
 
@@ -36,7 +36,7 @@ public interface OauthFeignApi {
      * @param req 登录验证码参数
      * @return Result<String>
      */
-    @ApiOperation(value = "登录验证码", notes = "密码登录生成base64图片验证码,邮件登录发送邮件验证码等")
+    @ApiOperation(value = "登录验证码" , notes = "密码登录生成base64图片验证码,邮件登录发送邮件验证码等")
     @PostMapping("/verify.code")
     @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 10)
     Result<String> verifyCode(@Validated @RequestBody VerifyCodeReq req);
@@ -47,7 +47,7 @@ public interface OauthFeignApi {
      * @param req 文本密码登录校验验证码参数
      * @return Result<String>
      */
-    @ApiOperation(value = "校验验证码", notes = "此接口是可选的,若想实现在第一次文本密码登录失败后显示验证码" +
+    @ApiOperation(value = "校验验证码" , notes = "此接口是可选的,若想实现在第一次文本密码登录失败后显示验证码" +
             ",应在对应情境下请求/api/v1/oauth/verify.code接口,根据responseType=password来生成base64图片校验码" +
             ",此接口验证码比对正确则返回成功" +
             ",若用户验证码没生成过或生成了过期(验证码值在缓存中15分钟过期)或者比对失败则直接返回新的base64图片至data中")
@@ -62,7 +62,7 @@ public interface OauthFeignApi {
      * @param req 请求授权参数VO
      * @return Result<BaseEntity>
      */
-    @ApiOperation(value = "登录", notes = "根据用户名及验证码生成授权码/根据用户名及密码登录直接生成用户令牌")
+    @ApiOperation(value = "登录" , notes = "根据用户名及验证码生成授权码/根据用户名及密码登录直接生成用户令牌")
     @PostMapping("/authorize")
     @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 20)
     Result<RedirectUriVo> authorize(@Validated @RequestBody OauthReq req);

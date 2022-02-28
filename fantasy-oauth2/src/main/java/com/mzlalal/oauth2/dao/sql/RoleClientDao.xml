@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mzlalal.oauth2.dao.RoleClientDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.mzlalal.base.entity.oauth2.dto.RoleClientEntity" id="roleClientMap">
+        <result property="id" column="id"/>
+        <result property="roleId" column="role_id"/>
+        <result property="clientId" column="client_id"/>
+    </resultMap>
+
+    <select id="queryClientListByRoleId" resultType="com.mzlalal.base.entity.oauth2.vo.ClientVo">
+        select distinct client_key, client_name, index_uri from t_client where id in (select client_id from
+        t_role_client where role_id in (${roleId}))
+    </select>
+
+</mapper>

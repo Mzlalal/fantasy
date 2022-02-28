@@ -26,7 +26,7 @@ public class Oauth2Property {
     private String accessToken;
 
     @NotBlank(message = "客户端ID不能为空")
-    private String clientId;
+    private String clientKey;
 
     @NotBlank(message = "客户端私匙不能为空")
     private String clientSecret;

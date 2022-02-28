@@ -1,10 +1,7 @@
 package com.mzlalal.card.service;
 
 import com.mzlalal.base.entity.card.dto.RoomPlayerEntity;
-import com.mzlalal.base.entity.card.req.PlayerOutOrJoinRoomReq;
-import com.mzlalal.base.entity.card.req.TransferScoreReq;
 import com.mzlalal.base.entity.card.vo.HistoryMessageVo;
-import com.mzlalal.base.entity.oauth2.dto.UserEntity;
 import com.mzlalal.base.service.BaseService;
 
 import java.util.List;
@@ -27,28 +24,6 @@ public interface RoomPlayerService extends BaseService<RoomPlayerEntity> {
     RoomPlayerEntity queryOneByRoomIdAndUserId(String roomId, String userId);
 
     /**
-     * 初始化房间内的选手
-     *
-     * @param roomId 房间ID
-     * @param user   用户信息
-     */
-    void playerInit(String roomId, UserEntity user);
-
-    /**
-     * 用户加入房间
-     *
-     * @param req 请求
-     */
-    void playerJoinRoom(PlayerOutOrJoinRoomReq req);
-
-    /**
-     * 用户退出房间
-     *
-     * @param req 请求
-     */
-    void playerOutRoom(PlayerOutOrJoinRoomReq req);
-
-    /**
      * 根据房间号统计房间内的选手信息
      *
      * @param roomId 房间ID
@@ -57,20 +32,33 @@ public interface RoomPlayerService extends BaseService<RoomPlayerEntity> {
     List<RoomPlayerEntity> queryRoomPlayerListByRoomId(String roomId);
 
     /**
+     * 增加分数
+     *
+     * @param roomId 房间ID
+     * @param userId 用户ID
+     * @param change 转账数额
+     * @return int
+     */
+    int addRoomPlayerScore(String roomId, String userId, Integer change);
+
+    /**
+     * 减少分数
+     *
+     * @param roomId 房间ID
+     * @param userId 用户ID
+     * @param change 转账数额
+     * @return int
+     */
+    int subRoomPlayerScore(String roomId, String userId, Integer change);
+
+    /**
      * 更新用户状态
      *
      * @param roomId 房间ID
      * @param userId 用户ID
      * @param status 状态
      */
-    void updateStatus(String roomId, String userId, String status);
-
-    /**
-     * 转账分数
-     *
-     * @param transferScoreReq 转账分数请求
-     */
-    void transferScore(TransferScoreReq transferScoreReq);
+    void updateRoomPlayerStatus(String roomId, String userId, String status);
 
     /**
      * 根据房间ID,选手ID查询历史消息
@@ -86,14 +74,4 @@ public interface RoomPlayerService extends BaseService<RoomPlayerEntity> {
      * @param ids 房间ID
      */
     void closeRoom(String[] ids);
-
-    /**
-     * 广播消息
-     *
-     * @param roomId  房间ID
-     * @param from    发送者
-     * @param to      接受者
-     * @param message 消息
-     */
-    void broadcast(String roomId, String from, String to, String message);
 }

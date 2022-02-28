@@ -33,9 +33,9 @@ public class ClientServiceImpl extends ServiceImpl<ClientDao, ClientEntity> impl
     }
 
     @Override
-    public ClientEntity getOneByClientId(String clientId) {
+    public ClientEntity getOneByClientKey(String clientKey) {
         QueryWrapper<ClientEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("client_id", clientId);
+        queryWrapper.eq("client_key" , clientKey);
         return this.getOne(queryWrapper);
     }
 }

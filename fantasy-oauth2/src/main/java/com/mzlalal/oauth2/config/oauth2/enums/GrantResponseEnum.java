@@ -59,7 +59,7 @@ public enum GrantResponseEnum {
             // 邮箱格式
             this.verifyUsername(username);
             // 用户名的邮箱验证码redis key
-            String mailCodeRedisKey = GlobalConstant.clientIdMailCodeRedisKey(req.getClientId(), username);
+            String mailCodeRedisKey = GlobalConstant.clientKeyMailCodeRedisKey(req.getClientKey(), username);
             // 获取验证码
             String redisCode = redisTemplate.opsForValue().get(mailCodeRedisKey);
             // 删除只能使用一次
@@ -69,7 +69,7 @@ public enum GrantResponseEnum {
             // 查询用户信息
             UserEntity userEntity = userService.queryOneByMail(username).orElseThrow(GlobalResult.EMAIL_NOT_FOUNT::boom);
             // 存储用户信息并返回授权码
-            return redisAuthorizeCodeService.store(req.getClientId(), userEntity);
+            return redisAuthorizeCodeService.store(req.getClientKey(), userEntity);
         }
     },
     /**
@@ -109,7 +109,7 @@ public enum GrantResponseEnum {
             AssertUtil.isTrue(passwordEncoder.matches(req.getPassword(), userEntity.getPassword()),
                     GlobalResult.PASSWORD_NOT_RIGHT);
             // 存储用户信息和授权码
-            return redisAuthorizeCodeService.store(req.getClientId(), userEntity);
+            return redisAuthorizeCodeService.store(req.getClientSecret(), userEntity);
         }
     };
 
@@ -146,6 +146,7 @@ public enum GrantResponseEnum {
         // 返回结果
         return Result.ok(RedirectUriVo.builder()
                 .redirectUri(redirectUri)
+                .indexUri(req.getIndexUri())
                 .build());
     }
 

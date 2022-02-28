@@ -10,7 +10,7 @@
 
 
 ## 对接
-1. 创建client,需要设置clientId,clientSecret,redirect_uri(重定向地址)
+1. 创建client,需要设置clientKey,clientSecret,redirect_uri(重定向地址)
 2. 前端在登录时请求授权登录界面  
  http://oauth2.mzlalal.icu/oauth/authorize?response_type=code&client_id=XXX
 > 此时会跳转到统一登录界面 http://mzlalal.icu/login.html 

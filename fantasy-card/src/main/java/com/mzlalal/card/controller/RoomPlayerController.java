@@ -12,6 +12,7 @@ import com.mzlalal.base.feign.card.RoomPlayerFeignApi;
 import com.mzlalal.base.util.AssertUtil;
 import com.mzlalal.base.util.Page;
 import com.mzlalal.card.service.RoomPlayerService;
+import com.mzlalal.card.service.impl.StatScoreSessionService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -34,10 +35,12 @@ import java.util.List;
 public class RoomPlayerController implements RoomPlayerFeignApi {
 
     private final RoomPlayerService roomPlayerService;
+    private final StatScoreSessionService statScoreSessionService;
 
     @Autowired
-    public RoomPlayerController(RoomPlayerService roomPlayerService) {
+    public RoomPlayerController(RoomPlayerService roomPlayerService, StatScoreSessionService statScoreSessionService) {
         this.roomPlayerService = roomPlayerService;
+        this.statScoreSessionService = statScoreSessionService;
     }
 
     @Override
@@ -78,19 +81,19 @@ public class RoomPlayerController implements RoomPlayerFeignApi {
 
     @Override
     public Result<Void> playerJoinRoom(@Validated @RequestBody PlayerOutOrJoinRoomReq req) {
-        roomPlayerService.playerJoinRoom(req);
+        statScoreSessionService.playerJoinRoom(req);
         return Result.ok();
     }
 
     @Override
     public Result<Void> playerOutRoom(@Validated @RequestBody PlayerOutOrJoinRoomReq req) {
-        roomPlayerService.playerOutRoom(req);
+        statScoreSessionService.playerOutRoom(req);
         return Result.ok();
     }
 
     @Override
     public Result<Void> transferScore(@Validated @RequestBody TransferScoreReq req) {
-        roomPlayerService.transferScore(req);
+        statScoreSessionService.transferScore(req);
         return Result.ok();
     }
 

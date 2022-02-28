@@ -33,17 +33,17 @@ public class ClientVerifyResponseTypeService {
      * 3. 比对参数授权方式是否存在切割数组中
      * 4. 返回客户端
      *
-     * @param clientId     客户端ID
+     * @param clientKey    客户端ID
      * @param responseType 授权方式
      * @return ClientEntity
      */
-    public ClientEntity verifyResponseType(String clientId, String responseType) {
+    public ClientEntity verifyResponseType(String clientKey, String responseType) {
         // 客户端ID是否为空
-        AssertUtil.notBlank(clientId, GlobalResult.OAUTH_FAIL);
+        AssertUtil.notBlank(clientKey, GlobalResult.OAUTH_FAIL);
         // 授权方式是否为空
         AssertUtil.notBlank(responseType, GlobalResult.RESPONSE_TYPE_NOT_CORRECT);
         // 检查客户端
-        ClientEntity client = clientService.getOneByClientId(clientId);
+        ClientEntity client = clientService.getOneByClientKey(clientKey);
         AssertUtil.notNull(client, GlobalResult.OAUTH_FAIL);
         // 获取授权方式
         String[] grantTypeArray = StrUtil.splitToArray(client.getResponseType(), ",");

@@ -56,12 +56,12 @@ public class OauthController implements OauthFeignApi {
     public Result<String> verifyCode(@Validated @RequestBody VerifyCodeReq req) {
         // 授权方式
         String responseType = req.getResponseType();
-        clientVerifyResponseTypeService.verifyResponseType(req.getClientId(), responseType);
+        clientVerifyResponseTypeService.verifyResponseType(req.getClientKey(), responseType);
         // 用户名
         String username = req.getUsername();
         GrantResponseEnum.getEnum(responseType).verifyUsername(username);
         // 生成验证码
-        return VerifyCodeProvideEnum.getEnum(responseType).createVerifyCode(username, req.getClientId());
+        return VerifyCodeProvideEnum.getEnum(responseType).createVerifyCode(username, req.getClientKey());
     }
 
     @Override
@@ -70,11 +70,11 @@ public class OauthController implements OauthFeignApi {
         String username = req.getUsername();
         GrantResponseEnum.PASSWORD.verifyUsername(username);
         // 校验客户端
-        String clientId = req.getClientId();
-        clientVerifyResponseTypeService.verifyResponseType(clientId, GrantResponseEnum.PASSWORD.name());
+        String clientKey = req.getClientKey();
+        clientVerifyResponseTypeService.verifyResponseType(clientKey, GrantResponseEnum.PASSWORD.name());
         // 获取验证码
         String redisVal = stringRedisTemplate.opsForValue().
-                get(GlobalConstant.clientIdPasswordCodeRedisKey(clientId, username));
+                get(GlobalConstant.clientKeyPasswordCodeRedisKey(clientKey, username));
         // 验证码为空直接返回失败 验证码相等则返回成功
         if (StrUtil.isNotBlank(redisVal) && StrUtil.equals(redisVal, req.getCode())) {
             return Result.ok();
@@ -87,10 +87,14 @@ public class OauthController implements OauthFeignApi {
     public Result<RedirectUriVo> authorize(@Validated @RequestBody OauthReq req) {
         // 授权方式
         String responseType = req.getResponseType();
-        ClientEntity client = clientVerifyResponseTypeService.verifyResponseType(req.getClientId(), responseType);
+        ClientEntity client = clientVerifyResponseTypeService.verifyResponseType(req.getClientKey(), responseType);
         // 重定向地址为空,则设置默认的重新地址
         if (StrUtil.isBlank(req.getRedirectUri())) {
             req.setRedirectUri(client.getRedirectUri());
+        }
+        // 首页地址为空,则设置默认的首页地址
+        if (StrUtil.isBlank(req.getIndexUri())) {
+            req.setIndexUri(client.getIndexUri());
         }
         // 获取授权码
         return GrantResponseEnum.getEnum(responseType).createCallback(req);
@@ -100,7 +104,7 @@ public class OauthController implements OauthFeignApi {
     public Result<AccessToken> createToken(@Validated @RequestBody CreateTokenReq req) {
         // 检查授权方式
         String responseType = req.getResponseType();
-        ClientEntity client = clientVerifyResponseTypeService.verifyResponseType(req.getClientId(), responseType);
+        ClientEntity client = clientVerifyResponseTypeService.verifyResponseType(req.getClientKey(), responseType);
         // 获取授权码
         return GrantResponseEnum.getEnum(responseType).createAccessToken(req, client);
     }

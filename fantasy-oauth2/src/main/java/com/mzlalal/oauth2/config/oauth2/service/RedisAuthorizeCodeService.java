@@ -32,13 +32,13 @@ public class RedisAuthorizeCodeService {
     /**
      * 根据authorizeCode存储用户信息
      *
-     * @param clientId   客户端ID
+     * @param clientKey  客户端ID
      * @param userEntity 用户信息
      * @return String 存储用户信息的redis authorizeCode授权码
      */
-    public String store(String clientId, UserEntity userEntity) {
+    public String store(String clientKey, UserEntity userEntity) {
         // 创建UUID
-        String authorizeCode = GlobalConstant.clientIdAuthCodeRedisKey(clientId);
+        String authorizeCode = GlobalConstant.clientKeyAuthCodeRedisKey(clientKey);
         // 存储
         redisTemplate.opsForValue().setIfAbsent(authorizeCode, userEntity, 15, TimeUnit.MINUTES);
         // 返回授权码

@@ -45,7 +45,7 @@ public class Oauth2CallbackController {
     public Result<AccessToken> callback(@Validated @RequestBody OauthCallbackReq req) {
         // 根据tokenVO请求
         CreateTokenReq createTokenReq = CreateTokenReq.builder()
-                .clientId(oauth2Property.getClientId())
+                .clientKey(oauth2Property.getClientKey())
                 .clientSecret(oauth2Property.getClientSecret())
                 .responseType(req.getResponseType())
                 .authorizeCode(req.getCode())

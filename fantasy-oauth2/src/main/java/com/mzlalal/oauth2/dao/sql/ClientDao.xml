@@ -6,16 +6,22 @@
     <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="com.mzlalal.base.entity.oauth2.dto.ClientEntity" id="clientMap">
         <result property="id" column="id"/>
-        <result property="clientId" column="client_id"/>
+        <result property="clientKey" column="client_key"/>
         <result property="clientSecret" column="client_secret"/>
-        <result property="responseType" column="response_type"/>
+        <result property="clientName" column="client_name"/>
+        <result property="indexUri" column="index_uri"/>
         <result property="redirectUri" column="redirect_uri"/>
+        <result property="responseType" column="response_type"/>
         <result property="scope" column="scope"/>
-        <result property="resourceId" column="resource_id"/>
-        <result property="roleId" column="role_id"/>
         <result property="accessTokenTime" column="access_token_time"/>
         <result property="refreshTokenTime" column="refresh_token_time"/>
         <result property="autoApprove" column="auto_approve"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createName" column="create_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateName" column="update_name"/>
+        <result property="updateTime" column="update_time"/>
     </resultMap>
 
 

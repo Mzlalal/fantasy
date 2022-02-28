@@ -17,23 +17,24 @@
         <result property="isHide" column="is_hide"/>
         <result property="roleId" column="role_id"/>
         <result property="tenantId" column="tenant_id"/>
+
+        <collection property="roleList" javaType="java.util.ArrayList"
+                    ofType="com.mzlalal.base.entity.oauth2.vo.RoleVo"
+                    column="role_id" select="com.mzlalal.oauth2.dao.RoleDao.queryRoleListById"/>
+        <collection property="clientList" javaType="java.util.ArrayList"
+                    ofType="com.mzlalal.base.entity.oauth2.vo.ClientVo"
+                    column="role_id" select="com.mzlalal.oauth2.dao.RoleClientDao.queryClientListByRoleId"/>
     </resultMap>
 
-    <select id="queryOneByMobile" resultType="com.mzlalal.base.entity.oauth2.dto.UserEntity">
-        select *
-        from t_user
-        where mobile = #{mobile}
+    <select id="queryOneByMobile" resultMap="userMap">
+        select * from t_user where mobile = #{mobile}
     </select>
 
-    <select id="queryOneByMail" resultType="com.mzlalal.base.entity.oauth2.dto.UserEntity">
-        select *
-        from t_user
-        where mail = #{mail}
+    <select id="queryOneByMail" resultMap="userMap">
+        select * from t_user where mail = #{mail}
     </select>
 
     <select id="queryExistByMail" resultType="java.lang.Boolean" parameterType="java.lang.String">
-        select count(mail)
-        from t_user
-        where mail = #{mail}
+        select count(mail) from t_user where mail = #{mail}
     </select>
 </mapper>

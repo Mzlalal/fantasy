@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.mzlalal.base.common.GlobalResult;
 import com.mzlalal.base.entity.oauth2.dto.UserEntity;
 import com.mzlalal.card.service.RoomPlayerService;
+import com.mzlalal.card.service.impl.StatScoreSessionService;
 import com.mzlalal.card.service.websocket.session.UserSessionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -31,6 +32,10 @@ public class StatScoreWebSocket {
      * 用户会话操作
      */
     private final UserSessionService userSessionService = SpringUtil.getBean(UserSessionService.class);
+    /**
+     * 用户会话操作
+     */
+    private final StatScoreSessionService statScoreSessionService = SpringUtil.getBean(StatScoreSessionService.class);
     /**
      * 房间内的选手操作
      */
@@ -61,7 +66,7 @@ public class StatScoreWebSocket {
         // 根据房间ID和用户ID保存会话
         userSessionService.saveByRoomIdAndUserId(roomId, userId, session);
         // 保存用户至房间
-        roomPlayerService.playerInit(roomId, user);
+        statScoreSessionService.roomPlayerInit(roomId, user);
     }
 
     /**
@@ -112,6 +117,6 @@ public class StatScoreWebSocket {
         // 用户ID
         String userId = user.getId();
         // 广播信息
-        roomPlayerService.broadcast(roomId, userId, "", str);
+        statScoreSessionService.broadcast(roomId, userId, str);
     }
 }

@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.mzlalal.base.entity.global.BaseEntity;
+import com.mzlalal.base.entity.oauth2.vo.ClientVo;
+import com.mzlalal.base.entity.oauth2.vo.RoleVo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -15,6 +17,7 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 用户DTO
@@ -24,7 +27,7 @@ import java.util.Date;
  */
 @Data
 @ApiModel("用户DTO")
-@TableName("t_user")
+@TableName(value = "t_user" , resultMap = "userMap")
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
@@ -68,6 +71,14 @@ public class UserEntity extends BaseEntity {
 
     @ApiModelProperty("角色ID")
     private Long roleId;
+
+    @ApiModelProperty("角色")
+    @TableField(exist = false)
+    private List<RoleVo> roleList;
+
+    @ApiModelProperty("客户端")
+    @TableField(exist = false)
+    private List<ClientVo> clientList;
 
     @ApiModelProperty("租户ID")
     private String tenantId;

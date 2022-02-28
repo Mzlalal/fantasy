@@ -22,7 +22,7 @@ public class CheckVerifyCodeReq extends BaseEntity {
 
     @ApiModelProperty("客户端ID")
     @NotBlank(message = "客户端ID不能为空")
-    private String clientId;
+    private String clientKey;
 
     @ApiModelProperty("用户名")
     @NotBlank(message = "用户名不能为空")

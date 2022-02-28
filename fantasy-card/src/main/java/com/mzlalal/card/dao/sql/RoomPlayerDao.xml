@@ -13,11 +13,11 @@
         <result property="roomName" column="room_name"/>
     </resultMap>
 
-    <update id="addPlayerScore">
+    <update id="addRoomPlayerScore">
         update t_room_player set player_score = player_score + #{change} where room_id = #{roomId} and id = #{userId}
     </update>
 
-    <update id="subPlayerScore">
+    <update id="subRoomPlayerScore">
         update t_room_player set player_score = player_score - #{change} where room_id = #{roomId} and id = #{userId}
     </update>
 

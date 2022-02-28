@@ -12,44 +12,54 @@
     <script src="js/CommonUtil.js"></script>
 </head>
 <style>
-
+    .ui-img-vertical {
+        padding-top: 100%;
+    }
 </style>
 <body>
 <div id="app">
-    <div class="ui-form ui-border-t">
-        <div class="ui-tooltips-cnt ui-border-b text-c enter">
-            <label>
-                Fantasy
-            </label>
-        </div>
-        <div class="ui-feeds">
-            <ul>
+    <header class="ui-header ui-header-positive ui-border-b text-center">
+        <span class="position-left username-display" @click="redirectUpdateUserInfo">我的信息</span>
+        <span class="font-weight-bolder font-weight-20px">Fantasy</span>
+    </header>
+    <div class="ui-form ui-border-t ui-container">
+        <div class="ui-grid ui-grid-trisect">
+            <ul class="ui-border-b">
                 <li>
-                    <span style="background-image:url(http://placeholder.qiniudn.com/374x374)"></span>
+                    <div class="ui-img-vertical">
+                        <span></span>
+                    </div>
+                    <div class="ui-grid-info ui-border-r">
+                        <h4>高尔夫<span>2.3M</span></h4>
+                        <p>辅助信息</p>
+                    </div>
                 </li>
                 <li>
-                    <span style="background-image:url(http://placeholder.qiniudn.com/374x374)"></span>
+                    <div class="ui-img-vertical">
+                        <span></span>
+                    </div>
+                    <div class="ui-grid-info ui-border-r">
+                        <h4>高尔夫<span>2.3M</span></h4>
+                        <p>辅助信息</p>
+                    </div>
                 </li>
                 <li>
-                    <span style="background-image:url(http://placeholder.qiniudn.com/374x374)"></span>
+                    <div class="ui-img-vertical">
+                        <span></span>
+                    </div>
+                    <div class="ui-grid-info ui-border-r">
+                        <h4>高尔夫<span>2.3M</span></h4>
+                        <p>辅助信息</p>
+                    </div>
                 </li>
                 <li>
-                    <span style="background-image:url(http://placeholder.qiniudn.com/374x374)"></span>
-                </li>
-                <li>
-                    <span style="background-image:url(http://placeholder.qiniudn.com/374x374)"></span>
-                </li>
-                <li>
-                    <span style="background-image:url(http://placeholder.qiniudn.com/374x374)"></span>
-                </li>
-                <li>
-                    <span style="background-image:url(http://placeholder.qiniudn.com/374x374)"></span>
-                </li>
-                <li>
-                    <span style="background-image:url(http://placeholder.qiniudn.com/374x374)"></span>
-                </li>
-                <li>
-                    <span style="background-image:url(http://placeholder.qiniudn.com/374x374)"></span>
+                    <div class="ui-img-vertical">
+                        <span></span>
+                    </div>
+                    <div class="ui-grid-info ui-border-r">
+                        <h4>高尔夫<span>2.3M</span></h4>
+                        <p>辅助信息</p>
+                    </div>
                 </li>
             </ul>
         </div>
@@ -60,7 +70,15 @@
     const vm = new Vue({
         el: "#app",
         data: {},
-        methods: {},
+        methods: {
+            // 跳转到更新用户信息
+            redirectUpdateUserInfo() {
+                // 保存URL
+                localStorage.setItem("user.href.from", window.location.href);
+                // 跳转到修改信息
+                window.location = "/fantasy-oauth2/wo-de-xin-xi.html";
+            }
+        },
         created() {
         }
     });

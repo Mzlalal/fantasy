@@ -36,12 +36,12 @@ public enum VerifyCodeProvideEnum {
         private final StringRedisTemplate redisTemplate = SpringUtil.getBean(StringRedisTemplate.class);
 
         @Override
-        public Result<String> createVerifyCode(String username, String clientId) {
+        public Result<String> createVerifyCode(String username, String clientKey) {
             // 随机四位数
             int randomInt = RandomUtil.randomInt(1001, 9999);
             // 过期时间15分钟
             redisTemplate.opsForValue()
-                    .set(GlobalConstant.clientIdMailCodeRedisKey(clientId, username), String.valueOf(randomInt), 15, TimeUnit.MINUTES);
+                    .set(GlobalConstant.clientKeyMailCodeRedisKey(clientKey, username), String.valueOf(randomInt), 15, TimeUnit.MINUTES);
             // 构建参数
             SendMailCodeReq sendMailCodeReq = SendMailCodeReq.builder()
                     .username(username)
@@ -62,14 +62,14 @@ public enum VerifyCodeProvideEnum {
         private final StringRedisTemplate redisTemplate = SpringUtil.getBean(StringRedisTemplate.class);
 
         @Override
-        public Result<String> createVerifyCode(String username, String clientId) {
+        public Result<String> createVerifyCode(String username, String clientKey) {
             // 定义图形验证码的长、宽、验证码字符数、干扰线宽度
             ShearCaptcha captcha = CaptchaUtil.createShearCaptcha(200, 100, 4, 4);
             // 图形验证码写出，可以写出到文件，也可以写出到流
             String encode = Base64.encode(captcha.getImageBytes());
             // 验证码最多过期时间15分钟
             redisTemplate.opsForValue()
-                    .set(GlobalConstant.clientIdPasswordCodeRedisKey(clientId, username), captcha.getCode(), 15, TimeUnit.MINUTES);
+                    .set(GlobalConstant.clientKeyPasswordCodeRedisKey(clientKey, username), captcha.getCode(), 15, TimeUnit.MINUTES);
             // 返回base64给前端渲染
             return Result.ok(encode);
         }
@@ -79,11 +79,11 @@ public enum VerifyCodeProvideEnum {
      * 发送验证码给用户名
      * 密码可以是邮箱验证码,图片验证码,短信验证码等
      *
-     * @param username 用户名
-     * @param clientId 客户端ID
+     * @param username  用户名
+     * @param clientKey 客户端ID
      * @return Result<String>
      */
-    public abstract Result<String> createVerifyCode(String username, String clientId);
+    public abstract Result<String> createVerifyCode(String username, String clientKey);
 
     /**
      * 根据验证码方式type获取

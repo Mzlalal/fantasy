@@ -28,7 +28,7 @@ public class OauthReq extends BaseEntity {
 
     @ApiModelProperty("客户端ID")
     @NotBlank(message = "客户端ID不能为空")
-    private String clientId;
+    private String clientKey;
 
     @ApiModelProperty("私匙")
     private String clientSecret;
@@ -43,6 +43,9 @@ public class OauthReq extends BaseEntity {
 
     @ApiModelProperty("重定向地址")
     private String redirectUri;
+
+    @ApiModelProperty("首页地址")
+    private String indexUri;
 
     @ApiModelProperty("原封不动的返回")
     private String state;

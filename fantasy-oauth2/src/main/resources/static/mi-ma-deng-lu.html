@@ -16,12 +16,10 @@
 </style>
 <body>
 <div id="app">
-    <div class="ui-form ui-border-t">
-        <div class="ui-tooltips-cnt ui-border-b text-center">
-            <label>
-                Fantasy
-            </label>
-        </div>
+    <header class="ui-header ui-header-positive ui-border-b text-center">
+        <span class="font-weight-bolder font-weight-20px">Fantasy</span>
+    </header>
+    <div class="ui-form ui-border-t ui-container">
         <div class="ui-tooltips-cnt ui-border-b text-center height-auto">
             <svg t="1609316919517" class="icon" viewBox="0 0 1258 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  p-id="1717" width="150" height="150">
@@ -67,7 +65,7 @@
             <ul class="ui-tab-nav ui-border-b ">
                 <li class="current"><span>密码登录</span></li>
                 <li>
-                    <a :href="'/fantasy-oauth2/you-xiang-deng-lu.html?clientId=' + reqClientId">
+                    <a :href="'/fantasy-oauth2/you-xiang-deng-lu.html?clientKey=' + reqClientKey">
                         <span>邮箱登录</span>
                     </a>
                 </li>
@@ -94,7 +92,7 @@
         <div class="ui-tooltips ui-tooltips-guide ui-tooltips-function">
             <div class="ui-tooltips-cnt ui-border-b">
                 <i></i>{{tips}}
-                <a :href="'/fantasy-oauth2/zhu-ce.html?clientId=' + reqClientId">
+                <a :href="'/fantasy-oauth2/zhu-ce.html?clientKey=' + reqClientKey">
                     <button class="ui-btn-s">
                         👉注册
                     </button>
@@ -111,7 +109,7 @@
             // 登录按钮
             loginBtn: false,
             // 请求的客户端ID
-            reqClientId: "",
+            reqClientKey: "",
             // 用户名
             username: "",
             // 密码
@@ -126,7 +124,7 @@
                 this.loginBtn = false;
                 // 请求参数,和form或者input使用v-model绑定
                 const param = {
-                    "clientId": this.reqClientId,
+                    "clientKey": this.reqClientKey,
                     "responseType": "password",
                     "state": "",
                     "password": this.password,
@@ -140,8 +138,10 @@
                     url: "/fantasy-oauth2/api/v1/oauth/authorize",
                     data: param
                 }).then(res => {
-                    // 跳转地址
-                    window.location = res.data.redirectUri;
+                    // 客户端首页
+                    localStorage.setItem("client.index.uri", res.data.indexUri);
+                    // 跳转
+                    window.location = (res.data.redirectUri.startsWith("http") ? "" : gateway) + res.data.redirectUri;
                 }).catch(res => {
                     // 置空验证码
                     this.password = "";
@@ -166,10 +166,10 @@
             },
         },
         created() {
-            // 如果URL有clientId,优先使用URL上的clientId
-            let urlClientId = commonUtil.getUrlPara("clientId");
+            // 如果URL有clientKey,优先使用URL上的clientKey
+            let urlClientKey = commonUtil.getUrlPara("clientKey");
             // 赋值
-            this.reqClientId = urlClientId == null ? clientId : urlClientId;
+            this.reqClientKey = urlClientKey == null ? clientKey : urlClientKey;
             // 获取本地缓存的邮箱
             let cacheUsername = localStorage.getItem("username.mobile");
             if (cacheUsername) {

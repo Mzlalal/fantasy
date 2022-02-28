@@ -12,10 +12,10 @@ import com.mzlalal.base.service.BaseService;
 public interface ClientService extends BaseService<ClientEntity> {
 
     /**
-     * 根据client id获取
+     * 根据clientKey获取
      *
-     * @param clientId 客户端ID
+     * @param clientKey 客户端ID
      * @return ClientEntity
      */
-    ClientEntity getOneByClientId(String clientId);
+    ClientEntity getOneByClientKey(String clientKey);
 }

@@ -5,7 +5,7 @@
     // win.gateway = "http://gateway.mzlalal.icu";
     win.gateway = "http://" + location.host;
     // 客户端ID
-    win.clientId = "fantasy-card";
+    win.clientKey = "fantasy-oauth2";
     // https://www.axios-http.cn/docs/interceptors 拦截器文档
     // 添加请求拦截器
     axios.interceptors.request.use(function (config) {
@@ -64,7 +64,7 @@
             var r = window.location.search.substr(1).match(reg);
             if (r != null) return unescape(r[2]);
         },
-        // 获取res的page中的集合,若为空则返回[]空数组
+        // 获取res的pageInfo中的集合,若为空则返回[]空数组
         getPageList: function (res) {
             if (res && res.page && res.page.list) {
                 return res.page.list;

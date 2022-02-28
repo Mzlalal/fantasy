@@ -22,7 +22,7 @@ public interface RoomPlayerDao extends BaseMapper<RoomPlayerEntity> {
      * @param change 转账数额
      * @return int
      */
-    int addPlayerScore(@Param("roomId") String roomId
+    int addRoomPlayerScore(@Param("roomId") String roomId
             , @Param("userId") String userId
             , @Param("change") Integer change);
 
@@ -34,7 +34,7 @@ public interface RoomPlayerDao extends BaseMapper<RoomPlayerEntity> {
      * @param change 转账数额
      * @return int
      */
-    int subPlayerScore(@Param("roomId") String roomId
+    int subRoomPlayerScore(@Param("roomId") String roomId
             , @Param("userId") String userId
             , @Param("change") Integer change);
 }

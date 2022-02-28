@@ -24,7 +24,7 @@ public class CreateTokenReq extends BaseEntity {
 
     @ApiModelProperty("客户端ID")
     @NotBlank(message = "客户端ID不能为空")
-    private String clientId;
+    private String clientKey;
 
     @ApiModelProperty("私匙")
     @NotBlank(message = "客户端私匙不能为空")

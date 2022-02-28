@@ -134,7 +134,7 @@
             // 注册按钮
             registerBtn: true,
             // 请求的客户端ID
-            reqClientId: "",
+            reqClientKey: "",
             // 用户名
             username: "",
             // 手机号
@@ -185,7 +185,7 @@
                         localStorage.setItem("username.mail", this.mail);
                     }
                     setTimeout(() => {
-                        window.location = "/fantasy-oauth2/mi-ma-deng-lu.html?clientId=" + this.reqClientId;
+                        window.location = "/fantasy-oauth2/mi-ma-deng-lu.html?clientKey=" + this.reqClientKey;
                     }, 2000)
                 }).catch(res => {
                     // 禁用登录按钮
@@ -200,10 +200,10 @@
             },
         },
         created() {
-            // 如果URL有clientId,优先使用URL上的clientId
-            let urlClientId = commonUtil.getUrlPara("clientId");
+            // 如果URL有clientKey,优先使用URL上的clientKey
+            let urlClientKey = commonUtil.getUrlPara("clientKey");
             // 赋值
-            this.reqClientId = urlClientId == null ? clientId : urlClientId;
+            this.reqClientKey = urlClientKey == null ? clientKey : urlClientKey;
         }
     });
 </script>

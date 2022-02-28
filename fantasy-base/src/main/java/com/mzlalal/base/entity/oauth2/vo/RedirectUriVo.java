@@ -22,4 +22,7 @@ public class RedirectUriVo extends BaseEntity {
 
     @ApiModelProperty("重定向地址")
     private String redirectUri;
+
+    @ApiModelProperty("首页地址")
+    private String indexUri;
 }

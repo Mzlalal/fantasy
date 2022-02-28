@@ -16,12 +16,10 @@
 </style>
 <body>
 <div id="app">
-    <div class="ui-form ui-border-t">
-        <div class="ui-tooltips-cnt ui-border-b text-center">
-            <label>
-                Fantasy
-            </label>
-        </div>
+    <header class="ui-header ui-header-positive ui-border-b text-center">
+        <span class="font-weight-bolder font-weight-20px">Fantasy</span>
+    </header>
+    <div class="ui-form ui-border-t ui-container">
         <div class="ui-tooltips-cnt ui-border-b text-center height-auto">
             <svg t="1609316919517" class="icon" viewBox="0 0 1258 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
                  p-id="1717" width="200" height="200">
@@ -65,7 +63,7 @@
         </div>
         <div class="ui-btn-wrap">
             <button class="ui-btn-lg ui-btn-primary">
-                {{tips}}
+                {{msg}}
             </button>
         </div>
     </div>
@@ -121,6 +119,12 @@
                     if (res.data) {
                         localStorage.setItem("user.info", JSON.stringify(res.data));
                     }
+                    // 获取首页
+                    let clientIndexUri = localStorage.getItem("client.index.uri");
+                    // 跳转
+                    setTimeout(() => {
+                        window.location = (clientIndexUri.startsWith("http") ? "" : gateway) + clientIndexUri;
+                    }, 1000)
                 }).catch(res => {
                     console.log("请求用户信息失败");
                     console.log(res);

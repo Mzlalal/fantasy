@@ -32,7 +32,7 @@ public class RoomHistoryEntity extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     /**
-     * ID
+     * ID(用户ID)
      */
     @TableId
     @ApiModelProperty("ID")
