@@ -44,19 +44,22 @@ public class ClientEntity extends BaseEntity {
     @ApiModelProperty("重定向地址")
     private String redirectUri;
 
-    @ApiModelProperty(value = "授权方式" , example = "mail,password")
+    @ApiModelProperty(value = "授权方式", example = "mail,password")
     private String responseType;
 
-    @ApiModelProperty(value = "授权范围" , example = "mobile,mail,header")
+    @ApiModelProperty(value = "客户端图片")
+    private String clientHeader;
+
+    @ApiModelProperty(value = "授权范围", example = "mobile,mail,header")
     private String scope;
 
-    @ApiModelProperty(value = "token有效时间(秒)" , example = "86400")
+    @ApiModelProperty(value = "token有效时间(秒)", example = "86400")
     private Integer accessTokenTime;
 
-    @ApiModelProperty(value = "refresh_token有效时间(秒)" , example = "1296000")
+    @ApiModelProperty(value = "refresh_token有效时间(秒)", example = "1296000")
     private Long refreshTokenTime;
 
-    @ApiModelProperty(value = "是否自动授权" , example = "0")
+    @ApiModelProperty(value = "是否自动授权", example = "0")
     private Integer autoApprove;
 
     @ApiModelProperty("创建人ID")

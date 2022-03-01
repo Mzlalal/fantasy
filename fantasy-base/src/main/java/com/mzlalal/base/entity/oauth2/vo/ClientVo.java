@@ -26,4 +26,7 @@ public class ClientVo extends BaseEntity {
 
     @ApiModelProperty("首页地址")
     private String indexUri;
+
+    @ApiModelProperty(value = "客户端图片")
+    private String clientHeader;
 }

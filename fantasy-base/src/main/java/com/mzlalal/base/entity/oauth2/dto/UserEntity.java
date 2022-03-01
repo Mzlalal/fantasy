@@ -27,7 +27,7 @@ import java.util.List;
  */
 @Data
 @ApiModel("用户DTO")
-@TableName(value = "t_user" , resultMap = "userMap")
+@TableName(value = "t_user", resultMap = "userMap")
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)

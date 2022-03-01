@@ -109,7 +109,7 @@ public enum GrantResponseEnum {
             AssertUtil.isTrue(passwordEncoder.matches(req.getPassword(), userEntity.getPassword()),
                     GlobalResult.PASSWORD_NOT_RIGHT);
             // 存储用户信息和授权码
-            return redisAuthorizeCodeService.store(req.getClientSecret(), userEntity);
+            return redisAuthorizeCodeService.store(req.getClientKey(), userEntity);
         }
     };
 

@@ -11,7 +11,8 @@
     </resultMap>
 
     <select id="queryClientListByRoleId" resultType="com.mzlalal.base.entity.oauth2.vo.ClientVo">
-        select distinct client_key, client_name, index_uri from t_client where id in (select client_id from
+        select distinct client_key, client_name, index_uri, client_header from t_client where id in (select client_id
+        from
         t_role_client where role_id in (${roleId}))
     </select>
 

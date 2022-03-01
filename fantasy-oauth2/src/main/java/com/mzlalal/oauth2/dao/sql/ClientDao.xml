@@ -12,6 +12,7 @@
         <result property="indexUri" column="index_uri"/>
         <result property="redirectUri" column="redirect_uri"/>
         <result property="responseType" column="response_type"/>
+        <result property="clientHeader" column="client_header"/>
         <result property="scope" column="scope"/>
         <result property="accessTokenTime" column="access_token_time"/>
         <result property="refreshTokenTime" column="refresh_token_time"/>

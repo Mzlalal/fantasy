@@ -73,9 +73,19 @@ body {
     width: 100%;
 }
 
+/* 宽度85% */
+.width-85p {
+    width: 85%;
+}
+
 /* 填充0 */
 .padding-0 {
     padding: 0 !important;
+}
+
+/* 填充1em */
+.padding-1em {
+    padding: 1em !important;
 }
 
 /* 边距0 */

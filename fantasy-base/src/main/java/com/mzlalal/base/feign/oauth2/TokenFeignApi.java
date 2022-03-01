@@ -2,8 +2,8 @@ package com.mzlalal.base.feign.oauth2;
 
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.mzlalal.base.common.GlobalConstant;
-import com.mzlalal.base.entity.global.BaseEntity;
 import com.mzlalal.base.entity.global.Result;
+import com.mzlalal.base.entity.oauth2.dto.UserEntity;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.core.Ordered;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
  * @author Mzlalal
  * @date 2022/2/8 11:19
  */
-@FeignClient(contextId = "TokenFeignApi" , name = GlobalConstant.FANTASY_OAUTH2, url = "${fantasy-oauth2.feign.url}"
+@FeignClient(contextId = "TokenFeignApi", name = GlobalConstant.FANTASY_OAUTH2, url = "${fantasy-oauth2.feign.url}"
         , path = "/api/v1/token")
 public interface TokenFeignApi {
 
@@ -25,12 +25,12 @@ public interface TokenFeignApi {
      * 验证令牌是否有效
      *
      * @param token 令牌
-     * @return Result<BaseEntity>
+     * @return Result<UserEntity>
      */
     @ApiOperation("验证令牌")
     @PostMapping("/check.token")
     @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 40)
-    Result<BaseEntity> checkToken(@RequestHeader(GlobalConstant.F_AUTHORIZATION) String token);
+    Result<UserEntity> checkToken(@RequestHeader(GlobalConstant.F_AUTHORIZATION) String token);
 
     /**
      * 登出

@@ -16,12 +16,11 @@
 </style>
 <body>
 <div id="app">
-    <div class="ui-form ui-border-t">
-        <div class="ui-tooltips-cnt ui-border-b text-center">
-            <label>
-                Fantasy
-            </label>
-        </div>
+    <header class="ui-header ui-header-positive ui-border-b text-center">
+        <span class="font-weight-bolder font-weight-20px">Fantasy</span>
+        <span class="position-right username-display" @click="redirectHrefFrom">返回</span>
+    </header>
+    <div class="ui-form ui-border-t ui-container">
         <div class="ui-tooltips-cnt ui-border-b text-center height-auto">
             <?xml version="1.0" encoding="UTF-8"?>
             <svg width="150" height="150" viewBox="0 0 43 43" version="1.1" xmlns="http://www.w3.org/2000/svg">
@@ -86,31 +85,31 @@
                 <label class="width-80px username-display">
                     用户名
                 </label>
-                <input v-model="user.username" type="text" placeholder="请输入用户名">
+                <input v-model="user.username" type="text" placeholder="请输入用户名"/>
             </div>
             <div class="ui-form-item ui-border-b">
                 <label class="width-80px username-display">
                     手机号
                 </label>
-                <input v-model="user.mobile" type="number" placeholder="请输入手机号">
+                <input v-model="user.mobile" type="number" pattern="/d*" class="width-100p" placeholder="请输入手机号"/>
             </div>
             <div class="ui-form-item ui-border-b">
                 <label class="width-80px">
                     电子邮箱
                 </label>
-                <input v-model="user.mail" type="email" placeholder="请输入电子邮箱">
+                <input v-model="user.mail" type="email" class="width-100p" placeholder="请输入电子邮箱"/>
             </div>
             <div class="ui-form-item ui-border-b">
                 <label class="width-80px username-display">
                     用户密码
                 </label>
-                <input v-model="user.password" type="password" placeholder="请输入密码">
+                <input v-model="user.password" type="password" placeholder="请输入密码"/>
             </div>
             <div class="ui-form-item ui-border-b">
                 <label class="width-80px username-display">
                     确认密码
                 </label>
-                <input v-model="user.confirmPassword" type="password" placeholder="请再次输入相同的密码">
+                <input v-model="user.confirmPassword" type="password" placeholder="请再次输入相同的密码"/>
             </div>
         </div>
         <div class="ui-btn-wrap">
@@ -179,8 +178,8 @@
                     localStorage.setItem("user.info", JSON.stringify(this.user));
                     // 跳转回原地址
                     setTimeout(() => {
-                        window.location = localStorage.getItem("user.href.from");
-                    }, 2000)
+                        this.redirectHrefFrom();
+                    }, 1000)
                 }).catch(res => {
                     // 禁用登录按钮
                     this.updateBtn = true;
@@ -192,6 +191,10 @@
                     }
                 })
             },
+            // 跳转回原地址
+            redirectHrefFrom() {
+                window.location = localStorage.getItem("user.href.from");
+            }
         },
         created() {
             let userInfo = localStorage.getItem("user.info");

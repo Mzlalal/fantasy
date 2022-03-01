@@ -3,7 +3,6 @@ package com.mzlalal.oauth2.config.oauth2.service;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.Assert;
-import cn.hutool.core.util.BooleanUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.mzlalal.base.common.GlobalConstant;
@@ -53,13 +52,19 @@ public class RedisTokenService {
      * @return AccessToken
      */
     public AccessToken createAccessToken(UserEntity userEntity, ClientEntity clientEntity) {
+        String oldAccessToken = userEntity.getAccessToken();
+        String oldAccessTokenRedisKey = GlobalConstant.tokenRedisKey(oldAccessToken);
         // 如果存在token则返回旧的
-        if (StrUtil.isNotBlank(userEntity.getAccessToken())) {
+        if (StrUtil.isNotBlank(oldAccessToken)) {
             // 如果存在redis 则返回旧的信息
-            Boolean bool = redisTemplate.hasKey(GlobalConstant.tokenRedisKey(userEntity.getAccessToken()));
-            if (BooleanUtil.isTrue(bool)) {
+            UserEntity oldUserEntity = (UserEntity) redisTemplate.opsForValue().get(oldAccessTokenRedisKey);
+            if (userEntity.equals(oldUserEntity)) {
                 return BeanUtil.copyProperties(userEntity, AccessToken.class);
             }
+        }
+        // 删除旧的用户信息
+        if (StrUtil.isNotBlank(oldAccessToken)) {
+            redisTemplate.delete(oldAccessTokenRedisKey);
         }
         // 删除旧的刷新TOKEN
         if (StrUtil.isNotBlank(userEntity.getRefreshToken())) {
@@ -71,16 +76,18 @@ public class RedisTokenService {
                 .refreshToken(IdUtil.fastSimpleUUID())
                 .expireAt(DateUtil.offsetSecond(new Date(), clientEntity.getAccessTokenTime()))
                 .build();
+        // 更新用户token
+        BeanUtil.copyProperties(accessToken, userEntity);
+        AssertUtil.isTrue(userService.updateAccessTokenById(userEntity.getId(), userEntity)
+                , "更新用户登录信息失败,可能是用户不存在");
+        // 更新用户信息并缓存
+        userEntity = userService.getById(userEntity.getId());
         // 设置TOKEN
         redisTemplate.opsForValue().setIfAbsent(GlobalConstant.tokenRedisKey(accessToken.getAccessToken())
                 , userEntity, clientEntity.getAccessTokenTime(), TimeUnit.SECONDS);
         // 设置刷新TOKEN
         redisTemplate.opsForValue().setIfAbsent(GlobalConstant.tokenRedisKey(accessToken.getRefreshToken())
-                , "" , clientEntity.getRefreshTokenTime(), TimeUnit.SECONDS);
-        // 更新用户token
-        BeanUtil.copyProperties(accessToken, userEntity);
-        AssertUtil.isTrue(userService.updateAccessTokenById(userEntity.getId(), userEntity)
-                , "更新用户登录信息失败,可能是用户不存在");
+                , "", clientEntity.getRefreshTokenTime(), TimeUnit.SECONDS);
         return accessToken;
     }
 }

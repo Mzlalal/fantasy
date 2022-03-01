@@ -73,7 +73,7 @@
         }
     }
 
-    // 事件
+    // 页面重新获得焦点事件
     win.hiddenProperty = 'hidden' in document ? 'hidden' : 'webkitHidden' in document ? 'webkitHidden' : 'mozHidden' in document ? 'mozHidden' : null;
     win.visibilityChangeEvent = hiddenProperty.replace(/hidden/i, 'visibilitychange');
     // 事件处理方法
@@ -94,23 +94,6 @@
     };
     // 当前窗口得到焦点
     document.addEventListener(visibilityChangeEvent, onVisibilityChange);
-
-    // 禁止双指放大
-    document.documentElement.addEventListener('touchstart', function (event) {
-        if (event.touches.length > 1) {
-            event.preventDefault();
-        }
-    }, false);
-
-    // 禁止双击放大
-    let lastTouchEnd = 0;
-    document.documentElement.addEventListener('touchend', function (event) {
-        const now = Date.now();
-        if (now - lastTouchEnd <= 300) {
-            event.preventDefault();
-        }
-        lastTouchEnd = now;
-    }, false);
 })(window, window.axios);
 
 // 时间增加Format格式化函数

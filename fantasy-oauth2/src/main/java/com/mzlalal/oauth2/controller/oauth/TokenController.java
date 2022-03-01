@@ -1,8 +1,8 @@
 package com.mzlalal.oauth2.controller.oauth;
 
 import com.mzlalal.base.common.GlobalConstant;
-import com.mzlalal.base.entity.global.BaseEntity;
 import com.mzlalal.base.entity.global.Result;
+import com.mzlalal.base.entity.oauth2.dto.UserEntity;
 import com.mzlalal.base.feign.oauth2.TokenFeignApi;
 import com.mzlalal.base.oauth2.Oauth2Context;
 import io.swagger.annotations.Api;
@@ -38,7 +38,7 @@ public class TokenController implements TokenFeignApi {
     }
 
     @Override
-    public Result<BaseEntity> checkToken(@RequestHeader(GlobalConstant.F_AUTHORIZATION) String token) {
+    public Result<UserEntity> checkToken(@RequestHeader(GlobalConstant.F_AUTHORIZATION) String token) {
         return Result.ok(Oauth2Context.get());
     }
 

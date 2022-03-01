@@ -92,8 +92,8 @@
                     url: "/fantasy-card/api/v1/card/room.history/list",
                     data: param
                 }).then(res => {
-                    this.loading = false;
                     this.roomList = commonUtil.getPageList(res);
+                    this.loading = false;
                 }).catch(res => {
                     this.loading = false;
                     if (res.data && res.data.msg) {
