@@ -73,7 +73,7 @@
     const vm = new Vue({
         el: "#app",
         data: {
-            msg: "正在验证授权,请稍候...",
+            msg: "正在验证授权，请稍候...",
         },
         methods: {
             // 请求回调地址
@@ -94,7 +94,7 @@
                     url: "/fantasy-oauth2/oauth/callback",
                     data: param,
                 }).then(res => {
-                    this.msg = "登录成功,正在跳转,请稍候...";
+                    this.msg = "登录成功，正在跳转，请稍候...";
                     // 记住用户TOKEN
                     if (res.data && res.data.accessToken) {
                         localStorage.setItem("user.access.token", res.data.accessToken);
@@ -106,7 +106,7 @@
                     if (res.data && res.data.msg) {
                         this.msg = res.data.msg;
                     } else {
-                        this.msg = "服务器繁忙,请稍后再试";
+                        this.msg = "服务器繁忙，请稍后再试";
                     }
                 })
             },
@@ -132,7 +132,7 @@
                     if (res.data && res.data.msg) {
                         this.msg = res.data.msg;
                     } else {
-                        this.msg = "服务器繁忙,请稍后再试";
+                        this.msg = "服务器繁忙，请稍后再试";
                     }
                 })
             }

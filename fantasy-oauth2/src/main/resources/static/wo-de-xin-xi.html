@@ -165,7 +165,7 @@
                     data: param
                 }).then(res => {
                     // 跳转地址
-                    this.tips = "修改成功,即将跳转到原地址";
+                    this.tips = "修改信息成功，即将跳转到原地址";
                     // 记住用户手机号
                     if (this.username) {
                         localStorage.setItem("username.mobile", this.username);
@@ -187,7 +187,7 @@
                     if (res.data && res.data.msg) {
                         this.tips = res.data.msg;
                     } else {
-                        this.tips = "服务器繁忙,请稍后再试";
+                        this.tips = "服务器繁忙，请稍后再试";
                     }
                 })
             },

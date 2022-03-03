@@ -175,7 +175,7 @@
                     data: param
                 }).then(res => {
                     // 跳转地址
-                    this.tips = "注册成功,两秒后跳转到首页";
+                    this.tips = "注册成功，两秒后跳转到首页";
                     // 记住用户手机号
                     if (this.username) {
                         localStorage.setItem("username.mobile", this.username);
@@ -186,7 +186,7 @@
                     }
                     setTimeout(() => {
                         window.location = "/fantasy-oauth2/mi-ma-deng-lu.html?clientKey=" + this.reqClientKey;
-                    }, 2000)
+                    }, 1500)
                 }).catch(res => {
                     // 禁用登录按钮
                     this.registerBtn = true;
@@ -194,7 +194,7 @@
                     if (res.data && res.data.msg) {
                         this.tips = res.data.msg;
                     } else {
-                        this.tips = "服务器繁忙,请稍后再试";
+                        this.tips = "服务器繁忙，请稍后再试";
                     }
                 })
             },

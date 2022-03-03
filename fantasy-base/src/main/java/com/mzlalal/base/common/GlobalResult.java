@@ -63,10 +63,6 @@ public enum GlobalResult {
      */
     SEVER_ERROR(500, "服务器繁忙，请稍后再试"),
     /**
-     * 服务器繁忙
-     */
-    FEIGN_SEVER_ERROR(5000, "服务器繁忙，请稍后再试"),
-    /**
      * 当前请求不支持当前METHOD访问
      */
     REQ_NOT(501, "当前请求不支持当前METHOD访问"),
@@ -129,7 +125,15 @@ public enum GlobalResult {
     /**
      * 房间已经存在
      */
-    ROOM_EXIST(1205, "房间已经存在");
+    ROOM_EXIST(1205, "房间已经存在"),
+    /**
+     * 重复提交
+     */
+    REPEAT_SUBMIT(3004, "正在加快处理中，请稍候..."),
+    /**
+     * 服务器繁忙
+     */
+    FEIGN_SEVER_ERROR(5000, "服务器繁忙，请稍后再试");
 
     /**
      * 状态
