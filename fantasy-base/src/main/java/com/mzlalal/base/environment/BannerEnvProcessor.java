@@ -33,5 +33,8 @@ public class BannerEnvProcessor implements EnvironmentPostProcessor {
         // 添加到环境中
         environment.getPropertySources()
                 .addLast(new MapPropertySource("banner.config", bannerConfig));
+
+        // 隐藏page-helper banner输出
+        System.setProperty("pagehelper.banner", "false");
     }
 }

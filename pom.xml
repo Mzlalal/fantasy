@@ -9,7 +9,7 @@
         <module>fantasy-gateway</module>
         <module>fantasy-oauth2</module>
         <module>fantasy-oss</module>
-        <module>fantasy-card</module>
+        <module>fantasy-chess</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -34,7 +34,7 @@
         <spring.cloud.alibaba.version>2021.1</spring.cloud.alibaba.version>
         <spring.cloud.nacos.version>2021.1</spring.cloud.nacos.version>
         <!-- Mz -->
-        <mz.fantasy.base.version>${version}</mz.fantasy.base.version>
+        <mz.fantasy.base.version>${project.version}</mz.fantasy.base.version>
         <mz.minio.stater.version>1.1.1</mz.minio.stater.version>
         <mz.system.log.stater.version>1.0.1</mz.system.log.stater.version>
         <mz.mybatis.interceptor.stater.version>1.0.4</mz.mybatis.interceptor.stater.version>

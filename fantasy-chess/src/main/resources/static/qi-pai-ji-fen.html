@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, initial-scale=1.0, user-scalable=no">
+    <title>棋牌计分</title>
+    <link rel="stylesheet" href="css/plugin/frozen.css"/>
+    <link rel="stylesheet" href="css/common.css"/>
+    <script src="js/plugin/axios.min.js"></script>
+    <script src="js/plugin/vue.min.js"></script>
+    <script src="js/CommonUtil.js"></script>
+</head>
+<style>
+    /* 此界面弹窗向上偏移 */
+    .ui-dialog-cnt {
+        bottom: calc(15vh);
+    }
+</style>
+<body>
+<div id="app">
+    <header class="ui-header ui-header-positive ui-border-b text-center">
+        <a class="position-left username-display" href="/fantasy-chess/fang-jian-lie-biao.html">返回</a>
+        <span class="font-weight-bolder font-weight-20px">{{roomCode || "斗也斗的"}}</span>
+        <span class="position-right ui-txt-red font-weight-bolder" @click="playerOutRoom"
+              v-if="userStatus === '1'">我要下桌</span>
+        <span class="position-right username-display" @click="playerJoinRoom"
+              v-if="userStatus === '0'">我要上桌</span>
+    </header>
+    <div class="ui-form ui-border-t ui-container">
+        <transition name="slide-fade">
+            <ul class="ui-row ui-whitespace overflow-auto" style="max-height: 220px;" v-if="playerList.length > 0">
+                <li class="ui-col ui-col-25 margin-top-1em" v-for="player in playerList"
+                    @click="selectTransferTarget(player)">
+                    <div class="ui-avatar-lg background-dingding text-line-height-70px text-center background-A-c"
+                         v-bind:class="{'background-B-c': player.playerStatus !== '1'}">
+                        {{player.playerName}}
+                    </div>
+                    <div class="text-center width-70px font-weight-bolder">
+                        {{player.playerScore}}
+                    </div>
+                </li>
+            </ul>
+        </transition>
+        <transition name="slide-fade">
+            <div class="ui-tooltips ui-tooltips-warn" v-if="tips">
+                <div class="ui-tooltips-cnt ui-border-b">
+                    <i></i>{{tips}}
+                </div>
+            </div>
+        </transition>
+        <div class="ui-tab margin-top-1em">
+            <ul class="ui-tab-nav ui-border-b">
+                <li @click="showRoom = true" v-bind:class="{'current': showRoom}"><span>房间</span></li>
+                <li @click="showRoom = false" v-bind:class="{'current': !showRoom}"><span>我的</span></li>
+            </ul>
+            <ul class="ui-tab-content">
+                <li v-if="showRoom">
+                    <ul class="ui-list ui-list-function ui-border-tb overflow-auto"
+                        style="max-height: calc(100vh - 300px)" @scroll="onScroll" ref="scrollTarget">
+                        <li v-for="item in messageList">
+                            <div class="ui-list-info ui-border-t"
+                                 v-bind:class="{'from-myself':item.from === userId}">
+                                <p class="ui-nowrap">{{item.time}}</p>
+                                <p v-html="item.msg"></p>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+                <li v-else>
+                    <ul class="ui-list ui-list-function ui-border-tb overflow-auto"
+                        style="max-height: calc(100vh - 300px)" @scroll="onScroll" ref="scrollTarget">
+                        <li v-for="item in historyMessageList">
+                            <div class="ui-list-info ui-border-t"
+                                 v-bind:class="{'from-myself':item.from === userId}">
+                                <p class="ui-nowrap">{{item.time}}</p>
+                                <p v-html="item.msg"></p>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <transition name="slide-fade">
+        <div class="ui-dialog show" v-if="currentSelectedPlayer">
+            <div class="ui-dialog-cnt">
+                <div class="ui-dialog-bd">
+                    <h3>
+                        转账给
+                        <span class="username-display">
+                            {{currentSelectedPlayer && currentSelectedPlayer.playerName}}
+                        </span>
+                    </h3>
+                </div>
+                <div class="ui-form-item ui-border-b">
+                    <div class="ui-input ui-input-text">
+                        <input type="number" pattern="/d*" class="text-center padding-0" v-model="transferAmount"
+                               ref="transferAmountInput" placeholder="请输入转账数额"/>
+                    </div>
+                </div>
+                <div class="ui-dialog-ft">
+                    <button type="button" data-role="button" @click="cancelTransfer">取消</button>
+                    <button type="button" data-role="button" @click="confirmTransfer">确定</button>
+                </div>
+            </div>
+        </div>
+    </transition>
+</div>
+</body>
+<script>
+    // 获取房间号
+    let roomId = localStorage.getItem("user.room.id") || "1";
+    // 获取用户TOKEN
+    let accessToken = localStorage.getItem("user.access.token");
+    // websocket对象
+    let ws;
+
+    // 窗口激活
+    function windowActivatedFunction() {
+        // 连接websocket
+        connectWebsocket();
+        // 查询关于我的历史消息
+        vm.queryHistoryMessageAboutMine();
+    }
+
+    // 窗口失活
+    function windowDeactivatedFunction() {
+        // 关闭websocket
+        if (ws && typeof (ws.close) === 'function') {
+            ws.close();
+        }
+    }
+
+    // 连接websocket
+    function connectWebsocket() {
+        // websocket状态正常
+        if (ws && ws.readyState === 1) {
+            return;
+        }
+        // 连接websocket
+        // const ws = new WebSocket("ws://127.0.0.1:9020/websocket/stat.score/" + roomId + "/" + accessToken);
+        ws = new WebSocket("ws://" + location.host + "/fantasy-chess/websocket/stat.score/" + roomId + "/" + accessToken);
+
+        // 连接
+        ws.onopen = function (evt) {
+            console.log("connection open ...");
+
+            // 收到消息
+            ws.onmessage = function (evt) {
+                // 返回信息反序列化
+                let res = JSON.parse(evt.data);
+                console.log(res);
+                // 设置vue变量
+                vm.playerList = commonUtil.getPageList(res);
+                // 遍历当前用户的上桌状态
+                vm.playerList.forEach(item => {
+                    if (vm.userId === item.id) {
+                        vm.userStatus = item.playerStatus;
+                    }
+                })
+                // 判断是否存在消息
+                if (res.msg) {
+                    // 消息列表
+                    vm.messageList.push({"msg": res.msg, "time": res.time, "from": res.from});
+                    if (res.from === vm.userId || res.to === vm.userId) {
+                        // 关于我的历史消息
+                        vm.historyMessageList.push({"msg": res.msg, "time": res.time, "from": res.from});
+                    }
+                    // 新消息的滚动
+                    vm.scrollToBottom();
+                }
+            };
+
+            // 关闭
+            ws.onclose = function (evt) {
+                console.log("connection closed ...");
+            };
+        };
+    }
+
+    const vm = new Vue({
+        el: "#app",
+        data: {
+            // 提示
+            tips: "",
+            // 用户ID
+            userId: "",
+            // 用户名称
+            username: "",
+            // 是否显示房间
+            showRoom: false,
+            // 用户上桌状态
+            userStatus: null,
+            // 房间号
+            roomCode: null,
+            // 是否自动滚动
+            autoScroll: true,
+            // 转账数额
+            transferAmount: "",
+            // 当前选中的选手
+            currentSelectedPlayer: null,
+            // 选手列表
+            playerList: [],
+            // 当前推送的所有消息
+            messageList: [{"msg": "点击他人头像即可进行转账", "time": "💬", "from": ""}],
+            // 关于我的历史消息
+            historyMessageList: [{"msg": "点击他人头像即可进行转账", "time": "💬", "from": ""}],
+        },
+        methods: {
+            // 监听滚动
+            onScroll() {
+                // 滚动条高度 - 距离顶部的距离 - 像素高度
+                let scrollBottom = this.$refs.scrollTarget.scrollHeight - this.$refs.scrollTarget.scrollTop - this.$refs.scrollTarget.offsetHeight;
+                // 如果滚动到底部小于50px了则自动滚动
+                this.autoScroll = scrollBottom < 50;
+            },
+            // 来新消息,判断是否滚动
+            scrollToBottom() {
+                if (!this.autoScroll) {
+                    return;
+                }
+                // 自动滚动
+                setTimeout(() => {
+                    this.$refs.scrollTarget.scrollTop = this.$refs.scrollTarget.scrollHeight;
+                })
+            },
+            // 选中转账对象
+            selectTransferTarget(player) {
+                if (player.id === this.userId) {
+                    this.tips = "不能对自己转账";
+                    return;
+                }
+                if (player.playerStatus === "1") {
+                    this.tips = "";
+                    this.currentSelectedPlayer = player;
+                    // 获取焦点
+                    this.$nextTick(() => {
+                        this.$refs.transferAmountInput.focus();
+                    })
+                    return;
+                }
+                this.tips = "不能对已下桌的人转账";
+            },
+            // 确认转账
+            confirmTransfer() {
+                if (this.transferAmount > 9999) {
+                    alert("转账数额不能大于9999");
+                    return;
+                }
+                if (this.transferAmount < 1) {
+                    alert("转账数额不能小于1");
+                    return;
+                }
+                let message = "<span class='username-display'>" + this.username
+                    + "</span>向<span class='username-display'>" + this.currentSelectedPlayer.playerName
+                    + "</span>转账了<span class='username-display'>" + this.transferAmount + "</span>积分";
+                const param = {
+                    "roomId": roomId,
+                    "from": this.userId,
+                    "to": this.currentSelectedPlayer.id,
+                    "change": this.transferAmount,
+                    "message": message,
+                }
+                // 隐藏窗口
+                this.cancelTransfer();
+                // 请求
+                axios({
+                    method: "post",
+                    url: "/fantasy-chess/api/v1/chess/room.player/transfer.score",
+                    data: param
+                }).then(res => {
+                    // 隐藏窗口
+                    this.cancelTransfer();
+                }).catch(res => {
+                    if (res.data && res.data.msg) {
+                        alert(res.data.msg)
+                    } else {
+                        alert("服务器繁忙,请稍后再试")
+                    }
+                })
+            },
+            // 用户下桌
+            playerOutRoom() {
+                const param = {
+                    "roomId": roomId,
+                    "userId": this.userId,
+                    "username": this.username,
+                }
+                // 请求
+                axios({
+                    method: "post",
+                    url: "/fantasy-chess/api/v1/chess/room.player/player.out.room",
+                    data: param
+                }).then(res => {
+
+                }).catch(res => {
+                    if (res.data && res.data.msg) {
+                        alert(res.data.msg)
+                    } else {
+                        alert("服务器繁忙,请稍后再试")
+                    }
+                })
+            },
+            // 用户上桌
+            playerJoinRoom() {
+                const param = {
+                    "roomId": roomId,
+                    "userId": this.userId,
+                    "username": this.username,
+                }
+                // 请求
+                axios({
+                    method: "post",
+                    url: "/fantasy-chess/api/v1/chess/room.player/player.join.room",
+                    data: param
+                }).then(res => {
+
+                }).catch(res => {
+                    if (res.data && res.data.msg) {
+                        alert(res.data.msg)
+                    } else {
+                        alert("服务器繁忙,请稍后再试")
+                    }
+                })
+            },
+            // 取消转账(隐藏窗口)
+            cancelTransfer() {
+                // 转账数额置空
+                this.transferAmount = "";
+                // 已选中选手置空
+                this.currentSelectedPlayer = null;
+            },
+            // 查询关于我的历史消息
+            queryHistoryMessageAboutMine() {
+                // 请求
+                axios({
+                    method: "get",
+                    url: "/fantasy-chess/api/v1/chess/room.player/" + roomId + "/query.room.player.history.message",
+                }).then(res => {
+                    this.historyMessageList = [{"msg": "点击他人头像即可进行转账", "time": "💬", "from": ""}];
+                    commonUtil.getPageList(res).forEach(item => {
+                        this.historyMessageList.push({"msg": item.msg, "time": item.time, "from": item.from});
+                    })
+                }).catch(res => {
+                    if (res.data && res.data.msg) {
+                        alert(res.data.msg)
+                    } else {
+                        alert("服务器繁忙,请稍后再试")
+                    }
+                })
+            }
+        },
+        created() {
+            // 获取用户ID
+            let userInfo = localStorage.getItem("user.info");
+            if (userInfo) {
+                userInfo = JSON.parse(userInfo);
+                this.userId = userInfo.id;
+                this.username = userInfo.username;
+            }
+            // 获取房间号
+            let roomCode = localStorage.getItem("user.room.code");
+            if (roomCode) {
+                this.roomCode = roomCode;
+            }
+
+            // 查询关于我的历史消息
+            this.queryHistoryMessageAboutMine();
+
+            // 连接websocket
+            connectWebsocket();
+        }
+    });
+</script>
+
+</html>

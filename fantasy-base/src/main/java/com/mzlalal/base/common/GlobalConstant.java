@@ -21,7 +21,7 @@ public interface GlobalConstant {
     /**
      * 棋牌室应用名
      */
-    String FANTASY_CARD = "fantasy-card";
+    String FANTASY_CHESS = "fantasy-chess";
     /**
      * 字典应用名
      */
