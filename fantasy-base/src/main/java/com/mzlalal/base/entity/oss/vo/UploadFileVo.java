@@ -1,9 +1,10 @@
 package com.mzlalal.base.entity.oss.vo;
 
-import com.mzlalal.base.entity.global.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
+
+import java.io.Serializable;
 
 /**
  * 上传文件返回结果
@@ -14,10 +15,10 @@ import lombok.*;
 @Data
 @Builder
 @ApiModel("上传文件返回结果")
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class UploadFileVo extends BaseEntity {
+public class UploadFileVo implements Serializable {
     private static final long serialVersionUID = 2020375640032804322L;
 
     @ApiModelProperty("文件路径")

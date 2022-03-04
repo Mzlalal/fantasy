@@ -1,9 +1,10 @@
 package com.mzlalal.base.entity.oauth2.vo;
 
-import com.mzlalal.base.entity.global.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
+
+import java.io.Serializable;
 
 /**
  * 二次确认URL返回结果
@@ -14,10 +15,10 @@ import lombok.*;
 @Data
 @Builder
 @ApiModel("二次确认URL返回结果")
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class RedirectUriVo extends BaseEntity {
+public class RedirectUriVo implements Serializable {
     private static final long serialVersionUID = 7314359505039342617L;
 
     @ApiModelProperty("重定向地址")

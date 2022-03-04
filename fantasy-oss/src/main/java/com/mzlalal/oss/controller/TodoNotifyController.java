@@ -1,0 +1,71 @@
+package com.mzlalal.oss.controller;
+
+import cn.hutool.core.collection.CollUtil;
+import com.mzlalal.base.entity.global.Result;
+import com.mzlalal.base.entity.global.po.Po;
+import com.mzlalal.base.entity.oss.dto.TodoNotifyEntity;
+import com.mzlalal.base.feign.oss.TodoNotifyFeignApi;
+import com.mzlalal.base.util.Page;
+import com.mzlalal.oss.service.TodoNotifyService;
+import io.swagger.annotations.Api;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+/**
+ * 待办提醒controller
+ *
+ * @author Mzlalal
+ * @date 2022-03-04 21:58:11
+ */
+@Api(tags = "待办提醒")
+@RestController
+@RequestMapping("/api/v1/oss/todo.notify")
+public class TodoNotifyController implements TodoNotifyFeignApi {
+
+    private final TodoNotifyService todoNotifyService;
+
+    @Autowired
+    public TodoNotifyController(TodoNotifyService todoNotifyService) {
+        this.todoNotifyService = todoNotifyService;
+    }
+
+    @Override
+    public Result<TodoNotifyEntity> list(@RequestBody Po<TodoNotifyEntity> po) {
+        Page<TodoNotifyEntity> page = todoNotifyService.queryPage(po);
+        return Result.ok(page);
+    }
+
+    @Override
+    public Result<TodoNotifyEntity> info(@PathVariable("id") String id) {
+        TodoNotifyEntity todoNotify = todoNotifyService.getById(id);
+        return Result.ok(todoNotify);
+    }
+
+    @Override
+    public Result<Void> save(@RequestBody TodoNotifyEntity todoNotify) {
+        if (todoNotifyService.save(todoNotify)) {
+            return Result.ok();
+        }
+        return Result.fail();
+    }
+
+    @Override
+    public Result<Void> update(@RequestBody TodoNotifyEntity todoNotify) {
+        if (todoNotifyService.updateById(todoNotify)) {
+            return Result.ok();
+        }
+        return Result.fail();
+    }
+
+    @Override
+    public Result<Void> delete(@RequestBody String[] ids) {
+        if (todoNotifyService.removeByIds(CollUtil.newArrayList(ids))) {
+            return Result.ok();
+        }
+        return Result.fail();
+    }
+
+}

@@ -1,11 +1,11 @@
 package com.mzlalal.base.entity.oauth2.req;
 
-import com.mzlalal.base.entity.global.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 
 /**
  * 生成用户令牌参数
@@ -16,10 +16,10 @@ import javax.validation.constraints.NotBlank;
 @Data
 @Builder
 @ApiModel("根据授权码生成用户令牌参数")
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class CreateTokenReq extends BaseEntity {
+public class CreateTokenReq implements Serializable {
     private static final long serialVersionUID = -5009016199714464610L;
 
     @ApiModelProperty("客户端ID")

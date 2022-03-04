@@ -1,10 +1,10 @@
 package com.mzlalal.base.entity.oauth2.vo;
 
-import com.mzlalal.base.entity.global.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -16,10 +16,10 @@ import java.util.Date;
 @Data
 @Builder
 @ApiModel("用户令牌返回结果")
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class AccessToken extends BaseEntity {
+public class AccessToken implements Serializable {
     private static final long serialVersionUID = 7010075157513317532L;
 
     @ApiModelProperty("访问令牌")

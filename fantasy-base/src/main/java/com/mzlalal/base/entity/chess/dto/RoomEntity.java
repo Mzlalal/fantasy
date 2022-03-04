@@ -4,11 +4,11 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.mzlalal.base.entity.global.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -20,34 +20,25 @@ import java.util.Date;
 @Data
 @Builder
 @ApiModel("房间")
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName("t_room")
-@EqualsAndHashCode(callSuper = true)
-public class RoomEntity extends BaseEntity {
+public class RoomEntity implements Serializable {
     private static final long serialVersionUID = -3290488096046399525L;
 
-    /**
-     * ID
-     */
     @TableId
     @ApiModelProperty("ID")
     private String id;
-    /**
-     * 房间名
-     */
+
     @ApiModelProperty("房间号")
     private Integer code;
-    /**
-     * 房间名
-     */
+
     @ApiModelProperty("房间名")
     private String name;
-    /**
-     * 创建时间
-     */
-    @TableField(fill = FieldFill.INSERT)
+
     @ApiModelProperty("创建时间")
+    @TableField(fill = FieldFill.INSERT)
     private Date createTime;
 
 }

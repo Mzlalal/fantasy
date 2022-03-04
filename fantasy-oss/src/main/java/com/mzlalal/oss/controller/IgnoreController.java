@@ -23,17 +23,13 @@ import java.util.List;
  */
 @Slf4j
 @Api(tags = "工具")
-@Validated
 @RestController
 @RequestMapping("/ignore/api/v1/toolkit")
 public class IgnoreController {
 
     @ApiOperation("根据空格分割人名并脱敏")
     @PostMapping(value = "/desensitized.name.by.space", headers = "content-type=application/x-www-form-urlencoded")
-    public String desensitizedNameBySpace(@ModelAttribute DesensitizedNameReq req) {
-        // 验空
-        AssertUtil.notBlank(req.getName(), "数据为空,请从excel对应列复制数据");
-
+    public String desensitizedNameBySpace(@Validated @ModelAttribute DesensitizedNameReq req) {
         // 切割数据
         List<String> nameList = StrUtil.split(req.getName(), StrUtil.SPACE);
         AssertUtil.notEmpty(nameList, "数据为空,请从excel对应列复制数据");

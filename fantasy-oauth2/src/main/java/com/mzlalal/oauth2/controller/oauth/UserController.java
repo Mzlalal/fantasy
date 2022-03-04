@@ -2,6 +2,7 @@ package com.mzlalal.oauth2.controller.oauth;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
+import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oauth2.dto.UserEntity;
@@ -66,6 +67,8 @@ public class UserController implements UserFeignApi {
         }
         // 密码加密
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        // 设置默认普通角色
+        user.setRoleId(GlobalConstant.DEFAULT_NORMAL_ROLE);
         return userService.save(user) ? Result.ok() : Result.fail();
     }
 

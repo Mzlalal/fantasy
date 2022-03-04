@@ -12,14 +12,14 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 
 /**
- * 返回结果
+ * WebSocket返回结果
  *
  * @author Mzlalal
  * @date 2021/4/22 11:28
  **/
 @Data
 @Builder
-@ApiModel("API返回结果")
+@ApiModel("WebSocket返回结果")
 @NoArgsConstructor
 @AllArgsConstructor
 public class WsResult<T> implements Serializable {

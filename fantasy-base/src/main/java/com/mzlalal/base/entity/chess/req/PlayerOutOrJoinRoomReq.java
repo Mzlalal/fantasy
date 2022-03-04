@@ -1,11 +1,11 @@
 package com.mzlalal.base.entity.chess.req;
 
-import com.mzlalal.base.entity.global.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 
 /**
  * 房间内的选手下桌请求
@@ -16,10 +16,10 @@ import javax.validation.constraints.NotBlank;
 @Data
 @Builder
 @ApiModel("房间内的选手下桌请求")
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class PlayerOutOrJoinRoomReq extends BaseEntity {
+public class PlayerOutOrJoinRoomReq implements Serializable {
     private static final long serialVersionUID = 4964848440556470458L;
 
     @NotBlank(message = "房间ID不能为空")

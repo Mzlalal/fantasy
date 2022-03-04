@@ -1,11 +1,11 @@
 package com.mzlalal.base.entity.oauth2.req;
 
-import com.mzlalal.base.entity.global.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 
 /**
  * 授权码回调参数
@@ -16,10 +16,10 @@ import javax.validation.constraints.NotBlank;
 @Data
 @Builder
 @ApiModel("授权码回调参数")
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class OauthCallbackReq extends BaseEntity {
+public class OauthCallbackReq implements Serializable {
     private static final long serialVersionUID = -7486074614031343046L;
 
     @ApiModelProperty("授权码")

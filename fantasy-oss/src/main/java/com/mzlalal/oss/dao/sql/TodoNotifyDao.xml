@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mzlalal.oss.dao.TodoNotifyDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.mzlalal.base.entity.oss.dto.TodoNotifyEntity" id="notifyMap">
+        <result property="id" column="id"/>
+        <result property="notifyType" column="notify_type"/>
+        <result property="notifyMonth" column="notify_month"/>
+        <result property="notifyDay" column="notify_day"/>
+        <result property="notifyHour" column="notify_hour"/>
+        <result property="notifyMinute" column="notify_minute"/>
+        <result property="tenantId" column="tenant_id"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+
+</mapper>

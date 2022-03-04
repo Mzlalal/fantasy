@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.mzlalal.base.entity.global.BaseEntity;
 import com.mzlalal.base.entity.oauth2.vo.ClientVo;
 import com.mzlalal.base.entity.oauth2.vo.RoleVo;
 import io.swagger.annotations.ApiModel;
@@ -16,6 +15,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -28,10 +28,10 @@ import java.util.List;
 @Data
 @ApiModel("用户DTO")
 @TableName(value = "t_user", resultMap = "userMap")
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class UserEntity extends BaseEntity {
+public class UserEntity implements Serializable {
     private static final long serialVersionUID = 6149495996020661158L;
 
     @TableId
@@ -70,7 +70,7 @@ public class UserEntity extends BaseEntity {
     private Integer isHide;
 
     @ApiModelProperty("角色ID")
-    private Long roleId;
+    private String roleId;
 
     @ApiModelProperty("角色")
     @TableField(exist = false)
@@ -81,6 +81,7 @@ public class UserEntity extends BaseEntity {
     private List<ClientVo> clientList;
 
     @ApiModelProperty("租户ID")
+    @TableField(fill = FieldFill.INSERT)
     private String tenantId;
 
     @ApiModelProperty("创建时间")

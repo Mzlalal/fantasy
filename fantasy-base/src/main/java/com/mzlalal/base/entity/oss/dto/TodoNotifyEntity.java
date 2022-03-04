@@ -1,4 +1,4 @@
-package com.mzlalal.base.entity.oauth2.dto;
+package com.mzlalal.base.entity.oss.dto;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -12,30 +12,39 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 角色DTO
+ * 待办提醒DTO
  *
  * @author Mzlalal
- * @date 2022-02-28 10:36:02
+ * @date 2022-03-04 21:58:11
  */
 @Data
 @Builder
-@ApiModel("角色DTO")
+@ApiModel("待办提醒DTO")
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName(value = "t_role")
-public class RoleEntity implements Serializable {
-    private static final long serialVersionUID = -443651908011920824L;
+@TableName("t_todo_notify")
+public class TodoNotifyEntity implements Serializable {
+    private static final long serialVersionUID = -6165208728756335195L;
 
     @TableId
     @ApiModelProperty("ID")
     private String id;
 
-    @ApiModelProperty("角色名称")
-    private String name;
+    @ApiModelProperty("提醒类型单位,例:1=每年,2=每月,3=每周,4=每日")
+    private String notifyType;
 
-    @ApiModelProperty("角色用途")
-    private String memo;
+    @ApiModelProperty("月")
+    private String notifyMonth;
+
+    @ApiModelProperty("日")
+    private String notifyDay;
+
+    @ApiModelProperty("时")
+    private String notifyHour;
+
+    @ApiModelProperty("分")
+    private String notifyMinute;
 
     @ApiModelProperty("租户ID")
     @TableField(fill = FieldFill.INSERT)
@@ -44,18 +53,12 @@ public class RoleEntity implements Serializable {
     @ApiModelProperty("创建人ID")
     private String createBy;
 
-    @ApiModelProperty("创建人")
-    private String createName;
-
     @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty("创建时间")
     private Date createTime;
 
     @ApiModelProperty("更新人ID")
     private String updateBy;
-
-    @ApiModelProperty("更新人")
-    private String updateName;
 
     @TableField(fill = FieldFill.INSERT_UPDATE)
     @ApiModelProperty("更新时间")

@@ -1,12 +1,12 @@
 package com.mzlalal.base.entity.chess.req;
 
-import com.mzlalal.base.entity.global.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 
 /**
  * 转账分数请求
@@ -17,10 +17,10 @@ import javax.validation.constraints.NotBlank;
 @Data
 @Builder
 @ApiModel("转账分数请求")
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class TransferScoreReq extends BaseEntity {
+public class TransferScoreReq implements Serializable {
     private static final long serialVersionUID = 2086775977074489498L;
 
     @NotBlank(message = "房间ID不能为空")

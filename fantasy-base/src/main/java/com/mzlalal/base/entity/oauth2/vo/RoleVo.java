@@ -1,10 +1,11 @@
 package com.mzlalal.base.entity.oauth2.vo;
 
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.mzlalal.base.entity.global.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
+
+import java.io.Serializable;
 
 /**
  * 角色VO
@@ -15,26 +16,19 @@ import lombok.*;
 @Data
 @Builder
 @ApiModel("角色VO")
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class RoleVo extends BaseEntity {
-    private static final long serialVersionUID = 1L;
+public class RoleVo implements Serializable {
+    private static final long serialVersionUID = -7508424069967910559L;
 
-    /**
-     * ID
-     */
     @TableId
     @ApiModelProperty("ID")
     private String id;
-    /**
-     * 角色名称
-     */
+
     @ApiModelProperty("角色名称")
     private String name;
-    /**
-     * 租户ID
-     */
+
     @ApiModelProperty("租户ID")
     private String tenantId;
 }

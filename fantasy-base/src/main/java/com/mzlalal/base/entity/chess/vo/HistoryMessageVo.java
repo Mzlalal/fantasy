@@ -1,11 +1,12 @@
 package com.mzlalal.base.entity.chess.vo;
 
 import cn.hutool.core.date.DateUtil;
-import com.mzlalal.base.entity.global.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
 
 /**
  * 历史消息VO
@@ -15,8 +16,8 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @ApiModel("历史消息VO")
-@EqualsAndHashCode(callSuper = true)
-public class HistoryMessageVo extends BaseEntity {
+@EqualsAndHashCode
+public class HistoryMessageVo implements Serializable {
     private static final long serialVersionUID = 5048960753867921159L;
 
     @ApiModelProperty(value = "返回状态")

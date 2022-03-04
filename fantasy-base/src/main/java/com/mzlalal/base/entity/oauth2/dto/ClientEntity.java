@@ -4,12 +4,14 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.mzlalal.base.entity.global.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -21,8 +23,10 @@ import java.util.Date;
 @Data
 @ApiModel("客户端DTO")
 @TableName("t_client")
-@EqualsAndHashCode(callSuper = true)
-public class ClientEntity extends BaseEntity {
+@EqualsAndHashCode
+@NoArgsConstructor
+@AllArgsConstructor
+public class ClientEntity implements Serializable {
     private static final long serialVersionUID = -3474524373938676799L;
 
     @TableId
@@ -63,11 +67,9 @@ public class ClientEntity extends BaseEntity {
     private Integer autoApprove;
 
     @ApiModelProperty("创建人ID")
-    @TableField(fill = FieldFill.INSERT)
     private Long createBy;
 
     @ApiModelProperty("创建人")
-    @TableField(fill = FieldFill.INSERT)
     private String createName;
 
     @ApiModelProperty("创建时间")
@@ -75,11 +77,9 @@ public class ClientEntity extends BaseEntity {
     private Date createTime;
 
     @ApiModelProperty("更新人ID")
-    @TableField(fill = FieldFill.INSERT_UPDATE)
     private Long updateBy;
 
     @ApiModelProperty("更新人")
-    @TableField(fill = FieldFill.INSERT_UPDATE)
     private String updateName;
 
     @ApiModelProperty("更新时间")

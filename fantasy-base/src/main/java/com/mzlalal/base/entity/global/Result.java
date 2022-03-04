@@ -12,7 +12,7 @@ import java.beans.Transient;
 import java.io.Serializable;
 
 /**
- * 返回结果
+ * API返回结果
  *
  * @author Mzlalal
  * @date 2021/4/22 11:28

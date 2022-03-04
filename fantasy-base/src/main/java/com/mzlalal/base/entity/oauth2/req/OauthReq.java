@@ -1,11 +1,11 @@
 package com.mzlalal.base.entity.oauth2.req;
 
-import com.mzlalal.base.entity.global.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 
 /**
  * oauth请求参数
@@ -16,10 +16,10 @@ import javax.validation.constraints.NotBlank;
 @Data
 @Builder
 @ApiModel("登录参数")
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class OauthReq extends BaseEntity {
+public class OauthReq implements Serializable {
     private static final long serialVersionUID = -8043411261618997959L;
 
     @ApiModelProperty("用户名")

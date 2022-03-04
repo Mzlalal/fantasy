@@ -23,17 +23,9 @@ public interface GlobalConstant {
      */
     String FANTASY_CHESS = "fantasy-chess";
     /**
-     * 字典应用名
-     */
-    String FANTASY_DICT = "fantasy-dict";
-    /**
      * 授权服务器应用名
      */
     String FANTASY_OAUTH2 = "fantasy-oauth2";
-    /**
-     * 纪念日应用名
-     */
-    String FANTASY_DAY_MATTER = "fantasy-day-matter";
     /**
      * 邮箱
      */
@@ -46,6 +38,14 @@ public interface GlobalConstant {
      * 生产环境
      */
     String PRODUCT = "product";
+    /**
+     * 默认超管角色
+     */
+    String DEFAULT_MANAGE_ROLE = "1000";
+    /**
+     * 默认普通角色
+     */
+    String DEFAULT_NORMAL_ROLE = "2000";
     /**
      * 启用
      */
@@ -70,7 +70,7 @@ public interface GlobalConstant {
      * @return String fantasy:{clientKey}:{uuid}
      */
     static String clientKeyAuthCodeRedisKey(String clientKey) {
-        return StrUtil.format("fantasy:{}:{}" , clientKey, IdUtil.fastSimpleUUID());
+        return StrUtil.format("fantasy:{}:{}", clientKey, IdUtil.fastSimpleUUID());
     }
 
     /**
@@ -81,7 +81,7 @@ public interface GlobalConstant {
      * @return String fantasy:mail:code:{clientKey}:{mail}
      */
     static String clientKeyMailCodeRedisKey(String clientKey, String mail) {
-        return StrUtil.format("fantasy:mail:code:{}:{}" , clientKey, mail);
+        return StrUtil.format("fantasy:mail:code:{}:{}", clientKey, mail);
     }
 
     /**
@@ -92,7 +92,7 @@ public interface GlobalConstant {
      * @return String fantasy:password:code:{clientKey}:{mobile}
      */
     static String clientKeyPasswordCodeRedisKey(String clientKey, String mobile) {
-        return StrUtil.format("fantasy:password:code:{}:{}" , clientKey, mobile);
+        return StrUtil.format("fantasy:password:code:{}:{}", clientKey, mobile);
     }
 
     /**

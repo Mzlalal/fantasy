@@ -1,10 +1,11 @@
 package com.mzlalal.base.entity.oauth2.vo;
 
-import com.mzlalal.base.entity.global.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
 
 /**
  * 客户端VO
@@ -14,9 +15,9 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @ApiModel("客户端VO")
-@EqualsAndHashCode(callSuper = true)
-public class ClientVo extends BaseEntity {
-    private static final long serialVersionUID = 1L;
+@EqualsAndHashCode
+public class ClientVo implements Serializable {
+    private static final long serialVersionUID = 5633041303958946875L;
 
     @ApiModelProperty("应用ID")
     private String clientKey;

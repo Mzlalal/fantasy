@@ -1,12 +1,12 @@
 package com.mzlalal.base.entity.oauth2.req;
 
-import com.mzlalal.base.entity.global.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 
 /**
  * 密码登录校验验证码参数
@@ -16,8 +16,8 @@ import javax.validation.constraints.NotBlank;
  */
 @Data
 @ApiModel("检查验证码参数")
-@EqualsAndHashCode(callSuper = true)
-public class CheckVerifyCodeReq extends BaseEntity {
+@EqualsAndHashCode
+public class CheckVerifyCodeReq implements Serializable {
     private static final long serialVersionUID = 7890819661057272354L;
 
     @ApiModelProperty("客户端ID")
