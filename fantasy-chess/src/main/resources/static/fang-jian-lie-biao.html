@@ -153,7 +153,7 @@
                     this.joinRoom(res.data);
                 }).catch(res => {
                     // 已存在房间
-                    if (res.data.state === 1205) {
+                    if (res.data.state === window.roomIsExist) {
                         this.existRoom = res.data.data;
                         return;
                     }

@@ -7,6 +7,8 @@
     window.clientKey = "fantasy-oauth2";
     // 需要刷新令牌的的状态码
     window.refreshTokenStateCode = [1404, 1405];
+    // 房间已存在状态码
+    window.roomIsExist = 2205;
     // 日历类别,例:1=阳历,2=阴历(农历)
     window.calendarType = [
         {
