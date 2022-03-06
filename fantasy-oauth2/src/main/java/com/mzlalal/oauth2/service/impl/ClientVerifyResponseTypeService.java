@@ -27,18 +27,18 @@ public class ClientVerifyResponseTypeService {
     }
 
     /**
-     * 根据客户端ID查询响应类型是否存在
-     * 1. 根据客户端ID查询
+     * 根据客户端Key查询响应类型是否存在
+     * 1. 根据客户端Key查询
      * 2. 根据","切割客户端授权方式
      * 3. 比对参数授权方式是否存在切割数组中
      * 4. 返回客户端
      *
-     * @param clientKey    客户端ID
+     * @param clientKey    客户端Key
      * @param responseType 授权方式
      * @return ClientEntity
      */
     public ClientEntity verifyResponseType(String clientKey, String responseType) {
-        // 客户端ID是否为空
+        // 客户端Key是否为空
         AssertUtil.notBlank(clientKey, GlobalResult.OAUTH_FAIL);
         // 授权方式是否为空
         AssertUtil.notBlank(responseType, GlobalResult.RESPONSE_TYPE_NOT_CORRECT);

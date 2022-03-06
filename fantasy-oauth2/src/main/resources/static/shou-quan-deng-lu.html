@@ -10,6 +10,7 @@
     <script src="js/plugin/axios.min.js"></script>
     <script src="js/plugin/vue.min.js"></script>
     <script src="js/CommonUtil.js"></script>
+    <script src="js/FantasyConstant.js"></script>
 </head>
 <style>
 
@@ -95,13 +96,22 @@
                     data: param,
                 }).then(res => {
                     this.msg = "登录成功，正在跳转，请稍候...";
-                    // 记住用户TOKEN
+                    // 保存用户令牌
                     if (res.data && res.data.accessToken) {
                         localStorage.setItem("user.access.token", res.data.accessToken);
                     }
-                    // 保存用户信息
-                    this.rememberUser();
-                    // 跳转界面
+                    // 保存用户刷新令牌
+                    if (res.data && res.data.refreshToken) {
+                        localStorage.setItem("user.refresh.token", res.data.refreshToken);
+                    }
+                    // 保存用户信息并跳转界面
+                    window.commonUtil.checkToken();
+                    // 获取首页
+                    let clientIndexUri = localStorage.getItem("client.index.uri");
+                    // 跳转
+                    setTimeout(() => {
+                        window.location = (clientIndexUri.startsWith("http") ? "" : window.gateway) + clientIndexUri;
+                    }, 1000)
                 }).catch(res => {
                     if (res.data && res.data.msg) {
                         this.msg = res.data.msg;
@@ -110,32 +120,6 @@
                     }
                 })
             },
-            rememberUser() {
-                // 请求接口
-                axios({
-                    method: "post",
-                    url: "/fantasy-oauth2/api/v1/token/check.token",
-                }).then(res => {
-                    if (res.data) {
-                        localStorage.setItem("user.info", JSON.stringify(res.data));
-                    }
-                    // 获取首页
-                    let clientIndexUri = localStorage.getItem("client.index.uri");
-                    // 跳转
-                    setTimeout(() => {
-                        window.location = (clientIndexUri.startsWith("http") ? "" : gateway) + clientIndexUri;
-                    }, 1000)
-                }).catch(res => {
-                    console.log("请求用户信息失败");
-                    console.log(res);
-                    // 查看返回消息
-                    if (res.data && res.data.msg) {
-                        this.msg = res.data.msg;
-                    } else {
-                        this.msg = "服务器繁忙，请稍后再试";
-                    }
-                })
-            }
         },
         created() {
             // 验证授权码

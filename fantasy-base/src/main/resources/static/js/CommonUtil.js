@@ -1,19 +1,12 @@
-(function (win, axios) {
-    // gateway interceptors可以配置在common.js中提供出来使用,提供了一个CommonUtil.js参考,估计不能直接导入使用
-    // 请求服务器的网关
-    // win.gateway = "http://127.0.0.1:9999";
-    // win.gateway = "http://gateway.mzlalal.icu";
-    win.gateway = "http://" + location.host;
-    // 客户端ID
-    win.clientKey = "fantasy-oauth2";
+(function (window, axios) {
     // https://www.axios-http.cn/docs/interceptors 拦截器文档
-    // 添加请求拦截器
+    // 请求拦截器
     axios.interceptors.request.use(function (config) {
         // 发送请求之前可以对config再次处理
         // 判断是否是HTTP开头,若不是则增加gateway地址
         if (config.url && !config.url.startsWith("http")) {
             // 在这里对URL进行拦截,增加gateway地址
-            config.url = win.gateway + config.url;
+            config.url = window.gateway + config.url;
         }
         // 增加TOKEN头
         if (!config.headers['F-Authorization']) {
@@ -26,25 +19,44 @@
         return Promise.reject(error);
     });
 
-    // 添加响应拦截器
-    axios.interceptors.response.use(function (res) {
-        // 2xx 范围内的HTTP状态码都会触发该函数
+    // 响应拦截器
+    axios.interceptors.response.use(async function (res) {
         // res.data存在并且返回的state(业务状态)状态为200才能够继续执行,否则直接执行error
         // 避免了then方法中每次都需要判断state=200
         if (res.data && res.data.state === 200) {
             // 传递接口返回的结果给then方法
             return res.data;
         }
-        // 需要重定向到登录界面的方法
-        let redirectState = [411, 412, 413, 414]
-        // 避免了then方法中每次都需要判断state=200
-        if (res.data && redirectState.includes(res.data.state)) {
-            // 1.5s后跳转到登录页
-            setTimeout(() => {
-                window.location = res.data.data;
-            }, 1500)
+        // 需要刷新令牌的的状态码
+        if (res.data && window.refreshTokenStateCode.includes(res.data.state)) {
+            // 获取刷新令牌
+            let refreshToken = localStorage.getItem("user.refresh.token");
+            if (!refreshToken) {
+                // 无刷新令牌,跳转到登录页
+                window.commonUtil.redirectDefaultUri();
+                return;
+            }
+            let param = {
+                "clientKey": window.clientKey,
+                "refreshToken": refreshToken
+            }
+            // 请求 await同步
+            let refreshTokenRes = await axios({
+                method: "post",
+                url: "/fantasy-oauth2/api/v1/oauth/refresh.token",
+                data: param
+            })
+            if (refreshTokenRes.data && refreshTokenRes.data.accessToken && refreshTokenRes.data.refreshToken) {
+                // 保存用户令牌,用户刷新令牌
+                localStorage.setItem("user.access.token", refreshTokenRes.data.accessToken);
+                localStorage.setItem("user.refresh.token", refreshTokenRes.data.refreshToken);
+            } else {
+                // 刷新令牌失败,跳转到登录页
+                window.commonUtil.redirectDefaultUri();
+                return;
+            }
             // 业务状态错误直接使用catch方法
-            return Promise.reject(res);
+            return axios.request(res.config);
         }
         // 业务状态错误直接使用catch方法
         return Promise.reject(res);
@@ -57,11 +69,11 @@
     });
 
     // 暴露commonUtil
-    win.commonUtil = {
+    window.commonUtil = {
         // 获取URL上的参数
         getUrlPara: function (name) {
-            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-            var r = window.location.search.substr(1).match(reg);
+            const reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+            const r = window.location.search.substr(1).match(reg);
             if (r != null) return unescape(r[2]);
         },
         // 获取res的pageInfo中的集合,若为空则返回[]空数组
@@ -70,14 +82,42 @@
                 return res.page.list;
             }
             return [];
+        },
+        // 验证令牌
+        checkToken: function () {
+            // 请求接口
+            axios({
+                method: "post",
+                url: "/fantasy-oauth2/api/v1/token/check.token",
+            }).then(res => {
+                if (res.data) {
+                    localStorage.setItem("user.info", JSON.stringify(res.data));
+                }
+            }).catch(res => {
+                // 查看返回消息
+                if (res.data && res.data.msg) {
+                    this.msg = res.data.msg;
+                } else {
+                    this.msg = "服务器繁忙，请稍后再试";
+                }
+            })
+        },
+        // 跳转到默认地址
+        redirectDefaultUri: function () {
+            // 刷新令牌失败 1.5s后跳转到登录页
+            setTimeout(() => {
+                window.location = window.defaultRedirectUri;
+            }, 500)
+            // 提示
+            alert("信息失效，请重新登录");
         }
     }
 
     // 页面重新获得焦点事件
-    win.hiddenProperty = 'hidden' in document ? 'hidden' : 'webkitHidden' in document ? 'webkitHidden' : 'mozHidden' in document ? 'mozHidden' : null;
-    win.visibilityChangeEvent = hiddenProperty.replace(/hidden/i, 'visibilitychange');
+    window.hiddenProperty = 'hidden' in document ? 'hidden' : 'webkitHidden' in document ? 'webkitHidden' : 'mozHidden' in document ? 'mozHidden' : null;
+    window.visibilityChangeEvent = hiddenProperty.replace(/hidden/i, 'visibilitychange');
     // 事件处理方法
-    win.onVisibilityChange = function () {
+    window.onVisibilityChange = function () {
         if (!document[hiddenProperty]) {
             // 页面激活
             console.log("the current window is activated")
@@ -116,7 +156,7 @@ Date.prototype.Format = function (fmt) {
     };
     if (/(y+)/.test(fmt))
         fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-    for (var k in o)
+    for (const k in o)
         if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
     return fmt;
 }

@@ -20,8 +20,8 @@ import java.io.Serializable;
 public class CheckVerifyCodeReq implements Serializable {
     private static final long serialVersionUID = 7890819661057272354L;
 
-    @ApiModelProperty("客户端ID")
-    @NotBlank(message = "客户端ID不能为空")
+    @ApiModelProperty("客户端Key")
+    @NotBlank(message = "客户端Key不能为空")
     private String clientKey;
 
     @ApiModelProperty("用户名")

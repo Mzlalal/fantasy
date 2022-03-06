@@ -66,7 +66,7 @@ public interface GlobalConstant {
     /**
      * UUID与clientKey绑定的授权码 redis key
      *
-     * @param clientKey 客户端ID
+     * @param clientKey 客户端Key
      * @return String fantasy:{clientKey}:{uuid}
      */
     static String clientKeyAuthCodeRedisKey(String clientKey) {
@@ -76,7 +76,7 @@ public interface GlobalConstant {
     /**
      * 邮箱 redis key
      *
-     * @param clientKey 客户端ID
+     * @param clientKey 客户端Key
      * @param mail      电子邮箱地址
      * @return String fantasy:mail:code:{clientKey}:{mail}
      */
@@ -87,7 +87,7 @@ public interface GlobalConstant {
     /**
      * 手机号登录验证码 redis key
      *
-     * @param clientKey 客户端ID
+     * @param clientKey 客户端Key
      * @param mobile    手机号
      * @return String fantasy:password:code:{clientKey}:{mobile}
      */

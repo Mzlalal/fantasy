@@ -80,7 +80,7 @@ public enum VerifyCodeProvideEnum {
      * 密码可以是邮箱验证码,图片验证码,短信验证码等
      *
      * @param username  用户名
-     * @param clientKey 客户端ID
+     * @param clientKey 客户端Key
      * @return Result<String>
      */
     public abstract Result<String> createVerifyCode(String username, String clientKey);

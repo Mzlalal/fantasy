@@ -14,7 +14,7 @@ public interface ClientService extends BaseService<ClientEntity> {
     /**
      * 根据clientKey获取
      *
-     * @param clientKey 客户端ID
+     * @param clientKey 客户端Key
      * @return ClientEntity
      */
     ClientEntity getOneByClientKey(String clientKey);

@@ -5,15 +5,13 @@ import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.common.GlobalResult;
 import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.oauth2.dto.ClientEntity;
-import com.mzlalal.base.entity.oauth2.req.CheckVerifyCodeReq;
-import com.mzlalal.base.entity.oauth2.req.CreateTokenReq;
-import com.mzlalal.base.entity.oauth2.req.OauthReq;
-import com.mzlalal.base.entity.oauth2.req.VerifyCodeReq;
+import com.mzlalal.base.entity.oauth2.req.*;
 import com.mzlalal.base.entity.oauth2.vo.AccessToken;
 import com.mzlalal.base.entity.oauth2.vo.RedirectUriVo;
 import com.mzlalal.base.feign.oauth2.OauthFeignApi;
 import com.mzlalal.oauth2.config.oauth2.enums.GrantResponseEnum;
 import com.mzlalal.oauth2.config.oauth2.enums.VerifyCodeProvideEnum;
+import com.mzlalal.oauth2.config.oauth2.service.RedisTokenService;
 import com.mzlalal.oauth2.service.impl.ClientVerifyResponseTypeService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -44,12 +42,17 @@ public class OauthController implements OauthFeignApi {
      * string redis操作模板
      */
     private final StringRedisTemplate stringRedisTemplate;
+    /**
+     * redis token服务
+     */
+    private final RedisTokenService redisTokenService;
 
     @Autowired
     public OauthController(ClientVerifyResponseTypeService clientVerifyResponseTypeService
-            , StringRedisTemplate stringRedisTemplate) {
+            , StringRedisTemplate stringRedisTemplate, RedisTokenService redisTokenService) {
         this.clientVerifyResponseTypeService = clientVerifyResponseTypeService;
         this.stringRedisTemplate = stringRedisTemplate;
+        this.redisTokenService = redisTokenService;
     }
 
     @Override
@@ -107,5 +110,10 @@ public class OauthController implements OauthFeignApi {
         ClientEntity client = clientVerifyResponseTypeService.verifyResponseType(req.getClientKey(), responseType);
         // 获取授权码
         return GrantResponseEnum.getEnum(responseType).createAccessToken(req, client);
+    }
+
+    @Override
+    public Result<AccessToken> refreshToken(@Validated @RequestBody RefreshTokenReq req) {
+        return redisTokenService.refreshAccessToken(req);
     }
 }

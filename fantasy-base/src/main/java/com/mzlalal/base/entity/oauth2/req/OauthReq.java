@@ -26,8 +26,8 @@ public class OauthReq implements Serializable {
     @NotBlank(message = "用户名不能为空")
     private String username;
 
-    @ApiModelProperty("客户端ID")
-    @NotBlank(message = "客户端ID不能为空")
+    @ApiModelProperty("客户端Key")
+    @NotBlank(message = "客户端Key不能为空")
     private String clientKey;
 
     @ApiModelProperty("私匙")

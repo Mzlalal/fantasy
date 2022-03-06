@@ -10,6 +10,7 @@
     <script src="js/plugin/axios.min.js"></script>
     <script src="js/plugin/vue.min.js"></script>
     <script src="js/CommonUtil.js"></script>
+    <script src="js/FantasyConstant.js"></script>
 </head>
 <style>
 
@@ -108,7 +109,7 @@
         data: {
             // 登录按钮
             loginBtn: false,
-            // 请求的客户端ID
+            // 请求的客户端Key
             reqClientKey: "",
             // 用户名
             username: "",
@@ -169,7 +170,7 @@
             // 如果URL有clientKey,优先使用URL上的clientKey
             let urlClientKey = commonUtil.getUrlPara("clientKey");
             // 赋值
-            this.reqClientKey = urlClientKey == null ? clientKey : urlClientKey;
+            this.reqClientKey = urlClientKey == null ? window.clientKey : urlClientKey;
             // 获取本地缓存的邮箱
             let cacheUsername = localStorage.getItem("username.mobile");
             if (cacheUsername) {

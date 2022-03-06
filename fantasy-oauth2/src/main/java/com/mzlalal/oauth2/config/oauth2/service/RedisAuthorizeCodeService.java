@@ -32,7 +32,7 @@ public class RedisAuthorizeCodeService {
     /**
      * 根据authorizeCode存储用户信息
      *
-     * @param clientKey  客户端ID
+     * @param clientKey  客户端Key
      * @param userEntity 用户信息
      * @return String 存储用户信息的redis authorizeCode授权码
      */
