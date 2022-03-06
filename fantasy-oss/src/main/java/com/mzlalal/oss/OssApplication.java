@@ -1,10 +1,11 @@
 package com.mzlalal.oss;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * 启动类
@@ -14,9 +15,10 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  * @author Mzlalal
  */
 @EnableDiscoveryClient
+@EnableTransactionManagement
+@MapperScan(basePackages = "com.mzlalal.oss.dao")
 @EnableFeignClients(basePackages = {"com.mzlalal.base.feign"})
-@SpringBootApplication(scanBasePackages = {"com.mzlalal.base", "com.mzlalal.oss"}
-        , exclude = {DataSourceAutoConfiguration.class})
+@SpringBootApplication(scanBasePackages = {"com.mzlalal.base", "com.mzlalal.oss"})
 public class OssApplication {
 
     public static void main(String[] args) {

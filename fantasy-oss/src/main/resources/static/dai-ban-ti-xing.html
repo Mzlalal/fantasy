@@ -21,17 +21,85 @@
         <span class="font-weight-bolder font-weight-20px">待办提醒</span>
     </header>
     <div class="ui-form ui-border-t ui-container">
-
+        <div class="ui-form-item ui-border-b">
+            <label>日历</label>
+            <div class="ui-select-group">
+                <div class="ui-select">
+                    <select v-model="type">
+                        <option v-for="item in calendarType" :value="item.calendarTypeValue">
+                            {{item.calendarTypeLabel}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="ui-form-item ui-border-b">
+            <label>月日</label>
+            <div class="ui-select-group">
+                <div class="ui-select">
+                    <select v-model="month">
+                        <option v-for="month in calendarMonth">{{month}}</option>
+                    </select>
+                </div>
+                <div class="ui-select">
+                    <select v-model="day">
+                        <option v-for="day in calendarDay">{{day}}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="ui-form-item ui-border-b">
+            <label>时分</label>
+            <div class="ui-select-group">
+                <div class="ui-select">
+                    <select v-model="hour">
+                        <option v-for="hour in calendarHour">{{hour}}</option>
+                    </select>
+                </div>
+                <div class="ui-select">
+                    <select v-model="minute">
+                        <option v-for="minute in calendarMinute">{{minute}}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="ui-form-item ui-form-item-switch ui-border-b">
+            <p>重复提醒</p>
+            <label class="ui-switch">
+                <input type="checkbox" v-model="enableRepeat">
+            </label>
+        </div>
+        <transition name="slide-fade">
+            <div class="ui-form-item ui-border-b" v-if="enableRepeat">
+                <label>次数</label>
+                <div class="ui-select">
+                    <select v-model="times">
+                        <option v-for="times in repeatTimes">{{times}}</option>
+                    </select>
+                </div>
+            </div>
+        </transition>
     </div>
 </div>
 </body>
 <script>
     const vm = new Vue({
         el: "#app",
-        data: {},
+        data: {
+            type: 1,
+            month: calendarMonth[0],
+            day: calendarDay[0],
+            hour: calendarHour[0],
+            minute: calendarMinute[0],
+            enableRepeat: true,
+            times: repeatTimes[0],
+        },
         methods: {},
         created() {
-
+            let current = new Date();
+            this.month = current.getMonth() + 1;
+            this.day = current.getDate();
+            this.hour = current.getHours();
         }
     });
 </script>
