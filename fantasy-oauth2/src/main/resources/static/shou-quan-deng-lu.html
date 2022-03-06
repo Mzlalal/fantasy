@@ -106,12 +106,6 @@
                     }
                     // 保存用户信息并跳转界面
                     window.commonUtil.checkToken();
-                    // 获取首页
-                    let clientIndexUri = localStorage.getItem("client.index.uri");
-                    // 跳转
-                    setTimeout(() => {
-                        window.location = (clientIndexUri.startsWith("http") ? "" : window.gateway) + clientIndexUri;
-                    }, 1000)
                 }).catch(res => {
                     if (res.data && res.data.msg) {
                         this.msg = res.data.msg;

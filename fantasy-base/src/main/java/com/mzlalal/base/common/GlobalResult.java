@@ -19,117 +19,97 @@ import java.lang.reflect.InvocationTargetException;
 @Getter
 public enum GlobalResult {
     /**
-     * 授权失败
-     */
-    SUCCESS(200, "操作成功"),
-    /**
-     * 授权失败
-     */
-    OAUTH_FAIL(401, "应用授权失败"),
-    /**
-     * 用户取消授权
-     */
-    OAUTH_CANCER(402, "用户取消授权"),
-    /**
-     * 服务器繁忙
-     */
-    REQ_NOT_FOUNT(404, "请求找不到了，请稍后再试"),
-    /**
-     * dataType不是json
-     */
-    TYPE_NOT_JSON(410, "需dataType为application/json并传递参数"),
-    /**
-     * 长时间未操作,请重新登录
-     */
-    LONG_TIME_NO_OPERATION(411, "长时间未操作，请重新登录"),
-    /**
-     * 授权验证码不正确,请重新登录
-     */
-    OAUTH_CODE_NOT_CORRECT(412, "授权验证码不正确，请重新登录"),
-    /**
-     * 非法的授权方式grantType
-     */
-    OAUTH_RESPONSE_TYPE_NOT_CORRECT(413, "非法的授权方式(responseType)"),
-    /**
-     * 当前未登录
-     */
-    USER_NOT_LOGIN(414, "当前未登录"),
-    /**
-     * 授权方式为空
-     */
-    RESPONSE_TYPE_NOT_CORRECT(415, "授权方式为空(responseType)"),
-    /**
-     * 服务器繁忙
-     */
-    SEVER_ERROR(500, "服务器繁忙，请稍后再试"),
-    /**
-     * 当前请求不支持当前METHOD访问
-     */
-    REQ_NOT(501, "当前请求不支持当前METHOD访问"),
-    /**
-     * 数据已存在
-     */
-    DUPLICATE_KEY(600, "数据已存在"),
-    /**
      * 手机未注册
      */
-    MOBILE_NOT_FOUNT(1001, "手机未注册"),
-    /**
-     * 密码不正确
-     */
-    PASSWORD_NOT_RIGHT(1002, "密码不正确"),
-    /**
-     * 验证码不正确
-     */
-    VALIDATE_CODE_NOT_RIGHT(1003, "验证码不正确"),
-    /**
-     * 账户被锁定
-     */
-    ACCOUNT_LOCKED(1004, "账户被锁定"),
-    /**
-     * 邮箱格式不正确
-     */
-    EMAIL_NOT_CORRECT(1005, "邮箱格式不正确"),
+    MOBILE_NOT_FOUNT(1100, "手机未注册"),
     /**
      * 邮箱未注册
      */
-    EMAIL_NOT_FOUNT(1006, "邮箱未注册"),
+    EMAIL_NOT_FOUNT(1101, "邮箱未注册"),
+    /**
+     * 密码不正确
+     */
+    PASSWORD_NOT_RIGHT(1102, "密码不正确"),
+    /**
+     * 验证码不正确
+     */
+    VALIDATE_CODE_NOT_RIGHT(1103, "验证码不正确"),
+    /**
+     * 邮箱格式不正确
+     */
+    EMAIL_NOT_CORRECT(1104, "邮箱格式不正确"),
     /**
      * 手机格式不正确
      */
-    MOBILE_NOT_CORRECT(1007, "手机格式不正确"),
+    MOBILE_NOT_CORRECT(1105, "手机格式不正确"),
     /**
-     * 另一端登录
+     * 账户被锁定
      */
-    ANOTHER_LOGIN(1008, "另一端登录，连接断开"),
+    ACCOUNT_LOCKED(1106, "账户被锁定"),
+    /**
+     * 授权失败
+     */
+    OAUTH_FAIL(1400, "应用授权失败"),
+    /**
+     * 用户取消授权
+     */
+    OAUTH_CANCER(1401, "用户取消授权"),
+    /**
+     * 授权验证码不正确,请重新登录
+     */
+    OAUTH_CODE_NOT_CORRECT(1402, "授权验证码不正确，请重新登录"),
+    /**
+     * 非法的授权方式grantType
+     */
+    OAUTH_RESPONSE_TYPE_NOT_CORRECT(1403, "非法的授权方式(responseType)"),
+    /**
+     * 长时间未操作,请重新登录
+     */
+    LONG_TIME_NO_OPERATION(1404, "长时间未操作，请重新登录"),
+    /**
+     * 当前未登录
+     */
+    USER_NOT_LOGIN(1405, "当前未登录，请登录"),
+    /**
+     * 服务器繁忙
+     */
+    SEVER_ERROR(1500, "服务器繁忙，请稍后再试"),
+    /**
+     * 需dataType为application/json并传递参数
+     */
+    DATATYPE_NOT_JSON(1501, "需dataType为application/json并传递参数"),
+    /**
+     * 数据已存在
+     */
+    DUPLICATE_KEY(1600, "数据已存在"),
     /**
      * 文件上传失败
      */
-    FILE_UPLOAD_FAIL(1100, "文件上传失败，请稍后再试"),
+    FILE_UPLOAD_FAIL(2100, "文件上传失败，请稍后再试"),
     /**
      * 扣除分数失败
      */
-    SUB_SCORE_FAIL(1200, "扣除分数失败，可能发起人未加入房间"),
+    SUB_SCORE_FAIL(2200, "扣除分数失败，可能发起人未加入房间"),
     /**
      * 增加分数失败
      */
-    ADD_SCORE_FAIL(1201, "增加分数失败，可能接收人未加入房间"),
+    ADD_SCORE_FAIL(2201, "增加分数失败，可能接收人未加入房间"),
     /**
      * 扣除分数失败
      */
-    SUB_PLAYER_STATUS_OFF(1203, "操作失败，发起人已经下桌"),
+    SUB_PLAYER_STATUS_OFF(2203, "操作失败，发起人已经下桌"),
     /**
      * 扣除分数失败
      */
-    ADD_PLAYER_STATUS_OFF(1204, "操作失败，接收人已经下桌"),
+    ADD_PLAYER_STATUS_OFF(2204, "操作失败，接收人已经下桌"),
     /**
      * 房间已经存在
      */
-    ROOM_EXIST(1205, "房间已经存在"),
+    ROOM_EXIST(2205, "房间已经存在"),
     /**
-     * 重复提交
+     * 另一端登录
      */
-    REPEAT_SUBMIT(3004, "正在加快处理中，请稍候..."),
+    ANOTHER_LOGIN(2206, "另一端登录，连接断开"),
     /**
      * 服务器繁忙
      */

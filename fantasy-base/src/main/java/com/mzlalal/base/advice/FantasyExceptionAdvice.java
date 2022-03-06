@@ -14,7 +14,6 @@ import feign.FeignException;
 import javassist.ClassPool;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -24,6 +23,8 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
@@ -44,21 +45,15 @@ import java.util.Set;
 @ResponseStatus(HttpStatus.OK)
 public class FantasyExceptionAdvice {
     /**
-     * request请求
-     */
-    @Autowired
-    private HttpServletRequest request;
-
-    /**
      * 打印系统异常和当前请求路径,请求参数
      *
      * @param cause 异常
      */
     protected void printExceptionAndParams(Exception cause) {
         // 打印原始报错
-        log.error("", ExceptionUtil.getRootCause(cause));
+        log.error("", cause);
         // 打印自定义报错信息
-        this.printCustomMessage(cause);
+        this.printRequestPathAndException(cause);
     }
 
     /**
@@ -66,17 +61,20 @@ public class FantasyExceptionAdvice {
      *
      * @param cause 异常
      */
-    protected void printCustomMessage(Exception cause) {
+    protected void printRequestPathAndException(Exception cause) {
+        // 获取request对象
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
+                .getRequest();
         // 输出格式
         String format = "\n\t请求路径:{}{}\n\t请求参数:{}\n\t异常信息:{}";
         // 处理堆栈错误信息
         String classLine = this.printStack(cause);
         // 请求参数,非请求体
-        String requestParam = JSON.toJSONString(ServletUtil.getParamMap(request));
+        String param = JSON.toJSONString(ServletUtil.getParamMap(request));
         // 异常信息
-        String exceptionMessage = ExceptionUtil.getMessage(cause);
+        String message = ExceptionUtil.getMessage(cause);
         // 打印自定义错误信息
-        log.error(StrUtil.format(format, request.getRequestURL(), classLine, requestParam, exceptionMessage));
+        log.error(StrUtil.format(format, request.getRequestURL(), classLine, param, message));
     }
 
     /**
@@ -89,7 +87,7 @@ public class FantasyExceptionAdvice {
     private String printStack(Exception exception) {
         // 获取异常的所有的堆栈信息
         StackTraceElement[] stackTraceElementArray = exception.getStackTrace();
-        // 设置默认
+
         StringBuilder sb = new StringBuilder();
         for (StackTraceElement stack : stackTraceElementArray) {
             // 获取类名
@@ -97,13 +95,12 @@ public class FantasyExceptionAdvice {
             // base包抛出的类不需要
             if (!StrUtil.containsAny(className, "com.mzlalal.base", "$")
                     && StrUtil.contains(className, "com.mzlalal")) {
-                sb.append("\n\t代码位置:")
-                        .append(StrUtil.format("{}({}.java:{})", stack.getClassName()
-                                , ClassPool.getDefault().get(stack.getClassName()).getSimpleName(), stack.getLineNumber()
-                        ));
+                // 代码位置
+                String format = StrUtil.format("{}({}.java:{})", className
+                        , ClassPool.getDefault().get(className).getSimpleName(), stack.getLineNumber());
+                sb.append("\n\t代码位置:").append(format);
             }
         }
-        // 返回格式化信息
         return sb.toString();
     }
 
@@ -115,7 +112,7 @@ public class FantasyExceptionAdvice {
      */
     @ExceptionHandler(ConstraintViolationException.class)
     public Result<String> handleValidationException(ConstraintViolationException exception) {
-        this.printCustomMessage(exception);
+        this.printRequestPathAndException(exception);
         // 可能有多个条件校验失败 只返回第一条
         Set<ConstraintViolation<?>> violations = exception.getConstraintViolations();
         ConstraintViolation<?> errorMsg = CollUtil.get(violations, 0);
@@ -130,7 +127,7 @@ public class FantasyExceptionAdvice {
      */
     @ExceptionHandler(BindException.class)
     public Result<String> handleBindException(BindException exception) {
-        this.printCustomMessage(exception);
+        this.printRequestPathAndException(exception);
         // 可能有多个条件校验失败 只返回第一条
         List<FieldError> violations = exception.getFieldErrors();
         FieldError errorMsg = CollUtil.get(violations, 0);
@@ -158,7 +155,7 @@ public class FantasyExceptionAdvice {
     @ExceptionHandler(BoomException.class)
     public Result<String> handleBoomException(Exception exception) {
         String state = exception.getMessage();
-        this.printCustomMessage(exception);
+        this.printRequestPathAndException(exception);
         return GlobalResult.getEnum(state).result();
     }
 
@@ -172,7 +169,7 @@ public class FantasyExceptionAdvice {
     @ResponseStatus(HttpStatus.OK)
     public Result<String> handleHttpMessageNotReadableException(Exception exception) {
         this.printExceptionAndParams(exception);
-        return GlobalResult.TYPE_NOT_JSON.result(ExceptionUtil.getMessage(exception));
+        return Result.failMsg("需dataType为application/json并传递参数");
     }
 
     /**
@@ -185,7 +182,7 @@ public class FantasyExceptionAdvice {
     @ResponseStatus(HttpStatus.OK)
     public Result<String> handleHttpRequestMethodNotSupportedException(Exception exception) {
         this.printExceptionAndParams(exception);
-        return GlobalResult.REQ_NOT.result(ExceptionUtil.getMessage(exception));
+        return Result.failMsg("当前请求不支持当前METHOD访问");
     }
 
     /**

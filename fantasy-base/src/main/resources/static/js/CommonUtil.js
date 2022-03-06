@@ -93,6 +93,10 @@
                 if (res.data) {
                     localStorage.setItem("user.info", JSON.stringify(res.data));
                 }
+                // 获取首页
+                let clientIndexUri = localStorage.getItem("client.index.uri");
+                // 跳转
+                window.location = (clientIndexUri.startsWith("http") ? "" : window.gateway) + clientIndexUri;
             }).catch(res => {
                 // 查看返回消息
                 if (res.data && res.data.msg) {

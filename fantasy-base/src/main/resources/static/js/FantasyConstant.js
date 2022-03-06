@@ -6,5 +6,5 @@
     // 客户端Key
     window.clientKey = "fantasy-oauth2";
     // 需要刷新令牌的的状态码
-    window.refreshTokenStateCode = [401, 411, 412, 413, 414];
+    window.refreshTokenStateCode = [1404, 1405];
 })(window);
