@@ -6,9 +6,11 @@
           content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, initial-scale=1.0, user-scalable=no">
     <title>待办提醒</title>
     <link rel="stylesheet" href="css/plugin/frozen.css"/>
+    <link rel="stylesheet" href="css/plugin/vue.select.css"/>
     <link rel="stylesheet" href="css/common.css"/>
     <script src="js/plugin/axios.min.js"></script>
     <script src="js/plugin/vue.min.js"></script>
+    <script src="js/plugin/vue.select.js"></script>
     <script src="js/CommonUtil.js"></script>
     <script src="js/FantasyConstant.js"></script>
 </head>
@@ -21,85 +23,124 @@
         <span class="font-weight-bolder font-weight-20px">待办提醒</span>
     </header>
     <div class="ui-form ui-border-t ui-container">
-        <div class="ui-form-item ui-border-b">
-            <label>日历</label>
-            <div class="ui-select-group">
-                <div class="ui-select">
-                    <select v-model="type">
-                        <option v-for="item in calendarType" :value="item.calendarTypeValue">
-                            {{item.calendarTypeLabel}}
-                        </option>
-                    </select>
+        <ul class="ui-list ui-list-single ui-border-tb">
+            <li class="ui-border-t">
+                <div class="ui-list-info">
+                    <h4 class="ui-nowrap">日历</h4>
+                    <div class="ui-txt-info">
+                        <v-select v-model="notifyCalendarType" :reduce="item => item.code" :clearable="false"
+                                  :searchable="false"
+                                  :options="calendarTypeOption"></v-select>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div class="ui-form-item ui-border-b">
-            <label>月日</label>
-            <div class="ui-select-group">
-                <div class="ui-select">
-                    <select v-model="month">
-                        <option v-for="month in calendarMonth">{{month}}</option>
-                    </select>
-                </div>
-                <div class="ui-select">
-                    <select v-model="day">
-                        <option v-for="day in calendarDay">{{day}}</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-        <div class="ui-form-item ui-border-b">
-            <label>时分</label>
-            <div class="ui-select-group">
-                <div class="ui-select">
-                    <select v-model="hour">
-                        <option v-for="hour in calendarHour">{{hour}}</option>
-                    </select>
-                </div>
-                <div class="ui-select">
-                    <select v-model="minute">
-                        <option v-for="minute in calendarMinute">{{minute}}</option>
-                    </select>
-                </div>
-            </div>
-        </div>
+            </li>
+        </ul>
         <div class="ui-form-item ui-form-item-switch ui-border-b">
             <p>重复提醒</p>
             <label class="ui-switch">
-                <input type="checkbox" v-model="enableRepeat">
+                <input type="checkbox" v-model="enableRepeatNotifyMode">
             </label>
         </div>
-        <transition name="slide-fade">
-            <div class="ui-form-item ui-border-b" v-if="enableRepeat">
-                <label>次数</label>
-                <div class="ui-select">
-                    <select v-model="times">
-                        <option v-for="times in repeatTimes">{{times}}</option>
-                    </select>
+        <ul class="ui-list ui-list-single ui-border-tb">
+            <transition name="slide">
+                <li class="ui-border-t" v-if="enableRepeatNotifyMode">
+                    <div class="ui-list-info">
+                        <h4 class="ui-nowrap">周期</h4>
+                        <div class="ui-txt-info">
+                            <v-select v-model="notifyType" :reduce="item => item.code" :clearable="false"
+                                      :searchable="false" :options="repeatModeOption"></v-select>
+                        </div>
+                    </div>
+                </li>
+            </transition>
+            <li class="ui-border-t">
+                <div class="ui-list-info">
+                    <h4 class="ui-nowrap"></h4>
+                    <transition name="slide">
+                        <div class="ui-txt-info" v-if="notifyType < 2">
+                            <v-select v-model="notifyMonth" :reduce="item => item.code" :clearable="false"
+                                      :searchable="false" :options="calendarMonthOption"></v-select>
+                        </div>
+                    </transition>
+                    <transition name="slide">
+                        <div class="ui-txt-info" v-if="notifyType < 3">
+                            <v-select v-model="notifyDay" :reduce="item => item.code" :clearable="false"
+                                      :searchable="false" :options="calendarDayOption"></v-select>
+                        </div>
+                    </transition>
+                    <div class="ui-txt-info">
+                        <v-select v-model="notifyHour" :reduce="item => item.code" :clearable="false"
+                                  :searchable="false" :options="calendarHourOption"></v-select>
+                    </div>
+                    <div class="ui-txt-info">
+                        <v-select v-model="notifyMinute" :reduce="item => item.code" :clearable="false"
+                                  :searchable="false" :options="calendarMinuteOption"></v-select>
+                    </div>
                 </div>
-            </div>
+            </li>
+        </ul>
+        <div class="ui-form-item ui-form-item-switch ui-border-b">
+            <p>懒人模式</p>
+            <label class="ui-switch">
+                <input type="checkbox" v-model="enableLazyMode">
+            </label>
+        </div>
+        <transition name="slide">
+            <ul class="ui-list ui-list-single ui-border-tb" v-if="enableLazyMode">
+                <li class="ui-border-t">
+                    <div class="ui-list-info">
+                        <h4 class="ui-nowrap">重复</h4>
+                        <div class="ui-txt-info">
+                            <v-select v-model="notifyLazyModeTimes" :reduce="item => item.code" :clearable="false"
+                                      :searchable="false" :options="lazyTimesOption"></v-select>
+                        </div>
+                    </div>
+                </li>
+            </ul>
         </transition>
     </div>
 </div>
 </body>
 <script>
+    Vue.component('v-select', VueSelect.VueSelect);
+
     const vm = new Vue({
         el: "#app",
         data: {
-            type: 1,
-            month: calendarMonth[0],
-            day: calendarDay[0],
-            hour: calendarHour[0],
-            minute: calendarMinute[0],
-            enableRepeat: true,
-            times: repeatTimes[0],
+            notifyCalendarType: 1,
+            enableRepeatNotifyMode: true,
+            notifyType: 1,
+            notifyMonth: null,
+            notifyDay: null,
+            notifyHour: null,
+            notifyMinute: 30,
+            enableLazyMode: true,
+            notifyLazyModeTimes: lazyTimesOption[0],
         },
         methods: {},
         created() {
             let current = new Date();
-            this.month = current.getMonth() + 1;
-            this.day = current.getDate();
-            this.hour = current.getHours();
+            this.notifyMonth = current.getMonth() + 1;
+            this.notifyDay = current.getDate();
+            this.notifyHour = current.getHours();
+        },
+        watch: {
+            enableRepeatNotifyMode(newVal, oldVal) {
+                if (newVal === false) {
+                    this.notifyType = 0;
+                }
+                if (newVal === true) {
+                    this.notifyType = 1;
+                }
+            },
+            enableLazyMode(newVal, oldVal) {
+                if (newVal === false) {
+                    this.notifyLazyModeTimes = null;
+                }
+                if (newVal === true) {
+                    this.notifyLazyModeTimes = lazyTimesOption[0];
+                }
+            }
         }
     });
 </script>

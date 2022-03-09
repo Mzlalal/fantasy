@@ -5,11 +5,14 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.io.FileUtil;
 import com.mzlalal.minio.service.MinioService;
 import io.minio.errors.MinioException;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -50,6 +53,18 @@ public class OssTest {
             }
         });
         System.out.println("文件结束上传...");
+    }
+
+    @Test
+    public void createJson() throws JSONException {
+        List<JSONObject> jsonObjectList = new ArrayList<>();
+        for (int i = 1; i <= 5; i++) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("code", i);
+            jsonObject.put("label", i + "次");
+            jsonObjectList.add(jsonObject);
+        }
+        System.out.println(jsonObjectList);
     }
 
 }

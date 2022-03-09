@@ -29,7 +29,7 @@
               v-if="userStatus === '0'">我要上桌</span>
     </header>
     <div class="ui-form ui-border-t ui-container">
-        <transition name="slide-fade">
+        <transition name="fade">
             <ul class="ui-row ui-whitespace overflow-auto" style="max-height: 220px;" v-if="playerList.length > 0">
                 <li class="ui-col ui-col-25 margin-top-1em" v-for="player in playerList"
                     @click="selectTransferTarget(player)">
@@ -43,7 +43,7 @@
                 </li>
             </ul>
         </transition>
-        <transition name="slide-fade">
+        <transition name="fade">
             <div class="ui-tooltips ui-tooltips-warn" v-if="tips">
                 <div class="ui-tooltips-cnt ui-border-b">
                     <i></i>{{tips}}
@@ -83,7 +83,7 @@
             </ul>
         </div>
     </div>
-    <transition name="slide-fade">
+    <transition name="fade">
         <div class="ui-dialog show" v-if="currentSelectedPlayer">
             <div class="ui-dialog-cnt">
                 <div class="ui-dialog-bd">
