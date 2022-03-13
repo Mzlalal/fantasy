@@ -9,10 +9,10 @@ import com.mzlalal.base.entity.oauth2.req.*;
 import com.mzlalal.base.entity.oauth2.vo.AccessToken;
 import com.mzlalal.base.entity.oauth2.vo.RedirectUriVo;
 import com.mzlalal.base.feign.oauth2.OauthFeignApi;
-import com.mzlalal.oauth2.config.oauth2.enums.GrantResponseEnum;
-import com.mzlalal.oauth2.config.oauth2.enums.VerifyCodeProvideEnum;
-import com.mzlalal.oauth2.config.oauth2.service.RedisTokenService;
 import com.mzlalal.oauth2.service.impl.ClientVerifyResponseTypeService;
+import com.mzlalal.oauth2.service.oauth2.CaptchaProvideEnum;
+import com.mzlalal.oauth2.service.oauth2.GrantResponseEnum;
+import com.mzlalal.oauth2.service.oauth2.RedisTokenService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +64,7 @@ public class OauthController implements OauthFeignApi {
         String username = req.getUsername();
         GrantResponseEnum.getEnum(responseType).verifyUsername(username);
         // 生成验证码
-        return VerifyCodeProvideEnum.getEnum(responseType).createVerifyCode(username, req.getClientKey());
+        return CaptchaProvideEnum.getEnum(responseType).createVerifyCode(username, req.getClientKey());
     }
 
     @Override

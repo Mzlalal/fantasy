@@ -111,6 +111,10 @@ public enum GlobalResult {
      */
     ANOTHER_LOGIN(2206, "另一端登录，连接断开"),
     /**
+     * 非法的重复提醒周期(notifyType)
+     */
+    TODO_NOTIFY_TYPE_NOT_CORRECT(2300, "非法的重复提醒周期(notifyType)"),
+    /**
      * 服务器繁忙
      */
     FEIGN_SEVER_ERROR(5000, "服务器繁忙，请稍后再试");

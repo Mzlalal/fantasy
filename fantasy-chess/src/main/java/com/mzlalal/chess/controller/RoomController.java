@@ -55,9 +55,9 @@ public class RoomController implements RoomFeignApi {
     @Override
     public Result<RoomEntity> save() {
         // 用户名
-        String username = Oauth2Context.getUsername();
+        String username = Oauth2Context.getUsernameElseThrow();
         // 用户ID
-        String userId = Oauth2Context.getUserId();
+        String userId = Oauth2Context.getUserIdElseThrow();
         // 判断房间是否存在
         RoomEntity existRoom = roomService.getById(userId);
         // 存在直接返回

@@ -28,12 +28,20 @@ public class Oauth2MetaObjectConfig extends BaseMetaObjectInterceptor {
         // 获取当前日期
         Date now = new Date();
         // 租户ID
-        String tenantId = Oauth2Context.getTenantId();
+        String tenantId = Oauth2Context.getTenantIdElseDefault();
+        // 用户ID
+        String userId = Oauth2Context.getUserIdElseDefault();
+        // 用户名称
+        String userName = Oauth2Context.getUsernameElseDefault();
         // 基础参数列表
         return MapUtil.<String, Object>builder()
-                .put("createTime" , now)
-                .put("updateTime" , now)
-                .put("tenantId" , tenantId)
+                .put("createBy", userId)
+                .put("updateBy", userId)
+                .put("createName", userName)
+                .put("updateName", userName)
+                .put("createTime", now)
+                .put("updateTime", now)
+                .put("tenantId", tenantId)
                 .build();
     }
 }

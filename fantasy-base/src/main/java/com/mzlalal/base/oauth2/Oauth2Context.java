@@ -40,8 +40,10 @@ public class Oauth2Context {
      *
      * @return String userId
      */
-    public static String getUserId() {
-        AssertUtil.notNull(CONTEXT.get(), GlobalResult.USER_NOT_LOGIN);
+    public static String getUserIdElseDefault() {
+        if (CONTEXT.get() == null) {
+            return GlobalConstant.DEFAULT_USER_ID;
+        }
         return CONTEXT.get().getId();
     }
 
@@ -50,8 +52,10 @@ public class Oauth2Context {
      *
      * @return String 用户名
      */
-    public static String getUsername() {
-        AssertUtil.notNull(CONTEXT.get(), GlobalResult.USER_NOT_LOGIN);
+    public static String getUsernameElseDefault() {
+        if (CONTEXT.get() == null) {
+            return GlobalConstant.DEFAULT_USERNAME;
+        }
         return CONTEXT.get().getUsername();
     }
 
@@ -60,11 +64,44 @@ public class Oauth2Context {
      *
      * @return String 租户
      */
-    public static String getTenantId() {
-        if (CONTEXT.get() != null) {
-            return CONTEXT.get().getTenantId();
+    public static String getTenantIdElseDefault() {
+        if (CONTEXT.get() == null) {
+            return GlobalConstant.DEFAULT_USERNAME;
         }
-        return GlobalConstant.DEFAULT_TENANT_ID;
+        return CONTEXT.get().getTenantId();
+    }
+
+    /**
+     * 获取用户ID
+     * 为空则抛出异常
+     *
+     * @return String userId
+     */
+    public static String getUserIdElseThrow() {
+        AssertUtil.notNull(CONTEXT.get(), GlobalResult.USER_NOT_LOGIN);
+        return CONTEXT.get().getId();
+    }
+
+    /**
+     * 获取用户姓名
+     * 为空则抛出异常
+     *
+     * @return String 用户名
+     */
+    public static String getUsernameElseThrow() {
+        AssertUtil.notNull(CONTEXT.get(), GlobalResult.USER_NOT_LOGIN);
+        return CONTEXT.get().getUsername();
+    }
+
+    /**
+     * 获取用户租户信息
+     * 为空则抛出异常
+     *
+     * @return String 租户
+     */
+    public static String getTenantIdElseThrow() {
+        AssertUtil.notNull(CONTEXT.get(), GlobalResult.USER_NOT_LOGIN);
+        return CONTEXT.get().getTenantId();
     }
 
     /**

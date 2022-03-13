@@ -4,17 +4,22 @@
 <mapper namespace="com.mzlalal.oss.dao.TodoNotifyDao">
 
     <!-- 可根据自己的需求，是否要使用 -->
-    <resultMap type="com.mzlalal.base.entity.oss.dto.TodoNotifyEntity" id="notifyMap">
+    <resultMap type="com.mzlalal.base.entity.oss.dto.TodoNotifyEntity" id="todoNotifyMap">
         <result property="id" column="id"/>
+        <result property="notifyCalendarType" column="notify_calendar_type"/>
         <result property="notifyType" column="notify_type"/>
         <result property="notifyMonth" column="notify_month"/>
         <result property="notifyDay" column="notify_day"/>
         <result property="notifyHour" column="notify_hour"/>
         <result property="notifyMinute" column="notify_minute"/>
+        <result property="notifyLazyModeTimes" column="notify_lazy_mode_times"/>
+        <result property="notifyMemo" column="notify_memo"/>
         <result property="tenantId" column="tenant_id"/>
         <result property="createBy" column="create_by"/>
+        <result property="createName" column="create_name"/>
         <result property="createTime" column="create_time"/>
         <result property="updateBy" column="update_by"/>
+        <result property="updateName" column="update_name"/>
         <result property="updateTime" column="update_time"/>
     </resultMap>
 

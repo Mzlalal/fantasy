@@ -3,6 +3,11 @@ body {
     background-color: white;
 }
 
+/* 无边框 */
+.border-none {
+    border: none !important;
+}
+
 /* 名称显示 */
 .username-display {
     color: #18b4ed !important;

@@ -1,4 +1,4 @@
-package com.mzlalal.oauth2.config.oauth2.enums;
+package com.mzlalal.oauth2.service.oauth2;
 
 import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.ShearCaptcha;
@@ -16,12 +16,12 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 验证码方式
+ * 验证码提供方式
  *
  * @author Mzlalal
  * @date 2022/1/24 21:28
  */
-public enum VerifyCodeProvideEnum {
+public enum CaptchaProvideEnum {
     /**
      * 生成邮箱验证码
      */
@@ -91,8 +91,8 @@ public enum VerifyCodeProvideEnum {
      * @param type 授权方式
      * @return VerifyCodeProvideEnum
      */
-    public static VerifyCodeProvideEnum getEnum(String type) {
-        for (VerifyCodeProvideEnum value : VerifyCodeProvideEnum.values()) {
+    public static CaptchaProvideEnum getEnum(String type) {
+        for (CaptchaProvideEnum value : CaptchaProvideEnum.values()) {
             // 枚举名字和type是否相等
             if (StrUtil.equalsIgnoreCase(type, value.name())) {
                 return value;

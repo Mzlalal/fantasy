@@ -130,7 +130,7 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
     @Override
     public List<HistoryMessageVo> queryPlayerHistoryMessage(String roomId) {
         // 用户ID
-        String userId = Oauth2Context.getUserId();
+        String userId = Oauth2Context.getUserIdElseThrow();
         // 获取房间内的选手
         String redisKey = GlobalConstant.roomMessageRedisKey(roomId);
         Set<Object> memberSet = redisTemplate.opsForSet().members(redisKey);

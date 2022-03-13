@@ -39,14 +39,6 @@ public interface GlobalConstant {
      */
     String PRODUCT = "product";
     /**
-     * 默认超管角色
-     */
-    String DEFAULT_MANAGE_ROLE = "1000";
-    /**
-     * 默认普通角色
-     */
-    String DEFAULT_NORMAL_ROLE = "2000";
-    /**
      * 启用
      */
     String STATUS_ON = "1";
@@ -54,6 +46,22 @@ public interface GlobalConstant {
      * 禁用
      */
     String STATUS_OFF = "0";
+    /**
+     * 默认用户ID
+     */
+    String DEFAULT_USER_ID = "1";
+    /**
+     * 默认用户名
+     */
+    String DEFAULT_USERNAME = "系统";
+    /**
+     * 默认超管角色
+     */
+    String DEFAULT_MANAGE_ROLE = "1000";
+    /**
+     * 默认普通角色
+     */
+    String DEFAULT_NORMAL_ROLE = "2000";
     /**
      * 启用
      */

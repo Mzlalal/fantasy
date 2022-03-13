@@ -7,7 +7,7 @@ import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oauth2.dto.UserEntity;
 import com.mzlalal.base.feign.oauth2.UserFeignApi;
-import com.mzlalal.oauth2.config.oauth2.enums.GrantResponseEnum;
+import com.mzlalal.oauth2.service.oauth2.GrantResponseEnum;
 import com.mzlalal.oauth2.service.UserService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;

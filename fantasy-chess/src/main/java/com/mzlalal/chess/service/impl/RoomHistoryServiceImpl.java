@@ -33,7 +33,7 @@ public class RoomHistoryServiceImpl extends ServiceImpl<RoomHistoryDao, RoomHist
         // 查询参数
         QueryWrapper<RoomHistoryEntity> wrapper = new QueryWrapper<>();
         // 根据用户ID查询
-        String userId = Oauth2Context.getUserId();
+        String userId = Oauth2Context.getUserIdElseThrow();
         wrapper.apply(StrUtil.isNotBlank(userId), "FIND_IN_SET('" + userId + "', player_id_set)");
         // 创建分页条件
         com.github.pagehelper.Page<RoomHistoryEntity> pageResult = this.createPageQuery(po.getPageInfo());

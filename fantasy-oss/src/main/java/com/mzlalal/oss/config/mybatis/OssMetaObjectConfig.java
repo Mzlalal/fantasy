@@ -1,4 +1,4 @@
-package com.mzlalal.chess.config.mybatis;
+package com.mzlalal.oss.config.mybatis;
 
 import cn.hutool.core.map.MapUtil;
 import com.mzlalal.base.oauth2.Oauth2Context;
@@ -14,12 +14,12 @@ import java.util.Map;
  * mybatis 基础参数配置信息
  *
  * @author Mzlalal
- * @date 2022/2/14 14:24
+ * @date 2022/3/13 23:24
  */
 @Component
 @ConditionalOnProperty(value = {"mz.mybatis.config.enable-base-meta"}, havingValue = "true")
-public class ChessMetaObjectConfig extends BaseMetaObjectInterceptor {
-    public ChessMetaObjectConfig(BaseMetaInterceptorProperties baseMetaInterceptorProperties) {
+public class OssMetaObjectConfig extends BaseMetaObjectInterceptor {
+    public OssMetaObjectConfig(BaseMetaInterceptorProperties baseMetaInterceptorProperties) {
         super(baseMetaInterceptorProperties);
     }
 

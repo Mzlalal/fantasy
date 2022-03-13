@@ -1,4 +1,4 @@
-package com.mzlalal.oauth2.config.oauth2.service;
+package com.mzlalal.oauth2.service.oauth2;
 
 import cn.hutool.core.lang.Assert;
 import com.mzlalal.base.common.GlobalConstant;

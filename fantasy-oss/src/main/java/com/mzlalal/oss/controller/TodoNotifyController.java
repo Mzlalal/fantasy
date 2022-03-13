@@ -7,7 +7,9 @@ import com.mzlalal.base.entity.oss.dto.TodoNotifyEntity;
 import com.mzlalal.base.feign.oss.TodoNotifyFeignApi;
 import com.mzlalal.base.util.Page;
 import com.mzlalal.oss.service.TodoNotifyService;
+import com.mzlalal.oss.service.todo.NotifyTypeVerifyEnum;
 import io.swagger.annotations.Api;
+import org.simpleframework.xml.core.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,7 +47,10 @@ public class TodoNotifyController implements TodoNotifyFeignApi {
     }
 
     @Override
-    public Result<Void> save(@RequestBody TodoNotifyEntity todoNotify) {
+    public Result<Void> save(@Validate @RequestBody TodoNotifyEntity todoNotify) {
+        // 验证重复提醒的值
+        NotifyTypeVerifyEnum.getEnum(todoNotify.getNotifyType()).checkNotifyValue(todoNotify);
+        // 保存
         if (todoNotifyService.save(todoNotify)) {
             return Result.ok();
         }

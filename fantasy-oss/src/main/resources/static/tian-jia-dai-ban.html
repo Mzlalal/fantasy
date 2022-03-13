@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, initial-scale=1.0, user-scalable=no">
-    <title>待办提醒</title>
+    <title>添加待办</title>
     <link rel="stylesheet" href="css/plugin/frozen.css"/>
     <link rel="stylesheet" href="css/plugin/vue.select.css"/>
     <link rel="stylesheet" href="css/common.css"/>
     <script src="js/plugin/axios.min.js"></script>
     <script src="js/plugin/vue.min.js"></script>
     <script src="js/plugin/vue.select.js"></script>
+    <script src="js/plugin/calcTextareaHeight.js"></script>
     <script src="js/CommonUtil.js"></script>
     <script src="js/FantasyConstant.js"></script>
 </head>
@@ -20,7 +21,7 @@
 <body>
 <div id="app">
     <header class="ui-header ui-header-positive ui-border-b text-center">
-        <span class="font-weight-bolder font-weight-20px">待办提醒</span>
+        <span class="font-weight-bolder font-weight-20px">添加待办</span>
     </header>
     <div class="ui-form ui-border-t ui-container">
         <ul class="ui-list ui-list-single ui-border-tb">
@@ -29,8 +30,7 @@
                     <h4 class="ui-nowrap">日历</h4>
                     <div class="ui-txt-info">
                         <v-select v-model="notifyCalendarType" :reduce="item => item.code" :clearable="false"
-                                  :searchable="false"
-                                  :options="calendarTypeOption"></v-select>
+                                  :searchable="false" :options="calendarTypeOption"></v-select>
                     </div>
                 </div>
             </li>
@@ -89,7 +89,7 @@
             <ul class="ui-list ui-list-single ui-border-tb" v-if="enableLazyMode">
                 <li class="ui-border-t">
                     <div class="ui-list-info">
-                        <h4 class="ui-nowrap">重复</h4>
+                        <h4 class="ui-nowrap">重复提醒</h4>
                         <div class="ui-txt-info">
                             <v-select v-model="notifyLazyModeTimes" :reduce="item => item.code" :clearable="false"
                                       :searchable="false" :options="lazyTimesOption"></v-select>
@@ -98,6 +98,22 @@
                 </li>
             </ul>
         </transition>
+        <ul class="ui-list ui-list-single ui-border-tb">
+            <li class="ui-border-t">
+                <div class="ui-list-info">
+                    <h4 class="ui-nowrap">备注</h4>
+                    <div class="ui-txt-info">
+                            <textarea ref="textarea" :style="{'height': height}" v-model="notifyMemo"
+                                      class="textarea border-none" placeholder="请输入备注"></textarea>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <div class="ui-btn-wrap">
+            <button class="ui-btn-lg ui-btn-primary">
+                添加
+            </button>
+        </div>
     </div>
 </div>
 </body>
@@ -108,16 +124,23 @@
         el: "#app",
         data: {
             notifyCalendarType: 1,
-            enableRepeatNotifyMode: true,
-            notifyType: 1,
+            enableRepeatNotifyMode: false,
+            notifyType: 0,
             notifyMonth: null,
             notifyDay: null,
             notifyHour: null,
             notifyMinute: 30,
             enableLazyMode: true,
             notifyLazyModeTimes: lazyTimesOption[0],
+            notifyMemo: null,
+            height: '18px',
         },
-        methods: {},
+        methods: {
+            // 获取文本框高度
+            getHeight() {
+                this.height = calcTextareaHeight(this.$refs.textarea, 1, null).height;
+            },
+        },
         created() {
             let current = new Date();
             this.notifyMonth = current.getMonth() + 1;
@@ -135,11 +158,14 @@
             },
             enableLazyMode(newVal, oldVal) {
                 if (newVal === false) {
-                    this.notifyLazyModeTimes = null;
+                    this.notifyLazyModeTimes = 0;
                 }
                 if (newVal === true) {
                     this.notifyLazyModeTimes = lazyTimesOption[0];
                 }
+            },
+            notifyMemo() {
+                this.getHeight();
             }
         }
     });
