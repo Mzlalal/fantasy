@@ -1,5 +1,7 @@
 package com.mzlalal.oss.service.todo;
 
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.mzlalal.base.common.GlobalResult;
 import com.mzlalal.base.entity.oss.dto.TodoNotifyEntity;
@@ -15,16 +17,25 @@ public enum NotifyTypeVerifyEnum {
     /**
      * 无提醒
      */
-    NONE() {
+    NONE("0") {
         @Override
         public void checkNotifyValue(TodoNotifyEntity todoNotify) {
+            // 月日时分都不能为空
+            AssertUtil.isTrue(StrUtil.isAllNotBlank(todoNotify.getNotifyMonth(), todoNotify.getNotifyDay()
+                    , todoNotify.getNotifyHour(), todoNotify.getNotifyMinute()), "月日时分都不能为空");
 
+            // 对比当前时间,不能是过去的时间
+            DateTime nowDate = DateUtil.date();
+            DateTime dateTime = DateUtil.parse(StrUtil.format("{}-{}-{} {}:{}", nowDate.year()
+                    , todoNotify.getNotifyMonth(), todoNotify.getNotifyDay()
+                    , todoNotify.getNotifyHour(), todoNotify.getNotifyMinute()));
+            AssertUtil.isTrue(DateUtil.compare(nowDate, dateTime) >= 0, "待办时间不能小于当前时间");
         }
     },
     /**
      * 每年
      */
-    YEAR() {
+    YEAR("1") {
         @Override
         public void checkNotifyValue(TodoNotifyEntity todoNotify) {
             // 月日时分都不能为空
@@ -35,7 +46,7 @@ public enum NotifyTypeVerifyEnum {
     /**
      * 每月
      */
-    MONTH() {
+    MONTH("2") {
         @Override
         public void checkNotifyValue(TodoNotifyEntity todoNotify) {
             // 日时分都不能为空
@@ -46,16 +57,18 @@ public enum NotifyTypeVerifyEnum {
     /**
      * 每周
      */
-    WEEK() {
+    WEEK("3") {
         @Override
         public void checkNotifyValue(TodoNotifyEntity todoNotify) {
-
+            // 日时分都不能为空
+            AssertUtil.isTrue(StrUtil.isAllNotBlank(todoNotify.getNotifyWeekday(), todoNotify.getNotifyHour()
+                    , todoNotify.getNotifyMinute()), "星期时分都不能为空");
         }
     },
     /**
      * 每日
      */
-    DAY() {
+    DAY("4") {
         @Override
         public void checkNotifyValue(TodoNotifyEntity todoNotify) {
             // 月日时分都不能为空
@@ -63,6 +76,12 @@ public enum NotifyTypeVerifyEnum {
                     , "时分都不能为空");
         }
     };
+
+    private final String code;
+
+    NotifyTypeVerifyEnum(String code) {
+        this.code = code;
+    }
 
     /**
      * 验证待办提醒的值
@@ -80,7 +99,7 @@ public enum NotifyTypeVerifyEnum {
     public static NotifyTypeVerifyEnum getEnum(String notifyType) {
         for (NotifyTypeVerifyEnum value : NotifyTypeVerifyEnum.values()) {
             // 枚举名字和type是否相等
-            if (StrUtil.equalsIgnoreCase(notifyType, value.name())) {
+            if (StrUtil.equalsIgnoreCase(notifyType, value.code)) {
                 return value;
             }
         }

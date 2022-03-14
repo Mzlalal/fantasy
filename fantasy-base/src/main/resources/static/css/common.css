@@ -6,6 +6,7 @@ body {
 /* 无边框 */
 .border-none {
     border: none !important;
+    resize: none !important;
 }
 
 /* 名称显示 */

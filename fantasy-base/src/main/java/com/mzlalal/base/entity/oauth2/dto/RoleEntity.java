@@ -42,23 +42,27 @@ public class RoleEntity implements Serializable {
     private String tenantId;
 
     @ApiModelProperty("创建人ID")
+    @TableField(fill = FieldFill.INSERT)
     private String createBy;
 
     @ApiModelProperty("创建人")
+    @TableField(fill = FieldFill.INSERT)
     private String createName;
 
-    @TableField(fill = FieldFill.INSERT)
     @ApiModelProperty("创建时间")
+    @TableField(fill = FieldFill.INSERT)
     private Date createTime;
 
     @ApiModelProperty("更新人ID")
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private String updateBy;
 
     @ApiModelProperty("更新人")
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private String updateName;
 
-    @TableField(fill = FieldFill.INSERT_UPDATE)
     @ApiModelProperty("更新时间")
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
 
 }

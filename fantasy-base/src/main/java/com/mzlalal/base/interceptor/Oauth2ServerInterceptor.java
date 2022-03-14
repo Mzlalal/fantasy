@@ -36,7 +36,7 @@ public class Oauth2ServerInterceptor implements HandlerInterceptor {
      */
     private final String[] excludePath = new String[]{
             // oauth
-            "/api/v1/oauth/**" , "/oauth/callback"
+            "/api/v1/oauth/**", "/oauth/callback"
             // notify message without token
             , "/api/v1/notify/**"
             // ignore controller
@@ -44,7 +44,7 @@ public class Oauth2ServerInterceptor implements HandlerInterceptor {
             // doc swagger
             , "/doc.html", "/webjars/**", "/v2/api-docs", "/swagger-resources", "/swagger-resources/**"
             // static resource
-            , "/**/**.js", "/**/**.css", "/**/**.html", "/**/**.ico", "/error"};
+            , "/**/**.js", "/**/**.map", "/**/**.css", "/**/**.html", "/**/**.ico", "/error"};
 
     /**
      * 需要登录验证的网址

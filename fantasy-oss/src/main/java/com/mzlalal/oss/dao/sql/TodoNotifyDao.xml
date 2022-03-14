@@ -10,17 +10,19 @@
         <result property="notifyType" column="notify_type"/>
         <result property="notifyMonth" column="notify_month"/>
         <result property="notifyDay" column="notify_day"/>
+        <result property="notifyWeekday" column="notify_weekday"/>
         <result property="notifyHour" column="notify_hour"/>
         <result property="notifyMinute" column="notify_minute"/>
         <result property="notifyLazyModeTimes" column="notify_lazy_mode_times"/>
         <result property="notifyMemo" column="notify_memo"/>
+        <result property="notifyTopStatus" column="notify_top_status"/>
         <result property="tenantId" column="tenant_id"/>
         <result property="createBy" column="create_by"/>
         <result property="createName" column="create_name"/>
         <result property="createTime" column="create_time"/>
         <result property="updateBy" column="update_by"/>
-        <result property="updateName" column="update_name"/>
         <result property="updateTime" column="update_time"/>
+        <result property="updateName" column="update_name"/>
     </resultMap>
 
 

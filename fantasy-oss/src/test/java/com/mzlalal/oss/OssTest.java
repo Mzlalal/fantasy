@@ -2,6 +2,8 @@ package com.mzlalal.oss;
 
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import com.mzlalal.minio.service.MinioService;
 import io.minio.errors.MinioException;
@@ -9,7 +11,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -19,7 +20,6 @@ import java.util.List;
  * @author Mzlalal
  * @date 2021/9/06 13:44
  **/
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = OssApplication.class)
 public class OssTest {
 
     @Autowired
@@ -58,13 +58,25 @@ public class OssTest {
     @Test
     public void createJson() throws JSONException {
         List<JSONObject> jsonObjectList = new ArrayList<>();
-        for (int i = 1; i <= 5; i++) {
+        for (int i = 1; i <= 31; i++) {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("code", i);
-            jsonObject.put("label", i + "次");
+            if (i < 10) {
+                jsonObject.put("code", "0" + String.valueOf(i));
+            } else {
+                jsonObject.put("code", String.valueOf(i));
+            }
+            jsonObject.put("label", i + "日");
             jsonObjectList.add(jsonObject);
         }
         System.out.println(jsonObjectList);
+    }
+
+    @Test
+    public void dateCompare() {
+        DateTime now = DateUtil.date();
+        DateTime dateTime = DateUtil.parse(now.year() + "-03-14 14:30");
+        System.out.println(dateTime);
+        System.out.println(DateUtil.compare(now, dateTime));
     }
 
 }

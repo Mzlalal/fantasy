@@ -19,6 +19,10 @@ import java.lang.reflect.InvocationTargetException;
 @Getter
 public enum GlobalResult {
     /**
+     * 请求找不到了，请稍后再试
+     */
+    REQ_NOT_FOUNT(404, "请求找不到了，请稍后再试"),
+    /**
      * 手机未注册
      */
     MOBILE_NOT_FOUNT(1100, "手机未注册"),

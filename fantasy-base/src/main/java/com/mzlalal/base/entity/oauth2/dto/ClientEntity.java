@@ -67,9 +67,11 @@ public class ClientEntity implements Serializable {
     private Integer autoApprove;
 
     @ApiModelProperty("创建人ID")
-    private Long createBy;
+    @TableField(fill = FieldFill.INSERT)
+    private String createBy;
 
     @ApiModelProperty("创建人")
+    @TableField(fill = FieldFill.INSERT)
     private String createName;
 
     @ApiModelProperty("创建时间")
@@ -77,9 +79,11 @@ public class ClientEntity implements Serializable {
     private Date createTime;
 
     @ApiModelProperty("更新人ID")
-    private Long updateBy;
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private String updateBy;
 
     @ApiModelProperty("更新人")
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private String updateName;
 
     @ApiModelProperty("更新时间")

@@ -68,6 +68,12 @@
                                       :searchable="false" :options="calendarDayOption"></v-select>
                         </div>
                     </transition>
+                    <transition name="slide">
+                        <div class="ui-txt-info" v-if="notifyType === 3">
+                            <v-select v-model="notifyWeekday" :reduce="item => item.code" :clearable="false"
+                                      :searchable="false" :options="weekdayOption"></v-select>
+                        </div>
+                    </transition>
                     <div class="ui-txt-info">
                         <v-select v-model="notifyHour" :reduce="item => item.code" :clearable="false"
                                   :searchable="false" :options="calendarHourOption"></v-select>
@@ -98,6 +104,12 @@
                 </li>
             </ul>
         </transition>
+        <div class="ui-form-item ui-form-item-switch ui-border-b">
+            <p>置顶</p>
+            <label class="ui-switch">
+                <input type="checkbox" v-model="notifyTopStatus">
+            </label>
+        </div>
         <ul class="ui-list ui-list-single ui-border-tb">
             <li class="ui-border-t">
                 <div class="ui-list-info">
@@ -110,7 +122,7 @@
             </li>
         </ul>
         <div class="ui-btn-wrap">
-            <button class="ui-btn-lg ui-btn-primary">
+            <button class="ui-btn-lg ui-btn-primary" @click="saveTodo">
                 添加
             </button>
         </div>
@@ -128,18 +140,48 @@
             notifyType: 0,
             notifyMonth: null,
             notifyDay: null,
+            notifyWeekday: null,
             notifyHour: null,
             notifyMinute: 30,
             enableLazyMode: true,
-            notifyLazyModeTimes: lazyTimesOption[0],
+            notifyLazyModeTimes: window.lazyTimesOption[0].code,
             notifyMemo: null,
-            height: '18px',
+            notifyTopStatus: false,
+            height: '22px',
         },
         methods: {
             // 获取文本框高度
             getHeight() {
                 this.height = calcTextareaHeight(this.$refs.textarea, 1, null).height;
             },
+            saveTodo() {
+                let param = {
+                    "notifyCalendarType": this.notifyCalendarType,
+                    "notifyType": this.notifyType,
+                    "notifyMonth": this.notifyMonth,
+                    "notifyDay": this.notifyDay,
+                    "notifyWeekday": this.notifyWeekday,
+                    "notifyHour": this.notifyHour,
+                    "notifyMinute": this.notifyMinute,
+                    "notifyLazyModeTimes": this.notifyLazyModeTimes,
+                    "notifyMemo": this.notifyMemo,
+                    "notifyTopStatus": this.notifyTopStatus ? "1" : "0",
+                }
+                // 请求接口
+                axios({
+                    method: "post",
+                    url: "/fantasy-oss/api/v1/oss/todo.notify/save",
+                    data: param
+                }).then(res => {
+                    console.log(res);
+                }).catch(res => {
+                    if (res.data && res.data.msg) {
+                        alert(res.data.msg)
+                    } else {
+                        alert("服务器繁忙，请稍后再试")
+                    }
+                })
+            }
         },
         created() {
             let current = new Date();
@@ -161,7 +203,14 @@
                     this.notifyLazyModeTimes = 0;
                 }
                 if (newVal === true) {
-                    this.notifyLazyModeTimes = lazyTimesOption[0];
+                    this.notifyLazyModeTimes = window.lazyTimesOption[0].code;
+                }
+            },
+            notifyType(newVal, oldVal) {
+                if (newVal === 3) {
+                    this.notifyWeekday = window.weekdayOption[0].code;
+                } else {
+                    this.notifyWeekday = null;
                 }
             },
             notifyMemo() {
