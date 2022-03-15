@@ -14,8 +14,12 @@
         <result property="notifyHour" column="notify_hour"/>
         <result property="notifyMinute" column="notify_minute"/>
         <result property="notifyLazyModeTimes" column="notify_lazy_mode_times"/>
+        <result property="notifyNextTime" column="notify_next_time"/>
         <result property="notifyMemo" column="notify_memo"/>
         <result property="notifyTopStatus" column="notify_top_status"/>
+        <result property="notifyAfterDelete" column="notify_after_delete"/>
+        <result property="notifyMailSet" column="notify_mail_set"/>
+        <result property="isHide" column="is_hide"/>
         <result property="tenantId" column="tenant_id"/>
         <result property="createBy" column="create_by"/>
         <result property="createName" column="create_name"/>
@@ -25,5 +29,8 @@
         <result property="updateName" column="update_name"/>
     </resultMap>
 
+    <select id="queryTodoListByCurrentTime" resultMap="todoNotifyMap">
+        select * from t_todo_notify where notify_next_time = #{currentTime} and is_hide = 0
+    </select>
 
 </mapper>

@@ -36,6 +36,16 @@ public class Oauth2Context {
     }
 
     /**
+     * 获取用户信息
+     *
+     * @return UserEntity 用户信息
+     */
+    public static UserEntity getElseThrow() {
+        AssertUtil.notNull(CONTEXT.get(), GlobalResult.USER_NOT_LOGIN);
+        return CONTEXT.get();
+    }
+
+    /**
      * 获取用户ID
      *
      * @return String userId

@@ -1,9 +1,11 @@
 package com.mzlalal.base.entity.oss.dto;
 
+import cn.hutool.core.date.DatePattern;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
@@ -59,12 +61,26 @@ public class TodoNotifyEntity implements Serializable {
     @ApiModelProperty("重复提醒次数")
     private String notifyLazyModeTimes;
 
+    @JsonFormat(pattern = DatePattern.NORM_DATETIME_MINUTE_PATTERN, timezone = "GMT+8")
+    @ApiModelProperty("下次提醒时间")
+    private Date notifyNextTime;
+
     @ApiModelProperty("备注")
     private String notifyMemo;
 
     @NotBlank(message = "是否置顶不能为空")
     @ApiModelProperty("是否置顶,例:0=不置顶,1=置顶")
     private String notifyTopStatus;
+
+    @NotBlank(message = "提醒后自动删除不能为空")
+    @ApiModelProperty("提醒后自动删除,例:0=不删除,1=删除")
+    private String notifyAfterDelete;
+
+    @ApiModelProperty("发送给这些邮箱")
+    private String notifyMailSet;
+
+    @ApiModelProperty("是否删除")
+    private Integer isHide;
 
     @ApiModelProperty("租户ID")
     @TableField(fill = FieldFill.INSERT)

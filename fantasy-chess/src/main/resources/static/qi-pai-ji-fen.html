@@ -111,7 +111,7 @@
 </body>
 <script>
     // 获取房间号
-    let roomId = localStorage.getItem("user.room.id") || "1";
+    let roomId = localStorage.getItem("chess.room.id") || "1";
     // 获取用户TOKEN
     let accessToken = localStorage.getItem("user.access.token");
     // websocket对象
@@ -361,7 +361,7 @@
                 this.username = userInfo.username;
             }
             // 获取房间号
-            let roomCode = localStorage.getItem("user.room.code");
+            let roomCode = localStorage.getItem("chess.room.code");
             if (roomCode) {
                 this.roomCode = roomCode;
             }

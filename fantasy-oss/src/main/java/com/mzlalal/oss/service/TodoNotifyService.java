@@ -11,4 +11,8 @@ import com.mzlalal.base.service.BaseService;
  */
 public interface TodoNotifyService extends BaseService<TodoNotifyEntity> {
 
+    /**
+     * 提醒当前时间的待办
+     */
+    void notifyTodoListCurrentTime();
 }

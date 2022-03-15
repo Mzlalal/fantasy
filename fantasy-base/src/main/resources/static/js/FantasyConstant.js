@@ -12,30 +12,30 @@
     // 日历类别,例:1=阳历,2=阴历(农历)
     window.calendarTypeOption = [
         {
-            "code": 1,
+            "code": "1",
             "label": "阳历",
         },
         {
-            "code": 2,
+            "code": "2",
             "label": "阴历（农历）",
         },
     ];
     // 重复提醒模式
     window.repeatModeOption = [
         {
-            "code": 1,
+            "code": "1",
             "label": "每年",
         },
         {
-            "code": 2,
+            "code": "2",
             "label": "每月",
         },
         {
-            "code": 3,
+            "code": "3",
             "label": "每周",
         },
         {
-            "code": 4,
+            "code": "4",
             "label": "每日",
         },
     ];
@@ -221,25 +221,25 @@
     window.weekdayOption = [
         {
             "code": 1,
-            "label": "星期一"
+            "label": "星期日"
         }, {
             "code": 2,
-            "label": "星期二"
+            "label": "星期一"
         }, {
             "code": 3,
-            "label": "星期三"
+            "label": "星期二"
         }, {
             "code": 4,
-            "label": "星期四"
+            "label": "星期三"
         }, {
             "code": 5,
-            "label": "星期五"
+            "label": "星期四"
         }, {
             "code": 6,
-            "label": "星期六"
+            "label": "星期五"
         }, {
             "code": 7,
-            "label": "星期日"
+            "label": "星期六"
         }
     ];
     // 日历-时
@@ -262,30 +262,25 @@
         }, {
             "code": "05",
             "label": "5时"
-        }
-        , {
+        }, {
             "code": "06",
             "label": "6时"
-        }
-        , {
+        }, {
             "code": "07",
             "label": "7时"
         }, {
             "code": "08",
             "label": "8时"
-        }
-        , {
+        }, {
             "code": "09",
             "label": "9时"
-        }
-        , {
+        }, {
             "code": "10",
             "label": "10时"
         }, {
             "code": "11",
             "label": "11时"
-        }
-        , {
+        }, {
             "code": "12",
             "label": "12时"
         }, {
@@ -366,19 +361,19 @@
     // 懒人提醒次数
     window.lazyTimesOption = [
         {
-            "code": 1,
+            "code": "1",
             "label": "1次"
         }, {
-            "code": 2,
+            "code": "2",
             "label": "2次"
         }, {
-            "code": 3,
+            "code": "3",
             "label": "3次"
         }, {
-            "code": 4,
+            "code": "4",
             "label": "4次"
         }, {
-            "code": 5,
+            "code": "5",
             "label": "5次"
         }
     ];

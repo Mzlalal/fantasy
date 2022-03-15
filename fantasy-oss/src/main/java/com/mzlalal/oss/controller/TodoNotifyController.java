@@ -1,10 +1,12 @@
 package com.mzlalal.oss.controller;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
 import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oss.dto.TodoNotifyEntity;
 import com.mzlalal.base.feign.oss.TodoNotifyFeignApi;
+import com.mzlalal.base.oauth2.Oauth2Context;
 import com.mzlalal.base.util.Page;
 import com.mzlalal.oss.service.TodoNotifyService;
 import com.mzlalal.oss.service.todo.NotifyTypeVerifyEnum;
@@ -49,7 +51,13 @@ public class TodoNotifyController implements TodoNotifyFeignApi {
     @Override
     public Result<Void> save(@Validate @RequestBody TodoNotifyEntity todoNotify) {
         // 验证重复提醒的值
-        NotifyTypeVerifyEnum.getEnum(todoNotify.getNotifyType()).checkNotifyValue(todoNotify);
+        NotifyTypeVerifyEnum.getEnum(todoNotify.getNotifyType()).checkAndGenerateNotifyNextTime(todoNotify);
+        // 设置邮箱
+        todoNotify.setNotifyMailSet(Oauth2Context.getElseThrow().getMail());
+        // 默认备注
+        if (StrUtil.isBlank(todoNotify.getNotifyMemo())) {
+            todoNotify.setNotifyMemo("无备注");
+        }
         // 保存
         if (todoNotifyService.save(todoNotify)) {
             return Result.ok();
@@ -59,6 +67,15 @@ public class TodoNotifyController implements TodoNotifyFeignApi {
 
     @Override
     public Result<Void> update(@RequestBody TodoNotifyEntity todoNotify) {
+        // 验证重复提醒的值
+        NotifyTypeVerifyEnum.getEnum(todoNotify.getNotifyType()).checkAndGenerateNotifyNextTime(todoNotify);
+        // 设置邮箱
+        todoNotify.setNotifyMailSet(Oauth2Context.getElseThrow().getMail());
+        // 默认备注
+        if (StrUtil.isBlank(todoNotify.getNotifyMemo())) {
+            todoNotify.setNotifyMemo("无备注");
+        }
+        // 更新
         if (todoNotifyService.updateById(todoNotify)) {
             return Result.ok();
         }

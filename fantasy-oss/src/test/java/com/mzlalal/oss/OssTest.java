@@ -2,6 +2,7 @@ package com.mzlalal.oss;
 
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
@@ -20,6 +21,7 @@ import java.util.List;
  * @author Mzlalal
  * @date 2021/9/06 13:44
  **/
+//@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = OssApplication.class)
 public class OssTest {
 
     @Autowired
@@ -77,6 +79,11 @@ public class OssTest {
         DateTime dateTime = DateUtil.parse(now.year() + "-03-14 14:30");
         System.out.println(dateTime);
         System.out.println(DateUtil.compare(now, dateTime));
+    }
+
+    @Test
+    public void currentTime() {
+        System.out.println(DateUtil.format(DateUtil.date(), DatePattern.NORM_DATETIME_MINUTE_PATTERN));
     }
 
 }

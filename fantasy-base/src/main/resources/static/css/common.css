@@ -50,6 +50,11 @@ body {
     font-size: 16px;
 }
 
+/* 背景颜色为灰色 */
+.background-color-ghostwhite {
+    background-color: ghostwhite;
+}
+
 /* A颜色 */
 .background-A-c {
     background: #bbb;
@@ -140,6 +145,11 @@ body {
     margin-bottom: 1em;
 }
 
+/* 向左边距5px */
+.margin-left-5px {
+    margin-left: 5px;
+}
+
 /* 宽度70px */
 .width-70px {
     width: 70px;
@@ -163,6 +173,21 @@ body {
 /* 加粗 */
 .font-weight-bolder {
     font-weight: bolder;
+}
+
+/* 字体12像素 */
+.font-weight-12px {
+    font-size: 12px;
+}
+
+/* 字体14像素 */
+.font-weight-14px {
+    font-size: 14px;
+}
+
+/* 字体16像素 */
+.font-weight-16px {
+    font-size: 16px;
 }
 
 /* 字体18像素 */

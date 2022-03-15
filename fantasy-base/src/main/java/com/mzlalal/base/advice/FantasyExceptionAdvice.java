@@ -143,7 +143,7 @@ public class FantasyExceptionAdvice {
     @ExceptionHandler(IllegalArgumentException.class)
     public Result<String> handleIllegalArgumentException(Exception exception) {
         this.printExceptionAndParams(exception);
-        return Result.fail(ExceptionUtil.getMessage(exception));
+        return Result.failMsg(exception.getMessage());
     }
 
     /**

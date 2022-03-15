@@ -152,4 +152,14 @@ public interface GlobalConstant {
     static String loginErrorRedisKey(String username) {
         return "fantasy:login:error:" + username;
     }
+
+    /**
+     * 待办调度redisKey
+     *
+     * @param currentTime 年月日时分
+     * @return String fantasy:{currentTime}
+     */
+    static String todoNotifyScheduleRedisKey(String currentTime) {
+        return StrUtil.format("fantasy:{}", currentTime);
+    }
 }

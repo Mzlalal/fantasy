@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, initial-scale=1.0, user-scalable=no">
+    <title>待办列表</title>
+    <link rel="stylesheet" href="css/plugin/frozen.css"/>
+    <link rel="stylesheet" href="css/common.css"/>
+    <script src="js/plugin/axios.min.js"></script>
+    <script src="js/plugin/vue.min.js"></script>
+    <script src="js/CommonUtil.js"></script>
+    <script src="js/FantasyConstant.js"></script>
+</head>
+<style>
+
+</style>
+<body>
+<div id="app">
+    <header class="ui-header ui-header-positive ui-border-b text-center">
+        <span class="position-left username-display" @click="redirectUpdateUserInfo">我的信息</span>
+        <!--<span class="font-weight-bolder font-weight-20px">待办列表</span>-->
+        <span class="position-right username-display" @click="redirectSaveTodo">添加待办</span>
+    </header>
+    <div class="ui-form ui-border-t ui-container">
+        <ul class="ui-list-function ui-border-tb">
+            <li class="ui-whitespace" v-for="todo in todoList"
+                v-bind:class="{'background-color-ghostwhite': todo.notifyTopStatus === '1'}"
+                @click="redirectUpdateTodo(todo.id)">
+                <div class="ui-list-info ui-border-t">
+                    <h4 class="ui-nowrap font-weight-16px">
+                        {{todo.notifyMemo}}
+                    </h4>
+                    <div class="ui-nowrap">
+                        <span class="ui-txt-highlight font-weight-12px">{{todo.notifyNextTime}}</span>
+                        <span class="ui-txt-highlight font-weight-12px margin-left-5px">{{todo.notifyType | repeatNotifyModeFilter}}</span>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <section class="ui-notice margin-top-1em" v-if="!loading && todoList.length === 0">
+            <i></i>
+            <p>暂无待办</p>
+        </section>
+        <div class="ui-loading-wrap margin-top-1em" v-if="loading">
+            <p>加载中</p>
+            <i class="ui-loading"></i>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    new Vue({
+        el: "#app",
+        data: {
+            // 加载中
+            loading: false,
+            // 默认列表
+            todoList: [],
+        },
+        filters: {
+            repeatNotifyModeFilter(notifyType) {
+                if (notifyType <= 0) {
+                    return "提醒一次";
+                }
+                for (let index in window.repeatModeOption) {
+                    let item = window.repeatModeOption[index];
+                    if (notifyType === item.code) {
+                        return item.label;
+                    }
+                }
+            },
+            notifyTypeFilter(notifyType) {
+                if (notifyType <= 0) {
+                    return "提醒一次";
+                }
+                for (let index in window.repeatModeOption) {
+                    let item = window.repeatModeOption[index];
+                    if (notifyType === item.code) {
+                        return item.label;
+                    }
+                }
+            }
+        },
+        methods: {
+            // 跳转到更新用户信息
+            redirectUpdateUserInfo() {
+                // 保存URL
+                localStorage.setItem("user.href.from", window.location.href);
+                // 跳转到修改信息
+                window.location = "/fantasy-oauth2/wo-de-xin-xi.html";
+            },
+            // 跳转到添加待办
+            redirectSaveTodo() {
+                // 跳转到保存待办
+                window.location = "/fantasy-oss/tian-jia-dai-ban.html";
+            },
+            // 跳转到修改待办
+            redirectUpdateTodo(id) {
+                // 保存ID
+                localStorage.setItem("oss.todo.notify.id", id);
+                // 跳转到修改待办
+                window.location = "/fantasy-oss/xiu-gai-dai-ban.html";
+            },
+            // 初始化列表
+            initTodoList() {
+                this.loading = true;
+                const param = {
+                    "entity": {},
+                    "pageInfo": {
+                        "currPage": 1,
+                        "pageSize": 20
+                    }
+                }
+                // 请求
+                axios({
+                    method: "post",
+                    url: "/fantasy-oss/api/v1/oss/todo.notify/list",
+                    data: param
+                }).then(res => {
+                    this.todoList = commonUtil.getPageList(res);
+                    this.loading = false;
+                }).catch(res => {
+                    this.loading = false;
+                    if (res.data && res.data.msg) {
+                        alert(res.data.msg)
+                    } else {
+                        alert("服务器繁忙，请稍后再试")
+                    }
+                })
+            }
+        },
+        created() {
+            this.initTodoList();
+        },
+    });
+</script>
+
+</html>

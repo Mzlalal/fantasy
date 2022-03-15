@@ -43,38 +43,30 @@
             </label>
         </div>
         <ul class="ui-list ui-list-single ui-border-tb">
-            <transition name="slide">
-                <li class="ui-border-t" v-if="enableRepeatNotifyMode">
-                    <div class="ui-list-info">
-                        <h4 class="ui-nowrap">周期</h4>
-                        <div class="ui-txt-info">
-                            <v-select v-model="notifyType" :reduce="item => item.code" :clearable="false"
-                                      :searchable="false" :options="repeatModeOption"></v-select>
-                        </div>
+            <li class="ui-border-t" v-if="enableRepeatNotifyMode">
+                <div class="ui-list-info">
+                    <h4 class="ui-nowrap">周期</h4>
+                    <div class="ui-txt-info">
+                        <v-select v-model="notifyType" :reduce="item => item.code" :clearable="false"
+                                  :searchable="false" :options="repeatModeOption"></v-select>
                     </div>
-                </li>
-            </transition>
+                </div>
+            </li>
             <li class="ui-border-t">
                 <div class="ui-list-info">
                     <h4 class="ui-nowrap"></h4>
-                    <transition name="slide">
-                        <div class="ui-txt-info" v-if="notifyType < 2">
-                            <v-select v-model="notifyMonth" :reduce="item => item.code" :clearable="false"
-                                      :searchable="false" :options="calendarMonthOption"></v-select>
-                        </div>
-                    </transition>
-                    <transition name="slide">
-                        <div class="ui-txt-info" v-if="notifyType < 3">
-                            <v-select v-model="notifyDay" :reduce="item => item.code" :clearable="false"
-                                      :searchable="false" :options="calendarDayOption"></v-select>
-                        </div>
-                    </transition>
-                    <transition name="slide">
-                        <div class="ui-txt-info" v-if="notifyType === '3'">
-                            <v-select v-model="notifyWeekday" :reduce="item => item.code" :clearable="false"
-                                      :searchable="false" :options="weekdayOption"></v-select>
-                        </div>
-                    </transition>
+                    <div class="ui-txt-info" v-if="notifyType < 2">
+                        <v-select v-model="notifyMonth" :reduce="item => item.code" :clearable="false"
+                                  :searchable="false" :options="calendarMonthOption"></v-select>
+                    </div>
+                    <div class="ui-txt-info" v-if="notifyType < 3">
+                        <v-select v-model="notifyDay" :reduce="item => item.code" :clearable="false"
+                                  :searchable="false" :options="calendarDayOption"></v-select>
+                    </div>
+                    <div class="ui-txt-info" v-if="notifyType === '3'">
+                        <v-select v-model="notifyWeekday" :reduce="item => item.code" :clearable="false"
+                                  :searchable="false" :options="weekdayOption"></v-select>
+                    </div>
                     <div class="ui-txt-info">
                         <v-select v-model="notifyHour" :reduce="item => item.code" :clearable="false"
                                   :searchable="false" :options="calendarHourOption"></v-select>
@@ -92,19 +84,17 @@
                 <input type="checkbox" v-model="enableLazyMode">
             </label>
         </div>
-        <transition name="slide">
-            <ul class="ui-list ui-list-single ui-border-tb" v-if="enableLazyMode">
-                <li class="ui-border-t">
-                    <div class="ui-list-info">
-                        <h4 class="ui-nowrap"></h4>
-                        <div class="ui-txt-info">
-                            <v-select v-model="notifyLazyModeTimes" :reduce="item => item.code" :clearable="false"
-                                      :searchable="false" :options="lazyTimesOption"></v-select>
-                        </div>
+        <ul class="ui-list ui-list-single ui-border-tb" v-if="enableLazyMode">
+            <li class="ui-border-t">
+                <div class="ui-list-info">
+                    <h4 class="ui-nowrap"></h4>
+                    <div class="ui-txt-info">
+                        <v-select v-model="notifyLazyModeTimes" :reduce="item => item.code" :clearable="false"
+                                  :searchable="false" :options="lazyTimesOption"></v-select>
                     </div>
-                </li>
-            </ul>
-        </transition>
+                </div>
+            </li>
+        </ul>
         <div class="ui-form-item ui-form-item-switch ui-border-b">
             <p>置顶</p>
             <label class="ui-switch">
@@ -140,8 +130,13 @@
             <i class="ui-loading"></i>
         </div>
         <div class="ui-btn-wrap" v-else>
-            <button class="ui-btn-lg ui-btn-primary" @click="saveTodo">
-                添加
+            <button class="ui-btn-lg ui-btn-primary" @click="updateTodo">
+                保存
+            </button>
+        </div>
+        <div class="ui-btn-wrap" style="padding-top: 0">
+            <button class="ui-btn-lg ui-btn-danger" @click="deleteTodo">
+                删除当前待办
             </button>
         </div>
     </div>
@@ -153,6 +148,7 @@
     const vm = new Vue({
         el: "#app",
         data: {
+            id: null,
             notifyCalendarType: "1",
             enableRepeatNotifyMode: false,
             notifyType: "0",
@@ -160,9 +156,9 @@
             notifyDay: null,
             notifyWeekday: null,
             notifyHour: null,
-            notifyMinute: "30",
+            notifyMinute: null,
             enableLazyMode: true,
-            notifyLazyModeTimes: window.lazyTimesOption[0].code,
+            notifyLazyModeTimes: null,
             notifyMemo: null,
             notifyTopStatus: false,
             notifyAfterDelete: false,
@@ -180,9 +176,42 @@
             getHeight() {
                 this.height = calcTextareaHeight(this.$refs.textarea, 1, null).height;
             },
-            saveTodo() {
+            // 初始化待办信息
+            initTodo() {
+                this.loading = true;
+                // 请求接口
+                axios({
+                    method: "get",
+                    url: "/fantasy-oss/api/v1/oss/todo.notify/info/" + this.id,
+                }).then(res => {
+                    this.loading = false;
+                    this.notifyCalendarType = res.data.notifyCalendarType;
+                    this.enableRepeatNotifyMode = res.data.notifyType > 0;
+                    this.notifyType = res.data.notifyType;
+                    this.notifyMonth = res.data.notifyMonth;
+                    this.notifyDay = res.data.notifyDay;
+                    this.notifyWeekday = res.data.notifyWeekday;
+                    this.notifyHour = res.data.notifyHour;
+                    this.notifyMinute = res.data.notifyMinute;
+                    this.enableLazyMode = res.data.notifyLazyModeTimes > 0;
+                    this.notifyLazyModeTimes = res.data.notifyLazyModeTimes;
+                    this.notifyMemo = res.data.notifyMemo;
+                    this.notifyTopStatus = res.data.notifyTopStatus === "1";
+                    this.notifyAfterDelete = res.data.notifyAfterDelete === "1";
+                }).catch(res => {
+                    this.loading = false
+                    if (res.data && res.data.msg) {
+                        this.tips = res.data.msg;
+                    } else {
+                        alert("服务器繁忙，请稍后再试")
+                    }
+                })
+            },
+            // 更新待办
+            updateTodo() {
                 this.loading = true;
                 let param = {
+                    "id": this.id,
                     "notifyCalendarType": this.notifyCalendarType,
                     "notifyType": this.notifyType,
                     "notifyMonth": this.notifyMonth,
@@ -198,7 +227,7 @@
                 // 请求接口
                 axios({
                     method: "post",
-                    url: "/fantasy-oss/api/v1/oss/todo.notify/save",
+                    url: "/fantasy-oss/api/v1/oss/todo.notify/update",
                     data: param
                 }).then(res => {
                     this.tips = res.msg;
@@ -211,22 +240,37 @@
                         alert("服务器繁忙，请稍后再试")
                     }
                 })
+            },
+            // 删除待办
+            deleteTodo() {
+                this.loading = true;
+                // 请求接口
+                axios({
+                    method: "post",
+                    url: "/fantasy-oss/api/v1/oss/todo.notify/delete",
+                    data: [this.id]
+                }).then(res => {
+                    this.tips = res.msg;
+                    this.loading = false;
+                    // 跳转回列表
+                    setTimeout(() => {
+                        this.redirectTodoList();
+                    }, 1000)
+                }).catch(res => {
+                    this.loading = false
+                    if (res.data && res.data.msg) {
+                        this.tips = res.data.msg;
+                    } else {
+                        alert("服务器繁忙，请稍后再试")
+                    }
+                })
             }
         },
         created() {
-            let current = new Date();
-            this.notifyMonth = (current.getMonth() + 1).toString();
-            if (this.notifyMonth < 10) {
-                this.notifyMonth = "0" + this.notifyMonth;
-            }
-            this.notifyDay = current.getDate().toString();
-            if (this.notifyDay < 10) {
-                this.notifyDay = "0" + this.notifyDay;
-            }
-            this.notifyHour = current.getHours().toString();
-            if (this.notifyHour < 10) {
-                this.notifyHour = "0" + this.notifyHour;
-            }
+            // 从缓存中获取ID
+            this.id = localStorage.getItem("oss.todo.notify.id");
+            // 初始化待办
+            this.initTodo()
         },
         watch: {
             enableRepeatNotifyMode(newVal, oldVal) {
