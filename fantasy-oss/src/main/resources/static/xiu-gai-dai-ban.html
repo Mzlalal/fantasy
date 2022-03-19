@@ -43,15 +43,17 @@
             </label>
         </div>
         <ul class="ui-list ui-list-single ui-border-tb">
-            <li class="ui-border-t" v-if="enableRepeatNotifyMode">
-                <div class="ui-list-info">
-                    <h4 class="ui-nowrap">周期</h4>
-                    <div class="ui-txt-info">
-                        <v-select v-model="notifyType" :reduce="item => item.code" :clearable="false"
-                                  :searchable="false" :options="repeatModeOption"></v-select>
+            <transition name="fade">
+                <li class="ui-border-t" v-if="enableRepeatNotifyMode">
+                    <div class="ui-list-info">
+                        <h4 class="ui-nowrap">周期</h4>
+                        <div class="ui-txt-info">
+                            <v-select v-model="notifyType" :reduce="item => item.code" :clearable="false"
+                                      :searchable="false" :options="repeatModeOption"></v-select>
+                        </div>
                     </div>
-                </div>
-            </li>
+                </li>
+            </transition>
             <li class="ui-border-t">
                 <div class="ui-list-info">
                     <h4 class="ui-nowrap"></h4>
@@ -101,12 +103,14 @@
                 <input type="checkbox" v-model="notifyTopStatus">
             </label>
         </div>
-        <div class="ui-form-item ui-form-item-switch ui-border-b">
-            <p>提醒后自动删除</p>
-            <label class="ui-switch">
-                <input type="checkbox" v-model="notifyAfterDelete">
-            </label>
-        </div>
+        <transition name="fade">
+            <div class="ui-form-item ui-form-item-switch ui-border-b" v-if="!enableRepeatNotifyMode">
+                <p>提醒后自动删除</p>
+                <label class="ui-switch">
+                    <input type="checkbox" v-model="notifyAfterDelete">
+                </label>
+            </div>
+        </transition>
         <ul class="ui-list ui-list-single ui-border-tb">
             <li class="ui-border-t">
                 <div class="ui-list-info">
@@ -129,12 +133,12 @@
             <p>加载中</p>
             <i class="ui-loading"></i>
         </div>
-        <div class="ui-btn-wrap" v-else>
+        <div class="ui-btn-wrap" v-if="!loading">
             <button class="ui-btn-lg ui-btn-primary" @click="updateTodo">
                 保存
             </button>
         </div>
-        <div class="ui-btn-wrap" style="padding-top: 0">
+        <div class="ui-btn-wrap" style="padding-top: 0" v-if="!loading">
             <button class="ui-btn-lg ui-btn-danger" @click="deleteTodo">
                 删除当前待办
             </button>
@@ -198,6 +202,10 @@
                     this.notifyMemo = res.data.notifyMemo;
                     this.notifyTopStatus = res.data.notifyTopStatus === "1";
                     this.notifyAfterDelete = res.data.notifyAfterDelete === "1";
+                    // 初始化备注高度
+                    setTimeout(() => {
+                        this.getHeight();
+                    })
                 }).catch(res => {
                     this.loading = false
                     if (res.data && res.data.msg) {
@@ -250,12 +258,8 @@
                     url: "/fantasy-oss/api/v1/oss/todo.notify/delete",
                     data: [this.id]
                 }).then(res => {
-                    this.tips = res.msg;
-                    this.loading = false;
                     // 跳转回列表
-                    setTimeout(() => {
-                        this.redirectTodoList();
-                    }, 1000)
+                    this.redirectTodoList();
                 }).catch(res => {
                     this.loading = false
                     if (res.data && res.data.msg) {
@@ -280,6 +284,8 @@
                 if (newVal === true) {
                     this.notifyType = "1";
                 }
+                // 每次更改提醒后删除都重置为false
+                this.notifyAfterDelete = false;
             },
             enableLazyMode(newVal, oldVal) {
                 if (newVal === false) {

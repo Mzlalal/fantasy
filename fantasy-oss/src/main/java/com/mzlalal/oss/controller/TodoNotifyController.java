@@ -9,7 +9,7 @@ import com.mzlalal.base.feign.oss.TodoNotifyFeignApi;
 import com.mzlalal.base.oauth2.Oauth2Context;
 import com.mzlalal.base.util.Page;
 import com.mzlalal.oss.service.TodoNotifyService;
-import com.mzlalal.oss.service.todo.NotifyTypeVerifyEnum;
+import com.mzlalal.oss.service.todo.NotifyTypeEnum;
 import io.swagger.annotations.Api;
 import org.simpleframework.xml.core.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +51,7 @@ public class TodoNotifyController implements TodoNotifyFeignApi {
     @Override
     public Result<Void> save(@Validate @RequestBody TodoNotifyEntity todoNotify) {
         // 验证重复提醒的值
-        NotifyTypeVerifyEnum.getEnum(todoNotify.getNotifyType()).checkAndGenerateNotifyNextTime(todoNotify);
+        NotifyTypeEnum.getEnum(todoNotify.getNotifyType()).generateNotifyNextTime(todoNotify);
         // 设置邮箱
         todoNotify.setNotifyMailSet(Oauth2Context.getElseThrow().getMail());
         // 默认备注
@@ -67,8 +67,8 @@ public class TodoNotifyController implements TodoNotifyFeignApi {
 
     @Override
     public Result<Void> update(@RequestBody TodoNotifyEntity todoNotify) {
-        // 验证重复提醒的值
-        NotifyTypeVerifyEnum.getEnum(todoNotify.getNotifyType()).checkAndGenerateNotifyNextTime(todoNotify);
+        // 获取下次执行时间
+        NotifyTypeEnum.getEnum(todoNotify.getNotifyType()).generateNotifyNextTime(todoNotify);
         // 设置邮箱
         todoNotify.setNotifyMailSet(Oauth2Context.getElseThrow().getMail());
         // 默认备注

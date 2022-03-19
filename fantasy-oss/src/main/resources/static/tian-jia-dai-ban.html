@@ -43,7 +43,7 @@
             </label>
         </div>
         <ul class="ui-list ui-list-single ui-border-tb">
-            <transition name="slide">
+            <transition name="fade">
                 <li class="ui-border-t" v-if="enableRepeatNotifyMode">
                     <div class="ui-list-info">
                         <h4 class="ui-nowrap">周期</h4>
@@ -57,24 +57,18 @@
             <li class="ui-border-t">
                 <div class="ui-list-info">
                     <h4 class="ui-nowrap"></h4>
-                    <transition name="slide">
-                        <div class="ui-txt-info" v-if="notifyType < 2">
-                            <v-select v-model="notifyMonth" :reduce="item => item.code" :clearable="false"
-                                      :searchable="false" :options="calendarMonthOption"></v-select>
-                        </div>
-                    </transition>
-                    <transition name="slide">
-                        <div class="ui-txt-info" v-if="notifyType < 3">
-                            <v-select v-model="notifyDay" :reduce="item => item.code" :clearable="false"
-                                      :searchable="false" :options="calendarDayOption"></v-select>
-                        </div>
-                    </transition>
-                    <transition name="slide">
-                        <div class="ui-txt-info" v-if="notifyType === '3'">
-                            <v-select v-model="notifyWeekday" :reduce="item => item.code" :clearable="false"
-                                      :searchable="false" :options="weekdayOption"></v-select>
-                        </div>
-                    </transition>
+                    <div class="ui-txt-info" v-if="notifyType < 2">
+                        <v-select v-model="notifyMonth" :reduce="item => item.code" :clearable="false"
+                                  :searchable="false" :options="calendarMonthOption"></v-select>
+                    </div>
+                    <div class="ui-txt-info" v-if="notifyType < 3">
+                        <v-select v-model="notifyDay" :reduce="item => item.code" :clearable="false"
+                                  :searchable="false" :options="calendarDayOption"></v-select>
+                    </div>
+                    <div class="ui-txt-info" v-if="notifyType === '3'">
+                        <v-select v-model="notifyWeekday" :reduce="item => item.code" :clearable="false"
+                                  :searchable="false" :options="weekdayOption"></v-select>
+                    </div>
                     <div class="ui-txt-info">
                         <v-select v-model="notifyHour" :reduce="item => item.code" :clearable="false"
                                   :searchable="false" :options="calendarHourOption"></v-select>
@@ -92,31 +86,31 @@
                 <input type="checkbox" v-model="enableLazyMode">
             </label>
         </div>
-        <transition name="slide">
-            <ul class="ui-list ui-list-single ui-border-tb" v-if="enableLazyMode">
-                <li class="ui-border-t">
-                    <div class="ui-list-info">
-                        <h4 class="ui-nowrap"></h4>
-                        <div class="ui-txt-info">
-                            <v-select v-model="notifyLazyModeTimes" :reduce="item => item.code" :clearable="false"
-                                      :searchable="false" :options="lazyTimesOption"></v-select>
-                        </div>
+        <ul class="ui-list ui-list-single ui-border-tb" v-if="enableLazyMode">
+            <li class="ui-border-t">
+                <div class="ui-list-info">
+                    <h4 class="ui-nowrap"></h4>
+                    <div class="ui-txt-info">
+                        <v-select v-model="notifyLazyModeTimes" :reduce="item => item.code" :clearable="false"
+                                  :searchable="false" :options="lazyTimesOption"></v-select>
                     </div>
-                </li>
-            </ul>
-        </transition>
+                </div>
+            </li>
+        </ul>
         <div class="ui-form-item ui-form-item-switch ui-border-b">
             <p>置顶</p>
             <label class="ui-switch">
                 <input type="checkbox" v-model="notifyTopStatus">
             </label>
         </div>
-        <div class="ui-form-item ui-form-item-switch ui-border-b">
-            <p>提醒后自动删除</p>
-            <label class="ui-switch">
-                <input type="checkbox" v-model="notifyAfterDelete">
-            </label>
-        </div>
+        <transition name="fade">
+            <div class="ui-form-item ui-form-item-switch ui-border-b" v-if="!enableRepeatNotifyMode">
+                <p>提醒后自动删除</p>
+                <label class="ui-switch">
+                    <input type="checkbox" v-model="notifyAfterDelete">
+                </label>
+            </div>
+        </transition>
         <ul class="ui-list ui-list-single ui-border-tb">
             <li class="ui-border-t">
                 <div class="ui-list-info">
@@ -203,6 +197,10 @@
                 }).then(res => {
                     this.tips = res.msg;
                     this.loading = false;
+                    if (!window.confirm("保存成功,是否继续添加?")) {
+                        // 跳转到待办列表
+                        this.redirectTodoList()
+                    }
                 }).catch(res => {
                     this.loading = false
                     if (res.data && res.data.msg) {
@@ -236,6 +234,8 @@
                 if (newVal === true) {
                     this.notifyType = "1";
                 }
+                // 每次更改提醒后删除都重置为false
+                this.notifyAfterDelete = false;
             },
             enableLazyMode(newVal, oldVal) {
                 if (newVal === false) {

@@ -3,8 +3,10 @@ package com.mzlalal.oss.service.impl;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oss.dto.TodoNotifyEntity;
 import com.mzlalal.base.oauth2.Oauth2Context;
@@ -12,7 +14,7 @@ import com.mzlalal.base.util.Page;
 import com.mzlalal.notify.service.MailNotifyService;
 import com.mzlalal.oss.dao.TodoNotifyDao;
 import com.mzlalal.oss.service.TodoNotifyService;
-import com.mzlalal.oss.service.todo.NotifyTypeVerifyEnum;
+import com.mzlalal.oss.service.todo.NotifyTypeEnum;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -58,10 +60,14 @@ public class TodoNotifyServiceImpl extends ServiceImpl<TodoNotifyDao, TodoNotify
 
     @Override
     public void notifyTodoListCurrentTime() {
+        QueryWrapper<TodoNotifyEntity> queryWrapper = new QueryWrapper<>();
         // 当前年月日时分
         String currentTime = DateUtil.format(DateUtil.date(), DatePattern.NORM_DATETIME_MINUTE_PATTERN);
+        queryWrapper.eq("notify_next_time", currentTime);
+        // 逻辑删除
+        queryWrapper.eq("is_hide", GlobalConstant.STATUS_OFF);
         // 查询数据库
-        List<TodoNotifyEntity> todoNotifyList = baseMapper.queryTodoListByCurrentTime(currentTime);
+        List<TodoNotifyEntity> todoNotifyList = baseMapper.selectList(queryWrapper);
         // 为空则跳过
         if (CollUtil.isEmpty(todoNotifyList)) {
             return;
@@ -70,8 +76,16 @@ public class TodoNotifyServiceImpl extends ServiceImpl<TodoNotifyDao, TodoNotify
         todoNotifyList.parallelStream().forEach(item -> {
             // 发送到邮箱
             mailNotifyService.sendText(item.getNotifyMailSet(), "待办提醒-Fantasy", item.getNotifyMemo());
+            // 提醒后删除
+            if (StrUtil.equals(GlobalConstant.STATUS_ON, item.getNotifyAfterDelete())) {
+                item.setIsHide(Integer.parseInt(GlobalConstant.STATUS_ON));
+            }
+            // 是否重复提醒
+            if (StrUtil.equals(GlobalConstant.STATUS_OFF, item.getNotifyType())) {
+                return;
+            }
             // 获取下次执行时间
-            NotifyTypeVerifyEnum.getEnum(item.getNotifyType()).checkAndGenerateNotifyNextTime(item);
+            NotifyTypeEnum.getEnum(item.getNotifyType()).generateNotifyNextTime(item);
         });
         // 批量更新
         this.saveOrUpdateBatch(todoNotifyList);

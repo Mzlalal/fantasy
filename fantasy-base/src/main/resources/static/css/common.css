@@ -221,7 +221,7 @@ body {
 }
 
 .fade-enter {
-    opacity: 1;
+    opacity: 0;
 }
 
 .fade-leave-to {

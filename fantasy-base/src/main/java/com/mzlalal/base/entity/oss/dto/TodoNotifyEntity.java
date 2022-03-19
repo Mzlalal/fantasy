@@ -52,9 +52,11 @@ public class TodoNotifyEntity implements Serializable {
     private String notifyWeekday;
 
     @ApiModelProperty("时")
+    @NotBlank(message = "小时不能为空")
     private String notifyHour;
 
     @ApiModelProperty("分(5的倍数)")
+    @NotBlank(message = "分钟不能为空")
     private String notifyMinute;
 
     @NotBlank(message = "重复提醒次数不能为空")
@@ -81,10 +83,6 @@ public class TodoNotifyEntity implements Serializable {
 
     @ApiModelProperty("是否删除")
     private Integer isHide;
-
-    @ApiModelProperty("租户ID")
-    @TableField(fill = FieldFill.INSERT)
-    private String tenantId;
 
     @ApiModelProperty("创建人ID")
     @TableField(fill = FieldFill.INSERT)

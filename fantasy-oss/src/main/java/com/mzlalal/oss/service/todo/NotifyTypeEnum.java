@@ -1,0 +1,175 @@
+package com.mzlalal.oss.service.todo;
+
+import cn.hutool.core.date.ChineseDate;
+import cn.hutool.core.date.DateField;
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
+import com.mzlalal.base.common.GlobalConstant;
+import com.mzlalal.base.common.GlobalResult;
+import com.mzlalal.base.entity.oss.dto.TodoNotifyEntity;
+import com.mzlalal.base.util.AssertUtil;
+
+/**
+ * 提醒周期方式并获取下次提醒时间
+ *
+ * @author Mzlalal
+ * @date 2022/1/24 21:28
+ */
+public enum NotifyTypeEnum {
+    /**
+     * 提醒一次
+     */
+    NONE("0") {
+        @Override
+        public void generateNotifyNextTime(TodoNotifyEntity todoNotify) {
+            // 月日都不能为空
+            AssertUtil.isTrue(StrUtil.isAllNotBlank(todoNotify.getNotifyMonth(), todoNotify.getNotifyDay()), "月日都不能为空");
+
+            // 对比当前时间,不能是过去的时间
+            DateTime dateTime = this.formatTodoNotifyTime(todoNotify);
+            // 当前时间必须在dateTime之前
+            AssertUtil.isTrue(DateUtil.date().before(dateTime), "待办时间不能小于当前时间");
+            // 设置下次提醒时间
+            todoNotify.setNotifyNextTime(dateTime);
+        }
+    },
+    /**
+     * 每年
+     */
+    YEAR("1") {
+        @Override
+        public void generateNotifyNextTime(TodoNotifyEntity todoNotify) {
+            // 月日都不能为空
+            AssertUtil.isTrue(StrUtil.isAllNotBlank(todoNotify.getNotifyMonth(), todoNotify.getNotifyDay()), "月日都不能为空");
+            // 获取用户传递的时间并格式化
+            DateTime dateTime = this.formatTodoNotifyTime(todoNotify);
+            // 设置时间
+            todoNotify.setNotifyNextTime(this.offsetTimeWhenBeforeCurrentTime(dateTime, 1, DateField.YEAR));
+        }
+    },
+    /**
+     * 每月
+     */
+    MONTH("2") {
+        @Override
+        public void generateNotifyNextTime(TodoNotifyEntity todoNotify) {
+            // 日不能为空
+            AssertUtil.isTrue(StrUtil.isAllNotBlank(todoNotify.getNotifyDay(), todoNotify.getNotifyHour()
+                    , todoNotify.getNotifyMinute()), "日不能为空");
+
+            // 获取用户传递的时间并格式化
+            DateTime dateTime = this.formatTodoNotifyTime(todoNotify);
+            // 设置时间
+            todoNotify.setNotifyNextTime(this.offsetTimeWhenBeforeCurrentTime(dateTime, 1, DateField.MONTH));
+        }
+    },
+    /**
+     * 每周
+     */
+    WEEK("3") {
+        @Override
+        public void generateNotifyNextTime(TodoNotifyEntity todoNotify) {
+            // 星期几不能为空
+            AssertUtil.isTrue(StrUtil.isAllNotBlank(todoNotify.getNotifyWeekday()), "星期几不能为空");
+
+            // 获取用户传递的时间并格式化
+            DateTime dateTime = this.formatTodoNotifyTime(todoNotify);
+            // 先校正weekday, 用户的星期几 - 格式化的时间(星期几)
+            dateTime.offset(DateField.DAY_OF_YEAR, Integer.parseInt(todoNotify.getNotifyWeekday()) - DateUtil.dayOfWeek(dateTime));
+            // 设置时间
+            todoNotify.setNotifyNextTime(this.offsetTimeWhenBeforeCurrentTime(dateTime, 1, DateField.WEEK_OF_YEAR));
+        }
+    },
+    /**
+     * 每日
+     */
+    DAY("4") {
+        @Override
+        public void generateNotifyNextTime(TodoNotifyEntity todoNotify) {
+            // 获取用户传递的时间并格式化
+            DateTime dateTime = this.formatTodoNotifyTime(todoNotify);
+            // 设置时间
+            todoNotify.setNotifyNextTime(this.offsetTimeWhenBeforeCurrentTime(dateTime, 1, DateField.DAY_OF_YEAR));
+        }
+    };
+
+    /**
+     * 字典值
+     */
+    private final String code;
+
+    NotifyTypeEnum(String code) {
+        this.code = code;
+    }
+
+    /**
+     * 验证并且生成下次待办提醒的时间
+     *
+     * @param todoNotify 待办提醒
+     */
+    public abstract void generateNotifyNextTime(TodoNotifyEntity todoNotify);
+
+    /**
+     * 前端传递的条件转换为待办时间
+     * yyyy-MM-dd hh:mm格式
+     *
+     * @param todoNotify 待办事项
+     * @return DateTime
+     */
+    public DateTime formatTodoNotifyTime(TodoNotifyEntity todoNotify) {
+        // 给年月日判断是否有值,没值则使用当前时间的部分
+        DateTime nowDate = DateUtil.date();
+        int year = nowDate.year();
+        int month = todoNotify.getNotifyMonth() == null ? nowDate.month() : Integer.parseInt(todoNotify.getNotifyMonth());
+        int day = todoNotify.getNotifyDay() == null ? nowDate.dayOfMonth() : Integer.parseInt(todoNotify.getNotifyDay());
+        String hour = todoNotify.getNotifyHour();
+        String minute = todoNotify.getNotifyMinute();
+        // 阳历
+        if (StrUtil.equals(GlobalConstant.STATUS_ON, todoNotify.getNotifyCalendarType())) {
+            // 格式化
+            String format = StrUtil.format("{}-{}-{} {}:{}", year, month, day, hour, minute);
+            return DateUtil.parse(format);
+        } else {
+            // 阴历(农历)
+            ChineseDate chineseDate = new ChineseDate(year, month, day);
+            // 返回成公历
+            return new DateTime(chineseDate.getGregorianDate())
+                    // 设置时分
+                    .offset(DateField.HOUR, Integer.parseInt(hour))
+                    .offset(DateField.MINUTE, Integer.parseInt(minute));
+        }
+    }
+
+    /**
+     * 若参数时间小于当前时间后偏移指定时间
+     * 若参数时间大于当前时间则返回原时间
+     *
+     * @param dateTime  参数时间
+     * @param dateField 偏移单位
+     * @param offset    偏移数
+     * @return DateTime
+     */
+    public DateTime offsetTimeWhenBeforeCurrentTime(DateTime dateTime, int offset, DateField dateField) {
+        if (dateTime.before(DateUtil.date())) {
+            return dateTime.offset(dateField, offset);
+        }
+        return dateTime;
+    }
+
+    /**
+     * 根据重复提醒周期notifyType获取
+     *
+     * @param notifyType 重复提醒周期
+     * @return NotifyTypeVerifyEnum
+     */
+    public static NotifyTypeEnum getEnum(String notifyType) {
+        for (NotifyTypeEnum value : NotifyTypeEnum.values()) {
+            // 枚举名字和type是否相等
+            if (StrUtil.equalsIgnoreCase(notifyType, value.code)) {
+                return value;
+            }
+        }
+        throw GlobalResult.TODO_NOTIFY_TYPE_NOT_CORRECT.boom();
+    }
+}
