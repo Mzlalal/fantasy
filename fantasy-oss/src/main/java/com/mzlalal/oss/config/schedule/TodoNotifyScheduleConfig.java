@@ -1,6 +1,5 @@
 package com.mzlalal.oss.config.schedule;
 
-import cn.hutool.core.date.DateUtil;
 import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.oss.service.TodoNotifyService;
 import org.redisson.api.RLock;
@@ -34,10 +33,8 @@ public class TodoNotifyScheduleConfig {
 
     @Scheduled(cron = "5 0/5 * * * ?")
     public void todoNotifySchedule() {
-        // 当前时间
-        String currentTime = DateUtil.format(DateUtil.date(), "yyyyMMddHHmm");
         // 获取锁
-        RLock lock = redissonClient.getLock(GlobalConstant.todoNotifyScheduleRedisKey(currentTime));
+        RLock lock = redissonClient.getLock(GlobalConstant.todoNotifyScheduleRedisKey());
         try {
             // 尝试获取锁,最大等待时间30秒,超过30秒自动释放
             boolean tryLock = lock.tryLock(30, 300, TimeUnit.SECONDS);
@@ -45,8 +42,10 @@ public class TodoNotifyScheduleConfig {
                 // 获取锁失败
                 return;
             }
+            // 对懒人模式的邮件进行提醒
+            todoNotifyService.notifyLazyModeTodoList();
             // 对待办列表进行邮件通知
-            todoNotifyService.notifyTodoListCurrentTime();
+            todoNotifyService.notifyCurrentTimeTodoList();
         } catch (InterruptedException ignored) {
             // 忽略
         } finally {

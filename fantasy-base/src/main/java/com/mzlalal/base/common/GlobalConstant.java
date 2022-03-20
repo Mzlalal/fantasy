@@ -156,11 +156,19 @@ public interface GlobalConstant {
     /**
      * 待办调度redisKey
      *
-     * @param currentTime 年月日时分
-     * @return String fantasy:notify:schedule:{currentTime}
+     * @return String fantasy:notify:schedule
      */
-    static String todoNotifyScheduleRedisKey(String currentTime) {
-        return StrUtil.format("fantasy:notify:schedule:{}", currentTime);
+    static String todoNotifyScheduleRedisKey() {
+        return StrUtil.format("fantasy:notify:schedule");
+    }
+
+    /**
+     * 待办重复提醒redisKey
+     *
+     * @return String fantasy:notify:repeat
+     */
+    static String todoNotifyRepeatRedisKey() {
+        return StrUtil.format("fantasy:notify:repeat");
     }
 
     /**

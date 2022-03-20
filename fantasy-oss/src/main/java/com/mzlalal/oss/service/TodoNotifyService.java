@@ -12,7 +12,12 @@ import com.mzlalal.base.service.BaseService;
 public interface TodoNotifyService extends BaseService<TodoNotifyEntity> {
 
     /**
-     * 提醒当前时间的待办
+     * 对懒人模式的邮件进行提醒
      */
-    void notifyTodoListCurrentTime();
+    void notifyLazyModeTodoList();
+
+    /**
+     * 对待办列表进行邮件通知
+     */
+    void notifyCurrentTimeTodoList();
 }
