@@ -54,7 +54,7 @@ public interface TodoNotifyFeignApi {
     @ApiOperation("保存")
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 30)
-    Result<Void> save(@RequestBody TodoNotifyEntity notify);
+    Result<TodoNotifyEntity> save(@RequestBody TodoNotifyEntity notify);
 
     /**
      * 更新

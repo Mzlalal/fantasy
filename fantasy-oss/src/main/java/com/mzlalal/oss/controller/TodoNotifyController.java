@@ -49,7 +49,7 @@ public class TodoNotifyController implements TodoNotifyFeignApi {
     }
 
     @Override
-    public Result<Void> save(@Validate @RequestBody TodoNotifyEntity todoNotify) {
+    public Result<TodoNotifyEntity> save(@Validate @RequestBody TodoNotifyEntity todoNotify) {
         // 验证重复提醒的值
         NotifyTypeEnum.getEnum(todoNotify.getNotifyType()).generateNotifyNextTime(todoNotify);
         // 设置邮箱
@@ -60,7 +60,7 @@ public class TodoNotifyController implements TodoNotifyFeignApi {
         }
         // 保存
         if (todoNotifyService.save(todoNotify)) {
-            return Result.ok();
+            return Result.ok(todoNotify);
         }
         return Result.fail();
     }
