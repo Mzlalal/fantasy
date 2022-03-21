@@ -51,7 +51,7 @@ public class TodoNotifyController implements TodoNotifyFeignApi {
     @Override
     public Result<TodoNotifyEntity> save(@Validate @RequestBody TodoNotifyEntity todoNotify) {
         // 验证重复提醒的值
-        NotifyTypeEnum.getEnum(todoNotify.getNotifyType()).generateNotifyNextTime(todoNotify);
+        NotifyTypeEnum.getEnum(todoNotify.getNotifyType()).checkAndCreateNextTime(todoNotify);
         // 设置邮箱
         todoNotify.setNotifyMailSet(Oauth2Context.getElseThrow().getMail());
         // 默认备注
@@ -68,7 +68,7 @@ public class TodoNotifyController implements TodoNotifyFeignApi {
     @Override
     public Result<Void> update(@RequestBody TodoNotifyEntity todoNotify) {
         // 获取下次执行时间
-        NotifyTypeEnum.getEnum(todoNotify.getNotifyType()).generateNotifyNextTime(todoNotify);
+        NotifyTypeEnum.getEnum(todoNotify.getNotifyType()).checkAndCreateNextTime(todoNotify);
         // 设置邮箱
         todoNotify.setNotifyMailSet(Oauth2Context.getElseThrow().getMail());
         // 默认备注

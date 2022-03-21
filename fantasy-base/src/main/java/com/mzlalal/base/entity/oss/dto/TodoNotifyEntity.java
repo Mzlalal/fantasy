@@ -64,8 +64,8 @@ public class TodoNotifyEntity implements Serializable {
     private String notifyLazyModeTimes;
 
     @JsonFormat(pattern = DatePattern.NORM_DATETIME_MINUTE_PATTERN, timezone = "GMT+8")
-    @ApiModelProperty("下次提醒时间")
-    private Date notifyNextTime;
+    @ApiModelProperty("下次提醒执行时间")
+    private Date notifyExecTime;
 
     @ApiModelProperty("备注")
     private String notifyMemo;

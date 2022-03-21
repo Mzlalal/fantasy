@@ -104,7 +104,8 @@ public class TodoNotifyServiceImpl extends ServiceImpl<TodoNotifyDao, TodoNotify
         QueryWrapper<TodoNotifyEntity> queryWrapper = new QueryWrapper<>();
         // 当前年月日时分
         String currentTime = DateUtil.format(DateUtil.date(), DatePattern.NORM_DATETIME_MINUTE_PATTERN);
-        queryWrapper.eq("notify_next_time", currentTime);
+        // 小于等于当前执行时间
+        queryWrapper.le(true, "notify_exec_time", currentTime);
         // 逻辑删除
         queryWrapper.eq("is_hide", GlobalConstant.STATUS_OFF);
         // 查询数据库
@@ -114,25 +115,27 @@ public class TodoNotifyServiceImpl extends ServiceImpl<TodoNotifyDao, TodoNotify
             return;
         }
         // 遍历
-        todoNotifyList.parallelStream().forEach(item -> {
+        todoNotifyList.parallelStream().forEach(todoNotify -> {
             // 发送到邮箱
-            mailNotifyService.sendText(item.getNotifyMailSet(), "待办提醒-Fantasy", item.getNotifyMemo());
+            mailNotifyService.sendText(todoNotify.getNotifyMailSet(), "待办提醒-Fantasy", todoNotify.getNotifyMemo());
             // 重复提醒的存放在redis列表中
-            if (Integer.parseInt(item.getNotifyLazyModeTimes()) > 0) {
+            if (Integer.parseInt(todoNotify.getNotifyLazyModeTimes()) > 0) {
                 TodoNotifyVo todoNotifyVo = new TodoNotifyVo();
-                BeanUtil.copyProperties(item, todoNotifyVo);
+                BeanUtil.copyProperties(todoNotify, todoNotifyVo);
                 redisTemplate.opsForList().rightPush(GlobalConstant.todoNotifyRepeatRedisKey(), todoNotifyVo);
             }
             // 提醒后删除
-            if (StrUtil.equals(GlobalConstant.STATUS_ON, item.getNotifyAfterDelete())) {
-                item.setIsHide(Integer.parseInt(GlobalConstant.STATUS_ON));
+            if (StrUtil.equals(GlobalConstant.STATUS_ON, todoNotify.getNotifyAfterDelete())) {
+                todoNotify.setIsHide(Integer.parseInt(GlobalConstant.STATUS_ON));
             }
-            // 是否重复提醒
-            if (StrUtil.equals(GlobalConstant.STATUS_OFF, item.getNotifyType())) {
+            // 提醒类型
+            String notifyType = todoNotify.getNotifyType();
+            // 等于0,只提醒一次
+            if (StrUtil.equals(GlobalConstant.STATUS_OFF, notifyType)) {
                 return;
             }
-            // 获取下次执行时间
-            NotifyTypeEnum.getEnum(item.getNotifyType()).generateNotifyNextTime(item);
+            // 生成下次执行时间
+            NotifyTypeEnum.getEnum(notifyType).createNextTime(todoNotify.getNotifyExecTime(), todoNotify);
         });
         // 批量更新
         this.saveOrUpdateBatch(todoNotifyList);

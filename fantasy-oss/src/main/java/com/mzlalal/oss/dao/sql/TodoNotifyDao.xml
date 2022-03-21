@@ -14,7 +14,7 @@
         <result property="notifyHour" column="notify_hour"/>
         <result property="notifyMinute" column="notify_minute"/>
         <result property="notifyLazyModeTimes" column="notify_lazy_mode_times"/>
-        <result property="notifyNextTime" column="notify_next_time"/>
+        <result property="notifyExecTime" column="notify_exec_time"/>
         <result property="notifyMemo" column="notify_memo"/>
         <result property="notifyTopStatus" column="notify_top_status"/>
         <result property="notifyAfterDelete" column="notify_after_delete"/>

@@ -10,6 +10,8 @@ import com.mzlalal.base.common.GlobalResult;
 import com.mzlalal.base.entity.oss.dto.TodoNotifyEntity;
 import com.mzlalal.base.util.AssertUtil;
 
+import java.util.Date;
+
 /**
  * 提醒周期方式并获取下次提醒时间
  *
@@ -22,7 +24,7 @@ public enum NotifyTypeEnum {
      */
     NONE("0") {
         @Override
-        public void generateNotifyNextTime(TodoNotifyEntity todoNotify) {
+        public void checkAndCreateNextTime(TodoNotifyEntity todoNotify) {
             // 月日都不能为空
             AssertUtil.isTrue(StrUtil.isAllNotBlank(todoNotify.getNotifyMonth(), todoNotify.getNotifyDay()), "月日都不能为空");
 
@@ -31,7 +33,12 @@ public enum NotifyTypeEnum {
             // 当前时间必须在dateTime之前
             AssertUtil.isTrue(DateUtil.date().before(dateTime), "待办时间不能小于当前时间");
             // 设置下次提醒时间
-            todoNotify.setNotifyNextTime(dateTime);
+            todoNotify.setNotifyExecTime(dateTime);
+        }
+
+        @Override
+        public void createNextTime(Date date, TodoNotifyEntity todoNotify) {
+            throw GlobalResult.SEVER_ERROR.boom();
         }
     },
     /**
@@ -39,13 +46,19 @@ public enum NotifyTypeEnum {
      */
     YEAR("1") {
         @Override
-        public void generateNotifyNextTime(TodoNotifyEntity todoNotify) {
+        public void checkAndCreateNextTime(TodoNotifyEntity todoNotify) {
             // 月日都不能为空
             AssertUtil.isTrue(StrUtil.isAllNotBlank(todoNotify.getNotifyMonth(), todoNotify.getNotifyDay()), "月日都不能为空");
             // 获取用户传递的时间并格式化
             DateTime dateTime = this.formatTodoNotifyTime(todoNotify);
-            // 设置时间
-            todoNotify.setNotifyNextTime(this.offsetTimeWhenBeforeCurrentTime(dateTime, 1, DateField.YEAR));
+            // 创建下次提醒时间
+            this.createNextTime(dateTime, todoNotify);
+        }
+
+        @Override
+        public void createNextTime(Date date, TodoNotifyEntity todoNotify) {
+            // 设置下次提醒时间
+            todoNotify.setNotifyExecTime(this.offsetTimeWhenBeforeCurrentTime(date, 1, DateField.YEAR));
         }
     },
     /**
@@ -53,15 +66,21 @@ public enum NotifyTypeEnum {
      */
     MONTH("2") {
         @Override
-        public void generateNotifyNextTime(TodoNotifyEntity todoNotify) {
+        public void checkAndCreateNextTime(TodoNotifyEntity todoNotify) {
             // 日不能为空
             AssertUtil.isTrue(StrUtil.isAllNotBlank(todoNotify.getNotifyDay(), todoNotify.getNotifyHour()
                     , todoNotify.getNotifyMinute()), "日不能为空");
 
             // 获取用户传递的时间并格式化
             DateTime dateTime = this.formatTodoNotifyTime(todoNotify);
-            // 设置时间
-            todoNotify.setNotifyNextTime(this.offsetTimeWhenBeforeCurrentTime(dateTime, 1, DateField.MONTH));
+            // 创建下次提醒时间
+            this.createNextTime(dateTime, todoNotify);
+        }
+
+        @Override
+        public void createNextTime(Date date, TodoNotifyEntity todoNotify) {
+            // 设置下次提醒时间
+            todoNotify.setNotifyExecTime(this.offsetTimeWhenBeforeCurrentTime(date, 1, DateField.MONTH));
         }
     },
     /**
@@ -69,7 +88,7 @@ public enum NotifyTypeEnum {
      */
     WEEK("3") {
         @Override
-        public void generateNotifyNextTime(TodoNotifyEntity todoNotify) {
+        public void checkAndCreateNextTime(TodoNotifyEntity todoNotify) {
             // 星期几不能为空
             AssertUtil.isTrue(StrUtil.isAllNotBlank(todoNotify.getNotifyWeekday()), "星期几不能为空");
 
@@ -77,8 +96,14 @@ public enum NotifyTypeEnum {
             DateTime dateTime = this.formatTodoNotifyTime(todoNotify);
             // 先校正weekday, 用户的星期几 - 格式化的时间(星期几)
             dateTime.offset(DateField.DAY_OF_YEAR, Integer.parseInt(todoNotify.getNotifyWeekday()) - DateUtil.dayOfWeek(dateTime));
-            // 设置时间
-            todoNotify.setNotifyNextTime(this.offsetTimeWhenBeforeCurrentTime(dateTime, 1, DateField.WEEK_OF_YEAR));
+            // 创建下次提醒时间
+            this.createNextTime(dateTime, todoNotify);
+        }
+
+        @Override
+        public void createNextTime(Date date, TodoNotifyEntity todoNotify) {
+            // 设置下次提醒时间
+            todoNotify.setNotifyExecTime(this.offsetTimeWhenBeforeCurrentTime(date, 1, DateField.WEEK_OF_YEAR));
         }
     },
     /**
@@ -86,11 +111,17 @@ public enum NotifyTypeEnum {
      */
     DAY("4") {
         @Override
-        public void generateNotifyNextTime(TodoNotifyEntity todoNotify) {
+        public void checkAndCreateNextTime(TodoNotifyEntity todoNotify) {
             // 获取用户传递的时间并格式化
             DateTime dateTime = this.formatTodoNotifyTime(todoNotify);
-            // 设置时间
-            todoNotify.setNotifyNextTime(this.offsetTimeWhenBeforeCurrentTime(dateTime, 1, DateField.DAY_OF_YEAR));
+            // 创建下次提醒时间
+            this.createNextTime(dateTime, todoNotify);
+        }
+
+        @Override
+        public void createNextTime(Date date, TodoNotifyEntity todoNotify) {
+            // 设置下次提醒时间
+            todoNotify.setNotifyExecTime(this.offsetTimeWhenBeforeCurrentTime(date, 1, DateField.DAY_OF_YEAR));
         }
     };
 
@@ -108,7 +139,15 @@ public enum NotifyTypeEnum {
      *
      * @param todoNotify 待办提醒
      */
-    public abstract void generateNotifyNextTime(TodoNotifyEntity todoNotify);
+    public abstract void checkAndCreateNextTime(TodoNotifyEntity todoNotify);
+
+    /**
+     * 生成下次待办提醒时间
+     *
+     * @param date       参数时间
+     * @param todoNotify 待办提醒
+     */
+    public abstract void createNextTime(Date date, TodoNotifyEntity todoNotify);
 
     /**
      * 前端传递的条件转换为待办时间
@@ -142,19 +181,24 @@ public enum NotifyTypeEnum {
     }
 
     /**
-     * 若参数时间小于当前时间后偏移指定时间
+     * 若参数时间小于当前时间后偏移指定时间,并递归调用直到大于当前时间位置
      * 若参数时间大于当前时间则返回原时间
      *
-     * @param dateTime  参数时间
-     * @param dateField 偏移单位
+     * @param date      参数时间
      * @param offset    偏移数
+     * @param dateField 偏移单位
      * @return DateTime
      */
-    public DateTime offsetTimeWhenBeforeCurrentTime(DateTime dateTime, int offset, DateField dateField) {
-        if (dateTime.before(DateUtil.date())) {
-            return dateTime.offset(dateField, offset);
+    public Date offsetTimeWhenBeforeCurrentTime(Date date, int offset, DateField dateField) {
+        // 参数时间小于当前时间
+        if (date.before(DateUtil.date())) {
+            // 偏移时间
+            date = DateUtil.offset(date, dateField, offset);
+            // 递归,直到提醒时间大于当前时间某个周期位置
+            return this.offsetTimeWhenBeforeCurrentTime(date, offset, dateField);
         }
-        return dateTime;
+        // 参数时间大于当前时间,返回
+        return date;
     }
 
     /**
