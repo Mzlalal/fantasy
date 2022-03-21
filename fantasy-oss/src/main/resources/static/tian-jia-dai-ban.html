@@ -115,10 +115,8 @@
             <li class="ui-border-t">
                 <div class="ui-list-info">
                     <h4 class="ui-nowrap">备注</h4>
-                    <div class="ui-txt-info">
-                            <textarea ref="textarea" :style="{'height': height}" v-model="notifyMemo"
-                                      class="textarea border-none" placeholder="请输入备注"></textarea>
-                    </div>
+                    <textarea ref="textarea" :style="{'height': height}" v-model="notifyMemo"
+                              class="ui-txt-infotextarea border-none" placeholder="请输入备注"></textarea>
                 </div>
             </li>
         </ul>
@@ -144,7 +142,7 @@
 <script>
     Vue.component('v-select', VueSelect.VueSelect);
 
-    const vm = new Vue({
+    new Vue({
         el: "#app",
         data: {
             notifyCalendarType: "1",
@@ -160,8 +158,11 @@
             notifyMemo: null,
             notifyTopStatus: false,
             notifyAfterDelete: false,
-            height: '22px',
+            // 文本框高度
+            height: '24px',
+            // 提示
             tips: null,
+            // 加载中
             loading: false,
         },
         methods: {
@@ -174,6 +175,7 @@
             getHeight() {
                 this.height = calcTextareaHeight(this.$refs.textarea, 1, null).height;
             },
+            // 保存待办
             saveTodo() {
                 this.loading = true;
                 let param = {

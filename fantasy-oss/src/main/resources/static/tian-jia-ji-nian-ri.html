@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, initial-scale=1.0, user-scalable=no">
+    <title>添加待办</title>
+    <link rel="stylesheet" href="css/plugin/frozen.css"/>
+    <link rel="stylesheet" href="css/common.css"/>
+    <link rel="stylesheet" href="css/plugin/vant.css">
+    <script src="js/plugin/axios.min.js"></script>
+    <script src="js/plugin/vue.min.js"></script>
+    <script src="js/plugin/vant.min.js"></script>
+    <script src="js/plugin/calcTextareaHeight.js"></script>
+    <script src="js/CommonUtil.js"></script>
+    <script src="js/FantasyConstant.js"></script>
+</head>
+<body>
+<div id="app">
+    <header class="ui-header ui-header-positive ui-border-b text-center">
+        <!--<span class="font-weight-bolder font-weight-20px">添加待办</span>-->
+        <span class="position-right username-display" @click="redirectDayMatterList">返回</span>
+    </header>
+    <div class="ui-form ui-border-t ui-container">
+        <ul class="ui-list ui-list-single ui-border-tb">
+            <li class="ui-border-t">
+                <div class="ui-list-info">
+                    <h4 class="ui-nowrap">备注</h4>
+                    <textarea ref="textarea" :style="{'height': height}" v-model="matterMemo"
+                              class="ui-txt-info textarea border-none" placeholder="请输入备注"></textarea>
+                </div>
+            </li>
+            <li class="ui-border-t">
+                <div class="ui-list-info">
+                    <h4 class="ui-nowrap">起始日</h4>
+                    <textarea readonly style="height: 24px" v-model="matterDate" @click="popupShow = true"
+                              class="ui-txt-info textarea border-none" placeholder="请选择时间"></textarea>
+                </div>
+            </li>
+        </ul>
+        <div class="ui-form-item ui-form-item-switch ui-border-b">
+            <p>置顶</p>
+            <label class="ui-switch">
+                <input type="checkbox" v-model="matterTopStatus">
+            </label>
+        </div>
+        <transition name="fade">
+            <div class="ui-tooltips ui-tooltips-guide ui-tooltips-function" v-if="tips">
+                <div class="ui-tooltips-cnt ui-border-b">
+                    <i></i>{{tips}}
+                </div>
+            </div>
+        </transition>
+        <div class="ui-loading-wrap margin-top-1em" v-if="loading">
+            <p>加载中</p>
+            <i class="ui-loading"></i>
+        </div>
+        <div class="ui-btn-wrap" v-else>
+            <button class="ui-btn-lg ui-btn-primary" @click="saveDayMatter">
+                添加
+            </button>
+        </div>
+    </div>
+
+    <van-popup v-model="popupShow" position="bottom">
+        <van-datetime-picker
+                type="date"
+                v-model="popupDate"
+                @confirm="onPopupConfirm"
+                @cancel="popupShow = false"/>
+    </van-popup>
+</div>
+</body>
+<script>
+    new Vue({
+        el: "#app",
+        data: {
+            matterMemo: null,
+            matterDate: null,
+            matterTopStatus: false,
+            // 当前日期
+            popupDate: new Date(),
+            // 显示选择时间弹窗
+            popupShow: false,
+            // 文本框高度
+            height: '24px',
+            // 提示
+            tips: null,
+            // 加载中
+            loading: false,
+        },
+        methods: {
+            // 跳转到纪念日列表
+            redirectDayMatterList() {
+                // 跳转到待办列表
+                window.location = "/fantasy-oss/ji-nian-ri-lie-biao.html";
+            },
+            // 获取文本框高度
+            getHeight() {
+                this.height = calcTextareaHeight(this.$refs.textarea, 1, null).height;
+            },
+            // 弹窗确认
+            onPopupConfirm(event) {
+                console.log(event);
+                console.log(event.Format("yyyy-MM-dd"));
+                // 格式化
+                this.matterDate = event.Format("yyyy-MM-dd");
+                // 隐藏
+                this.popupShow = false;
+            },
+            // 保存纪念日
+            saveDayMatter() {
+
+            },
+        },
+        created() {
+
+        },
+        watch: {
+            matterMemo() {
+                this.getHeight();
+            }
+        }
+    });
+</script>
+
+</html>
