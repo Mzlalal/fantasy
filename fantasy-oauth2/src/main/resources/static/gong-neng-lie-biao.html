@@ -11,6 +11,7 @@
     <script src="js/plugin/vue.min.js"></script>
     <script src="js/CommonUtil.js"></script>
     <script src="js/FantasyConstant.js"></script>
+    <script src="js/components/PopupMenu.js"></script>
 </head>
 <style>
     .ui-img-vertical {
@@ -20,7 +21,7 @@
 <body>
 <div id="app">
     <header class="ui-header ui-header-positive ui-border-b text-center">
-        <span class="position-left username-display" @click="redirectUpdateUserInfo">我的信息</span>
+        <span class="position-left username-display" @click="menuShow = true">我的菜单</span>
         <span class="font-weight-bolder font-weight-20px">Fantasy</span>
     </header>
     <div class="ui-form ui-border-t ui-container">
@@ -38,23 +39,24 @@
             </ul>
         </div>
     </div>
+
+    <template-popup-menu :menu-show="menuShow" @on-close="menuShow = false"></template-popup-menu>
 </div>
 </body>
 <script>
     const vm = new Vue({
         el: "#app",
-        data: {
-            clientList: [],
-            hideList: [clientKey],
+        data() {
+            return {
+                // 菜单显示
+                menuShow: false,
+                // 客户端列表
+                clientList: [],
+                // 需要隐藏的客户端
+                hideList: [clientKey],
+            }
         },
         methods: {
-            // 跳转到更新用户信息
-            redirectUpdateUserInfo() {
-                // 保存URL
-                localStorage.setItem("user.href.from", window.location.href);
-                // 跳转到修改信息
-                window.location = "/fantasy-oauth2/wo-de-xin-xi.html";
-            },
             // 跳转到客户端首页
             redirectClientIndex(indexUri) {
                 // 跳转

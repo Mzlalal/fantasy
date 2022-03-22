@@ -73,8 +73,10 @@
 <script>
     const vm = new Vue({
         el: "#app",
-        data: {
-            msg: "正在验证授权，请稍候...",
+        data() {
+            return {
+                msg: "正在验证授权，请稍候...",
+            }
         },
         methods: {
             // 请求回调地址

@@ -11,6 +11,7 @@
     <script src="js/plugin/vue.min.js"></script>
     <script src="js/CommonUtil.js"></script>
     <script src="js/FantasyConstant.js"></script>
+    <script src="js/components/PopupMenu.js"></script>
 </head>
 <style>
 
@@ -47,15 +48,8 @@
             <i class="ui-loading"></i>
         </div>
     </div>
-    <div class="ui-actionsheet show" v-if="menuShow" @click="menuShow = false">
-        <div class="ui-actionsheet-cnt am-actionsheet-down">
-            <button @click="redirectUpdateUserInfo">我的信息</button>
-            <button @click="redirectClientCenter">应用中心</button>
-            <button class="ui-actionsheet-del" @click="logout">退出登录</button>
-            <div class="ui-actionsheet-split-line"></div>
-            <button id="cancel" @click="menuShow = false">取消</button>
-        </div>
-    </div>
+
+    <template-popup-menu :menu-show="menuShow" @on-close="menuShow = false"></template-popup-menu>
 </div>
 </body>
 <script>
@@ -94,41 +88,6 @@
             }
         },
         methods: {
-            // 跳转到更新用户信息
-            redirectUpdateUserInfo() {
-                // 保存URL
-                localStorage.setItem("user.href.from", window.location.href);
-                // 跳转到修改信息
-                window.location = "/fantasy-oauth2/wo-de-xin-xi.html";
-            },
-            // 跳转到应用中心
-            redirectClientCenter() {
-                // 跳转到修改信息
-                window.location = "/fantasy-oauth2/gong-neng-lie-biao.html";
-            },
-            // 退出登录
-            logout() {
-                // 确认退出登录
-                if (!window.confirm("确定当前退出用户登录?")) {
-                    return;
-                }
-                // 请求接口
-                axios({
-                    method: "get",
-                    url: "/fantasy-oauth2/api/v1/token/logout",
-                }).then(res => {
-                    // 清空缓存
-                    localStorage.clear();
-                    // 跳转地址
-                    window.location = window.defaultRedirectUri;
-                }).catch(res => {
-                    if (res.data && res.data.msg) {
-                        this.tips = res.data.msg;
-                    } else {
-                        this.tips = "服务器繁忙，请稍后再试";
-                    }
-                })
-            },
             // 跳转到添加待办
             redirectSaveTodo() {
                 // 跳转到保存待办

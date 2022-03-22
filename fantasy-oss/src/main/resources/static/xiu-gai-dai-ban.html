@@ -151,24 +151,26 @@
 
     const vm = new Vue({
         el: "#app",
-        data: {
-            id: null,
-            notifyCalendarType: "1",
-            enableRepeatNotifyMode: false,
-            notifyType: "0",
-            notifyMonth: null,
-            notifyDay: null,
-            notifyWeekday: null,
-            notifyHour: null,
-            notifyMinute: null,
-            enableLazyMode: false,
-            notifyLazyModeTimes: "0",
-            notifyMemo: null,
-            notifyTopStatus: false,
-            notifyAfterDelete: false,
-            height: '24px',
-            tips: null,
-            loading: false,
+        data() {
+            return {
+                id: null,
+                notifyCalendarType: "1",
+                enableRepeatNotifyMode: false,
+                notifyType: "0",
+                notifyMonth: null,
+                notifyDay: null,
+                notifyWeekday: null,
+                notifyHour: null,
+                notifyMinute: null,
+                enableLazyMode: false,
+                notifyLazyModeTimes: "0",
+                notifyMemo: null,
+                notifyTopStatus: false,
+                notifyAfterDelete: false,
+                height: '24px',
+                tips: null,
+                loading: false,
+            }
         },
         methods: {
             // 跳转到待办列表

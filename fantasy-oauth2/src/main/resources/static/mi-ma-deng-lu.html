@@ -106,17 +106,19 @@
 <script>
     const vm = new Vue({
         el: "#app",
-        data: {
-            // 登录按钮
-            loginBtn: false,
-            // 请求的客户端Key
-            reqClientKey: "",
-            // 用户名
-            username: "",
-            // 密码
-            password: "",
-            // 显示信息
-            tips: "没有账号点击按钮快速注册",
+        data() {
+            return {
+                // 登录按钮
+                loginBtn: false,
+                // 请求的客户端Key
+                reqClientKey: "",
+                // 用户名
+                username: "",
+                // 密码
+                password: "",
+                // 显示信息
+                tips: "没有账号点击按钮快速注册",
+            }
         },
         methods: {
             // 登录

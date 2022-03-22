@@ -182,31 +182,33 @@
 
     const vm = new Vue({
         el: "#app",
-        data: {
-            // 提示
-            tips: "",
-            // 用户ID
-            userId: "",
-            // 用户名称
-            username: "",
-            // 是否显示房间
-            showRoom: false,
-            // 用户上桌状态
-            userStatus: null,
-            // 房间号
-            roomCode: null,
-            // 是否自动滚动
-            autoScroll: true,
-            // 转账数额
-            transferAmount: "",
-            // 当前选中的选手
-            currentSelectedPlayer: null,
-            // 选手列表
-            playerList: [],
-            // 当前推送的所有消息
-            messageList: [{"msg": "点击他人头像即可进行转账", "time": "💬", "from": ""}],
-            // 关于我的历史消息
-            historyMessageList: [{"msg": "点击他人头像即可进行转账", "time": "💬", "from": ""}],
+        data() {
+            return {
+                // 提示
+                tips: "",
+                // 用户ID
+                userId: "",
+                // 用户名称
+                username: "",
+                // 是否显示房间
+                showRoom: false,
+                // 用户上桌状态
+                userStatus: null,
+                // 房间号
+                roomCode: null,
+                // 是否自动滚动
+                autoScroll: true,
+                // 转账数额
+                transferAmount: "",
+                // 当前选中的选手
+                currentSelectedPlayer: null,
+                // 选手列表
+                playerList: [],
+                // 当前推送的所有消息
+                messageList: [{"msg": "点击他人头像即可进行转账", "time": "💬", "from": ""}],
+                // 关于我的历史消息
+                historyMessageList: [{"msg": "点击他人头像即可进行转账", "time": "💬", "from": ""}],
+            }
         },
         methods: {
             // 监听滚动

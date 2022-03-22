@@ -144,26 +144,28 @@
 
     new Vue({
         el: "#app",
-        data: {
-            notifyCalendarType: "1",
-            enableRepeatNotifyMode: false,
-            notifyType: "0",
-            notifyMonth: null,
-            notifyDay: null,
-            notifyWeekday: null,
-            notifyHour: null,
-            notifyMinute: "30",
-            enableLazyMode: false,
-            notifyLazyModeTimes: "0",
-            notifyMemo: null,
-            notifyTopStatus: false,
-            notifyAfterDelete: false,
-            // 文本框高度
-            height: '24px',
-            // 提示
-            tips: null,
-            // 加载中
-            loading: false,
+        data() {
+            return {
+                notifyCalendarType: "1",
+                enableRepeatNotifyMode: false,
+                notifyType: "0",
+                notifyMonth: null,
+                notifyDay: null,
+                notifyWeekday: null,
+                notifyHour: null,
+                notifyMinute: "30",
+                enableLazyMode: false,
+                notifyLazyModeTimes: "0",
+                notifyMemo: null,
+                notifyTopStatus: false,
+                notifyAfterDelete: false,
+                // 文本框高度
+                height: '24px',
+                // 提示
+                tips: null,
+                // 加载中
+                loading: false,
+            }
         },
         methods: {
             // 跳转到待办列表

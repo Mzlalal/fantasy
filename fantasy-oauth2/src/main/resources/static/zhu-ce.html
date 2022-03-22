@@ -131,23 +131,25 @@
 <script>
     const vm = new Vue({
         el: "#app",
-        data: {
-            // 注册按钮
-            registerBtn: true,
-            // 请求的客户端Key
-            reqClientKey: "",
-            // 用户名
-            username: "",
-            // 手机号
-            mobile: "",
-            // 邮箱
-            mail: "",
-            // 密码
-            password: "",
-            // 确认密码
-            confirmPassword: "",
-            // 显示信息
-            tips: "",
+        data() {
+            return {
+                // 注册按钮
+                registerBtn: true,
+                // 请求的客户端Key
+                reqClientKey: "",
+                // 用户名
+                username: "",
+                // 手机号
+                mobile: "",
+                // 邮箱
+                mail: "",
+                // 密码
+                password: "",
+                // 确认密码
+                confirmPassword: "",
+                // 显示信息
+                tips: "",
+            }
         },
         methods: {
             // 注册

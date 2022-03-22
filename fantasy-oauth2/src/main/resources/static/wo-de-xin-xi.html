@@ -130,13 +130,15 @@
 <script>
     const vm = new Vue({
         el: "#app",
-        data: {
-            // 修改按钮
-            updateBtn: true,
-            // 用户信息
-            user: {},
-            // 显示信息
-            tips: "",
+        data() {
+            return {
+                // 修改按钮
+                updateBtn: true,
+                // 用户信息
+                user: {},
+                // 显示信息
+                tips: "",
+            }
         },
         methods: {
             // 修改用户信息

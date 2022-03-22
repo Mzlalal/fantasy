@@ -74,20 +74,22 @@
 <script>
     new Vue({
         el: "#app",
-        data: {
-            matterMemo: null,
-            matterDate: null,
-            matterTopStatus: false,
-            // 当前日期
-            popupDate: new Date(),
-            // 显示选择时间弹窗
-            popupShow: false,
-            // 文本框高度
-            height: '24px',
-            // 提示
-            tips: null,
-            // 加载中
-            loading: false,
+        data() {
+            return {
+                matterMemo: null,
+                matterDate: null,
+                matterTopStatus: false,
+                // 当前日期
+                popupDate: new Date(),
+                // 显示选择时间弹窗
+                popupShow: false,
+                // 文本框高度
+                height: '24px',
+                // 提示
+                tips: null,
+                // 加载中
+                loading: false,
+            }
         },
         methods: {
             // 跳转到纪念日列表

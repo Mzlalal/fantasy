@@ -69,13 +69,15 @@
 <script>
     const vm = new Vue({
         el: "#app",
-        data: {
-            // 加载中
-            loading: false,
-            // 房间列表
-            roomList: [],
-            // 需要查看的历史房间
-            historyRoom: null,
+        data() {
+            return {
+                // 加载中
+                loading: false,
+                // 房间列表
+                roomList: [],
+                // 需要查看的历史房间
+                historyRoom: null,
+            }
         },
         methods: {
             // 加载房间列表
