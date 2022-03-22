@@ -12,6 +12,7 @@
     <script src="js/CommonUtil.js"></script>
     <script src="js/FantasyConstant.js"></script>
     <script src="js/components/PopupMenu.js"></script>
+    <script src="js/components/DownSlideStream.js"></script>
 </head>
 <style>
 
@@ -23,31 +24,29 @@
         <!--<span class="font-weight-bolder font-weight-20px">待办列表</span>-->
         <span class="position-right username-display" @click="redirectSaveTodo">添加待办</span>
     </header>
-    <div class="ui-form ui-border-t ui-container">
-        <ul class="ui-list-function ui-border-tb">
-            <li class="ui-whitespace" v-for="todo in todoList"
-                v-bind:class="{'background-color-ghostwhite': todo.notifyTopStatus === '1'}"
-                @click="redirectUpdateTodo(todo.id)">
-                <div class="ui-list-info ui-border-t">
-                    <h4 class="ui-nowrap font-weight-16px">
-                        {{todo.notifyMemo}}
-                    </h4>
-                    <div class="ui-nowrap">
-                        <span class="ui-txt-highlight font-weight-12px">最近提醒时间：{{todo.notifyExecTime}}</span>
-                        <span class="ui-txt-highlight font-weight-12px margin-left-5px">{{todo.notifyType | repeatNotifyModeFilter}}</span>
+
+    <template-down-slide-stream :distance-to-bottom="0"
+                                :loading="loading"
+                                :has-data="todoList && todoList.length > 0"
+                                @on-scroll-to-bottom="onScrollToBottom">
+        <slot>
+            <ul class="ui-list-function ui-border-tb">
+                <li class="ui-whitespace" v-for="todo in todoList"
+                    v-bind:class="{'background-color-ghostwhite': todo.notifyTopStatus === '1'}"
+                    @click="redirectUpdateTodo(todo.id)">
+                    <div class="ui-list-info ui-border-t">
+                        <h4 class="ui-nowrap font-weight-16px">
+                            {{todo.notifyMemo}}
+                        </h4>
+                        <div class="ui-nowrap">
+                            <span class="ui-txt-highlight font-weight-12px">最近提醒时间：{{todo.notifyExecTime}}</span>
+                            <span class="ui-txt-highlight font-weight-12px margin-left-5px">{{todo.notifyType | repeatNotifyModeFilter}}</span>
+                        </div>
                     </div>
-                </div>
-            </li>
-        </ul>
-        <section class="ui-notice margin-top-1em" v-if="!loading && todoList.length === 0">
-            <i></i>
-            <p>暂无待办</p>
-        </section>
-        <div class="ui-loading-wrap margin-top-1em" v-if="loading">
-            <p>加载中</p>
-            <i class="ui-loading"></i>
-        </div>
-    </div>
+                </li>
+            </ul>
+        </slot>
+    </template-down-slide-stream>
 
     <template-popup-menu :menu-show="menuShow" @on-close="menuShow = false"></template-popup-menu>
 </div>
@@ -56,6 +55,10 @@
     new Vue({
         el: "#app",
         data: {
+            // 当前页
+            currPage: 1,
+            // 总页数
+            totalPage: 0,
             // 加载中
             loading: false,
             // 菜单显示
@@ -106,7 +109,7 @@
                 const param = {
                     "entity": {},
                     "pageInfo": {
-                        "currPage": 1,
+                        "currPage": this.currPage,
                         "pageSize": 20
                     }
                 }
@@ -116,7 +119,10 @@
                     url: "/fantasy-oss/api/v1/oss/todo.notify/list",
                     data: param
                 }).then(res => {
-                    this.todoList = commonUtil.getPageList(res);
+                    // 追加到集合中
+                    this.todoList = this.todoList.concat(commonUtil.getPageList(res));
+                    // 获取到总页数
+                    this.totalPage = commonUtil.getTotalPage(res);
                     this.loading = false;
                 }).catch(res => {
                     this.loading = false;
@@ -126,9 +132,21 @@
                         alert("服务器繁忙，请稍后再试")
                     }
                 })
+            },
+            // 滚动到底部
+            onScrollToBottom() {
+                // 如果总页数小于当前页,则不加载
+                if (this.loading === false && this.totalPage <= this.currPage) {
+                    return;
+                }
+                // 当前页+1
+                this.currPage++;
+                // 加载下一页
+                this.initTodoList()
             }
         },
         created() {
+            // 初始化列表
             this.initTodoList();
         },
     });

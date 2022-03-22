@@ -11,6 +11,7 @@
     <script src="js/plugin/vue.min.js"></script>
     <script src="js/CommonUtil.js"></script>
     <script src="js/FantasyConstant.js"></script>
+    <script src="js/components/DownSlideStream.js"></script>
 </head>
 <style>
 
@@ -21,29 +22,28 @@
         <span class="font-weight-bolder font-weight-20px">历史记录</span>
         <a class="position-right username-display" href="/fantasy-chess/fang-jian-lie-biao.html">返回</a>
     </header>
-    <div class="ui-form ui-border-t ui-container">
-        <ul class="ui-list ui-list-function ui-border-tb">
-            <li v-for="room in roomList">
-                <ul class="ui-list ui-list-function ui-border-tb">
-                    <li>
-                        <div class="ui-list-info ui-border-t">
-                            <h4 class="ui-nowrap" v-html="room.roomName">}</h4>
-                            <p>{{room.createTime}}</p>
-                        </div>
-                        <div class="ui-btn" @click="checkHistoryRoom(room)">查看</div>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-        <section class="ui-notice margin-top-1em" v-if="!loading && roomList.length === 0">
-            <i></i>
-            <p>暂无记录</p>
-        </section>
-        <div class="ui-loading-wrap margin-top-1em" v-if="loading">
-            <p>加载中</p>
-            <i class="ui-loading"></i>
-        </div>
-    </div>
+
+    <template-down-slide-stream :distance-to-bottom="0"
+                                :loading="loading"
+                                :has-data="roomHistoryList && roomHistoryList.length > 0"
+                                @on-scroll-to-bottom="onScrollToBottom">
+        <slot>
+            <ul class="ui-list ui-list-function ui-border-tb">
+                <li v-for="roomHistory in roomHistoryList">
+                    <ul class="ui-list ui-list-function ui-border-tb">
+                        <li>
+                            <div class="ui-list-info ui-border-t">
+                                <h4 class="ui-nowrap" v-html="roomHistory.roomName">}</h4>
+                                <p>{{roomHistory.createTime}}</p>
+                            </div>
+                            <div class="ui-btn" @click="checkHistoryRoom(roomHistory)">查看</div>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </slot>
+    </template-down-slide-stream>
+
     <transition name="fade">
         <div class="ui-dialog show" v-if="historyRoom">
             <div class="ui-dialog-cnt">
@@ -71,21 +71,25 @@
         el: "#app",
         data() {
             return {
+                // 当前页
+                currPage: 1,
+                // 总页数
+                totalPage: 0,
                 // 加载中
                 loading: false,
                 // 房间列表
-                roomList: [],
+                roomHistoryList: [],
                 // 需要查看的历史房间
                 historyRoom: null,
             }
         },
         methods: {
             // 加载房间列表
-            initRoomList() {
+            initRoomHistoryList() {
                 this.loading = true;
                 const param = {
                     "pageInfo": {
-                        "currPage": 1,
+                        "currPage": this.currPage,
                         "pageSize": 20
                     }
                 }
@@ -95,7 +99,10 @@
                     url: "/fantasy-chess/api/v1/chess/room.history/list",
                     data: param
                 }).then(res => {
-                    this.roomList = commonUtil.getPageList(res);
+                    // 追加到集合中
+                    this.roomHistoryList = this.roomHistoryList.concat(commonUtil.getPageList(res));
+                    // 获取到总页数
+                    this.totalPage = commonUtil.getTotalPage(res);
                     this.loading = false;
                 }).catch(res => {
                     this.loading = false;
@@ -109,11 +116,22 @@
             // 点击查看按钮
             checkHistoryRoom(item) {
                 this.historyRoom = item;
+            },
+            // 滚动到底部
+            onScrollToBottom() {
+                // 如果总页数小于当前页,则不加载
+                if (this.loading === false && this.totalPage <= this.currPage) {
+                    return;
+                }
+                // 当前页+1
+                this.currPage++;
+                // 加载下一页
+                this.initRoomHistoryList();
             }
         },
         created() {
             // 加载房间列表
-            this.initRoomList();
+            this.initRoomHistoryList();
         }
     });
 </script>

@@ -83,6 +83,13 @@
             }
             return [];
         },
+        // 获取res的pageInfo中的totalPage,若为空则返回0
+        getTotalPage: function (res) {
+            if (res && res.page && res.page.totalPage) {
+                return res.page.totalPage;
+            }
+            return 0;
+        },
         // 验证令牌
         checkToken: function () {
             // 请求接口

@@ -11,6 +11,7 @@
     <script src="js/plugin/axios.min.js"></script>
     <script src="js/FantasyConstant.js"></script>
     <script src="js/components/PopupMenu.js"></script>
+    <script src="js/components/DownSlideStream.js"></script>
 </head>
 
 <body>
@@ -20,30 +21,27 @@
         <!--<span class="font-weight-bolder font-weight-20px">待办列表</span>-->
         <span class="position-right username-display" @click="redirectSaveDayMatter">添加纪念日</span>
     </header>
-    <div class="ui-form ui-border-t ui-container">
-        <ul class="ui-list-function ui-border-tb">
-            <li class="ui-whitespace" v-for="dayMatter in dayMatterList"
-                v-bind:class="{'background-color-ghostwhite': dayMatter.matterTopStatus === '1'}">
-                <div class="ui-list-info ui-border-t">
-                    <h4 class="ui-nowrap font-weight-16px">
-                        {{dayMatter.matterMemo}}
-                    </h4>
-                    <div class="ui-nowrap">
-                        <span class="ui-txt-highlight font-weight-12px">起始日：{{dayMatter.matterDate}}</span>
-                        <span class="ui-txt-highlight font-weight-12px margin-left-5px">{{dayMatter.createName}}</span>
+    <template-down-slide-stream :distance-to-bottom="0"
+                                :loading="loading"
+                                :has-data="dayMatterList && dayMatterList.length > 0"
+                                @on-scroll-to-bottom="onScrollToBottom">
+        <slot>
+            <ul class="ui-list-function ui-border-tb">
+                <li class="ui-whitespace" v-for="dayMatter in dayMatterList"
+                    v-bind:class="{'background-color-ghostwhite': dayMatter.matterTopStatus === '1'}">
+                    <div class="ui-list-info ui-border-t">
+                        <h4 class="ui-nowrap font-weight-16px">
+                            {{dayMatter.matterMemo}}
+                        </h4>
+                        <div class="ui-nowrap">
+                            <span class="ui-txt-highlight font-weight-12px">起始日：{{dayMatter.matterDate}}</span>
+                            <span class="ui-txt-highlight font-weight-12px margin-left-5px">{{dayMatter.createName}}</span>
+                        </div>
                     </div>
-                </div>
-            </li>
-        </ul>
-        <section class="ui-notice margin-top-1em" v-if="!loading && dayMatterList.length === 0">
-            <i></i>
-            <p>暂无纪念日</p>
-        </section>
-        <div class="ui-loading-wrap margin-top-1em" v-if="loading">
-            <p>加载中</p>
-            <i class="ui-loading"></i>
-        </div>
-    </div>
+                </li>
+            </ul>
+        </slot>
+    </template-down-slide-stream>
 
     <template-popup-menu :menu-show="menuShow" @on-close="menuShow = false"></template-popup-menu>
 </div>
@@ -51,6 +49,10 @@
     new Vue({
         el: '#app',
         data: {
+            // 当前页
+            currPage: 1,
+            // 总页数
+            totalPage: 0,
             // 加载中
             loading: false,
             // 菜单显示
@@ -64,6 +66,15 @@
                 // 跳转到保存待办
                 window.location = "/fantasy-oss/tian-jia-ji-nian-ri.html";
             },
+            // 滚动到底部
+            onScrollToBottom() {
+                // 如果总页数小于当前页,则不加载
+                if (this.loading === false && this.totalPage <= this.currPage) {
+                    return;
+                }
+                // 当前页+1
+                this.currPage++;
+            }
         }
     });
 </script>
