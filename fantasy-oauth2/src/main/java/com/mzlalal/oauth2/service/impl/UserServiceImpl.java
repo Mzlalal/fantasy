@@ -3,8 +3,10 @@ package com.mzlalal.oauth2.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mzlalal.base.entity.global.component.VueSelect;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oauth2.dto.UserEntity;
+import com.mzlalal.base.util.AssertUtil;
 import com.mzlalal.base.util.Page;
 import com.mzlalal.oauth2.dao.UserDao;
 import com.mzlalal.oauth2.service.UserService;
@@ -15,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * ServiceImpl
+ * 用户ServiceImpl
  *
  * @author Mzlalal
  * @date 2021-07-29 20:36:48
@@ -55,5 +57,11 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         UpdateWrapper<UserEntity> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("id", id);
         return this.update(userEntity, updateWrapper);
+    }
+
+    @Override
+    public List<VueSelect> queryVueSelectListByUsername(String username) {
+        AssertUtil.notBlank(username, "用户名不能为空");
+        return baseMapper.queryVueSelectListByUsername(username);
     }
 }

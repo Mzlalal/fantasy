@@ -7,13 +7,21 @@
     <title>添加待办</title>
     <link rel="stylesheet" href="css/plugin/frozen.css"/>
     <link rel="stylesheet" href="css/common.css"/>
+    <link rel="stylesheet" href="css/plugin/vue.select.css"/>
     <link rel="stylesheet" href="css/plugin/vant.css">
     <script src="js/plugin/axios.min.js"></script>
     <script src="js/plugin/vue.min.js"></script>
     <script src="js/plugin/vant.min.js"></script>
+    <script src="js/plugin/vue.select.js"></script>
     <script src="js/plugin/calcTextareaHeight.js"></script>
     <script src="js/CommonUtil.js"></script>
     <script src="js/FantasyConstant.js"></script>
+    <style>
+        .page-min-width {
+            min-width: 50vw;
+            max-width: 70vw;
+        }
+    </style>
 </head>
 <body>
 <div id="app">
@@ -35,6 +43,26 @@
                     <h4 class="ui-nowrap">起始日</h4>
                     <textarea readonly style="height: 24px" v-model="matterDate" @click="popupShow = true"
                               class="ui-txt-info textarea border-none" placeholder="请选择时间"></textarea>
+                </div>
+            </li>
+            <li class="ui-border-t">
+                <div class="ui-list-info">
+                    <h4 class="ui-nowrap">提醒</h4>
+                    <div class="ui-txt-info">
+                        <v-select class="page-min-width" v-model="matterInterval" :reduce="item => item.code"
+                                  :clearable="false" :searchable="false" :options="matterIntervalOption"></v-select>
+                    </div>
+                </div>
+            </li>
+            <li class="ui-border-t">
+                <div class="ui-list-info">
+                    <h4 class="ui-nowrap">与TA共享</h4>
+                    <v-select class="page-min-width" placeholder="请输入姓名" :close-on-select="false"
+                              :options="usernameOption" :multiple="true" @search="fetchOptions">
+                        <template slot="no-options">
+                            暂无数据
+                        </template>
+                    </v-select>
                 </div>
             </li>
         </ul>
@@ -72,13 +100,18 @@
 </div>
 </body>
 <script>
+    Vue.component('v-select', VueSelect.VueSelect);
+
     new Vue({
         el: "#app",
         data() {
             return {
                 matterMemo: null,
                 matterDate: null,
+                matterInterval: 0,
                 matterTopStatus: false,
+                // 用户下拉框
+                usernameOption: [],
                 // 当前日期
                 popupDate: new Date(),
                 // 显示选择时间弹窗
@@ -104,7 +137,6 @@
             // 弹窗确认
             onPopupConfirm(event) {
                 console.log(event);
-                console.log(event.Format("yyyy-MM-dd"));
                 // 格式化
                 this.matterDate = event.Format("yyyy-MM-dd");
                 // 隐藏
@@ -114,6 +146,30 @@
             saveDayMatter() {
 
             },
+            // 加载选项
+            fetchOptions(searchKey, loading) {
+                // 空值退出
+                if (!searchKey) {
+                    return;
+                }
+                loading(true);
+                commonUtil.debounce(() => {
+                    axios({
+                        method: "get",
+                        url: "/fantasy-oauth2/api/v1/oauth/user/query.vue.select.list.by.username/" + searchKey,
+                    }).then(res => {
+                        // 获取选项
+                        this.usernameOption = commonUtil.getPageList(res);
+                        loading(false);
+                    }).catch(res => {
+                        if (res.data && res.data.msg) {
+                            this.tips = res.data.msg;
+                        } else {
+                            alert("服务器繁忙，请稍后再试")
+                        }
+                    })
+                }, 500);
+            }
         },
         created() {
 

@@ -1,8 +1,10 @@
 package com.mzlalal.oauth2.service;
 
+import com.mzlalal.base.entity.global.component.VueSelect;
 import com.mzlalal.base.entity.oauth2.dto.UserEntity;
 import com.mzlalal.base.service.BaseService;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -44,4 +46,12 @@ public interface UserService extends BaseService<UserEntity> {
      * @return true 成功 false失败
      */
     boolean updateAccessTokenById(String id, UserEntity userEntity);
+
+    /**
+     * 根据用户名查询下拉框集合
+     *
+     * @param username 用户名
+     * @return List<VueSelect>
+     */
+    List<VueSelect> queryVueSelectListByUsername(String username);
 }

@@ -68,8 +68,19 @@
         return Promise.reject(error);
     });
 
+    // 防抖动的公共定时器
+    let timer = null;
     // 暴露commonUtil
     window.commonUtil = {
+        // 防抖动
+        debounce: function (fn, wait) {
+            // 如果不为空则清除
+            if (timer !== null) {
+                clearTimeout(timer);
+            }
+            // 设置新的定时器
+            timer = setTimeout(fn, wait);
+        },
         // 获取URL上的参数
         getUrlPara: function (name) {
             const reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");

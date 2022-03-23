@@ -1,0 +1,40 @@
+package com.mzlalal.oss.service.impl;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mzlalal.base.entity.global.po.Po;
+import com.mzlalal.base.entity.oss.dto.DayMatterEntity;
+import com.mzlalal.base.util.Page;
+import com.mzlalal.oss.dao.DayMatterDao;
+import com.mzlalal.oss.service.DayMatterService;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+/**
+ * 纪念日ServiceImpl
+ *
+ * @author Mzlalal
+ * @date 2022-03-23 19:39:24
+ */
+@Service("dayMatterServiceImpl")
+public class DayMatterServiceImpl extends ServiceImpl<DayMatterDao, DayMatterEntity> implements DayMatterService {
+
+    /**
+     * 根据 PagePara 查询分页
+     *
+     * @param po 分页参数
+     * @return 分页信息
+     */
+    @Override
+    public Page<DayMatterEntity> queryPage(Po<DayMatterEntity> po) {
+        // 查询参数
+        QueryWrapper<DayMatterEntity> wrapper = new QueryWrapper<>(po.getEntity());
+        // 创建分页条件
+        com.github.pagehelper.Page<DayMatterEntity> pageResult = this.createPageQuery(po.getPageInfo());
+        // 查询结果集
+        List<DayMatterEntity> entityList = baseMapper.selectList(wrapper);
+        // 返回结果
+        return new Page<>(entityList, pageResult.getTotal(), po.getPageInfo());
+    }
+}

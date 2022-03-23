@@ -377,4 +377,29 @@
             "label": "5次"
         }
     ];
+    // 纪念日提醒间隔
+    window.matterIntervalOption = [
+        {
+            "code": 0,
+            "label": "不需要提醒"
+        }, {
+            "code": 3,
+            "label": "3天提醒一次"
+        }, {
+            "code": 5,
+            "label": "5天提醒一次"
+        }, {
+            "code": 7,
+            "label": "7天提醒一次"
+        }, {
+            "code": 10,
+            "label": "10天提醒一次"
+        }, {
+            "code": 15,
+            "label": "15天提醒一次"
+        }, {
+            "code": 30,
+            "label": "30天提醒一次"
+        }
+    ];
 })(window);

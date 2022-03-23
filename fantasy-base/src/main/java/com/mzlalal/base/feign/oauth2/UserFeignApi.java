@@ -3,6 +3,7 @@ package com.mzlalal.base.feign.oauth2;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.entity.global.Result;
+import com.mzlalal.base.entity.global.component.VueSelect;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oauth2.dto.UserEntity;
 import io.swagger.annotations.ApiOperation;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @author Mzlalal
  * @date 2021-07-29 20:36:48
  **/
-@FeignClient(contextId = "UserFeignApi" , name = GlobalConstant.FANTASY_OAUTH2, url = "${fantasy-oauth2.feign.url}"
+@FeignClient(contextId = "UserFeignApi", name = GlobalConstant.FANTASY_OAUTH2, url = "${fantasy-oauth2.feign.url}"
         , path = "/api/v1/oauth/user")
 public interface UserFeignApi {
 
@@ -30,7 +31,7 @@ public interface UserFeignApi {
      * @return Result
      */
     @ApiOperation("查看列表")
-    @RequestMapping(value = "/list" , method = RequestMethod.POST)
+    @RequestMapping(value = "/list", method = RequestMethod.POST)
     @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 10)
     Result<UserEntity> list(@RequestBody Po<UserEntity> po);
 
@@ -41,7 +42,7 @@ public interface UserFeignApi {
      * @return Result
      */
     @ApiOperation("查看详情")
-    @RequestMapping(value = "/info/{id}" , method = RequestMethod.GET)
+    @RequestMapping(value = "/info/{id}", method = RequestMethod.GET)
     @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 20)
     Result<UserEntity> info(@PathVariable("id") Long id);
 
@@ -52,7 +53,7 @@ public interface UserFeignApi {
      * @return Result
      */
     @ApiOperation("保存")
-    @RequestMapping(value = "/save" , method = RequestMethod.POST)
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
     @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 30)
     Result<Void> save(@RequestBody UserEntity user);
 
@@ -63,7 +64,7 @@ public interface UserFeignApi {
      * @return Result
      */
     @ApiOperation("更新")
-    @RequestMapping(value = "/update" , method = RequestMethod.POST)
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 40)
     Result<Void> update(@RequestBody UserEntity user);
 
@@ -74,7 +75,18 @@ public interface UserFeignApi {
      * @return Result
      */
     @ApiOperation("删除")
-    @RequestMapping(value = "/delete" , method = RequestMethod.POST)
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 50)
     Result<Void> delete(@RequestBody String[] ids);
+
+
+    /**
+     * 根据用户名查询下拉框集合
+     *
+     * @param username 用户名
+     * @return List<VueSelect>
+     */
+    @ApiOperation("根据用户名查询下拉框集合")
+    @RequestMapping(value = "/query.vue.select.list.by.username/{username}", method = RequestMethod.GET)
+    Result<VueSelect> queryVueSelectListByUsername(@PathVariable("username") String username);
 }

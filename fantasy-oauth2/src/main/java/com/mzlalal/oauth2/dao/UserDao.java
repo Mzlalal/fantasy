@@ -1,10 +1,12 @@
 package com.mzlalal.oauth2.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.mzlalal.base.entity.global.component.VueSelect;
 import com.mzlalal.base.entity.oauth2.dto.UserEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -39,4 +41,12 @@ public interface UserDao extends BaseMapper<UserEntity> {
      * @return 1存在 0 不存在
      */
     boolean queryExistByMail(@Param("mail") String mail);
+
+    /**
+     * 根据用户名查询下拉框集合
+     *
+     * @param username 用户名
+     * @return List<VueSelect>
+     */
+    List<VueSelect> queryVueSelectListByUsername(@Param("username") String username);
 }

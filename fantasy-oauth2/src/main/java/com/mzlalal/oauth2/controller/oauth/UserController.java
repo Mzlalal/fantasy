@@ -4,11 +4,13 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.entity.global.Result;
+import com.mzlalal.base.entity.global.component.VueSelect;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oauth2.dto.UserEntity;
 import com.mzlalal.base.feign.oauth2.UserFeignApi;
-import com.mzlalal.oauth2.service.oauth2.GrantResponseEnum;
+import com.mzlalal.base.util.Page;
 import com.mzlalal.oauth2.service.UserService;
+import com.mzlalal.oauth2.service.oauth2.GrantResponseEnum;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,6 +90,13 @@ public class UserController implements UserFeignApi {
     @Override
     public Result<Void> delete(@RequestBody String[] ids) {
         return userService.removeByIds(CollUtil.newArrayList(ids)) ? Result.ok() : Result.fail();
+    }
+
+    @Override
+    public Result<VueSelect> queryVueSelectListByUsername(@PathVariable("username") String username) {
+        Page<VueSelect> page = Page.empty();
+        page.setList(userService.queryVueSelectListByUsername(username));
+        return Result.ok(page);
     }
 
 }
