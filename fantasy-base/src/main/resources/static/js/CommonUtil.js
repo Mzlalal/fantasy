@@ -19,6 +19,8 @@
         return Promise.reject(error);
     });
 
+    // 是否正在刷新TOKEN
+    let isRefreshTokenNow = false;
     // 响应拦截器
     axios.interceptors.response.use(async function (res) {
         // res.data存在并且返回的state(业务状态)状态为200才能够继续执行,否则直接执行error
@@ -28,7 +30,9 @@
             return res.data;
         }
         // 需要刷新令牌的的状态码
-        if (res.data && window.refreshTokenStateCode.includes(res.data.state)) {
+        if (!isRefreshTokenNow && res.data && window.refreshTokenStateCode.includes(res.data.state)) {
+            // 设置为刷新
+            isRefreshTokenNow = true;
             // 获取刷新令牌
             let refreshToken = localStorage.getItem("user.refresh.token");
             if (!refreshToken) {
@@ -47,6 +51,8 @@
                 data: param
             })
             if (refreshTokenRes.data && refreshTokenRes.data.accessToken && refreshTokenRes.data.refreshToken) {
+                // 设置刷新完毕
+                isRefreshTokenNow = false;
                 // 保存用户令牌,用户刷新令牌
                 localStorage.setItem("user.access.token", refreshTokenRes.data.accessToken);
                 localStorage.setItem("user.refresh.token", refreshTokenRes.data.refreshToken);

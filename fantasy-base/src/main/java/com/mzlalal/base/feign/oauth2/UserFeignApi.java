@@ -6,6 +6,7 @@ import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.global.component.VueSelect;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oauth2.dto.UserEntity;
+import com.mzlalal.base.entity.oss.req.UserVueSelectReq;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.core.Ordered;
@@ -81,12 +82,22 @@ public interface UserFeignApi {
 
 
     /**
-     * 根据用户名查询下拉框集合
+     * 根据用户名查询用户ID下拉框集合
      *
-     * @param username 用户名
+     * @param req 请求
      * @return List<VueSelect>
      */
-    @ApiOperation("根据用户名查询下拉框集合")
-    @RequestMapping(value = "/query.vue.select.list.by.username/{username}", method = RequestMethod.GET)
-    Result<VueSelect> queryVueSelectListByUsername(@PathVariable("username") String username);
+    @ApiOperation("根据用户名查询用户ID下拉框集合")
+    @RequestMapping(value = "/query.user.id.vue.select.list.by.username", method = RequestMethod.POST)
+    Result<VueSelect> queryUserIdVueSelectListByUsername(@RequestBody UserVueSelectReq req);
+
+    /**
+     * 根据用户名查询用户邮箱下拉框集合
+     *
+     * @param req 请求
+     * @return List<VueSelect>
+     */
+    @ApiOperation("根据用户名查询用户邮箱下拉框集合")
+    @RequestMapping(value = "/query.user.mail.vue.select.list.by.username", method = RequestMethod.POST)
+    Result<VueSelect> queryUserMailVueSelectListByUsername(@RequestBody UserVueSelectReq req);
 }

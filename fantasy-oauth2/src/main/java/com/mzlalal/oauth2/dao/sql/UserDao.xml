@@ -37,8 +37,15 @@
     <select id="queryExistByMail" resultType="java.lang.Boolean" parameterType="java.lang.String">
         select count(mail) from t_user where mail = #{mail}
     </select>
-    <select id="queryVueSelectListByUsername" resultType="com.mzlalal.base.entity.global.component.VueSelect"
+
+    <select id="queryUserIdVueSelectListByUsername" resultType="com.mzlalal.base.entity.global.component.VueSelect"
             parameterType="java.lang.String">
         SELECT id as code, username as label FROM t_user where username like concat('%', #{username}, '%')
+    </select>
+
+    <select id="queryUserMailVueSelectListByUsername" resultType="com.mzlalal.base.entity.global.component.VueSelect"
+            parameterType="java.lang.String">
+        SELECT mail as code, username as label FROM t_user
+        where username like concat('%', #{username}, '%') and mail is not null
     </select>
 </mapper>

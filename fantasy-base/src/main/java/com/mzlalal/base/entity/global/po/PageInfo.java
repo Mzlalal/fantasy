@@ -2,7 +2,10 @@ package com.mzlalal.base.entity.global.po;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -14,6 +17,9 @@ import javax.validation.constraints.Min;
  * @date 2021/6/17 16:09
  **/
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @ApiModel("分页参数")
 public class PageInfo {
 

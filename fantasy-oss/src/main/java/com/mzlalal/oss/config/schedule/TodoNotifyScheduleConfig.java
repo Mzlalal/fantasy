@@ -11,7 +11,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 调度配置
+ * 待办提醒调度
  *
  * @author Mzlalal
  * @date 2022/3/17 21:32
@@ -19,11 +19,13 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 @EnableScheduling
 public class TodoNotifyScheduleConfig {
-
     /**
      * 待办提醒service
      */
     private final TodoNotifyService todoNotifyService;
+    /**
+     * redissonClient连接
+     */
     private final RedissonClient redissonClient;
 
     public TodoNotifyScheduleConfig(TodoNotifyService todoNotifyService, RedissonClient redissonClient) {
@@ -31,6 +33,9 @@ public class TodoNotifyScheduleConfig {
         this.redissonClient = redissonClient;
     }
 
+    /**
+     * 每五分钟的五秒后执行,例如: 01:05:05, 01:10:05, 01:15:05
+     */
     @Scheduled(cron = "5 0/5 * * * ?")
     public void todoNotifySchedule() {
         // 获取锁

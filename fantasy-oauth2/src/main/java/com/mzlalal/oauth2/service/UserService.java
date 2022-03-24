@@ -48,10 +48,18 @@ public interface UserService extends BaseService<UserEntity> {
     boolean updateAccessTokenById(String id, UserEntity userEntity);
 
     /**
-     * 根据用户名查询下拉框集合
+     * 根据用户名查询用户ID下拉框集合
      *
      * @param username 用户名
      * @return List<VueSelect>
      */
-    List<VueSelect> queryVueSelectListByUsername(String username);
+    List<VueSelect> queryUserIdVueSelectListByUsername(String username);
+
+    /**
+     * 根据用户名查询用户邮箱下拉框集合
+     *
+     * @param username 用户名
+     * @return List<VueSelect>
+     */
+    List<VueSelect> queryUserMailVueSelectListByUsername(String username);
 }

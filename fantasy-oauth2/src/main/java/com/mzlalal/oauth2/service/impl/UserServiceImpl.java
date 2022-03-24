@@ -58,7 +58,12 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     }
 
     @Override
-    public List<VueSelect> queryVueSelectListByUsername(String username) {
-        return baseMapper.queryVueSelectListByUsername(username);
+    public List<VueSelect> queryUserIdVueSelectListByUsername(String username) {
+        return baseMapper.queryUserIdVueSelectListByUsername(username);
+    }
+
+    @Override
+    public List<VueSelect> queryUserMailVueSelectListByUsername(String username) {
+        return baseMapper.queryUserMailVueSelectListByUsername(username);
     }
 }

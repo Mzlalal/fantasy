@@ -8,9 +8,9 @@
         <result property="id" column="id"/>
         <result property="roomName" column="room_name"/>
         <result property="playerIdSet" column="player_id_set"/>
-        <result property="playerStatusSet" column="player_status_set"
-                typeHandler="com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler"/>
         <result property="createTime" column="create_time"/>
+        <collection property="playerStatusSet" column="player_status_set"
+                    typeHandler="com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler"/>
     </resultMap>
 
 </mapper>

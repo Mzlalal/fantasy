@@ -9,9 +9,8 @@
         <result property="matterMemo" column="matter_memo"/>
         <result property="matterDate" column="matter_date"/>
         <result property="matterInterval" column="matter_interval"/>
+        <result property="matterMailSet" column="matter_mail_set"/>
         <result property="matterTopStatus" column="matter_top_status"/>
-        <result property="matterShareSet" column="matter_share_set"
-                typeHandler="com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler"/>
         <result property="isHide" column="is_hide"/>
         <result property="createBy" column="create_by"/>
         <result property="createName" column="create_name"/>
@@ -19,6 +18,8 @@
         <result property="updateBy" column="update_by"/>
         <result property="updateTime" column="update_time"/>
         <result property="updateName" column="update_name"/>
+        <collection property="matterSelectSet" column="matter_select_set"
+                    typeHandler="com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler"/>
     </resultMap>
 
 

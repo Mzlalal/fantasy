@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * 分页工具类
@@ -39,7 +39,7 @@ public class Page<T> implements Serializable {
     private long currPage;
 
     @ApiModelProperty("列表数据")
-    private List<T> list;
+    private Collection<T> list;
 
     /**
      * 分页结果
@@ -48,7 +48,7 @@ public class Page<T> implements Serializable {
      * @param totalCount 总记录数
      * @param pageInfo   分页参数
      */
-    public Page(List<T> list, long totalCount, PageInfo pageInfo) {
+    public Page(Collection<T> list, long totalCount, PageInfo pageInfo) {
         this.list = list;
         this.totalCount = totalCount;
         this.pageSize = pageInfo.getPageSize();
@@ -73,5 +73,14 @@ public class Page<T> implements Serializable {
      */
     public static <T> Page<T> empty() {
         return new Page<>(new ArrayList<>(), 0L, new PageInfo());
+    }
+
+    /**
+     * 空分页信息
+     *
+     * @return 空分页信息
+     */
+    public static <T> Page<T> list(Collection<T> collection) {
+        return new Page<>(collection, 0L, new PageInfo());
     }
 }

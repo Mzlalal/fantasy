@@ -58,7 +58,7 @@
                 <div class="ui-list-info">
                     <h4 class="ui-nowrap">提醒列表</h4>
                     <v-select class="page-min-width" placeholder="请输入姓名" :close-on-select="false"
-                              v-model="matterShareSet" :options="matterShareOption" :multiple="true"
+                              v-model="matterSelectSet" :options="matterShareOption" :multiple="true"
                               @search="fetchOptions">
                         <template slot="no-options">
                             暂无数据
@@ -120,7 +120,7 @@
                 // 最大日期
                 maxDate: new Date(),
                 // 用户下拉框选中的值
-                matterShareSet: [],
+                matterSelectSet: [],
                 // 用户下拉框的选项
                 matterShareOption: [],
                 // 当前日期
@@ -162,7 +162,7 @@
                     "matterDate": this.matterDate,
                     "matterInterval": this.matterInterval,
                     "matterTopStatus": this.matterTopStatus ? "1" : "0",
-                    "matterShareSet": this.matterShareSet,
+                    "matterSelectSet": this.matterSelectSet,
                 }
                 // 请求接口
                 axios({
@@ -194,7 +194,7 @@
                     this.matterDate = res.data.matterDate;
                     this.matterInterval = res.data.matterInterval;
                     this.matterTopStatus = res.data.matterTopStatus;
-                    this.matterShareSet = res.data.matterShareSet;
+                    this.matterSelectSet = res.data.matterSelectSet;
                     // 初始化备注高度
                     setTimeout(() => {
                         this.getHeight();
@@ -240,9 +240,13 @@
                 }
                 loading(true);
                 commonUtil.debounce(() => {
+                    let param = {
+                        "username": searchKey,
+                    }
                     axios({
-                        method: "get",
-                        url: "/fantasy-oauth2/api/v1/oauth/user/query.vue.select.list.by.username/" + searchKey,
+                        method: "post",
+                        url: "/fantasy-oauth2/api/v1/oauth/user/query.user.mail.vue.select.list.by.username",
+                        data: param
                     }).then(res => {
                         // 获取选项
                         this.matterShareOption = commonUtil.getPageList(res);

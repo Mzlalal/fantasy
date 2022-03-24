@@ -13,6 +13,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
@@ -56,8 +57,12 @@ public class DayMatterEntity implements Serializable {
     private String matterTopStatus;
 
     @ApiModelProperty("提醒列表")
+    private String matterMailSet;
+
+    @ApiModelProperty("提醒列表")
     @TableField(typeHandler = FastjsonTypeHandler.class)
-    private List<VueSelect> matterShareSet;
+    @NotEmpty(message = "提醒列表不能为空")
+    private List<VueSelect> matterSelectSet;
 
     @ApiModelProperty("是否删除")
     private Integer isHide;

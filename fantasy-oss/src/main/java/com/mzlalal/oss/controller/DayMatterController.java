@@ -2,9 +2,12 @@ package com.mzlalal.oss.controller;
 
 import cn.hutool.core.collection.CollUtil;
 import com.mzlalal.base.entity.global.Result;
+import com.mzlalal.base.entity.global.component.VueSelect;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oss.dto.DayMatterEntity;
 import com.mzlalal.base.feign.oss.DayMatterFeignApi;
+import com.mzlalal.base.util.AssertUtil;
+import com.mzlalal.base.util.LambdaUtil;
 import com.mzlalal.base.util.Page;
 import com.mzlalal.oss.service.DayMatterService;
 import io.swagger.annotations.Api;
@@ -14,6 +17,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * 纪念日controller
@@ -47,6 +52,15 @@ public class DayMatterController implements DayMatterFeignApi {
 
     @Override
     public Result<Void> save(@Validated @RequestBody DayMatterEntity dayMatter) {
+        // 提醒列表
+        List<VueSelect> matterSelectSet = dayMatter.getMatterSelectSet();
+        // 不能超过N人
+        AssertUtil.isTrue(matterSelectSet.size() <= 10, "提醒列表最多保存10人");
+        // 获取集合
+        String collect = LambdaUtil.getFieldStr(matterSelectSet, (item) -> String.valueOf(item.getCode()), ",");
+        // 根据","分隔,方便查询
+        dayMatter.setMatterMailSet(collect);
+        // 保存
         if (dayMatterService.save(dayMatter)) {
             return Result.ok();
         }
@@ -55,6 +69,15 @@ public class DayMatterController implements DayMatterFeignApi {
 
     @Override
     public Result<Void> update(@Validated @RequestBody DayMatterEntity dayMatter) {
+        // 提醒列表
+        List<VueSelect> matterSelectSet = dayMatter.getMatterSelectSet();
+        // 不能超过N人
+        AssertUtil.isTrue(matterSelectSet.size() <= 10, "提醒列表最多保存10人");
+        // 获取集合
+        String collect = LambdaUtil.getFieldStr(matterSelectSet, (item) -> String.valueOf(item.getCode()), ",");
+        // 根据","分隔,方便查询
+        dayMatter.setMatterMailSet(collect);
+        // 更新
         if (dayMatterService.updateById(dayMatter)) {
             return Result.ok();
         }

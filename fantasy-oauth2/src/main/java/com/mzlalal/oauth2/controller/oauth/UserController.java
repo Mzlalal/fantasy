@@ -7,8 +7,8 @@ import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.global.component.VueSelect;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oauth2.dto.UserEntity;
+import com.mzlalal.base.entity.oss.req.UserVueSelectReq;
 import com.mzlalal.base.feign.oauth2.UserFeignApi;
-import com.mzlalal.base.util.AssertUtil;
 import com.mzlalal.base.util.Page;
 import com.mzlalal.oauth2.service.UserService;
 import com.mzlalal.oauth2.service.oauth2.GrantResponseEnum;
@@ -94,10 +94,14 @@ public class UserController implements UserFeignApi {
     }
 
     @Override
-    public Result<VueSelect> queryVueSelectListByUsername(@PathVariable("username") String username) {
-        AssertUtil.notBlank(username, "用户名不能为空");
-        Page<VueSelect> page = Page.empty();
-        page.setList(userService.queryVueSelectListByUsername(username));
+    public Result<VueSelect> queryUserIdVueSelectListByUsername(@Validated @RequestBody UserVueSelectReq req) {
+        Page<VueSelect> page = Page.list(userService.queryUserIdVueSelectListByUsername(req.getUsername()));
+        return Result.ok(page);
+    }
+
+    @Override
+    public Result<VueSelect> queryUserMailVueSelectListByUsername(@Validated @RequestBody UserVueSelectReq req) {
+        Page<VueSelect> page = Page.list(userService.queryUserMailVueSelectListByUsername(req.getUsername()));
         return Result.ok(page);
     }
 

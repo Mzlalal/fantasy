@@ -43,10 +43,18 @@ public interface UserDao extends BaseMapper<UserEntity> {
     boolean queryExistByMail(@Param("mail") String mail);
 
     /**
-     * 根据用户名查询下拉框集合
+     * 根据用户名查询用户ID下拉框集合
      *
      * @param username 用户名
      * @return List<VueSelect>
      */
-    List<VueSelect> queryVueSelectListByUsername(@Param("username") String username);
+    List<VueSelect> queryUserIdVueSelectListByUsername(@Param("username") String username);
+
+    /**
+     * 根据用户名查询用户邮箱下拉框集合
+     *
+     * @param username 用户名
+     * @return List<VueSelect>
+     */
+    List<VueSelect> queryUserMailVueSelectListByUsername(@Param("username") String username);
 }
