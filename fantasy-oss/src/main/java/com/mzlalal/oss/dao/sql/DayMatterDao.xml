@@ -10,7 +10,8 @@
         <result property="matterDate" column="matter_date"/>
         <result property="matterInterval" column="matter_interval"/>
         <result property="matterTopStatus" column="matter_top_status"/>
-        <result property="matterShareSet" column="matter_share_set"/>
+        <result property="matterShareSet" column="matter_share_set"
+                typeHandler="com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler"/>
         <result property="isHide" column="is_hide"/>
         <result property="createBy" column="create_by"/>
         <result property="createName" column="create_name"/>

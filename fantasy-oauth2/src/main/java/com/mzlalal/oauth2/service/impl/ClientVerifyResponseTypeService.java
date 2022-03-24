@@ -38,10 +38,6 @@ public class ClientVerifyResponseTypeService {
      * @return ClientEntity
      */
     public ClientEntity verifyResponseType(String clientKey, String responseType) {
-        // 客户端Key是否为空
-        AssertUtil.notBlank(clientKey, GlobalResult.OAUTH_FAIL);
-        // 授权方式是否为空
-        AssertUtil.notBlank(responseType, GlobalResult.OAUTH_RESPONSE_TYPE_NOT_CORRECT);
         // 检查客户端
         ClientEntity client = clientService.getOneByClientKey(clientKey);
         AssertUtil.notNull(client, GlobalResult.OAUTH_FAIL);

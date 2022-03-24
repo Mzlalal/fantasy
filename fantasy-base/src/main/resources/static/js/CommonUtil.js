@@ -160,7 +160,7 @@
 
 // 时间增加Format格式化函数
 Date.prototype.Format = function (fmt) {
-    var o = {
+    const o = {
         // 月份
         "M+": this.getMonth() + 1,
         // 日
@@ -181,4 +181,15 @@ Date.prototype.Format = function (fmt) {
     for (const k in o)
         if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
     return fmt;
+}
+
+// 计算两个日期之间的天数差
+Date.prototype.daysDistance = function (date1, date2) {
+    // date是yyyy-MM-dd格式
+    date1 = Date.parse(date1);
+    date2 = date2 ? Date.parse(date2) : new Date();
+    // 计算两个日期之间相差的毫秒数的绝对值
+    const distance = Math.abs(date2 - date1);
+    // 毫秒数除以一天的毫秒数,就得到了天数
+    return Math.floor(distance / (24 * 3600 * 1000));
 }

@@ -9,6 +9,7 @@ import com.mzlalal.base.util.Page;
 import com.mzlalal.oss.service.DayMatterService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,7 +46,7 @@ public class DayMatterController implements DayMatterFeignApi {
     }
 
     @Override
-    public Result<Void> save(@RequestBody DayMatterEntity dayMatter) {
+    public Result<Void> save(@Validated @RequestBody DayMatterEntity dayMatter) {
         if (dayMatterService.save(dayMatter)) {
             return Result.ok();
         }
@@ -53,7 +54,7 @@ public class DayMatterController implements DayMatterFeignApi {
     }
 
     @Override
-    public Result<Void> update(@RequestBody DayMatterEntity dayMatter) {
+    public Result<Void> update(@Validated @RequestBody DayMatterEntity dayMatter) {
         if (dayMatterService.updateById(dayMatter)) {
             return Result.ok();
         }

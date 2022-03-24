@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, initial-scale=1.0, user-scalable=no">
-    <title>添加纪念日</title>
+    <title>更新纪念日</title>
     <link rel="stylesheet" href="css/plugin/frozen.css"/>
     <link rel="stylesheet" href="css/common.css"/>
     <link rel="stylesheet" href="css/plugin/vue.select.css"/>
@@ -85,8 +85,13 @@
             <i class="ui-loading"></i>
         </div>
         <div class="ui-btn-wrap" v-else>
-            <button class="ui-btn-lg ui-btn-primary" @click="saveDayMatter">
-                添加
+            <button class="ui-btn-lg ui-btn-primary" @click="updateDayMatter">
+                保存
+            </button>
+        </div>
+        <div class="ui-btn-wrap" style="padding-top: 0" v-if="!loading">
+            <button class="ui-btn-lg ui-btn-danger" @click="deleteDayMatter">
+                删除当前待办
             </button>
         </div>
     </div>
@@ -148,10 +153,11 @@
                 // 隐藏
                 this.popupShow = false;
             },
-            // 保存纪念日
-            saveDayMatter() {
+            // 更新纪念日
+            updateDayMatter() {
                 this.loading = true;
                 let param = {
+                    "id": this.id,
                     "matterMemo": this.matterMemo,
                     "matterDate": this.matterDate,
                     "matterInterval": this.matterInterval,
@@ -161,15 +167,62 @@
                 // 请求接口
                 axios({
                     method: "post",
-                    url: "/fantasy-oss/api/v1/oss/day.matter/save",
+                    url: "/fantasy-oss/api/v1/oss/day.matter/update",
                     data: param
                 }).then(res => {
                     this.tips = res.msg;
                     this.loading = false;
-                    if (!window.confirm("保存成功，是否继续添加?")) {
-                        // 跳转到待办列表
-                        this.redirectDayMatterList();
+                }).catch(res => {
+                    this.loading = false
+                    if (res.data && res.data.msg) {
+                        this.tips = res.data.msg;
+                    } else {
+                        alert("服务器繁忙，请稍后再试")
                     }
+                })
+            },
+            // 初始化纪念日信息
+            initDayMatter() {
+                this.loading = true;
+                // 请求接口
+                axios({
+                    method: "get",
+                    url: "/fantasy-oss/api/v1/oss/day.matter/info/" + this.id,
+                }).then(res => {
+                    this.loading = false;
+                    this.matterMemo = res.data.matterMemo;
+                    this.matterDate = res.data.matterDate;
+                    this.matterInterval = res.data.matterInterval;
+                    this.matterTopStatus = res.data.matterTopStatus;
+                    this.matterShareSet = res.data.matterShareSet;
+                    // 初始化备注高度
+                    setTimeout(() => {
+                        this.getHeight();
+                    })
+                }).catch(res => {
+                    this.loading = false
+                    if (res.data && res.data.msg) {
+                        this.tips = res.data.msg;
+                    } else {
+                        alert("服务器繁忙，请稍后再试")
+                    }
+                })
+            },
+            // 删除待办
+            deleteDayMatter() {
+                // 确认删除
+                if (!window.confirm("确认删除当前纪念日吗?")) {
+                    return;
+                }
+                this.loading = true;
+                // 请求接口
+                axios({
+                    method: "post",
+                    url: "/fantasy-oss/api/v1/oss/day.matter/delete",
+                    data: [this.id]
+                }).then(res => {
+                    // 跳转回列表
+                    this.redirectDayMatterList();
                 }).catch(res => {
                     this.loading = false
                     if (res.data && res.data.msg) {
@@ -205,16 +258,10 @@
             },
         },
         created() {
-            let userInfo = localStorage.getItem("user.info");
-            // 重新登录
-            if (!userInfo) {
-                window.location = window.defaultRedirectUri;
-                return;
-            }
-            userInfo = JSON.parse(userInfo);
-            if (userInfo.id && userInfo.username && userInfo.mail) {
-                this.matterShareSet.push({"label": userInfo.username, "code": userInfo.id})
-            }
+            // 从缓存中获取ID
+            this.id = localStorage.getItem("oss.day.matter.id");
+            // 初始化纪念日
+            this.initDayMatter();
         },
         watch: {
             matterMemo() {

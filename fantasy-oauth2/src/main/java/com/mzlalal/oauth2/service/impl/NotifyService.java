@@ -1,14 +1,12 @@
 package com.mzlalal.oauth2.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.lang.Validator;
 import cn.hutool.extra.template.TemplateEngine;
-import com.mzlalal.base.common.GlobalResult;
 import com.mzlalal.base.entity.notify.req.SendMailCodeReq;
-import com.mzlalal.base.util.AssertUtil;
 import com.mzlalal.notify.service.MailNotifyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * 消息服务
@@ -39,15 +37,11 @@ public class NotifyService {
      * @param req 邮件验证码参数
      * @return 邮件ID
      */
-    public String send(SendMailCodeReq req) {
-        // 验证邮箱格式
-        AssertUtil.isTrue(Validator.isEmail(req.getUsername())
-                , GlobalResult.EMAIL_NOT_CORRECT);
+    public String send(@Validated SendMailCodeReq req) {
         // 渲染文本
         String content = templateEngine.getTemplate("/notify/mail/accountMailVerifyCode.html")
                 .render(BeanUtil.beanToMap(req));
         // 发送邮件
-        return mailNotifyService.send(req.getUsername()
-                , "Fantasy-登录验证码", content, true);
+        return mailNotifyService.send(req.getMail(), "Fantasy-登录验证码", content, true);
     }
 }

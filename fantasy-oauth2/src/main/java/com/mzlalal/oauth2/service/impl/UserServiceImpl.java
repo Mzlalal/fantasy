@@ -6,13 +6,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mzlalal.base.entity.global.component.VueSelect;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oauth2.dto.UserEntity;
-import com.mzlalal.base.util.AssertUtil;
 import com.mzlalal.base.util.Page;
 import com.mzlalal.oauth2.dao.UserDao;
 import com.mzlalal.oauth2.service.UserService;
 import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,22 +36,22 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     }
 
     @Override
-    public Optional<UserEntity> queryOneByMobile(@NotBlank(message = "手机号不能为空") String mobile) {
+    public Optional<UserEntity> queryOneByMobile(String mobile) {
         return baseMapper.queryOneByMobile(mobile);
     }
 
     @Override
-    public Optional<UserEntity> queryOneByMail(@NotBlank(message = "邮件不能为空") String mail) {
+    public Optional<UserEntity> queryOneByMail(String mail) {
         return baseMapper.queryOneByMail(mail);
     }
 
     @Override
-    public boolean queryExistByMail(@NotBlank(message = "邮件不能为空") String mail) {
+    public boolean queryExistByMail(String mail) {
         return baseMapper.queryExistByMail(mail);
     }
 
     @Override
-    public boolean updateAccessTokenById(@NotBlank(message = "用户ID不能为空") String id, UserEntity userEntity) {
+    public boolean updateAccessTokenById(String id, UserEntity userEntity) {
         UpdateWrapper<UserEntity> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("id", id);
         return this.update(userEntity, updateWrapper);
@@ -61,7 +59,6 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
 
     @Override
     public List<VueSelect> queryVueSelectListByUsername(String username) {
-        AssertUtil.notBlank(username, "用户名不能为空");
         return baseMapper.queryVueSelectListByUsername(username);
     }
 }

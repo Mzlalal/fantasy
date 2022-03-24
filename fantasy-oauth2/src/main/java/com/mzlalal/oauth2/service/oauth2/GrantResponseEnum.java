@@ -52,12 +52,12 @@ public enum GrantResponseEnum {
 
         @Override
         public String createAuthorizeCode(OauthReq req) {
-            // 用户名
-            String username = req.getUsername();
-            // 邮箱格式
-            this.verifyUsername(username);
+            // 邮箱
+            String mail = req.getUsername();
+            // 验证邮箱格式
+            this.verifyUsername(mail);
             // 用户名的邮箱验证码redis key
-            String mailCodeRedisKey = GlobalConstant.clientKeyMailCodeRedisKey(req.getClientKey(), username);
+            String mailCodeRedisKey = GlobalConstant.clientKeyMailCodeRedisKey(req.getClientKey(), mail);
             // 获取验证码
             String redisCode = redisTemplate.opsForValue().get(mailCodeRedisKey);
             // 删除只能使用一次
@@ -65,7 +65,7 @@ public enum GrantResponseEnum {
             // 验证码是否正确
             AssertUtil.equals(redisCode, req.getPassword(), GlobalResult.VALIDATE_CODE_NOT_RIGHT);
             // 查询用户信息
-            UserEntity userEntity = userService.queryOneByMail(username)
+            UserEntity userEntity = userService.queryOneByMail(mail)
                     .orElseThrow(GlobalResult.EMAIL_NOT_FOUNT::boom);
             // 存储用户信息并返回授权码
             return redisAuthorizeCodeService.store(req.getClientKey(), userEntity);
@@ -97,12 +97,12 @@ public enum GrantResponseEnum {
 
         @Override
         public String createAuthorizeCode(OauthReq req) {
-            // 用户名
-            String username = req.getUsername();
+            // 手机号
+            String mobile = req.getUsername();
             // 手机格式
-            this.verifyUsername(username);
+            this.verifyUsername(mobile);
             // 查询用户信息
-            UserEntity userEntity = userService.queryOneByMobile(username)
+            UserEntity userEntity = userService.queryOneByMobile(mobile)
                     .orElseThrow(GlobalResult.MOBILE_NOT_FOUNT::boom);
             // 密码不正确
             AssertUtil.isTrue(passwordEncoder.matches(req.getPassword(), userEntity.getPassword()),

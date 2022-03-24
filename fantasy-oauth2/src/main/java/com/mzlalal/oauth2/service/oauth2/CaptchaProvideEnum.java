@@ -36,15 +36,15 @@ public enum CaptchaProvideEnum {
         private final StringRedisTemplate redisTemplate = SpringUtil.getBean(StringRedisTemplate.class);
 
         @Override
-        public Result<String> createVerifyCode(String username, String clientKey) {
+        public Result<String> createVerifyCode(String mail, String clientKey) {
             // 随机四位数
             int randomInt = RandomUtil.randomInt(1001, 9999);
             // 过期时间15分钟
             redisTemplate.opsForValue()
-                    .set(GlobalConstant.clientKeyMailCodeRedisKey(clientKey, username), String.valueOf(randomInt), 15, TimeUnit.MINUTES);
+                    .set(GlobalConstant.clientKeyMailCodeRedisKey(clientKey, mail), String.valueOf(randomInt), 15, TimeUnit.MINUTES);
             // 构建参数
             SendMailCodeReq sendMailCodeReq = SendMailCodeReq.builder()
-                    .username(username)
+                    .mail(mail)
                     .code(String.valueOf(randomInt))
                     .build();
             // 发送邮箱验证码

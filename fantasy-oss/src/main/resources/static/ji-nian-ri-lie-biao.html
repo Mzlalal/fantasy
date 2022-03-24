@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="css/common.css"/>
     <script src="js/plugin/vue.min.js"></script>
     <script src="js/plugin/axios.min.js"></script>
+    <script src="js/CommonUtil.js"></script>
     <script src="js/FantasyConstant.js"></script>
     <script src="js/components/PopupMenu.js"></script>
     <script src="js/components/DownSlideStream.js"></script>
@@ -28,10 +29,14 @@
         <slot>
             <ul class="ui-list-function ui-border-tb">
                 <li class="ui-whitespace" v-for="dayMatter in dayMatterList"
-                    v-bind:class="{'background-color-ghostwhite': dayMatter.matterTopStatus === '1'}">
+                    v-bind:class="{'background-color-ghostwhite': dayMatter.matterTopStatus === '1'}"
+                    @click="redirectUpdateDayMatter(dayMatter.id)">
                     <div class="ui-list-info ui-border-t">
                         <h4 class="ui-nowrap font-weight-16px">
-                            {{dayMatter.matterMemo}}
+                            {{dayMatter.matterMemo}}已经
+                            <span class="ui-txt-highlight font-weight-bolder font-size-18px">
+                                {{dayMatter.matterDate | calculateDayDistanceToday}}
+                            </span>天
                         </h4>
                         <div class="ui-nowrap">
                             <span class="ui-txt-highlight font-weight-12px">起始日：{{dayMatter.matterDate}}</span>
@@ -60,11 +65,23 @@
             // 纪念日列表
             dayMatterList: [],
         },
+        filters: {
+            calculateDayDistanceToday(date) {
+                return new Date().daysDistance(date);
+            },
+        },
         methods: {
             // 跳转到添加纪念日
             redirectSaveDayMatter() {
                 // 跳转到保存待办
                 window.location = "/fantasy-oss/tian-jia-ji-nian-ri.html";
+            },
+            // 跳转到修改纪念日
+            redirectUpdateDayMatter(id) {
+                // 保存ID
+                localStorage.setItem("oss.day.matter.id", id);
+                // 跳转到修改纪念日
+                window.location = "/fantasy-oss/xiu-gai-ji-nian-ri.html";
             },
             // 滚动到底部
             onScrollToBottom() {
@@ -74,7 +91,41 @@
                 }
                 // 当前页+1
                 this.currPage++;
-            }
+            },
+            // 初始化列表
+            initDayMatterList() {
+                this.loading = true;
+                const param = {
+                    "entity": {},
+                    "pageInfo": {
+                        "currPage": this.currPage,
+                        "pageSize": 10
+                    }
+                }
+                // 请求
+                axios({
+                    method: "post",
+                    url: "/fantasy-oss/api/v1/oss/day.matter/list",
+                    data: param
+                }).then(res => {
+                    // 追加到集合中
+                    this.dayMatterList = this.dayMatterList.concat(commonUtil.getPageList(res));
+                    // 获取到总页数
+                    this.totalPage = commonUtil.getTotalPage(res);
+                    this.loading = false;
+                }).catch(res => {
+                    this.loading = false;
+                    if (res.data && res.data.msg) {
+                        alert(res.data.msg)
+                    } else {
+                        alert("服务器繁忙，请稍后再试")
+                    }
+                })
+            },
+        },
+        created() {
+            // 初始化列表
+            this.initDayMatterList();
         }
     });
 </script>
