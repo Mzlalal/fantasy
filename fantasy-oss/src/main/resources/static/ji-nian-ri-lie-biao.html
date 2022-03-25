@@ -19,7 +19,7 @@
 <div id="app">
     <header class="ui-header ui-header-positive ui-border-b text-center">
         <span class="position-left username-display" @click="menuShow = true">我的菜单</span>
-        <!--<span class="font-weight-bolder font-weight-20px">待办列表</span>-->
+        <!--<span class="font-weight-bolder font-size-20px">待办列表</span>-->
         <span class="position-right username-display" @click="redirectSaveDayMatter">添加纪念日</span>
     </header>
     <template-down-slide-stream :distance-to-bottom="0"
@@ -32,15 +32,15 @@
                     v-bind:class="{'background-color-ghostwhite': dayMatter.matterTopStatus === '1'}"
                     @click="redirectUpdateDayMatter(dayMatter.id)">
                     <div class="ui-list-info ui-border-t">
-                        <h4 class="ui-nowrap font-weight-16px">
+                        <h4 class="ui-nowrap font-size-16px">
                             {{dayMatter.matterMemo}}已经
-                            <span class="ui-txt-highlight font-weight-bolder font-size-18px">
+                            <span class="ui-txt-highlight font-size-bolder font-size-18px">
                                 {{dayMatter.matterDate | calculateDayDistanceToday}}
                             </span>天
                         </h4>
                         <div class="ui-nowrap">
-                            <span class="ui-txt-highlight font-weight-12px">起始日：{{dayMatter.matterDate}}</span>
-                            <span class="ui-txt-highlight font-weight-12px margin-left-5px">{{dayMatter.createName}}</span>
+                            <span class="ui-txt-highlight font-size-12px">起始日：{{dayMatter.matterDate}}</span>
+                            <span class="ui-txt-highlight font-size-12px margin-left-5px">{{dayMatter.createName}}</span>
                         </div>
                     </div>
                 </li>

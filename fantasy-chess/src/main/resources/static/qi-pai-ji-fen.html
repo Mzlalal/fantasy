@@ -22,8 +22,8 @@
 <div id="app">
     <header class="ui-header ui-header-positive ui-border-b text-center">
         <a class="position-left username-display" href="/fantasy-chess/fang-jian-lie-biao.html">返回</a>
-        <span class="font-weight-bolder font-weight-20px">{{roomCode || "斗也斗的"}}</span>
-        <span class="position-right ui-txt-red font-weight-bolder" @click="playerOutRoom"
+        <span class="font-weight-bolder font-size-20px">{{roomCode || "斗也斗的"}}</span>
+        <span class="position-right ui-txt-red font-size-bolder" @click="playerOutRoom"
               v-if="userStatus === '1'">我要下桌</span>
         <span class="position-right username-display" @click="playerJoinRoom"
               v-if="userStatus === '0'">我要上桌</span>
@@ -37,7 +37,7 @@
                          v-bind:class="{'background-B-c': player.playerStatus !== '1'}">
                         {{player.playerName}}
                     </div>
-                    <div class="text-center width-70px font-weight-bolder">
+                    <div class="text-center width-70px font-size-bolder">
                         {{player.playerScore}}
                     </div>
                 </li>

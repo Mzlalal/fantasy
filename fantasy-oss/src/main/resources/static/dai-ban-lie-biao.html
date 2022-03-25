@@ -21,7 +21,7 @@
 <div id="app">
     <header class="ui-header ui-header-positive ui-border-b text-center">
         <span class="position-left username-display" @click="menuShow = true">我的菜单</span>
-        <!--<span class="font-weight-bolder font-weight-20px">待办列表</span>-->
+        <!--<span class="font-weight-bolder font-size-20px">待办列表</span>-->
         <span class="position-right username-display" @click="redirectSaveTodo">添加待办</span>
     </header>
 
@@ -35,12 +35,12 @@
                     v-bind:class="{'background-color-ghostwhite': todo.notifyTopStatus === '1'}"
                     @click="redirectUpdateTodo(todo.id)">
                     <div class="ui-list-info ui-border-t">
-                        <h4 class="ui-nowrap font-weight-16px">
+                        <h4 class="ui-nowrap font-size-16px">
                             {{todo.notifyMemo}}
                         </h4>
                         <div class="ui-nowrap">
-                            <span class="ui-txt-highlight font-weight-12px">最近提醒时间：{{todo.notifyExecTime}}</span>
-                            <span class="ui-txt-highlight font-weight-12px margin-left-5px">{{todo.notifyType | repeatNotifyModeFilter}}</span>
+                            <span class="ui-txt-highlight font-size-12px">最近提醒时间：{{todo.notifyExecTime}}</span>
+                            <span class="ui-txt-highlight font-size-12px margin-left-5px">{{todo.notifyType | repeatNotifyModeFilter}}</span>
                         </div>
                     </div>
                 </li>
