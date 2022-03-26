@@ -65,7 +65,7 @@
             </svg>
         </div>
         <div class="ui-tab">
-            <ul class="ui-tab-nav ui-border-b margin-bottom-1em">
+            <ul class="ui-tab-nav ui-border-b">
                 <li>
                     <a :href="'/fantasy-oauth2/mi-ma-deng-lu.html?clientKey=' + reqClientKey">
                         <span>手机号登录</span>
@@ -74,28 +74,21 @@
                 <li class="current"><span>邮箱登录</span></li>
             </ul>
         </div>
-        <div class="ui-form-item ui-border-b">
-            <div class="ui-input ui-input-text padding-0 margin-0">
-                <input type="text" class="width-100p" @blur="rememberUsername"
-                       v-model="username" placeholder="请输入邮箱"/>
+        <div class="ui-form ui-border-t">
+            <div class="ui-form-item ui-border-b margin-top-1em">
+                <div class="ui-input ui-input-text padding-0 margin-0">
+                    <input type="text" class="width-100p" @blur="rememberUsername"
+                           v-model="username" placeholder="请输入邮箱"/>
+                </div>
+                <button class="ui-btn-s" @click="verifyCode" :disabled="!verifyCodeBtn">
+                    📬发送
+                </button>
             </div>
-            <button class="ui-btn-s" @click="verifyCode" :disabled="!verifyCodeBtn">
-                📬发送
-            </button>
-        </div>
-        <div class="ui-form-item ui-border-b">
-            <div class="ui-input ui-input-text padding-0 margin-0">
-                <input type="number" pattern="/d*" class="width-100p" v-model="password" placeholder="请输入收到的验证码"/>
+            <div class="ui-form-item ui-border-b margin-top-1em">
+                <div class="ui-input ui-input-text padding-0 margin-0">
+                    <input type="number" pattern="/d*" class="width-100p" v-model="password" placeholder="请输入收到的验证码"/>
+                </div>
             </div>
-        </div>
-        <div class="ui-loading-wrap margin-top-1em" v-if="loading">
-            <p>登录中</p>
-            <i class="ui-loading"></i>
-        </div>
-        <div class="ui-btn-wrap" v-else>
-            <button class="ui-btn-lg ui-btn-primary" @click="login">
-                登录
-            </button>
         </div>
         <div class="ui-tooltips ui-tooltips-guide ui-tooltips-function">
             <div class="ui-tooltips-cnt ui-border-b">
@@ -106,6 +99,15 @@
                     </button>
                 </a>
             </div>
+        </div>
+        <div class="ui-loading-wrap margin-top-1em" v-if="loading">
+            <p>登录中</p>
+            <i class="ui-loading"></i>
+        </div>
+        <div class="ui-btn-wrap" v-else>
+            <button class="ui-btn-lg ui-btn-primary" @click="login">
+                登录
+            </button>
         </div>
     </div>
 </div>

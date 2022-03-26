@@ -113,16 +113,19 @@
                 <input v-model="user.confirmPassword" type="password" placeholder="请再次输入相同的密码"/>
             </div>
         </div>
-        <div class="ui-btn-wrap">
-            <button class="ui-btn-lg ui-btn-primary" @click="updateFun"
-                    v-bind:class="{ 'disabled': !updateBtn }" :disabled="!updateBtn">
-                修改
-            </button>
-        </div>
         <div class="ui-tooltips ui-tooltips-guide ui-tooltips-function" v-if="tips">
             <div class="ui-tooltips-cnt ui-border-b">
                 <i></i>{{tips}}
             </div>
+        </div>
+        <div class="ui-loading-wrap margin-top-1em" v-if="loading">
+            <p>保存中</p>
+            <i class="ui-loading"></i>
+        </div>
+        <div class="ui-btn-wrap" v-else>
+            <button class="ui-btn-lg ui-btn-primary" @click="updateFun">
+                保存
+            </button>
         </div>
     </div>
 </div>
@@ -132,8 +135,8 @@
         el: "#app",
         data() {
             return {
-                // 修改按钮
-                updateBtn: true,
+                // 修改中
+                loading: false,
                 // 用户信息
                 user: {},
                 // 显示信息
@@ -143,14 +146,13 @@
         methods: {
             // 修改用户信息
             updateFun() {
-                // 禁用登录按钮
-                this.updateBtn = false;
+                this.loading = true;
                 // 校验密码和确认密码是否相同
                 if (this.user.password !== this.user.confirmPassword) {
                     // 提示
                     this.tips = "两次密码输入不相同";
                     // 启用登录按钮
-                    this.updateBtn = true;
+                    this.loading = false;
                     return;
                 }
                 // 请求参数,和form或者input使用v-model绑定
@@ -184,8 +186,7 @@
                         this.redirectHrefFrom();
                     }, 1000)
                 }).catch(res => {
-                    // 禁用登录按钮
-                    this.updateBtn = true;
+                    this.loading = false;
                     // 提示信息
                     if (res.data && res.data.msg) {
                         this.tips = res.data.msg;
