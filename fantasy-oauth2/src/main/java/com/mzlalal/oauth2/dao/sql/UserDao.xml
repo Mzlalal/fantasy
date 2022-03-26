@@ -34,10 +34,6 @@
         select * from t_user where mail = #{mail}
     </select>
 
-    <select id="queryExistByMail" resultType="java.lang.Boolean" parameterType="java.lang.String">
-        select count(mail) from t_user where mail = #{mail}
-    </select>
-
     <select id="queryUserIdVueSelectListByUsername" resultType="com.mzlalal.base.entity.global.component.VueSelect"
             parameterType="java.lang.String">
         SELECT id as code, username as label FROM t_user where username like concat('%', #{username}, '%')

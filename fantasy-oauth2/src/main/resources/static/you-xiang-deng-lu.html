@@ -13,7 +13,9 @@
     <script src="js/FantasyConstant.js"></script>
 </head>
 <style>
-
+    .ui-input {
+        height: unset;
+    }
 </style>
 <body>
 <div id="app">
@@ -63,41 +65,37 @@
             </svg>
         </div>
         <div class="ui-tab">
-            <ul class="ui-tab-nav ui-border-b ">
+            <ul class="ui-tab-nav ui-border-b margin-bottom-1em">
                 <li>
                     <a :href="'/fantasy-oauth2/mi-ma-deng-lu.html?clientKey=' + reqClientKey">
-                        <span>密码登录</span>
+                        <span>手机号登录</span>
                     </a>
                 </li>
                 <li class="current"><span>邮箱登录</span></li>
             </ul>
         </div>
-        <div class="ui-form-item ui-border-b margin-top-1em">
+        <div class="ui-form-item ui-border-b">
             <div class="ui-input ui-input-text padding-0 margin-0">
-                <input type="email" class="width-100p" @input="clearMsg" @blur="rememberUsername"
+                <input type="text" class="width-100p" @blur="rememberUsername"
                        v-model="username" placeholder="请输入邮箱"/>
             </div>
+            <button class="ui-btn-s" @click="verifyCode" :disabled="!verifyCodeBtn">
+                📬发送
+            </button>
         </div>
         <div class="ui-form-item ui-border-b">
             <div class="ui-input ui-input-text padding-0 margin-0">
-                <input type="text" class="width-100p" @input="enableLoginBtn"
-                       v-model="password" placeholder="请输入收到的验证码"/>
+                <input type="number" pattern="/d*" class="width-100p" v-model="password" placeholder="请输入收到的验证码"/>
             </div>
         </div>
-        <div class="ui-btn-wrap">
-            <button class="ui-btn-lg ui-btn-primary" @click="login"
-                    v-bind:class="{ 'disabled': !loginBtn }" :disabled="!loginBtn">
+        <div class="ui-loading-wrap margin-top-1em" v-if="loading">
+            <p>登录中</p>
+            <i class="ui-loading"></i>
+        </div>
+        <div class="ui-btn-wrap" v-else>
+            <button class="ui-btn-lg ui-btn-primary" @click="login">
                 登录
             </button>
-        </div>
-        <div class="ui-tooltips ui-tooltips-guide ui-tooltips-function">
-            <div class="ui-tooltips-cnt ui-border-b">
-                <i></i>{{tips}}
-                <button class="ui-btn-s" @click="verifyCode"
-                        v-bind:class="{ 'disabled': !verifyCodeBtn }" :disabled="!verifyCodeBtn">
-                    📬发送验证码
-                </button>
-            </div>
         </div>
         <div class="ui-tooltips ui-tooltips-guide ui-tooltips-function">
             <div class="ui-tooltips-cnt ui-border-b">
@@ -117,8 +115,8 @@
         el: "#app",
         data() {
             return {
-                // 登录按钮
-                loginBtn: false,
+                // 登录中
+                loading: false,
                 // 验证码按钮
                 verifyCodeBtn: true,
                 // 请求的客户端Key
@@ -127,8 +125,6 @@
                 username: "",
                 // 密码
                 password: "",
-                // 显示信息
-                tips: "使用邮箱验证码登录",
                 // 邮箱默认显示信息
                 mailDefaultTips: "使用邮箱验证码登录",
                 // 注册信息
@@ -138,8 +134,7 @@
         methods: {
             // 登录
             login() {
-                // 禁用登录按钮
-                this.loginBtn = false;
+                this.loading = true;
                 // 请求参数,和form或者input使用v-model绑定
                 const param = {
                     "clientKey": this.reqClientKey,
@@ -161,14 +156,17 @@
                     // 跳转地址
                     window.location = res.data.redirectUri;
                 }).catch(res => {
+                    setTimeout(() => {
+                        this.loading = false;
+                    }, 500);
                     // 启用验证码按钮
-                    this.enableVerifyBtn();
+                    this.verifyCodeBtn = true;
                     // 置空验证码
                     this.password = "";
                     if (res.data && res.data.msg) {
-                        this.tips = res.data.msg;
+                        alert(res.data.msg);
                     } else {
-                        this.tips = "服务器繁忙，请稍后再试";
+                        alert("服务器繁忙，请稍后再试");
                     }
                 })
             },
@@ -182,48 +180,23 @@
                 };
                 // 禁用验证码按钮
                 this.verifyCodeBtn = false;
-                // 禁用登录按钮
-                this.loginBtn = false;
-                // 更改信息
-                this.tips = "请稍候...";
                 // 请求接口
                 axios({
                     method: "post",
                     url: "/fantasy-oauth2/api/v1/oauth/verify.code",
                     data: param
                 }).then(res => {
-                    // 启用登录按钮
-                    this.enableLoginBtn();
                     // 更改信息
-                    this.tips = "已发送";
+                    alert("已发送，请注意查收");
                 }).catch(res => {
                     // 启用验证码按钮
-                    this.enableVerifyBtn();
+                    this.verifyCodeBtn = true;
                     if (res.data && res.data.msg) {
-                        this.tips = res.data.msg;
+                        alert(res.data.msg);
                     } else {
-                        this.tips = "服务器繁忙，请稍后再试";
+                        alert("服务器繁忙，请稍后再试");
                     }
                 })
-            },
-            // 清空信息
-            clearMsg() {
-                // 设置成默认消息
-                this.tips = this.mailDefaultTips;
-                // 启用验证码按钮
-                this.enableVerifyBtn();
-            },
-            // 启动登录按钮
-            enableLoginBtn() {
-                // 启用登录按钮
-                this.loginBtn = true;
-            },
-            // 启动验证码,禁用登录按钮
-            enableVerifyBtn() {
-                // 启用验证码按钮
-                this.verifyCodeBtn = true;
-                // 禁用登录按钮
-                this.loginBtn = false;
             },
             // 记住用户邮箱
             rememberUsername() {

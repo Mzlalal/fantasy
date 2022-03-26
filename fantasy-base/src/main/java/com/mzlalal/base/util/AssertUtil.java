@@ -44,6 +44,18 @@ public class AssertUtil extends Assert {
     }
 
     /**
+     * 为true则抛出异常
+     *
+     * @param flag       判断
+     * @param resultCode 全局状态码
+     */
+    public static void isFalse(boolean flag, GlobalResult resultCode) {
+        if (flag) {
+            throw resultCode.boom();
+        }
+    }
+
+    /**
      * 对象为空则抛出异常
      *
      * @param obj        判断

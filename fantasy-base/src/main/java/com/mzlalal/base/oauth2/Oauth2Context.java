@@ -76,7 +76,7 @@ public class Oauth2Context {
      */
     public static String getTenantIdElseDefault() {
         if (CONTEXT.get() == null) {
-            return GlobalConstant.DEFAULT_USERNAME;
+            return GlobalConstant.DEFAULT_TENANT_ID;
         }
         return CONTEXT.get().getTenantId();
     }

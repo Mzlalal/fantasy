@@ -98,7 +98,7 @@
                 <label class="width-80px">
                     电子邮箱
                 </label>
-                <input v-model="user.mail" type="email" class="width-100p" placeholder="请输入电子邮箱"/>
+                <input v-model="user.mail" type="text" class="width-100p" placeholder="请输入电子邮箱"/>
             </div>
             <div class="ui-form-item ui-border-b">
                 <label class="width-80px username-display">
@@ -203,6 +203,9 @@
             let userInfo = localStorage.getItem("user.info");
             if (userInfo) {
                 this.user = JSON.parse(userInfo);
+                if (this.user.mail.indexOf("@") === -1) {
+                    this.user.mail = "";
+                }
                 this.user.password = "";
                 this.user.confirmPassword = "";
             }

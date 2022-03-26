@@ -35,14 +35,6 @@ public interface UserDao extends BaseMapper<UserEntity> {
     Optional<UserEntity> queryOneByMail(@Param("mail") String mail);
 
     /**
-     * 根据邮箱判断用户是否存在
-     *
-     * @param mail 邮箱
-     * @return 1存在 0 不存在
-     */
-    boolean queryExistByMail(@Param("mail") String mail);
-
-    /**
      * 根据用户名查询用户ID下拉框集合
      *
      * @param username 用户名

@@ -51,6 +51,14 @@ public enum GlobalResult {
      */
     ACCOUNT_LOCKED(1106, "账户被锁定"),
     /**
+     * 手机号已被注册
+     */
+    MOBILE_HAS_BEEN_REGISTERED(1107, "手机号已被注册"),
+    /**
+     * 邮箱已被注册
+     */
+    MAIL_HAS_BEEN_REGISTERED(1108, "邮箱已被注册（忘记密码可以使用邮箱验证码登录后进入我的信息修改密码）"),
+    /**
      * 授权失败
      */
     OAUTH_FAIL(1400, "应用授权失败"),

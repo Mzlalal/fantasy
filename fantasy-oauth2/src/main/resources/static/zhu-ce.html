@@ -93,13 +93,13 @@
                 <label class="width-80px username-display">
                     手机号
                 </label>
-                <input v-model="mobile" type="number" placeholder="请输入手机号">
+                <input v-model="mobile" type="tel" placeholder="请输入手机号">
             </div>
             <div class="ui-form-item ui-border-b">
                 <label class="width-80px">
                     电子邮箱
                 </label>
-                <input v-model="mail" type="email" placeholder="请输邮箱">
+                <input v-model="mail" type="email" placeholder="请输入邮箱（选填）">
             </div>
             <div class="ui-form-item ui-border-b">
                 <label class="width-80px username-display">
@@ -114,16 +114,19 @@
                 <input v-model="confirmPassword" type="password" placeholder="请再次输入相同的密码">
             </div>
         </div>
-        <div class="ui-btn-wrap">
-            <button class="ui-btn-lg ui-btn-primary" @click="registerFun"
-                    v-bind:class="{ 'disabled': !registerBtn }" :disabled="!registerBtn">
-                立即注册
-            </button>
-        </div>
         <div class="ui-tooltips ui-tooltips-guide ui-tooltips-function" v-if="tips">
             <div class="ui-tooltips-cnt ui-border-b">
                 <i></i>{{tips}}
             </div>
+        </div>
+        <div class="ui-loading-wrap margin-top-1em" v-if="loading">
+            <p>注册中</p>
+            <i class="ui-loading"></i>
+        </div>
+        <div class="ui-btn-wrap" v-else>
+            <button class="ui-btn-lg ui-btn-primary" @click="registerFun">
+                立即注册
+            </button>
         </div>
     </div>
 </div>
@@ -133,8 +136,8 @@
         el: "#app",
         data() {
             return {
-                // 注册按钮
-                registerBtn: true,
+                // 注册中
+                loading: false,
                 // 请求的客户端Key
                 reqClientKey: "",
                 // 用户名
@@ -154,14 +157,13 @@
         methods: {
             // 注册
             registerFun() {
-                // 禁用登录按钮
-                this.registerBtn = false;
+                this.loading = true;
                 // 校验密码和确认密码是否相同
                 if (this.password !== this.confirmPassword) {
                     // 提示
                     this.tips = "两次密码输入不相同";
                     // 启用登录按钮
-                    this.registerBtn = true;
+                    this.loading = false;
                     return;
                 }
                 // 请求参数,和form或者input使用v-model绑定
@@ -181,7 +183,7 @@
                     this.tips = "注册成功，两秒后跳转到首页";
                     // 记住用户手机号
                     if (this.username) {
-                        localStorage.setItem("username.mobile", this.username);
+                        localStorage.setItem("username.mobile", this.mobile);
                     }
                     // 记住用户邮箱
                     if (this.mail) {
@@ -191,8 +193,7 @@
                         window.location = "/fantasy-oauth2/mi-ma-deng-lu.html?clientKey=" + this.reqClientKey;
                     }, 1500)
                 }).catch(res => {
-                    // 禁用登录按钮
-                    this.registerBtn = true;
+                    this.loading = false;
                     // 提示信息
                     if (res.data && res.data.msg) {
                         this.tips = res.data.msg;

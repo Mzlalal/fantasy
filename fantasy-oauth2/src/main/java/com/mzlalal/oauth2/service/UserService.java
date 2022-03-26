@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * service
+ * 用户service
  *
  * @author Mzlalal
  * @date 2021-07-29 20:36:48
@@ -29,6 +29,14 @@ public interface UserService extends BaseService<UserEntity> {
      * @return UserEntity
      */
     Optional<UserEntity> queryOneByMail(String mail);
+
+    /**
+     * 根据手机号判断用户是否存在
+     *
+     * @param mobile 手机号
+     * @return 1存在 0 不存在
+     */
+    boolean queryExistByMobile(String mobile);
 
     /**
      * 根据邮箱判断用户是否存在
@@ -62,4 +70,11 @@ public interface UserService extends BaseService<UserEntity> {
      * @return List<VueSelect>
      */
     List<VueSelect> queryUserMailVueSelectListByUsername(String username);
+
+    /**
+     * 当保存或修改时校验
+     *
+     * @param user 用户信息
+     */
+    void verifyWhenSaveOrUpdate(UserEntity user);
 }

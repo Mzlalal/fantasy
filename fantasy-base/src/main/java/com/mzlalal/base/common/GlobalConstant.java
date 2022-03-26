@@ -57,11 +57,11 @@ public interface GlobalConstant {
     /**
      * 默认超管角色
      */
-    String DEFAULT_MANAGE_ROLE = "1000";
+    String DEFAULT_MANAGE_ROLE = "10000";
     /**
      * 默认普通角色
      */
-    String DEFAULT_NORMAL_ROLE = "2000";
+    String DEFAULT_NORMAL_ROLE = "20000";
     /**
      * 启用
      */
