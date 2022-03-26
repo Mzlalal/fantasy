@@ -90,12 +90,12 @@ public enum NotifyTypeEnum {
         @Override
         public void checkAndCreateNextTime(TodoNotifyEntity todoNotify) {
             // 星期几不能为空
-            AssertUtil.isTrue(StrUtil.isAllNotBlank(todoNotify.getNotifyWeekday()), "星期几不能为空");
+            AssertUtil.notNull(todoNotify.getNotifyWeekday(), "星期几不能为空");
 
             // 获取用户传递的时间并格式化
             DateTime dateTime = this.formatTodoNotifyTime(todoNotify);
             // 先校正weekday, 用户的星期几 - 格式化的时间(星期几)
-            dateTime.offset(DateField.DAY_OF_YEAR, Integer.parseInt(todoNotify.getNotifyWeekday()) - DateUtil.dayOfWeek(dateTime));
+            dateTime.offset(DateField.DAY_OF_YEAR, todoNotify.getNotifyWeekday() - DateUtil.dayOfWeek(dateTime));
             // 创建下次提醒时间
             this.createNextTime(dateTime, todoNotify);
         }

@@ -193,19 +193,21 @@
                     this.loading = false;
                     this.notifyCalendarType = res.data.notifyCalendarType;
                     this.enableRepeatNotifyMode = res.data.notifyType > 0;
-                    this.notifyType = res.data.notifyType;
-                    this.notifyMonth = res.data.notifyMonth;
-                    this.notifyDay = res.data.notifyDay;
-                    this.notifyWeekday = res.data.notifyWeekday;
-                    this.notifyHour = res.data.notifyHour;
                     this.notifyMinute = res.data.notifyMinute;
                     this.enableLazyMode = res.data.notifyLazyModeTimes > 0;
-                    this.notifyLazyModeTimes = res.data.notifyLazyModeTimes;
                     this.notifyMemo = res.data.notifyMemo;
                     this.notifyTopStatus = res.data.notifyTopStatus === "1";
                     this.notifyAfterDelete = res.data.notifyAfterDelete === "1";
                     // 初始化备注高度
                     setTimeout(() => {
+                        this.notifyType = res.data.notifyType;
+                        setTimeout(() => {
+                            this.notifyMonth = res.data.notifyMonth;
+                            this.notifyDay = res.data.notifyDay;
+                            this.notifyWeekday = res.data.notifyWeekday;
+                            this.notifyHour = res.data.notifyHour;
+                            this.notifyLazyModeTimes = res.data.notifyLazyModeTimes;
+                        })
                         this.getHeight();
                     })
                 }).catch(res => {

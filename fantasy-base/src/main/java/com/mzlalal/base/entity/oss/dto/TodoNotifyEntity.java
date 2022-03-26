@@ -49,7 +49,7 @@ public class TodoNotifyEntity implements Serializable {
     private String notifyDay;
 
     @ApiModelProperty("星期几")
-    private String notifyWeekday;
+    private Integer notifyWeekday;
 
     @ApiModelProperty("时")
     @NotBlank(message = "小时不能为空")
