@@ -23,6 +23,7 @@
         <span class="position-right username-display" @click="redirectSaveDayMatter">添加纪念日</span>
     </header>
     <template-down-slide-stream :distance-to-bottom="0"
+                                :offset-to-bottom="45"
                                 :loading="loading"
                                 :has-data="dayMatterList && dayMatterList.length > 0"
                                 @on-scroll-to-bottom="onScrollToBottom">

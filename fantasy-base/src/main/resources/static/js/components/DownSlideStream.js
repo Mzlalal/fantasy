@@ -1,6 +1,6 @@
 // 定义组件注册的模板template html
 const template_down_slide_stream_html =
-    `<div class="ui-form ui-border-t ui-container overflow-auto" style="min-height: 60vh" @scroll="onScroll" ref="scrollTarget">
+    `<div class="ui-form ui-border-t ui-container overflow-auto" style="min-height: 40vh;max-height: 100vh;" @scroll="onScroll" ref="scrollTarget">
         <slot></slot>
         <section class="ui-notice" v-if="loading === false && hasData === false">
             <i></i>
@@ -24,8 +24,8 @@ const template_down_slide_stream = Vue.extend({
         onScroll() {
             // 滚动条高度 - 距离顶部的距离 - 像素高度
             let scrollBottom = this.$refs.scrollTarget.scrollHeight - this.$refs.scrollTarget.scrollTop - this.$refs.scrollTarget.offsetHeight;
-            // 加上容器计算max-height的高度
-            scrollBottom += 45;
+            // 加上容器计算offsetToBottom的高度
+            scrollBottom += this.offsetToBottom;
             // 打印
             console.log(scrollBottom);
             // 滚动到底部小于distanceToBottom的距离,则提供事件
@@ -37,6 +37,11 @@ const template_down_slide_stream = Vue.extend({
     },
     // props用来接收外部参数的
     props: {
+        // 其他组件占用的距离
+        offsetToBottom: {
+            type: Number,
+            default: 0,
+        },
         // 到底部的距离
         distanceToBottom: {
             type: Number,

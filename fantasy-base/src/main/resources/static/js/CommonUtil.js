@@ -70,7 +70,7 @@
                 data: param
             })
             // 判断是否取到新的TOKEN
-            if (refreshTokenRes.data && refreshTokenRes.data.accessToken && refreshTokenRes.data.refreshToken) {
+            if (refreshTokenRes && refreshTokenRes.data && refreshTokenRes.data.accessToken && refreshTokenRes.data.refreshToken) {
                 // 设置刷新完毕
                 isRefreshTokenNow = false;
                 // 保存用户令牌,用户刷新令牌
@@ -83,8 +83,6 @@
                 window.commonUtil.redirectDefaultUri();
                 return;
             }
-            // 业务状态错误直接使用catch方法
-            return axios.request(res.config);
         }
         // 取消请求
         if (isRefreshTokenNow) {
