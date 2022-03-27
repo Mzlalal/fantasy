@@ -36,7 +36,9 @@ public class Oauth2ServerInterceptor implements HandlerInterceptor {
      */
     private final String[] excludePath = new String[]{
             // oauth
-            "/api/v1/oauth/**", "/oauth/callback"
+            "/api/v1/oauth/*", "/oauth/callback"
+            // 用户
+            , "/api/v1/oauth/user/save"
             // notify message without token
             , "/api/v1/notify/**"
             // ignore controller

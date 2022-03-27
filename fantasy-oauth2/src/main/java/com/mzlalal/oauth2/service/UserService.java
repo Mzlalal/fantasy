@@ -72,9 +72,16 @@ public interface UserService extends BaseService<UserEntity> {
     List<VueSelect> queryUserMailVueSelectListByUsername(String username);
 
     /**
-     * 当保存或修改时校验
+     * 当保存时校验
      *
      * @param user 用户信息
      */
-    void verifyWhenSaveOrUpdate(UserEntity user);
+    void verifyWhenSave(UserEntity user);
+
+    /**
+     * 当修改时校验
+     *
+     * @param user 用户信息
+     */
+    void verifyWhenUpdate(UserEntity user);
 }

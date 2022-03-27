@@ -30,7 +30,6 @@ import java.util.concurrent.TimeUnit;
  */
 @Component
 public class RedisTokenService {
-
     /**
      * redis操作模板
      */
@@ -91,10 +90,10 @@ public class RedisTokenService {
         // 更新用户信息并缓存
         UserEntity newUserEntity = userService.getById(userEntity.getId());
         // 设置TOKEN
-        redisTemplate.opsForValue().setIfAbsent(GlobalConstant.userToken(accessToken.getAccessToken())
+        redisTemplate.opsForValue().set(GlobalConstant.userToken(accessToken.getAccessToken())
                 , newUserEntity, clientEntity.getAccessTokenTime(), TimeUnit.SECONDS);
         // 设置刷新令牌
-        redisTemplate.opsForValue().setIfAbsent(GlobalConstant.userToken(accessToken.getRefreshToken())
+        redisTemplate.opsForValue().set(GlobalConstant.userToken(accessToken.getRefreshToken())
                 , newUserEntity.getId(), clientEntity.getRefreshTokenTime(), TimeUnit.SECONDS);
         return accessToken;
     }
@@ -109,11 +108,13 @@ public class RedisTokenService {
         // 验证客户端
         ClientEntity clientEntity = clientService.getOneByClientKey(req.getClientKey());
         AssertUtil.notNull(clientEntity, GlobalResult.OAUTH_FAIL);
-        // 验证用户
+        // 获取刷新TOKEN绑定的用户ID
         String userId = (String) redisTemplate.opsForValue().get(GlobalConstant.userToken(req.getRefreshToken()));
         AssertUtil.notBlank(userId, GlobalResult.USER_NOT_LOGIN);
+        // 查询用户
         UserEntity userEntity = userService.getById(userId);
         AssertUtil.notNull(userEntity, GlobalResult.USER_NOT_LOGIN);
+        // 创建新的TOKEN
         return Result.ok(this.createAccessToken(userEntity, clientEntity));
     }
 }

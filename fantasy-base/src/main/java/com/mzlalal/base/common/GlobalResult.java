@@ -43,9 +43,9 @@ public enum GlobalResult {
      */
     EMAIL_NOT_CORRECT(1104, "邮箱格式不正确"),
     /**
-     * 手机格式不正确
+     * 手机号格式不正确
      */
-    MOBILE_NOT_CORRECT(1105, "手机格式不正确"),
+    MOBILE_NOT_CORRECT(1105, "手机号格式不正确"),
     /**
      * 账户被锁定
      */

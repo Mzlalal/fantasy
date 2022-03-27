@@ -9,6 +9,7 @@ import com.mzlalal.base.common.GlobalResult;
 import com.mzlalal.base.entity.global.component.VueSelect;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oauth2.dto.UserEntity;
+import com.mzlalal.base.oauth2.Oauth2Context;
 import com.mzlalal.base.util.AssertUtil;
 import com.mzlalal.base.util.Page;
 import com.mzlalal.oauth2.dao.UserDao;
@@ -92,21 +93,83 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     }
 
     @Override
-    public void verifyWhenSaveOrUpdate(UserEntity user) {
+    public void verifyWhenSave(UserEntity user) {
         // 验证手机号格式是否正确
         GrantResponseEnum.PASSWORD.verifyUsername(user.getMobile());
         // 校验邮箱是否被注册
         AssertUtil.isFalse(this.queryExistByMobile(user.getMobile()), GlobalResult.MOBILE_HAS_BEEN_REGISTERED);
-        // 验证邮箱是否正确
-        if (StrUtil.isNotBlank(user.getMail())) {
-            GrantResponseEnum.MAIL.verifyUsername(user.getMail());
-            // 校验邮箱是否被注册
-            AssertUtil.isFalse(this.queryExistByMail(user.getMail()), GlobalResult.MAIL_HAS_BEEN_REGISTERED);
-        } else {
-            // 默认使用雪花ID填充值
-            user.setMail(IdUtil.getSnowflake().nextIdStr());
-        }
         // 密码加密
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        // 邮箱
+        String mail = user.getMail();
+        // 邮箱选填,没有邮箱就填充默认值(在待办,纪念日中需要邮箱,做个伪必填)
+        if (StrUtil.isNotBlank(mail)) {
+            // 默认使用雪花ID填充值
+            user.setMail(IdUtil.getSnowflake().nextIdStr());
+            return;
+        }
+        // 验证邮箱
+        GrantResponseEnum.MAIL.verifyUsername(mail);
+        // 校验邮箱是否被注册
+        AssertUtil.isFalse(this.queryExistByMail(mail), GlobalResult.MAIL_HAS_BEEN_REGISTERED);
+    }
+
+    @Override
+    public void verifyWhenUpdate(UserEntity user) {
+        // 旧的用户信息
+        UserEntity oldUser = Oauth2Context.getElseThrow();
+        // 旧的用户名
+        String oldUsername = oldUser.getUsername();
+        // 新的用户名
+        String newUsername = user.getUsername();
+        // 校验用户名
+        AssertUtil.notBlank(newUsername, "用户名不能为空");
+        AssertUtil.isTrue(newUsername.length() < 9, "用户名长度需要在1和8之间");
+        // 如果名字相同,则不修改
+        if (StrUtil.equals(newUsername, oldUsername)) {
+            user.setUsername(null);
+        }
+        // 旧的手机号
+        String oldMobile = oldUser.getMobile();
+        // 新的手机号
+        String newMobile = user.getMobile();
+        // 验证手机号格式是否正确
+        GrantResponseEnum.PASSWORD.verifyUsername(newMobile);
+        // 如果名字相同,则不修改
+        if (StrUtil.equals(oldMobile, newMobile)) {
+            user.setMobile(null);
+        } else {
+            // 校验邮箱是否被注册
+            AssertUtil.isFalse(this.queryExistByMobile(newMobile), GlobalResult.MOBILE_HAS_BEEN_REGISTERED);
+        }
+
+        // 如果密码填写了,则加密
+        if (StrUtil.isNotBlank(user.getPassword())) {
+            // 密码加密
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        } else {
+            // 为空则不需要修改
+            user.setPassword(null);
+        }
+
+        // 旧的邮箱
+        String oldMail = oldUser.getMail();
+        // 新的邮箱
+        String newMail = user.getMail();
+        // 邮箱选填,没有邮箱就填充默认值(在待办,纪念日中需要邮箱,做个伪必填)
+        if (StrUtil.isBlank(newMail)) {
+            // 默认使用雪花ID填充值
+            user.setMail(IdUtil.getSnowflake().nextIdStr());
+            return;
+        }
+        // 验证邮箱是否正确
+        GrantResponseEnum.MAIL.verifyUsername(newMail);
+        // 如果邮箱相同,则不修改
+        if (StrUtil.equals(oldMail, newMail)) {
+            user.setMail(null);
+        } else {
+            // 校验邮箱是否被注册
+            AssertUtil.isFalse(this.queryExistByMail(newMail), GlobalResult.MAIL_HAS_BEEN_REGISTERED);
+        }
     }
 }

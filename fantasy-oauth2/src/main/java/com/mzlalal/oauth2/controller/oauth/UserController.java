@@ -13,6 +13,7 @@ import com.mzlalal.oauth2.service.UserService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,10 +36,15 @@ public class UserController implements UserFeignApi {
      * 用户操作
      */
     private final UserService userService;
+    /**
+     * redis操作模板
+     */
+    private final RedisTemplate<String, Object> redisTemplate;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, RedisTemplate<String, Object> redisTemplate) {
         this.userService = userService;
+        this.redisTemplate = redisTemplate;
     }
 
     @Override
@@ -54,18 +60,25 @@ public class UserController implements UserFeignApi {
     @Override
     public Result<Void> save(@Validated @RequestBody UserEntity user) {
         // 校验
-        userService.verifyWhenSaveOrUpdate(user);
+        userService.verifyWhenSave(user);
         // 设置默认普通角色
         user.setRoleId(GlobalConstant.DEFAULT_NORMAL_ROLE);
         return userService.save(user) ? Result.ok() : Result.fail();
     }
 
     @Override
-    public Result<Void> update(@Validated @RequestBody UserEntity user) {
+    public Result<Void> update(@RequestBody UserEntity user) {
         // 校验
-        userService.verifyWhenSaveOrUpdate(user);
+        userService.verifyWhenUpdate(user);
         // 更新
-        return userService.updateById(user) ? Result.ok() : Result.fail();
+        if (userService.updateById(user)) {
+            // 更新用户信息并缓存
+            UserEntity newUserEntity = userService.getById(user.getId());
+            // 缓存设置新的用户信息
+            redisTemplate.opsForValue().set(GlobalConstant.userToken(newUserEntity.getAccessToken()), newUserEntity);
+            return Result.ok();
+        }
+        return Result.fail();
     }
 
     @Override
