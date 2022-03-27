@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
+import com.mzlalal.base.entity.chess.vo.HistoryMessageVo;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -38,6 +39,39 @@ public class FantasyBaseBeanConfig {
         redisTemplate.setConnectionFactory(redisConnectionFactory);
         //使用Jackson2JsonRedisSerializer来序列化和反序列化redis的value值（默认使用JDK的序列化方式）
         Jackson2JsonRedisSerializer<Object> jacksonSerialize = new Jackson2JsonRedisSerializer<>(Object.class);
+        // 创建redis模板通用操作
+        this.createRedisTemplate(redisTemplate, jacksonSerialize);
+        // 返回redis模板
+        return redisTemplate;
+    }
+
+    /**
+     * redisTemplate存储对象
+     *
+     * @param redisConnectionFactory redis连接工厂
+     * @return RedisTemplate<String, Object>
+     */
+    @Bean("redisTemplateStoreHistoryMessage")
+    public RedisTemplate<String, HistoryMessageVo> redisTemplateStoreHistoryMessage(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<String, HistoryMessageVo> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(redisConnectionFactory);
+        //使用Jackson2JsonRedisSerializer来序列化和反序列化redis的value值（默认使用JDK的序列化方式）
+        Jackson2JsonRedisSerializer<HistoryMessageVo> jacksonSerialize = new Jackson2JsonRedisSerializer<>(HistoryMessageVo.class);
+        // 创建redis模板通用操作
+        this.createRedisTemplate(redisTemplate, jacksonSerialize);
+        // 返回redis模板
+        return redisTemplate;
+    }
+
+    /**
+     * 创建redis模板
+     *
+     * @param redisTemplate    redis模板
+     * @param jacksonSerialize 对象序列化
+     * @param <T>              泛型
+     */
+    private <T> void createRedisTemplate(RedisTemplate<String, T> redisTemplate
+            , Jackson2JsonRedisSerializer<T> jacksonSerialize) {
         // 对象映射
         ObjectMapper om = new ObjectMapper();
         // 指定要序列化的域，field,get和set,以及修饰符范围，ANY是都有包括private和public
@@ -54,7 +88,6 @@ public class FantasyBaseBeanConfig {
         redisTemplate.setHashKeySerializer(new StringRedisSerializer());
         redisTemplate.setHashValueSerializer(jacksonSerialize);
         redisTemplate.afterPropertiesSet();
-        return redisTemplate;
     }
 
     /**

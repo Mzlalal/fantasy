@@ -57,7 +57,7 @@ public enum GrantResponseEnum {
             // 验证邮箱格式
             this.verifyUsername(mail);
             // 用户名的邮箱验证码redis key
-            String mailCodeRedisKey = GlobalConstant.clientKeyMailCodeRedisKey(req.getClientKey(), mail);
+            String mailCodeRedisKey = GlobalConstant.clientMailCode(req.getClientKey(), mail);
             // 获取验证码
             String redisCode = redisTemplate.opsForValue().get(mailCodeRedisKey);
             // 删除只能使用一次

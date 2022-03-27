@@ -44,7 +44,7 @@ public class TokenController implements TokenFeignApi {
 
     @Override
     public Result<Void> logout(@RequestHeader(GlobalConstant.F_AUTHORIZATION) String token) {
-        redisTemplate.delete(GlobalConstant.tokenRedisKey(token));
+        redisTemplate.delete(GlobalConstant.userToken(token));
         return Result.ok();
     }
 }

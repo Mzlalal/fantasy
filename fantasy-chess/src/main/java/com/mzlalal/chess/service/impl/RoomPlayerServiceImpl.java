@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -46,12 +45,12 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
      */
     private final RoomHistoryService roomHistoryService;
     /**
-     * string=>对象 redis操作模板
+     * string=>HistoryMessageVo redis操作模板
      */
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, HistoryMessageVo> redisTemplate;
 
     public RoomPlayerServiceImpl(RoomService roomService, RoomHistoryService roomHistoryService
-            , RedisTemplate<String, Object> redisTemplate) {
+            , RedisTemplate<String, HistoryMessageVo> redisTemplate) {
         this.roomService = roomService;
         this.roomHistoryService = roomHistoryService;
         this.redisTemplate = redisTemplate;
@@ -132,24 +131,18 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
         // 用户ID
         String userId = Oauth2Context.getUserIdElseThrow();
         // 获取房间内的选手
-        String redisKey = GlobalConstant.roomMessageRedisKey(roomId);
-        Set<Object> memberSet = redisTemplate.opsForSet().members(redisKey);
-        // 刷新过期时间,一天过期
-        redisTemplate.expire(redisKey, 1, TimeUnit.DAYS);
+        String redisKey = GlobalConstant.messageInRoom(roomId);
+        Set<HistoryMessageVo> historyMessageVoSet = redisTemplate.opsForSet().members(redisKey);
         // 为空返回空集合
         List<HistoryMessageVo> historyList = CollUtil.newArrayList();
-        if (CollUtil.isEmpty(memberSet)) {
+        if (CollUtil.isEmpty(historyMessageVoSet)) {
             return historyList;
         }
         // 遍历过滤
-        for (Object member : memberSet) {
-            if (member instanceof HistoryMessageVo) {
-                // 强转类型
-                HistoryMessageVo historyMessageVo = (HistoryMessageVo) member;
-                // 过滤from为当前选手ID的集合
-                if (StrUtil.equalsAny(userId, historyMessageVo.getFrom(), historyMessageVo.getTo())) {
-                    historyList.add(historyMessageVo);
-                }
+        for (HistoryMessageVo historyMessageVo : historyMessageVoSet) {
+            // 过滤from为当前选手ID的集合
+            if (StrUtil.equalsAny(userId, historyMessageVo.getFrom(), historyMessageVo.getTo())) {
+                historyList.add(historyMessageVo);
             }
         }
         // 根据时间排序
@@ -194,7 +187,7 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
 
         // 删除房间redis消息
         for (String roomId : roomIdList) {
-            String redisKey = GlobalConstant.roomMessageRedisKey(roomId);
+            String redisKey = GlobalConstant.messageInRoom(roomId);
             redisTemplate.delete(redisKey);
         }
     }

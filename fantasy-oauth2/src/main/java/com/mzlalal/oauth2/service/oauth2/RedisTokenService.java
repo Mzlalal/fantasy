@@ -61,7 +61,7 @@ public class RedisTokenService {
      */
     public AccessToken createAccessToken(UserEntity userEntity, ClientEntity clientEntity) {
         String oldAccessToken = userEntity.getAccessToken();
-        String oldAccessTokenRedisKey = GlobalConstant.tokenRedisKey(oldAccessToken);
+        String oldAccessTokenRedisKey = GlobalConstant.userToken(oldAccessToken);
         // 如果存在token则返回旧的
         if (StrUtil.isNotBlank(oldAccessToken)) {
             // 如果旧的信息还没过期 则返回旧的信息
@@ -76,7 +76,7 @@ public class RedisTokenService {
         }
         // 删除旧的刷新令牌
         if (StrUtil.isNotBlank(userEntity.getRefreshToken())) {
-            redisTemplate.delete(GlobalConstant.tokenRedisKey(userEntity.getRefreshToken()));
+            redisTemplate.delete(GlobalConstant.userToken(userEntity.getRefreshToken()));
         }
         // 如果不存在则创建TOKEN并存储在redis
         AccessToken accessToken = AccessToken.builder()
@@ -91,10 +91,10 @@ public class RedisTokenService {
         // 更新用户信息并缓存
         UserEntity newUserEntity = userService.getById(userEntity.getId());
         // 设置TOKEN
-        redisTemplate.opsForValue().setIfAbsent(GlobalConstant.tokenRedisKey(accessToken.getAccessToken())
+        redisTemplate.opsForValue().setIfAbsent(GlobalConstant.userToken(accessToken.getAccessToken())
                 , newUserEntity, clientEntity.getAccessTokenTime(), TimeUnit.SECONDS);
         // 设置刷新令牌
-        redisTemplate.opsForValue().setIfAbsent(GlobalConstant.tokenRedisKey(accessToken.getRefreshToken())
+        redisTemplate.opsForValue().setIfAbsent(GlobalConstant.userToken(accessToken.getRefreshToken())
                 , newUserEntity.getId(), clientEntity.getRefreshTokenTime(), TimeUnit.SECONDS);
         return accessToken;
     }
@@ -110,7 +110,7 @@ public class RedisTokenService {
         ClientEntity clientEntity = clientService.getOneByClientKey(req.getClientKey());
         AssertUtil.notNull(clientEntity, GlobalResult.OAUTH_FAIL);
         // 验证用户
-        String userId = (String) redisTemplate.opsForValue().get(GlobalConstant.tokenRedisKey(req.getRefreshToken()));
+        String userId = (String) redisTemplate.opsForValue().get(GlobalConstant.userToken(req.getRefreshToken()));
         AssertUtil.notBlank(userId, GlobalResult.USER_NOT_LOGIN);
         UserEntity userEntity = userService.getById(userId);
         AssertUtil.notNull(userEntity, GlobalResult.USER_NOT_LOGIN);

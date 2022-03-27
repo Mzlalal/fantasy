@@ -41,7 +41,7 @@ public enum CaptchaProvideEnum {
             int randomInt = RandomUtil.randomInt(1001, 9999);
             // 过期时间15分钟
             redisTemplate.opsForValue()
-                    .set(GlobalConstant.clientKeyMailCodeRedisKey(clientKey, mail), String.valueOf(randomInt), 15, TimeUnit.MINUTES);
+                    .set(GlobalConstant.clientMailCode(clientKey, mail), String.valueOf(randomInt), 15, TimeUnit.MINUTES);
             // 构建参数
             SendMailCodeReq sendMailCodeReq = SendMailCodeReq.builder()
                     .mail(mail)
@@ -69,7 +69,7 @@ public enum CaptchaProvideEnum {
             String encode = Base64.encode(captcha.getImageBytes());
             // 验证码最多过期时间15分钟
             redisTemplate.opsForValue()
-                    .set(GlobalConstant.clientKeyPasswordCodeRedisKey(clientKey, username), captcha.getCode(), 15, TimeUnit.MINUTES);
+                    .set(GlobalConstant.clientMobileCode(clientKey, username), captcha.getCode(), 15, TimeUnit.MINUTES);
             // 返回base64给前端渲染
             return Result.ok(encode);
         }

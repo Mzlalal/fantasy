@@ -17,12 +17,11 @@
 </style>
 <body>
 <div id="app">
-    <div class="ui-form ui-border-t">
-        <div class="ui-tooltips-cnt ui-border-b text-center">
-            <label>
-                Fantasy
-            </label>
-        </div>
+    <header class="ui-header ui-header-positive ui-border-b text-center">
+        <span class="font-weight-bolder font-size-20px">Fantasy</span>
+        <span class="position-right username-display" @click="redirectHrefFrom">返回</span>
+    </header>
+    <div class="ui-form ui-border-t ui-container">
         <div class="ui-tooltips-cnt ui-border-b text-center height-auto">
             <?xml version="1.0" encoding="UTF-8"?>
             <svg width="150" height="150" viewBox="0 0 43 43" version="1.1" xmlns="http://www.w3.org/2000/svg">
@@ -202,12 +201,16 @@
                     }
                 })
             },
+            // 跳转回原地址
+            redirectHrefFrom() {
+                window.location = window.defaultRedirectUri;
+            }
         },
         created() {
             // 如果URL有clientKey,优先使用URL上的clientKey
             let urlClientKey = commonUtil.getUrlPara("clientKey");
             // 赋值
-            this.reqClientKey = urlClientKey == null ? clientKey : urlClientKey;
+            this.reqClientKey = urlClientKey == null ? window.clientKey : urlClientKey;
         }
     });
 </script>

@@ -44,7 +44,7 @@ public class UserSessionService {
      */
     public UserEntity getUserByToken(String token) {
         // 根据TOKEN获取redis用户信息
-        return (UserEntity) redisTemplate.opsForValue().get(GlobalConstant.tokenRedisKey(token));
+        return (UserEntity) redisTemplate.opsForValue().get(GlobalConstant.userToken(token));
     }
 
     /**
@@ -69,7 +69,7 @@ public class UserSessionService {
         // 保存用户会话
         UserSessionManager.put(userId, session);
         // 保存用户会话至redis房间中
-        String roomIdRedisKey = GlobalConstant.roomSessionRedisKey(roomId);
+        String roomIdRedisKey = GlobalConstant.userIdsInRoom(roomId);
         stringRedisTemplate.opsForSet().add(roomIdRedisKey, userId);
     }
 
@@ -83,7 +83,7 @@ public class UserSessionService {
         // 保存用户会话
         UserSessionManager.remove(userId);
         // 保存用户会话至redis房间中
-        String roomIdRedisKey = GlobalConstant.roomSessionRedisKey(roomId);
+        String roomIdRedisKey = GlobalConstant.userIdsInRoom(roomId);
         stringRedisTemplate.opsForSet().remove(roomIdRedisKey, userId);
     }
 }

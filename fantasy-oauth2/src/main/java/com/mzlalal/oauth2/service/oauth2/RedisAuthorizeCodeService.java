@@ -38,7 +38,7 @@ public class RedisAuthorizeCodeService {
      */
     public String store(String clientKey, UserEntity userEntity) {
         // 创建UUID
-        String authorizeCode = GlobalConstant.clientKeyAuthCodeRedisKey(clientKey);
+        String authorizeCode = GlobalConstant.clientAuthCode(clientKey);
         // 存储
         redisTemplate.opsForValue().setIfAbsent(authorizeCode, userEntity, 15, TimeUnit.MINUTES);
         // 返回授权码

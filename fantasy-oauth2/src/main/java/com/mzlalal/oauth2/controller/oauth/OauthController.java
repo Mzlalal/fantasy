@@ -77,7 +77,7 @@ public class OauthController implements OauthFeignApi {
         clientVerifyResponseTypeService.verifyResponseType(clientKey, GrantResponseEnum.PASSWORD.name());
         // 获取验证码
         String redisVal = stringRedisTemplate.opsForValue().
-                get(GlobalConstant.clientKeyPasswordCodeRedisKey(clientKey, username));
+                get(GlobalConstant.clientMobileCode(clientKey, username));
         // 验证码为空直接返回失败 验证码相等则返回成功
         if (StrUtil.isNotBlank(redisVal) && StrUtil.equals(redisVal, req.getCode())) {
             return Result.ok();

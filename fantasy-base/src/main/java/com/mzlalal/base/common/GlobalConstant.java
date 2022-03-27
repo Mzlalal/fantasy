@@ -75,10 +75,10 @@ public interface GlobalConstant {
      * UUID与clientKey绑定的授权码 redis key
      *
      * @param clientKey 客户端Key
-     * @return String fantasy:{clientKey}:{uuid}
+     * @return String "fantasy:client:auth:code:{clientKey}:{uuid}
      */
-    static String clientKeyAuthCodeRedisKey(String clientKey) {
-        return StrUtil.format("fantasy:{}:{}", clientKey, IdUtil.fastSimpleUUID());
+    static String clientAuthCode(String clientKey) {
+        return StrUtil.format("fantasy:client:auth:code:{}:{}", clientKey, IdUtil.fastSimpleUUID());
     }
 
     /**
@@ -86,10 +86,10 @@ public interface GlobalConstant {
      *
      * @param clientKey 客户端Key
      * @param mail      电子邮箱地址
-     * @return String fantasy:mail:code:{clientKey}:{mail}
+     * @return String fantasy:client:mail:code:{clientKey}:{mail}
      */
-    static String clientKeyMailCodeRedisKey(String clientKey, String mail) {
-        return StrUtil.format("fantasy:mail:code:{}:{}", clientKey, mail);
+    static String clientMailCode(String clientKey, String mail) {
+        return StrUtil.format("fantasy:client:mail:code:{}:{}", clientKey, mail);
     }
 
     /**
@@ -97,19 +97,19 @@ public interface GlobalConstant {
      *
      * @param clientKey 客户端Key
      * @param mobile    手机号
-     * @return String fantasy:password:code:{clientKey}:{mobile}
+     * @return String fantasy:client:mobile:code:{clientKey}:{mobile}
      */
-    static String clientKeyPasswordCodeRedisKey(String clientKey, String mobile) {
-        return StrUtil.format("fantasy:password:code:{}:{}", clientKey, mobile);
+    static String clientMobileCode(String clientKey, String mobile) {
+        return StrUtil.format("fantasy:client:mobile:code:{}:{}", clientKey, mobile);
     }
 
     /**
-     * 房间ID redis key
+     * 房间内的用户ID集合 redis key
      *
      * @param roomId 房间ID
      * @return String fantasy:room:session:{roomId}
      */
-    static String roomSessionRedisKey(String roomId) {
+    static String userIdsInRoom(String roomId) {
         return "fantasy:room:session:" + roomId;
     }
 
@@ -119,27 +119,27 @@ public interface GlobalConstant {
      * @param roomId 房间ID
      * @return String fantasy:room:message:{roomId}
      */
-    static String roomMessageRedisKey(String roomId) {
+    static String messageInRoom(String roomId) {
         return "fantasy:room:message:" + roomId;
     }
 
     /**
-     * 转账 redis lock key
+     * 房间内的转账 redis key
      *
      * @param roomId 房间ID
-     * @return String fantasy:transfer:lock:{roomId}
+     * @return String fantasy:room:transfer:{roomId}
      */
-    static String transferLockRedisKey(String roomId) {
-        return "fantasy:transfer:lock:" + roomId;
+    static String transferInRoom(String roomId) {
+        return "fantasy:room:transfer:" + roomId;
     }
 
     /**
-     * 用户 token redis key
+     * 用户token redis key
      *
      * @param token 电子邮箱地址
      * @return String fantasy:user:token:{token}
      */
-    static String tokenRedisKey(String token) {
+    static String userToken(String token) {
         return "fantasy:user:token:" + token;
     }
 
@@ -158,8 +158,8 @@ public interface GlobalConstant {
      *
      * @return String fantasy:notify:schedule
      */
-    static String todoNotifyScheduleRedisKey() {
-        return StrUtil.format("fantasy:notify:schedule");
+    static String todoNotifySchedule() {
+        return StrUtil.format("fantasy:todo:notify:schedule");
     }
 
     /**
@@ -167,17 +167,7 @@ public interface GlobalConstant {
      *
      * @return String fantasy:notify:repeat
      */
-    static String todoNotifyRepeatRedisKey() {
-        return StrUtil.format("fantasy:notify:repeat");
-    }
-
-    /**
-     * 待办ID redisKey
-     *
-     * @param id 待办ID
-     * @return String fantasy:notify:id:{currentTime}
-     */
-    static String todoNotifyIdRedisKey(String id) {
-        return StrUtil.format("fantasy:notify:id:{}", id);
+    static String todoNotifyLazyMode() {
+        return StrUtil.format("fantasy:todo:notify:lazy:mode");
     }
 }

@@ -6,7 +6,6 @@ import com.mzlalal.base.entity.chess.req.PlayerOutOrJoinRoomReq;
 import com.mzlalal.base.entity.chess.req.TransferScoreReq;
 import com.mzlalal.base.entity.chess.vo.HistoryMessageVo;
 import com.mzlalal.base.entity.global.Result;
-import com.mzlalal.base.entity.global.po.PageInfo;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.feign.chess.RoomPlayerFeignApi;
 import com.mzlalal.base.util.AssertUtil;
@@ -104,7 +103,7 @@ public class RoomPlayerController implements RoomPlayerFeignApi {
         // 获取历史消息
         List<HistoryMessageVo> historyMessageVoList = roomPlayerService.queryPlayerHistoryMessage(roomId);
         // 封装到分页信息
-        Page<HistoryMessageVo> page = new Page<>(historyMessageVoList, historyMessageVoList.size(), new PageInfo());
+        Page<HistoryMessageVo> page = Page.list(historyMessageVoList);
         return Result.ok(page);
     }
 

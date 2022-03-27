@@ -69,7 +69,7 @@ public class TodoNotifyServiceImpl extends ServiceImpl<TodoNotifyDao, TodoNotify
     @Override
     public void notifyLazyModeTodoList() {
         // 重复提醒的key
-        String notifyRepeatRedisKey = GlobalConstant.todoNotifyRepeatRedisKey();
+        String notifyRepeatRedisKey = GlobalConstant.todoNotifyLazyMode();
         List<Object> todoNotifyList = redisTemplate.opsForList().range(notifyRepeatRedisKey, 0, Long.MAX_VALUE);
         // 判空
         if (CollUtil.isEmpty(todoNotifyList)) {
@@ -122,7 +122,7 @@ public class TodoNotifyServiceImpl extends ServiceImpl<TodoNotifyDao, TodoNotify
             if (Integer.parseInt(todoNotify.getNotifyLazyModeTimes()) > 0) {
                 TodoNotifyVo todoNotifyVo = new TodoNotifyVo();
                 BeanUtil.copyProperties(todoNotify, todoNotifyVo);
-                redisTemplate.opsForList().rightPush(GlobalConstant.todoNotifyRepeatRedisKey(), todoNotifyVo);
+                redisTemplate.opsForList().rightPush(GlobalConstant.todoNotifyLazyMode(), todoNotifyVo);
             }
             // 提醒后删除
             if (StrUtil.equals(GlobalConstant.STATUS_ON, todoNotify.getNotifyAfterDelete())) {

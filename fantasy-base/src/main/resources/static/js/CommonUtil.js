@@ -1,4 +1,17 @@
 (function (window, axios) {
+    // 声明一个数组用于存储每个请求的取消函数和axios标识
+    let pending = [];
+    const CancelToken = axios.CancelToken;
+    // 取消请求
+    let removePending = (config) => {
+        for (let p in pending) {
+            if (pending[p].u === config.url + JSON.stringify(config.data) + '&' + config.method) {
+                pending[p].f()
+                pending.splice(p, 1)
+            }
+        }
+    }
+
     // https://www.axios-http.cn/docs/interceptors 拦截器文档
     // 请求拦截器
     axios.interceptors.request.use(function (config) {
@@ -12,6 +25,11 @@
         if (!config.headers['F-Authorization']) {
             config.headers['F-Authorization'] = localStorage.getItem("user.access.token");
         }
+        // 增加取消请求配置
+        config.cancelToken = new CancelToken((c) => {
+            // 这里的axios标识我是用请求地址&请求方式拼接的字符串，当然你可以选择其他的一些方式
+            pending.push({u: config.url + JSON.stringify(config.data) + '&' + config.method, f: c})
+        })
         // 继续往下执行
         return config;
     }, function (error) {
@@ -29,6 +47,7 @@
             // 传递接口返回的结果给then方法
             return res.data;
         }
+
         // 需要刷新令牌的的状态码
         if (!isRefreshTokenNow && res.data && window.refreshTokenStateCode.includes(res.data.state)) {
             // 设置为刷新
@@ -50,12 +69,15 @@
                 url: "/fantasy-oauth2/api/v1/oauth/refresh.token",
                 data: param
             })
+            // 判断是否取到新的TOKEN
             if (refreshTokenRes.data && refreshTokenRes.data.accessToken && refreshTokenRes.data.refreshToken) {
                 // 设置刷新完毕
                 isRefreshTokenNow = false;
                 // 保存用户令牌,用户刷新令牌
                 localStorage.setItem("user.access.token", refreshTokenRes.data.accessToken);
                 localStorage.setItem("user.refresh.token", refreshTokenRes.data.refreshToken);
+                // 刷新界面
+                window.location.reload();
             } else {
                 // 刷新令牌失败,跳转到登录页
                 window.commonUtil.redirectDefaultUri();
@@ -63,6 +85,12 @@
             }
             // 业务状态错误直接使用catch方法
             return axios.request(res.config);
+        }
+        // 取消请求
+        if (isRefreshTokenNow) {
+            // 取消响应
+            removePending(res.config);
+            return;
         }
         // 业务状态错误直接使用catch方法
         return Promise.reject(res);

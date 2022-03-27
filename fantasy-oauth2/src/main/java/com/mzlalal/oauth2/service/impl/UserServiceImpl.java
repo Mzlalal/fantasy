@@ -96,7 +96,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         // 验证手机号格式是否正确
         GrantResponseEnum.PASSWORD.verifyUsername(user.getMobile());
         // 校验邮箱是否被注册
-        AssertUtil.isFalse(this.queryExistByMobile(user.getMail()), GlobalResult.MOBILE_HAS_BEEN_REGISTERED);
+        AssertUtil.isFalse(this.queryExistByMobile(user.getMobile()), GlobalResult.MOBILE_HAS_BEEN_REGISTERED);
         // 验证邮箱是否正确
         if (StrUtil.isNotBlank(user.getMail())) {
             GrantResponseEnum.MAIL.verifyUsername(user.getMail());

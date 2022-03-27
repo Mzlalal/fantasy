@@ -39,7 +39,7 @@ public class TodoNotifyScheduleConfig {
     @Scheduled(cron = "5 0/5 * * * ?")
     public void todoNotifySchedule() {
         // 获取锁
-        RLock lock = redissonClient.getLock(GlobalConstant.todoNotifyScheduleRedisKey());
+        RLock lock = redissonClient.getLock(GlobalConstant.todoNotifySchedule());
         try {
             // 尝试获取锁,最大等待时间30秒,超过30秒自动释放
             boolean tryLock = lock.tryLock(30, 300, TimeUnit.SECONDS);

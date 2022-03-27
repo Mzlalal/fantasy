@@ -129,7 +129,7 @@ public class StatScoreSessionService {
         roomPlayerService.updateRoomPlayerStatus(roomId, userId, GlobalConstant.STATUS_ON);
 
         // 上桌消息
-        String message = StrUtil.format(GlobalConstant.USERNAME_DISPLAY + "上桌了" , req.getUsername());
+        String message = StrUtil.format(GlobalConstant.USERNAME_DISPLAY + "上桌了", req.getUsername());
         // 广播消息
         this.broadcast(roomId, userId, message);
     }
@@ -149,7 +149,7 @@ public class StatScoreSessionService {
         roomPlayerService.updateRoomPlayerStatus(roomId, userId, GlobalConstant.STATUS_OFF);
 
         // 下桌消息
-        String message = StrUtil.format(GlobalConstant.USERNAME_DISPLAY + "下桌了" , req.getUsername());
+        String message = StrUtil.format(GlobalConstant.USERNAME_DISPLAY + "下桌了", req.getUsername());
         // 广播消息
         this.broadcast(roomId, userId, message);
     }
@@ -160,13 +160,13 @@ public class StatScoreSessionService {
      * @param req 请求
      */
     @Transactional(rollbackFor = Exception.class)
-    public void transferScore(@Validated TransferScoreReq req) {
+    public void transferScore(TransferScoreReq req) {
         String roomId = req.getRoomId();
         String from = req.getFrom();
         String to = req.getTo();
         Integer change = req.getChange();
 
-        String lockRedisKey = GlobalConstant.transferLockRedisKey(roomId);
+        String lockRedisKey = GlobalConstant.transferInRoom(roomId);
         RLock lock = redissonClient.getLock(lockRedisKey);
         try {
             // 获取锁
@@ -204,7 +204,7 @@ public class StatScoreSessionService {
      * @param roomId 房间ID
      */
     public void broadcastPlayerStatus(String roomId) {
-        this.broadcast(roomId, "" , "");
+        this.broadcast(roomId, "", "");
     }
 
     /**
@@ -256,7 +256,7 @@ public class StatScoreSessionService {
             return;
         }
         // 获取当前房间的人员
-        String roomIdRedisKey = GlobalConstant.roomSessionRedisKey(roomId);
+        String roomIdRedisKey = GlobalConstant.userIdsInRoom(roomId);
         Set<String> memberSet = stringRedisTemplate.opsForSet().members(roomIdRedisKey);
         // 房间没有选手了
         if (CollUtil.isEmpty(memberSet)) {
@@ -274,7 +274,7 @@ public class StatScoreSessionService {
             try {
                 session.getBasicRemote().sendText(JSON.toJSONString(result));
             } catch (IOException e) {
-                log.error(JSON.toJSONString(pathParameterMap) + "关闭意外出错" , e);
+                log.error(JSON.toJSONString(pathParameterMap) + "关闭意外出错", e);
             }
         });
         // 保存消息
@@ -298,7 +298,7 @@ public class StatScoreSessionService {
         }
 
         // 保存到redis
-        String redisKey = GlobalConstant.roomMessageRedisKey(roomId);
+        String redisKey = GlobalConstant.messageInRoom(roomId);
         redisTemplate.opsForSet().add(redisKey, historyMessageVo);
     }
 }

@@ -81,6 +81,9 @@ public class Page<T> implements Serializable {
      * @return 空分页信息
      */
     public static <T> Page<T> list(Collection<T> collection) {
-        return new Page<>(collection, 0L, new PageInfo());
+        if (collection == null) {
+            collection = new ArrayList<>();
+        }
+        return new Page<>(collection, collection.size(), PageInfo.builder().pageSize(collection.size()).build());
     }
 }

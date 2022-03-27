@@ -57,7 +57,7 @@ public enum GlobalResult {
     /**
      * 邮箱已被注册
      */
-    MAIL_HAS_BEEN_REGISTERED(1108, "邮箱已被注册（忘记密码可以使用邮箱验证码登录后进入我的信息修改密码）"),
+    MAIL_HAS_BEEN_REGISTERED(1108, "邮箱已被注册（忘记密码可以使用邮箱登录）"),
     /**
      * 授权失败
      */

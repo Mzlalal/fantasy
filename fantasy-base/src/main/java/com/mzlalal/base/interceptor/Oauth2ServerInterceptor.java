@@ -75,7 +75,7 @@ public class Oauth2ServerInterceptor implements HandlerInterceptor {
             return false;
         }
         // 根据TOKEN获取redis用户信息
-        UserEntity userEntity = (UserEntity) redisTemplate.opsForValue().get(GlobalConstant.tokenRedisKey(token));
+        UserEntity userEntity = (UserEntity) redisTemplate.opsForValue().get(GlobalConstant.userToken(token));
         // 用户长时间未登录
         if (userEntity == null) {
             FilterUtil.writeJson(response, GlobalResult.LONG_TIME_NO_OPERATION.result(oauth2Property.getLogin()));
