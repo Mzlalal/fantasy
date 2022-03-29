@@ -2,6 +2,7 @@
 const template_down_slide_stream_html =
     `<div class="ui-form ui-border-t ui-container overflow-auto" :style="{'min-height': '30vh', 'max-height': 'calc(100vh - 120px)'}" 
         @scroll="onScroll" ref="scrollTarget">
+        <style>body{overflow: hidden !important;height: 100vh;}</style>
         <slot></slot>
         <section class="ui-notice" v-if="loading === false && hasData === false">
             <i></i>
