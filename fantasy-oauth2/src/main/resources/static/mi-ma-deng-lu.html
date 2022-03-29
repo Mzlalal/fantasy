@@ -151,9 +151,7 @@
                     // 跳转
                     window.location = (res.data.redirectUri.startsWith("http") ? "" : gateway) + res.data.redirectUri;
                 }).catch(res => {
-                    setTimeout(() => {
-                        this.loading = false;
-                    }, 500)
+                    this.loading = false;
                     // 置空验证码
                     this.password = "";
                     if (res.data && res.data.msg) {

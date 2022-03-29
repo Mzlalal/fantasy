@@ -1,6 +1,7 @@
 // 定义组件注册的模板template html
 const template_down_slide_stream_html =
-    `<div class="ui-form ui-border-t ui-container overflow-auto" style="min-height: 40vh;max-height: 100vh;" @scroll="onScroll" ref="scrollTarget">
+    `<div class="ui-form ui-border-t ui-container overflow-auto" :style="{'min-height': '30vh', 'max-height': 'calc(100vh - 120px)'}" 
+        @scroll="onScroll" ref="scrollTarget">
         <slot></slot>
         <section class="ui-notice" v-if="loading === false && hasData === false">
             <i></i>
@@ -10,6 +11,9 @@ const template_down_slide_stream_html =
             <p>加载中</p>
             <i class="ui-loading"></i>
         </div>
+        <section class="ui-notice margin-top-1em" style="height: unset" v-if="loading === false && hasData && hasBeenBottom">
+            <p>没有更多了~</p>
+        </section>
     </div>`;
 // Vue定义组件
 const template_down_slide_stream = Vue.extend({
@@ -29,7 +33,7 @@ const template_down_slide_stream = Vue.extend({
             // 打印
             console.log(scrollBottom);
             // 滚动到底部小于distanceToBottom的距离,则提供事件
-            if (scrollBottom <= this.distanceToBottom) {
+            if (scrollBottom <= this.distanceToBottom && this.hasBeenBottom === false && this.loading === false) {
                 // 提供事件出去
                 this.$emit("on-scroll-to-bottom");
             }
@@ -54,6 +58,11 @@ const template_down_slide_stream = Vue.extend({
         },
         // 是否有数据
         hasData: {
+            type: Boolean,
+            default: false,
+        },
+        // 是否已经到底部
+        hasBeenBottom: {
             type: Boolean,
             default: false,
         }

@@ -158,12 +158,10 @@
         },
         // 跳转到默认地址
         redirectDefaultUri: function () {
-            // 刷新令牌失败 1.5s后跳转到登录页
-            setTimeout(() => {
-                window.location = window.defaultRedirectUri;
-            }, 500)
             // 提示
             alert("信息失效，请重新登录");
+            // 刷新令牌失败 跳转到登录页
+            window.location = window.defaultRedirectUri;
         }
     }
 

@@ -98,7 +98,7 @@
                 <label class="width-80px">
                     电子邮箱
                 </label>
-                <input v-model="mail" type="email" style="min-width: calc(100vw)" placeholder="请输入邮箱（选填）">
+                <input v-model="mail" type="text" style="max-width: calc(100vw - 80px)" placeholder="请输入邮箱（选填）">
             </div>
             <div class="ui-form-item ui-border-b">
                 <label class="width-80px username-display">
@@ -179,7 +179,7 @@
                     data: param
                 }).then(res => {
                     // 跳转地址
-                    this.tips = "注册成功，两秒后跳转到首页";
+                    this.tips = "注册成功，稍候跳转到首页";
                     // 记住用户手机号
                     if (this.username) {
                         localStorage.setItem("username.mobile", this.mobile);
@@ -190,7 +190,7 @@
                     }
                     setTimeout(() => {
                         window.location = "/fantasy-oauth2/mi-ma-deng-lu.html?clientKey=" + this.reqClientKey;
-                    }, 1500)
+                    }, 1000)
                 }).catch(res => {
                     this.loading = false;
                     // 提示信息

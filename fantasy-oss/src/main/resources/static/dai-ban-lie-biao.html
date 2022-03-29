@@ -27,6 +27,7 @@
 
     <template-down-slide-stream :distance-to-bottom="0"
                                 :offset-to-bottom="45"
+                                :has-been-bottom="currPage >= totalPage"
                                 :loading="loading"
                                 :has-data="todoList && todoList.length > 0"
                                 @on-scroll-to-bottom="onScrollToBottom">
@@ -111,7 +112,7 @@
                     "entity": {},
                     "pageInfo": {
                         "currPage": this.currPage,
-                        "pageSize": 10
+                        "pageSize": 15
                     }
                 }
                 // 请求
@@ -136,14 +137,19 @@
             },
             // 滚动到底部
             onScrollToBottom() {
-                // 如果总页数小于当前页,则不加载
-                if (this.loading === false && this.totalPage <= this.currPage) {
-                    return;
-                }
-                // 当前页+1
-                this.currPage++;
-                // 加载下一页
-                this.initTodoList()
+                this.loading = true;
+                // 防抖动
+                commonUtil.debounce(() => {
+                    // 总页数小于等于当前页,则不加载
+                    if (this.totalPage <= this.currPage) {
+                        this.loading = false;
+                        return;
+                    }
+                    // 当前页+1
+                    this.currPage++;
+                    // 加载下一页
+                    this.initTodoList()
+                }, 250);
             }
         },
         created() {

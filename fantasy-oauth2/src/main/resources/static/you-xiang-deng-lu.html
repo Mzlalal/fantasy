@@ -158,9 +158,7 @@
                     // 跳转地址
                     window.location = res.data.redirectUri;
                 }).catch(res => {
-                    setTimeout(() => {
-                        this.loading = false;
-                    }, 500);
+                    this.loading = false;
                     // 启用验证码按钮
                     this.verifyCodeBtn = true;
                     // 置空验证码

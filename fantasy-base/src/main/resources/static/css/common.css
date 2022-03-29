@@ -1,6 +1,8 @@
 /* 背景为白色 */
 body {
     background-color: white;
+    overflow: hidden !important;
+    height: 100vh;
 }
 
 /* 无边框 */
