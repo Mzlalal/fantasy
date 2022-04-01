@@ -1,4 +1,4 @@
-package com.mzlalal.oauth2.controller.oauth;
+package com.mzlalal.oauth2.controller;
 
 import cn.hutool.core.util.StrUtil;
 import com.mzlalal.base.common.GlobalConstant;

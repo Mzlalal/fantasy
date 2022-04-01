@@ -41,7 +41,7 @@ const template_popup_menu = Vue.extend({
             // 请求接口
             axios({
                 method: "get",
-                url: "/fantasy-oauth2/api/v1/token/logout",
+                url: "/fantasy-oauth2/api/v1/oauth2/token/logout",
             }).then(res => {
                 // 清空缓存
                 localStorage.clear();

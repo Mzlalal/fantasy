@@ -1,17 +1,20 @@
-package com.mzlalal.oauth2.controller.oauth;
+package com.mzlalal.oauth2.controller;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
 import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.global.component.VueSelect;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oauth2.dto.UserEntity;
+import com.mzlalal.base.entity.oauth2.req.UpdateUserByAdminReq;
 import com.mzlalal.base.entity.oss.req.UserVueSelectReq;
 import com.mzlalal.base.feign.oauth2.UserFeignApi;
 import com.mzlalal.base.util.Page;
 import com.mzlalal.oauth2.service.UserService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.validation.annotation.Validated;
@@ -96,6 +99,23 @@ public class UserController implements UserFeignApi {
     public Result<VueSelect> queryUserMailVueSelectListByUsername(@Validated @RequestBody UserVueSelectReq req) {
         Page<VueSelect> page = Page.list(userService.queryUserMailVueSelectListByUsername(req.getUsername()));
         return Result.ok(page);
+    }
+
+    @Override
+    public Result<Void> updateByAdmin(@Validated @RequestBody UpdateUserByAdminReq req) {
+        // 设置为空,不更新
+        if (StrUtil.isBlank(req.getPassword())) {
+            req.setPassword(null);
+        }
+        // 更新用户信息
+        UserEntity user = new UserEntity();
+        // bean拷贝
+        BeanUtils.copyProperties(req, user);
+        // 更新
+        if (userService.updateById(user)) {
+            return Result.ok();
+        }
+        return Result.fail();
     }
 
 }

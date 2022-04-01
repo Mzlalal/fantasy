@@ -1,4 +1,4 @@
-package com.mzlalal.oauth2.controller.oauth;
+package com.mzlalal.oauth2.controller;
 
 import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.entity.global.Result;
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(tags = "令牌")
 @Validated
 @RestController
-@RequestMapping("/api/v1/token")
+@RequestMapping("/api/v1/oauth2/token")
 public class TokenController implements TokenFeignApi {
 
     /**

@@ -2,6 +2,7 @@ package com.mzlalal.oauth2.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mzlalal.base.entity.global.component.VueSelect;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oauth2.dto.RoleEntity;
 import com.mzlalal.base.util.Page;
@@ -36,5 +37,10 @@ public class RoleServiceImpl extends ServiceImpl<RoleDao, RoleEntity> implements
         List<RoleEntity> entityList = baseMapper.selectList(wrapper);
         // 返回结果
         return new Page<>(entityList, pageResult.getTotal(), po.getPageInfo());
+    }
+
+    @Override
+    public List<VueSelect> queryRoleVueSelectList() {
+        return baseMapper.queryRoleVueSelectList();
     }
 }

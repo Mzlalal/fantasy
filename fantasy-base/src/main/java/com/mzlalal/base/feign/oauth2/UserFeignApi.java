@@ -6,6 +6,7 @@ import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.global.component.VueSelect;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oauth2.dto.UserEntity;
+import com.mzlalal.base.entity.oauth2.req.UpdateUserByAdminReq;
 import com.mzlalal.base.entity.oss.req.UserVueSelectReq;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -100,4 +101,14 @@ public interface UserFeignApi {
     @ApiOperation("根据用户名查询用户邮箱下拉框集合")
     @RequestMapping(value = "/query.user.mail.vue.select.list.by.username", method = RequestMethod.POST)
     Result<VueSelect> queryUserMailVueSelectListByUsername(@RequestBody UserVueSelectReq req);
+
+    /**
+     * 管理员重置用户部分信息
+     *
+     * @param req 请求
+     * @return Result
+     */
+    @ApiOperation("管理员重置用户部分信息")
+    @RequestMapping(value = "/update.by.admin", method = RequestMethod.POST)
+    Result<Void> updateByAdmin(@RequestBody UpdateUserByAdminReq req);
 }

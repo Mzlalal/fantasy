@@ -46,8 +46,11 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         String mail = po.getEntity().getMail();
         String mobile = po.getEntity().getMobile();
         String username = po.getEntity().getUsername();
-        // like查询
-        wrapper.like("mobile", mobile).or().like("mail", mail).or().like("username", username);
+        // 都不为空
+        if (StrUtil.isAllNotBlank(mail, mobile, username)) {
+            // like查询
+            wrapper.like("mobile", mobile).or().like("mail", mail).or().like("username", username);
+        }
         // 创建分页条件
         com.github.pagehelper.Page<UserEntity> pageResult = this.createPageQuery(po.getPageInfo());
         // 查询结果集

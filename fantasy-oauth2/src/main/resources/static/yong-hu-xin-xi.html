@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, initial-scale=1.0, user-scalable=no">
+    <title>用户信息</title>
+    <link rel="stylesheet" href="css/plugin/frozen.css"/>
+    <link rel="stylesheet" href="css/common.css"/>
+    <link rel="stylesheet" href="css/plugin/vue.select.css"/>
+    <script src="js/plugin/axios.min.js"></script>
+    <script src="js/plugin/vue.min.js"></script>
+    <script src="js/plugin/vue.select.js"></script>
+    <script src="js/CommonUtil.js"></script>
+    <script src="js/FantasyConstant.js"></script>
+</head>
+<style>
+
+</style>
+<body>
+<div id="app">
+    <header class="ui-header ui-header-positive ui-border-b text-center">
+        <span class="font-weight-bolder font-size-20px">Fantasy</span>
+        <span class="position-right username-display" @click="redirectUserList">返回</span>
+    </header>
+    <div class="ui-form ui-border-t ui-container">
+        <div class="ui-form ui-border-t">
+            <div class="ui-form-item ui-border-b">
+                <label class="width-80px username-display">
+                    用户名
+                </label>
+                <input v-model="user.username" type="text" readonly placeholder="请输入用户名"/>
+            </div>
+            <div class="ui-form-item ui-border-b">
+                <label class="width-80px username-display">
+                    手机号
+                </label>
+                <input v-model="user.mobile" type="number" pattern="/d*" readonly class="width-100p"
+                       placeholder="请输入手机号"/>
+            </div>
+            <div class="ui-form-item ui-border-b">
+                <label class="width-80px">
+                    电子邮箱
+                </label>
+                <input v-model="user.mail" type="text" style="max-width: calc(100vw - 80px)" readonly
+                       placeholder="请输入电子邮箱"/>
+            </div>
+            <div class="ui-form-item ui-border-b">
+                <label class="width-80px">
+                    重置密码
+                </label>
+                <input v-model="user.password" type="text" placeholder="请输入密码"/>
+            </div>
+            <div class="ui-form-item ui-border-b">
+                <label class="width-80px">
+                    用户角色
+                </label>
+                <v-select class="page-min-width" placeholder="请输入姓名" :close-on-select="false" style="padding-left: 24px"
+                          v-model="selectedRoleList" :options="roleOption" :multiple="true" :loading="vueSelectLoading">
+                    <template slot="no-options">
+                        暂无数据
+                    </template>
+                </v-select>
+            </div>
+        </div>
+        <div class="ui-tooltips ui-tooltips-guide ui-tooltips-function" v-if="tips">
+            <div class="ui-tooltips-cnt ui-border-b">
+                <i></i>{{tips}}
+            </div>
+        </div>
+        <div class="ui-loading-wrap margin-top-1em" v-if="loading">
+            <p>处理中</p>
+            <i class="ui-loading"></i>
+        </div>
+        <div class="ui-btn-wrap" v-else>
+            <button class="ui-btn-lg ui-btn-primary" @click="updateFun">
+                保存
+            </button>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    Vue.component('v-select', VueSelect.VueSelect);
+
+    new Vue({
+        el: "#app",
+        data() {
+            return {
+                // 处理中
+                loading: false,
+                // 下拉框加载中
+                vueSelectLoading: false,
+                // 用户ID
+                userId: null,
+                // 用户信息
+                user: {},
+                // 选中的角色
+                selectedRoleList: [],
+                // 角色
+                roleOption: [],
+                // 显示信息
+                tips: "",
+            }
+        },
+        methods: {
+            // 修改用户信息
+            updateFun() {
+                this.loading = true;
+                // 请求参数,和form或者input使用v-model绑定
+                const param = {
+                    "id": this.user.id,
+                    "password": this.user.password,
+                    "roleId": this.selectedRoleList.map(item => item.code).join(","),
+                };
+                // 请求接口
+                axios({
+                    method: "post",
+                    url: "/fantasy-oauth2/api/v1/oauth/user/update.by.admin",
+                    data: param
+                }).then(res => {
+                    // 跳转地址
+                    this.tips = "修改成功";
+                    this.loading = false;
+                }).catch(res => {
+                    this.loading = false;
+                    // 提示信息
+                    if (res.data && res.data.msg) {
+                        this.tips = res.data.msg;
+                    } else {
+                        this.tips = "服务器繁忙，请稍后再试";
+                    }
+                })
+            },
+            // 初始化用户信息
+            initUserInfo() {
+                this.loading = true;
+                // 请求接口
+                axios({
+                    method: "get",
+                    url: "/fantasy-oauth2/api/v1/oauth/user/info/" + this.userId,
+                }).then(res => {
+                    this.loading = false;
+                    // 赋值
+                    this.user = res.data;
+                    // 清空用户密码
+                    this.user.password = "";
+                    // 用户角色默认选中
+                    this.selectedRoleList = this.user.roleList.map(item => {
+                        return {
+                            "code": item.id,
+                            "label": item.name,
+                        }
+                    });
+                }).catch(res => {
+                    this.loading = false;
+                    // 提示信息
+                    if (res.data && res.data.msg) {
+                        this.tips = res.data.msg;
+                    } else {
+                        this.tips = "服务器繁忙，请稍后再试";
+                    }
+                })
+            },
+            // 初始化角色下拉框
+            initRoleVueSelect() {
+                this.vueSelectLoading = true;
+                // 请求接口
+                axios({
+                    method: "get",
+                    url: "/fantasy-oauth2/api/v1/oauth2/role/query.role.vue.select.list",
+                }).then(res => {
+                    // 角色选项
+                    this.roleOption = commonUtil.getPageList(res);
+                    this.vueSelectLoading = false;
+                }).catch(res => {
+                    this.vueSelectLoading = false;
+                    // 提示信息
+                    if (res.data && res.data.msg) {
+                        this.tips = res.data.msg;
+                    } else {
+                        this.tips = "服务器繁忙，请稍后再试";
+                    }
+                })
+            },
+            // 跳转用户列表
+            redirectUserList() {
+                window.location = "/fantasy-oauth2/yong-hu-lie-biao.html";
+            }
+        },
+        created() {
+            // 获取需要更改的用户ID
+            this.userId = localStorage.getItem("oauth2.update.user.id");
+            // 加载用户信息
+            this.initUserInfo();
+            // 加载角色下拉框
+            this.initRoleVueSelect();
+        }
+    });
+</script>
+
+</html>

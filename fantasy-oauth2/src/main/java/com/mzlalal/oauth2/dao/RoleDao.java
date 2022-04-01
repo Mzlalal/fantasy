@@ -1,6 +1,7 @@
 package com.mzlalal.oauth2.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.mzlalal.base.entity.global.component.VueSelect;
 import com.mzlalal.base.entity.oauth2.dto.RoleEntity;
 import com.mzlalal.base.entity.oauth2.vo.RoleVo;
 import org.apache.ibatis.annotations.Mapper;
@@ -24,5 +25,12 @@ public interface RoleDao extends BaseMapper<RoleEntity> {
      * @return List<RoleVo>
      */
     List<RoleVo> queryRoleListById(@PathParam("id") String id);
+
+    /**
+     * 查询角色下拉框集合
+     *
+     * @return List<VueSelect>
+     */
+    List<VueSelect> queryRoleVueSelectList();
 
 }

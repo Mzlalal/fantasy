@@ -3,6 +3,7 @@ package com.mzlalal.base.feign.oauth2;
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.entity.global.Result;
+import com.mzlalal.base.entity.global.component.VueSelect;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oauth2.dto.RoleEntity;
 import io.swagger.annotations.ApiOperation;
@@ -19,8 +20,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @author Mzlalal
  * @date 2022-02-28 10:39:10
  **/
-@FeignClient(contextId = "RoleFeignApi" , name = GlobalConstant.FANTASY_OAUTH2, url = "${fantasy-oauth2.feign.url}"
-        , path = "/api/v1/role")
+@FeignClient(contextId = "RoleFeignApi", name = GlobalConstant.FANTASY_OAUTH2, url = "${fantasy-oauth2.feign.url}"
+        , path = "/api/v1/oauth2/role")
 public interface RoleFeignApi {
 
     /**
@@ -74,7 +75,16 @@ public interface RoleFeignApi {
      * @return Result
      */
     @ApiOperation("删除")
-    @RequestMapping(value = "/delete" , method = RequestMethod.POST)
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 50)
     Result<Void> delete(@RequestBody String[] ids);
+
+    /**
+     * 查询角色下拉框集合
+     *
+     * @return Result<VueSelect>
+     */
+    @ApiOperation("查询角色下拉框集合")
+    @RequestMapping(value = "/query.role.vue.select.list", method = RequestMethod.GET)
+    Result<VueSelect> queryRoleVueSelectList();
 }

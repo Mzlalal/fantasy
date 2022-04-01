@@ -1,4 +1,4 @@
-package com.mzlalal.oauth2.controller.client;
+package com.mzlalal.oauth2.controller;
 
 import cn.hutool.core.collection.CollUtil;
 import com.mzlalal.base.entity.global.Result;

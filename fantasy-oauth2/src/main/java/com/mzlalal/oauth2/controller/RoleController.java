@@ -1,7 +1,8 @@
-package com.mzlalal.oauth2.controller.oauth;
+package com.mzlalal.oauth2.controller;
 
 import cn.hutool.core.collection.CollUtil;
 import com.mzlalal.base.entity.global.Result;
+import com.mzlalal.base.entity.global.component.VueSelect;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oauth2.dto.RoleEntity;
 import com.mzlalal.base.feign.oauth2.RoleFeignApi;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 /**
  * 角色controller
  *
@@ -22,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Api(tags = "角色")
 @RestController
-@RequestMapping("/api/v1/role")
+@RequestMapping("/api/v1/oauth2/role")
 public class RoleController implements RoleFeignApi {
 
     private final RoleService roleService;
@@ -66,6 +69,15 @@ public class RoleController implements RoleFeignApi {
             return Result.ok();
         }
         return Result.fail();
+    }
+
+    @Override
+    public Result<VueSelect> queryRoleVueSelectList() {
+        // 查询列表
+        List<VueSelect> vueSelectList = roleService.queryRoleVueSelectList();
+        // 返回
+        Page<VueSelect> page = Page.list(vueSelectList);
+        return Result.ok(page);
     }
 
 }

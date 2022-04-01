@@ -21,4 +21,8 @@
         select id, name, tenant_id from t_role where id in (${id})
     </select>
 
+    <select id="queryRoleVueSelectList" resultType="com.mzlalal.base.entity.global.component.VueSelect">
+        select id as code, name as label from t_role
+    </select>
+
 </mapper>

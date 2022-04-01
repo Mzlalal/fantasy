@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, initial-scale=1.0, user-scalable=no">
+    <title>房间列表</title>
+    <link rel="stylesheet" href="css/plugin/frozen.css"/>
+    <link rel="stylesheet" href="css/common.css"/>
+    <script src="js/plugin/axios.min.js"></script>
+    <script src="js/plugin/vue.min.js"></script>
+    <script src="js/CommonUtil.js"></script>
+    <script src="js/FantasyConstant.js"></script>
+    <script src="js/components/PopupMenu.js"></script>
+    <script src="js/components/DownSlideStream.js"></script>
+</head>
+<style>
+
+</style>
+<body>
+<div id="app">
+    <header class="ui-header ui-header-positive ui-border-b text-center">
+        <span class="position-left username-display" @click="menuShow = true">我的菜单</span>
+        <!--<span class="font-weight-bolder font-size-20px">斗也斗得</span>-->
+        <!--<a class="position-right username-display" href="/fantasy-chess/li-shi-ji-lu.html">历史记录</a>-->
+    </header>
+
+    <template-down-slide-stream :distance-to-bottom="0"
+                                :offset-to-bottom="45"
+                                :has-been-bottom="currPage >= totalPage"
+                                :loading="loading"
+                                :has-data="userList && userList.length > 0"
+                                @on-scroll-to-bottom="onScrollToBottom">
+        <slot>
+            <div class="ui-searchbar-wrap ui-border-b" v-bind:class="{'focus': searchBar}">
+                <div class="ui-searchbar ui-border-radius" @click="changeSearchBar(true)">
+                    <i class="ui-icon-search"></i>
+                    <div class="ui-searchbar-text">搜索用户名/手机号/邮箱</div>
+                    <div class="ui-searchbar-input">
+                        <input v-model="searchKeyword" type="text" placeholder="搜索用户名/手机号/邮箱"
+                               ref="searchInput" autocapitalize="off">
+                    </div>
+                    <i class="ui-icon-close" v-on:click.stop="changeSearchBar(false)"></i>
+                </div>
+                <button class="ui-searchbar-cancel" @click="initUserList">确认</button>
+            </div>
+            <ul class="ui-list ui-list-function ui-border-tb">
+                <li v-for="user in userList">
+                    <div class="ui-list-info ui-border-t">
+                        <h4 class="ui-nowrap">
+                            {{user.username}}
+                        </h4>
+                        <p>
+                            <span class="ui-txt-highlight font-size-12px">{{user.mobile}}</span>
+                            <span class="ui-txt-highlight font-size-12px margin-left-5px">{{user.mail || '未设置'}}</span>
+                            <span class="ui-txt-highlight font-size-12px margin-left-5px"
+                                  v-for="role in user.roleList">
+                                {{role.name}}
+                            </span>
+                        </p>
+                    </div>
+                    <div class="ui-btn" @click="updateUser(user)">修改</div>
+                </li>
+            </ul>
+        </slot>
+    </template-down-slide-stream>
+
+    <template-popup-menu :menu-show="menuShow" @on-close="menuShow = false"></template-popup-menu>
+</div>
+</body>
+<script>
+    new Vue({
+        el: "#app",
+        data() {
+            return {
+                // 当前页
+                currPage: 1,
+                // 总页数
+                totalPage: 0,
+                // 加载中
+                loading: false,
+                // 菜单显示
+                menuShow: false,
+                // 搜索框
+                searchBar: false,
+                // 搜索关键字
+                searchKeyword: null,
+                // 房间列表
+                userList: [],
+                // 已存在房间
+                existRoom: null
+            }
+        },
+        methods: {
+            // 加载房间列表
+            initUserList() {
+                this.loading = true;
+                const param = {
+                    "entity": {
+                        "username": this.searchKeyword,
+                        "mobile": this.searchKeyword,
+                        "mail": this.searchKeyword,
+                    },
+                    "pageInfo": {
+                        "currPage": this.currPage,
+                        "pageSize": 15
+                    }
+                }
+                // 请求
+                axios({
+                    method: "post",
+                    url: "/fantasy-oauth2/api/v1/oauth/user/list",
+                    data: param
+                }).then(res => {
+                    // 追加到集合中
+                    this.userList = this.userList.concat(commonUtil.getPageList(res));
+                    // 获取到总页数
+                    this.totalPage = commonUtil.getTotalPage(res);
+                    this.loading = false;
+                }).catch(res => {
+                    this.loading = false;
+                    if (res.data && res.data.msg) {
+                        alert(res.data.msg)
+                    } else {
+                        alert("服务器繁忙，请稍后再试")
+                    }
+                })
+            },
+            // 加入房间
+            updateUser(user) {
+                // 房间ID
+                localStorage.setItem("oauth2.update.user.id", user.id);
+                // 跳转地址
+                window.location = "/fantasy-oauth2/yong-hu-xin-xi.html";
+            },
+            // 更改搜索框
+            changeSearchBar(bool) {
+                // 设置搜索框状态
+                this.searchBar = bool;
+                // 清空列表
+                this.userList = [];
+                // 重置为第一页
+                this.currPage = 1;
+                // 关闭窗口
+                if (bool) {
+                    // 获取焦点
+                    this.$nextTick(() => {
+                        this.$refs.searchInput.focus();
+                    });
+                } else {
+                    // 关键字
+                    this.searchKeyword = null;
+                    // 重新查询
+                    this.initUserList();
+                }
+            },
+            // 滚动到底部
+            onScrollToBottom() {
+                this.loading = true;
+                // 防抖动
+                commonUtil.debounce(() => {
+                    // 总页数小于等于当前页,则不加载
+                    if (this.totalPage <= this.currPage) {
+                        this.loading = false;
+                        return;
+                    }
+                    // 当前页+1
+                    this.currPage++;
+                    // 加载下一页
+                    this.initUserList()
+                }, 250);
+            }
+        },
+        created() {
+            // 加载房间列表
+            this.initUserList();
+        }
+    });
+</script>
+
+</html>

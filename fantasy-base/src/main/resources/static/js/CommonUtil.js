@@ -138,7 +138,7 @@
             // 请求接口
             axios({
                 method: "post",
-                url: "/fantasy-oauth2/api/v1/token/check.token",
+                url: "/fantasy-oauth2/api/v1/oauth2/token/check.token",
             }).then(res => {
                 if (res.data) {
                     localStorage.setItem("user.info", JSON.stringify(res.data));
