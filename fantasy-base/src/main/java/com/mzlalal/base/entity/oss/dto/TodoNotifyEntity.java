@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -35,7 +36,7 @@ public class TodoNotifyEntity implements Serializable {
     private String id;
 
     @NotBlank(message = "日历类别不能为空")
-    @ApiModelProperty("日历类别,例:1=阳历,2=阴历(农历)")
+    @ApiModelProperty("日历类别,例:1=阳历(公历),2=阴历(农历)")
     private String notifyCalendarType;
 
     @NotBlank(message = "重复提醒周期不能为空")
@@ -59,9 +60,9 @@ public class TodoNotifyEntity implements Serializable {
     @NotBlank(message = "分钟不能为空")
     private String notifyMinute;
 
-    @NotBlank(message = "重复提醒次数不能为空")
+    @NotNull(message = "重复提醒次数不能为空")
     @ApiModelProperty("重复提醒次数")
-    private String notifyLazyModeTimes;
+    private Integer notifyLazyModeTimes;
 
     @JsonFormat(pattern = DatePattern.NORM_DATETIME_MINUTE_PATTERN, timezone = "GMT+8")
     @ApiModelProperty("下次提醒执行时间")

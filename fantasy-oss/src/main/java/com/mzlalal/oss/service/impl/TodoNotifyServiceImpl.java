@@ -20,6 +20,7 @@ import com.mzlalal.oss.service.todo.NotifyTypeEnum;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -88,11 +89,11 @@ public class TodoNotifyServiceImpl extends ServiceImpl<TodoNotifyDao, TodoNotify
             // 发送到邮箱
             mailNotifyService.sendText(todoNotifyVo.getNotifyMailSet(), "待办提醒-懒人模式-Fantasy", todoNotifyVo.getNotifyMemo());
             // 更新次数
-            int notifyLazyModeTimes = Integer.parseInt(todoNotifyVo.getNotifyLazyModeTimes()) - 1;
+            int notifyLazyModeTimes = todoNotifyVo.getNotifyLazyModeTimes() - 1;
             // 如果提醒次数仍然大于0,则加入到集合中
             if (notifyLazyModeTimes > 0) {
                 // 更新次数
-                todoNotifyVo.setNotifyLazyModeTimes(String.valueOf(notifyLazyModeTimes));
+                todoNotifyVo.setNotifyLazyModeTimes(notifyLazyModeTimes);
                 // 保存到redis
                 redisTemplate.opsForList().rightPush(notifyRepeatRedisKey, todoNotifyVo);
             }
@@ -107,36 +108,41 @@ public class TodoNotifyServiceImpl extends ServiceImpl<TodoNotifyDao, TodoNotify
         // 小于等于当前执行时间
         queryWrapper.le(true, "notify_exec_time", currentTime);
         // 逻辑删除
-        queryWrapper.eq("is_hide", GlobalConstant.STATUS_OFF);
+        queryWrapper.eq("is_hide", GlobalConstant.STATUS_ZERO);
         // 查询数据库
         List<TodoNotifyEntity> todoNotifyList = baseMapper.selectList(queryWrapper);
         // 为空则跳过
         if (CollUtil.isEmpty(todoNotifyList)) {
             return;
         }
-        // 遍历
-        todoNotifyList.parallelStream().forEach(todoNotify -> {
+        // 迭代遍历
+        Iterator<TodoNotifyEntity> iterator = todoNotifyList.iterator();
+        while (iterator.hasNext()) {
+            TodoNotifyEntity todoNotify = iterator.next();
             // 发送到邮箱
             mailNotifyService.sendText(todoNotify.getNotifyMailSet(), "待办提醒-Fantasy", todoNotify.getNotifyMemo());
             // 重复提醒的存放在redis列表中
-            if (Integer.parseInt(todoNotify.getNotifyLazyModeTimes()) > 0) {
+            if (todoNotify.getNotifyLazyModeTimes() > 0) {
                 TodoNotifyVo todoNotifyVo = new TodoNotifyVo();
                 BeanUtil.copyProperties(todoNotify, todoNotifyVo);
                 redisTemplate.opsForList().rightPush(GlobalConstant.todoNotifyLazyMode(), todoNotifyVo);
             }
             // 提醒后删除
-            if (StrUtil.equals(GlobalConstant.STATUS_ON, todoNotify.getNotifyAfterDelete())) {
-                todoNotify.setIsHide(Integer.parseInt(GlobalConstant.STATUS_ON));
+            if (StrUtil.equals(GlobalConstant.STATUS_ONE, todoNotify.getNotifyAfterDelete())) {
+                // 逻辑删除
+                this.removeById(todoNotify.getId());
+                // 去除
+                iterator.remove();
             }
             // 提醒类型
             String notifyType = todoNotify.getNotifyType();
             // 等于0,只提醒一次
-            if (StrUtil.equals(GlobalConstant.STATUS_OFF, notifyType)) {
+            if (StrUtil.equals(GlobalConstant.STATUS_ZERO, notifyType)) {
                 return;
             }
             // 生成下次执行时间
             NotifyTypeEnum.getEnum(notifyType).createNextTime(todoNotify.getNotifyExecTime(), todoNotify);
-        });
+        }
         // 批量更新
         this.saveOrUpdateBatch(todoNotifyList);
     }

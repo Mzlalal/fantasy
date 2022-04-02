@@ -41,11 +41,11 @@ public interface GlobalConstant {
     /**
      * 启用
      */
-    String STATUS_ON = "1";
+    String STATUS_ONE = "1";
     /**
      * 禁用
      */
-    String STATUS_OFF = "0";
+    String STATUS_ZERO = "0";
     /**
      * 默认用户ID
      */

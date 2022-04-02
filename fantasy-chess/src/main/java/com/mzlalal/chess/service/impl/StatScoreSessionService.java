@@ -99,7 +99,7 @@ public class StatScoreSessionService {
                 .id(userId)
                 .playerName(username)
                 .playerScore(0)
-                .playerStatus(GlobalConstant.STATUS_ON)
+                .playerStatus(GlobalConstant.STATUS_ONE)
                 .roomId(roomId)
                 .roomName(room.getName())
                 .build();
@@ -126,7 +126,7 @@ public class StatScoreSessionService {
         String roomId = req.getRoomId();
 
         // 用户退出房间
-        roomPlayerService.updateRoomPlayerStatus(roomId, userId, GlobalConstant.STATUS_ON);
+        roomPlayerService.updateRoomPlayerStatus(roomId, userId, GlobalConstant.STATUS_ONE);
 
         // 上桌消息
         String message = StrUtil.format(GlobalConstant.USERNAME_DISPLAY + "上桌了", req.getUsername());
@@ -146,7 +146,7 @@ public class StatScoreSessionService {
         String roomId = req.getRoomId();
 
         // 用户退出房间
-        roomPlayerService.updateRoomPlayerStatus(roomId, userId, GlobalConstant.STATUS_OFF);
+        roomPlayerService.updateRoomPlayerStatus(roomId, userId, GlobalConstant.STATUS_ZERO);
 
         // 下桌消息
         String message = StrUtil.format(GlobalConstant.USERNAME_DISPLAY + "下桌了", req.getUsername());
@@ -174,11 +174,11 @@ public class StatScoreSessionService {
 
             // 检查发起人状态
             RoomPlayerEntity fromPlayer = roomPlayerService.queryOneByRoomIdAndUserId(roomId, from);
-            AssertUtil.equals(fromPlayer.getPlayerStatus(), GlobalConstant.STATUS_ON, GlobalResult.SUB_PLAYER_STATUS_OFF);
+            AssertUtil.equals(fromPlayer.getPlayerStatus(), GlobalConstant.STATUS_ONE, GlobalResult.SUB_PLAYER_STATUS_OFF);
 
             // 检查接收人状态
             RoomPlayerEntity toPlayer = roomPlayerService.queryOneByRoomIdAndUserId(roomId, to);
-            AssertUtil.equals(toPlayer.getPlayerStatus(), GlobalConstant.STATUS_ON, GlobalResult.ADD_PLAYER_STATUS_OFF);
+            AssertUtil.equals(toPlayer.getPlayerStatus(), GlobalConstant.STATUS_ONE, GlobalResult.ADD_PLAYER_STATUS_OFF);
 
             // 扣除发起人分数
             int sub = roomPlayerService.subRoomPlayerScore(roomId, from, change);

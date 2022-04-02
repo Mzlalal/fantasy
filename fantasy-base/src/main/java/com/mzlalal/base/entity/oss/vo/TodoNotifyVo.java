@@ -4,7 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -28,7 +28,7 @@ public class TodoNotifyVo implements Serializable {
     @ApiModelProperty("发送给这些邮箱")
     private String notifyMailSet;
 
-    @NotBlank(message = "重复提醒次数不能为空")
+    @NotNull(message = "重复提醒次数不能为空")
     @ApiModelProperty("重复提醒次数")
-    private String notifyLazyModeTimes;
+    private Integer notifyLazyModeTimes;
 }

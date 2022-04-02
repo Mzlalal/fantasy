@@ -2,6 +2,7 @@ package com.mzlalal.oss;
 
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.ChineseDate;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
@@ -84,6 +85,12 @@ public class OssTest {
     @Test
     public void currentTime() {
         System.out.println(DateUtil.format(DateUtil.date(), DatePattern.NORM_DATETIME_MINUTE_PATTERN));
+    }
+
+    @Test
+    public void chineseTime() {
+        ChineseDate chineseDate = new ChineseDate(2023, 13, 6);
+        System.out.println(new DateTime(chineseDate.getGregorianCalendar()));
     }
 
 }

@@ -163,7 +163,7 @@
                 notifyHour: null,
                 notifyMinute: null,
                 enableLazyMode: false,
-                notifyLazyModeTimes: "0",
+                notifyLazyModeTimes: 0,
                 notifyMemo: null,
                 notifyTopStatus: false,
                 notifyAfterDelete: false,
@@ -297,7 +297,7 @@
             },
             enableLazyMode(newVal, oldVal) {
                 if (newVal === false) {
-                    this.notifyLazyModeTimes = "0";
+                    this.notifyLazyModeTimes = 0;
                 }
                 if (newVal === true) {
                     this.notifyLazyModeTimes = window.lazyTimesOption[0].code;

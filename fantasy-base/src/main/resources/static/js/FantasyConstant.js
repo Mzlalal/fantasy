@@ -9,11 +9,11 @@
     window.refreshTokenStateCode = [1404, 1405];
     // 房间已存在状态码
     window.roomIsExist = 2205;
-    // 日历类别,例:1=阳历,2=阴历(农历)
+    // 日历类别,例:1=阳历(公历),2=阴历(农历)
     window.calendarTypeOption = [
         {
             "code": "1",
-            "label": "阳历",
+            "label": "阳历（公历）",
         },
         {
             "code": "2",
@@ -361,19 +361,19 @@
     // 懒人提醒次数
     window.lazyTimesOption = [
         {
-            "code": "1",
+            "code": 1,
             "label": "1次"
         }, {
-            "code": "2",
+            "code": 2,
             "label": "2次"
         }, {
-            "code": "3",
+            "code": 3,
             "label": "3次"
         }, {
-            "code": "4",
+            "code": 4,
             "label": "4次"
         }, {
-            "code": "5",
+            "code": 5,
             "label": "5次"
         }
     ];

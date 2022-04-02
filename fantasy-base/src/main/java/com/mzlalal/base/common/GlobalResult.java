@@ -127,6 +127,10 @@ public enum GlobalResult {
      */
     TODO_NOTIFY_TYPE_NOT_CORRECT(2300, "非法的重复提醒周期(notifyType)"),
     /**
+     * 非法的日历类别(notifyCalendarType)
+     */
+    TODO_NOTIFY_CALENDAR_TYPE_NOT_CORRECT(2300, "非法的日历类别(notifyCalendarType)"),
+    /**
      * 服务器繁忙
      */
     FEIGN_SEVER_ERROR(5000, "服务器繁忙，请稍后再试");

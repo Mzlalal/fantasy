@@ -58,7 +58,7 @@ public enum NotifyTypeEnum {
         @Override
         public void createNextTime(Date date, TodoNotifyEntity todoNotify) {
             // 设置下次提醒时间
-            todoNotify.setNotifyExecTime(this.offsetTimeWhenBeforeCurrentTime(date, 1, DateField.YEAR));
+            this.offsetTimeWhenBeforeCurrentTime(todoNotify, date, 1, DateField.YEAR);
         }
     },
     /**
@@ -80,7 +80,7 @@ public enum NotifyTypeEnum {
         @Override
         public void createNextTime(Date date, TodoNotifyEntity todoNotify) {
             // 设置下次提醒时间
-            todoNotify.setNotifyExecTime(this.offsetTimeWhenBeforeCurrentTime(date, 1, DateField.MONTH));
+            this.offsetTimeWhenBeforeCurrentTime(todoNotify, date, 1, DateField.MONTH);
         }
     },
     /**
@@ -103,7 +103,7 @@ public enum NotifyTypeEnum {
         @Override
         public void createNextTime(Date date, TodoNotifyEntity todoNotify) {
             // 设置下次提醒时间
-            todoNotify.setNotifyExecTime(this.offsetTimeWhenBeforeCurrentTime(date, 1, DateField.WEEK_OF_YEAR));
+            this.offsetTimeWhenBeforeCurrentTime(todoNotify, date, 1, DateField.WEEK_OF_YEAR);
         }
     },
     /**
@@ -121,7 +121,7 @@ public enum NotifyTypeEnum {
         @Override
         public void createNextTime(Date date, TodoNotifyEntity todoNotify) {
             // 设置下次提醒时间
-            todoNotify.setNotifyExecTime(this.offsetTimeWhenBeforeCurrentTime(date, 1, DateField.DAY_OF_YEAR));
+            this.offsetTimeWhenBeforeCurrentTime(todoNotify, date, 1, DateField.DAY_OF_YEAR);
         }
     };
 
@@ -164,8 +164,8 @@ public enum NotifyTypeEnum {
         int day = todoNotify.getNotifyDay() == null ? nowDate.dayOfMonth() : Integer.parseInt(todoNotify.getNotifyDay());
         String hour = todoNotify.getNotifyHour();
         String minute = todoNotify.getNotifyMinute();
-        // 阳历
-        if (StrUtil.equals(GlobalConstant.STATUS_ON, todoNotify.getNotifyCalendarType())) {
+        // 阳历(公历)
+        if (StrUtil.equals(GlobalConstant.STATUS_ONE, todoNotify.getNotifyCalendarType())) {
             // 格式化
             String format = StrUtil.format("{}-{}-{} {}:{}", year, month, day, hour, minute);
             return DateUtil.parse(format);
@@ -184,21 +184,107 @@ public enum NotifyTypeEnum {
      * 若参数时间小于当前时间后偏移指定时间,并递归调用直到大于当前时间位置
      * 若参数时间大于当前时间则返回原时间
      *
+     * @param todoNotifyEntity 待办提醒
+     * @param date             参数时间
+     * @param offset           偏移数
+     * @param dateField        偏移单位
+     */
+    public void offsetTimeWhenBeforeCurrentTime(TodoNotifyEntity todoNotifyEntity, Date date, int offset, DateField dateField) {
+        switch (todoNotifyEntity.getNotifyCalendarType()) {
+            case "1":
+                // 计算公历
+                date = this.offsetDate(date, offset, dateField);
+                // 保存
+                todoNotifyEntity.setNotifyExecTime(date);
+                break;
+            case "2":
+                // 计算阴历时间
+                date = this.offsetChineseDate(date, todoNotifyEntity);
+                // 保存
+                todoNotifyEntity.setNotifyExecTime(date);
+                break;
+            default:
+                throw GlobalResult.TODO_NOTIFY_CALENDAR_TYPE_NOT_CORRECT.boom();
+        }
+    }
+
+    /**
+     * 计算公历的偏移时间
+     *
      * @param date      参数时间
      * @param offset    偏移数
      * @param dateField 偏移单位
-     * @return DateTime
+     * @return 计算后的日期
      */
-    public Date offsetTimeWhenBeforeCurrentTime(Date date, int offset, DateField dateField) {
+    public Date offsetDate(Date date, int offset, DateField dateField) {
         // 参数时间小于当前时间
         if (date.before(DateUtil.date())) {
             // 偏移时间
             date = DateUtil.offset(date, dateField, offset);
             // 递归,直到提醒时间大于当前时间某个周期位置
-            return this.offsetTimeWhenBeforeCurrentTime(date, offset, dateField);
+            return this.offsetDate(date, offset, dateField);
         }
-        // 参数时间大于当前时间,返回
         return date;
+    }
+
+    /**
+     * 计算农历的便宜时间
+     *
+     * @param date             参数时间
+     * @param todoNotifyEntity 待办事项
+     * @return 计算后的日期
+     */
+    public Date offsetChineseDate(Date date, TodoNotifyEntity todoNotifyEntity) {
+        DateTime dateTime = new DateTime(date);
+        int year = dateTime.year();
+        int month = dateTime.month();
+        int day = dateTime.dayOfMonth();
+        // 阴历(农历)
+        ChineseDate chineseDate = new ChineseDate(year, month, day);
+        // 农历转换的公历日期
+        Date gregorianDate = chineseDate.getGregorianDate();
+        // 根据重复提醒周期处理
+        switch (todoNotifyEntity.getNotifyType()) {
+            // 每年
+            case "1":
+                while (gregorianDate.before(DateUtil.date())) {
+                    chineseDate = new ChineseDate(year + 1, month, day);
+                    gregorianDate = chineseDate.getGregorianDate();
+                }
+                break;
+            // 每月
+            case "2":
+                while (gregorianDate.before(DateUtil.date())) {
+                    chineseDate = new ChineseDate(year, month + 1, day);
+                    gregorianDate = chineseDate.getGregorianDate();
+                }
+                break;
+            // 每周(转换为公历逻辑)
+            case "3":
+                if (gregorianDate.before(DateUtil.date())) {
+                    return this.offsetDate(new DateTime(gregorianDate)
+                                    .offset(DateField.HOUR, Integer.parseInt(todoNotifyEntity.getNotifyHour()))
+                                    .offset(DateField.MINUTE, Integer.parseInt(todoNotifyEntity.getNotifyMinute()))
+                            , 1, DateField.WEEK_OF_YEAR);
+                }
+                break;
+            // 每日(转换为公历逻辑)
+            case "4":
+                if (gregorianDate.before(DateUtil.date())) {
+                    return this.offsetDate(new DateTime(gregorianDate)
+                                    .offset(DateField.HOUR, Integer.parseInt(todoNotifyEntity.getNotifyHour()))
+                                    .offset(DateField.MINUTE, Integer.parseInt(todoNotifyEntity.getNotifyMinute()))
+                            , 1, DateField.DAY_OF_YEAR);
+                }
+                break;
+            // 异常
+            default:
+                throw GlobalResult.TODO_NOTIFY_TYPE_NOT_CORRECT.boom();
+        }
+        // 返回成公历
+        return new DateTime(gregorianDate)
+                .offset(DateField.HOUR, Integer.parseInt(todoNotifyEntity.getNotifyHour()))
+                .offset(DateField.MINUTE, Integer.parseInt(todoNotifyEntity.getNotifyMinute()));
     }
 
     /**

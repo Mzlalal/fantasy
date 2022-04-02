@@ -27,6 +27,12 @@
         <div class="ui-form ui-border-t">
             <div class="ui-form-item ui-border-b">
                 <label class="width-80px username-display">
+                    租户
+                </label>
+                <input v-model="user.tenantId" type="text" readonly/>
+            </div>
+            <div class="ui-form-item ui-border-b">
+                <label class="width-80px username-display">
                     用户名
                 </label>
                 <input v-model="user.username" type="text" readonly placeholder="请输入用户名"/>
