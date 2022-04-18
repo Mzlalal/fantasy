@@ -111,7 +111,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         // 邮箱
         String mail = user.getMail();
         // 邮箱选填,没有邮箱就填充默认值(在待办,纪念日中需要邮箱,做个伪必填)
-        if (StrUtil.isNotBlank(mail)) {
+        if (StrUtil.isBlank(mail)) {
             // 默认使用雪花ID填充值
             user.setMail(IdUtil.getSnowflake().nextIdStr());
             return;
