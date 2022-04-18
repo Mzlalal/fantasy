@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mzlalal.base.entity.oauth2.vo.ClientVo;
 import com.mzlalal.base.entity.oauth2.vo.RoleVo;
 import io.swagger.annotations.ApiModel;
@@ -44,7 +45,6 @@ public class UserEntity implements Serializable {
     @ApiModelProperty("用户名")
     private String username;
 
-    @JsonIgnore
     @NotBlank(message = "密码不能为空")
     @ApiModelProperty("密码")
     private String password;
@@ -95,4 +95,14 @@ public class UserEntity implements Serializable {
     @ApiModelProperty("更新时间")
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
+
+    @JsonIgnore
+    public String getPassword() {
+        return password;
+    }
+
+    @JsonProperty
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }
