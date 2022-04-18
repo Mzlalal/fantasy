@@ -98,20 +98,13 @@
                 <label class="width-80px">
                     电子邮箱
                 </label>
-                <input v-model="user.mail" type="text" style="max-width: calc(100vw - 80px)"
-                       placeholder="请输入电子邮箱"/>
+                <input v-model="user.mail" style="max-width: calc(100vw - 80px)" type="text" placeholder="请输入电子邮箱"/>
             </div>
             <div class="ui-form-item ui-border-b">
                 <label class="width-80px">
                     用户密码
                 </label>
-                <input v-model="user.password" type="password" placeholder="请输入密码"/>
-            </div>
-            <div class="ui-form-item ui-border-b">
-                <label class="width-80px">
-                    确认密码
-                </label>
-                <input v-model="user.confirmPassword" type="password" placeholder="请再次输入相同的密码"/>
+                <input v-model="user.password" style="max-width: calc(100vw - 80px)" type="text" placeholder="请输入密码"/>
             </div>
         </div>
         <div class="ui-tooltips ui-tooltips-guide ui-tooltips-function" v-if="tips">
@@ -148,14 +141,6 @@
             // 修改用户信息
             updateFun() {
                 this.loading = true;
-                // 校验密码和确认密码是否相同
-                if (this.user.password !== this.user.confirmPassword) {
-                    // 提示
-                    this.tips = "两次密码输入不相同";
-                    // 启用登录按钮
-                    this.loading = false;
-                    return;
-                }
                 // 请求参数,和form或者input使用v-model绑定
                 const param = {
                     "id": this.user.id,
@@ -173,9 +158,9 @@
                     // 跳转地址
                     this.tips = "修改信息成功，即将跳转到原地址";
                     // 记住用户手机号
-                    if (this.username) {
-                        localStorage.setItem("username.mobile", this.username);
-                    }
+                    localStorage.setItem("username.mobile", this.username);
+                    // 记住用户密码
+                    localStorage.setItem("username.password", this.password);
                     // 记住用户邮箱
                     if (this.mail) {
                         localStorage.setItem("username.mail", this.mail);
@@ -209,7 +194,6 @@
                     this.user.mail = "";
                 }
                 this.user.password = "";
-                this.user.confirmPassword = "";
             }
         }
     });

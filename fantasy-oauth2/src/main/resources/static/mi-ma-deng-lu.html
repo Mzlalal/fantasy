@@ -174,10 +174,15 @@
             let urlClientKey = commonUtil.getUrlPara("clientKey");
             // 赋值
             this.reqClientKey = urlClientKey == null ? window.clientKey : urlClientKey;
-            // 获取本地缓存的邮箱
+            // 获取本地缓存的手机号
             let cacheUsername = localStorage.getItem("username.mobile");
             if (cacheUsername) {
                 this.username = cacheUsername;
+            }
+            // 获取本地缓存的密码
+            let cachePassword = localStorage.getItem("username.password");
+            if (cachePassword) {
+                this.password = cachePassword;
             }
         }
     });

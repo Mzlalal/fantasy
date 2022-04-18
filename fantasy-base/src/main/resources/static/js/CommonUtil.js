@@ -1,16 +1,8 @@
 (function (window, axios) {
-    // 声明一个数组用于存储每个请求的取消函数和axios标识
-    let pending = [];
-    const CancelToken = axios.CancelToken;
-    // 取消请求
-    let removePending = (config) => {
-        for (let p in pending) {
-            if (pending[p].u === config.url + JSON.stringify(config.data) + '&' + config.method) {
-                pending[p].f()
-                pending.splice(p, 1)
-            }
-        }
-    }
+    // 是否正在刷新TOKEN
+    let isRefreshTokenNow = false;
+    // 重试队列
+    let retryRequest = [];
 
     // https://www.axios-http.cn/docs/interceptors 拦截器文档
     // 请求拦截器
@@ -25,11 +17,6 @@
         if (!config.headers['F-Authorization']) {
             config.headers['F-Authorization'] = localStorage.getItem("user.access.token");
         }
-        // 增加取消请求配置
-        config.cancelToken = new CancelToken((c) => {
-            // 这里的axios标识我是用请求地址&请求方式拼接的字符串，当然你可以选择其他的一些方式
-            pending.push({u: config.url + JSON.stringify(config.data) + '&' + config.method, f: c})
-        })
         // 继续往下执行
         return config;
     }, function (error) {
@@ -37,10 +24,8 @@
         return Promise.reject(error);
     });
 
-    // 是否正在刷新TOKEN
-    let isRefreshTokenNow = false;
     // 响应拦截器
-    axios.interceptors.response.use(async function (res) {
+    axios.interceptors.response.use(function (res) {
         // res.data存在并且返回的state(业务状态)状态为200才能够继续执行,否则直接执行error
         // 避免了then方法中每次都需要判断state=200
         if (res.data && res.data.state === 200) {
@@ -49,46 +34,52 @@
         }
 
         // 需要刷新令牌的的状态码
-        if (!isRefreshTokenNow && res.data && window.refreshTokenStateCode.includes(res.data.state)) {
-            // 设置为刷新
-            isRefreshTokenNow = true;
-            // 获取刷新令牌
-            let refreshToken = localStorage.getItem("user.refresh.token");
-            if (!refreshToken) {
-                // 无刷新令牌,跳转到登录页
-                window.commonUtil.redirectDefaultUri();
-                return;
-            }
-            let param = {
-                "clientKey": window.clientKey,
-                "refreshToken": refreshToken
-            }
-            // 请求 await同步
-            let refreshTokenRes = await axios({
-                method: "post",
-                url: "/fantasy-oauth2/api/v1/oauth/refresh.token",
-                data: param
-            })
-            // 判断是否取到新的TOKEN
-            if (refreshTokenRes && refreshTokenRes.data && refreshTokenRes.data.accessToken && refreshTokenRes.data.refreshToken) {
-                // 设置刷新完毕
-                isRefreshTokenNow = false;
-                // 保存用户令牌,用户刷新令牌
-                localStorage.setItem("user.access.token", refreshTokenRes.data.accessToken);
-                localStorage.setItem("user.refresh.token", refreshTokenRes.data.refreshToken);
-                // 刷新界面
-                window.location.reload();
+        if (res.data && window.refreshTokenStateCode.includes(res.data.state)) {
+            if (!isRefreshTokenNow) {
+                // 设置为刷新
+                isRefreshTokenNow = true;
+                // 获取刷新令牌
+                let refreshToken = localStorage.getItem("user.refresh.token");
+                if (!refreshToken) {
+                    // 无刷新令牌,跳转到登录页
+                    window.commonUtil.redirectDefaultUri();
+                    return;
+                }
+                let param = {
+                    "clientKey": window.clientKey,
+                    "refreshToken": refreshToken
+                }
+                // 请求刷新token
+                return axios({
+                    method: "post",
+                    url: "/fantasy-oauth2/api/v1/oauth/refresh.token",
+                    data: param
+                }).then(refreshTokenRes => {
+                    // 设置刷新完毕
+                    isRefreshTokenNow = false;
+                    // 保存用户令牌,用户刷新令牌
+                    localStorage.setItem("user.access.token", refreshTokenRes.data.accessToken);
+                    localStorage.setItem("user.refresh.token", refreshTokenRes.data.refreshToken);
+                    // token刷新后将数组的方法重新执行
+                    retryRequest.forEach((retry) => retry(refreshTokenRes.data.accessToken));
+                    // 重新请求完清空
+                    retryRequest = [];
+                    // 重试当前请求
+                    return axios(res.config);
+                }).catch(() => {
+                    // 刷新令牌失败,跳转到登录页
+                    window.commonUtil.redirectDefaultUri();
+                })
             } else {
-                // 刷新令牌失败,跳转到登录页
-                window.commonUtil.redirectDefaultUri();
-                return;
+                // 返回未执行 resolve 的 Promise
+                return new Promise(resolve => {
+                    // 用函数形式将 resolve 存入，等待刷新后再执行
+                    retryRequest.push(token => {
+                        res.headers['F-Authorization'] = token;
+                        resolve(res.config);
+                    })
+                })
             }
-        }
-        // 取消请求
-        if (isRefreshTokenNow) {
-            // 取消响应
-            removePending(res.config);
-            return;
         }
         // 业务状态错误直接使用catch方法
         return Promise.reject(res);

@@ -12,7 +12,7 @@ const template_down_slide_stream_html =
             <p>加载中</p>
             <i class="ui-loading"></i>
         </div>
-        <section class="ui-notice margin-top-1em" style="height: unset" v-if="loading === false && hasData && hasBeenBottom">
+        <section class="ui-notice margin-top-1em" style="height: unset; position: unset;" v-if="loading === false && hasData && hasBeenBottom">
             <p>没有更多了~</p>
         </section>
     </div>`;
