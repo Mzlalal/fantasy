@@ -77,13 +77,14 @@
         <div class="ui-form ui-border-t">
             <div class="ui-form-item ui-border-b margin-top-1em">
                 <div class="ui-input ui-input-text padding-0 margin-0">
-                    <input type="tel" class="width-100p" @blur="rememberUsername"
+                    <input type="number" pattern="/d*" class="width-100p" @blur="rememberUsername"
                            v-model="username" placeholder="请输入手机号"/>
                 </div>
             </div>
             <div class="ui-form-item ui-border-b margin-top-1em">
                 <div class="ui-input ui-input-text padding-0 margin-0">
-                    <input type="password" class="width-100p" v-model="password" placeholder="请输入密码"/>
+                    <input type="password" class="width-100p" v-model="password" autocomplete="false"
+                           placeholder="请输入密码"/>
                 </div>
             </div>
         </div>

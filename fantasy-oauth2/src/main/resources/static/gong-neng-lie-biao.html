@@ -30,7 +30,7 @@
                 <li v-for="client in clientList" @click="redirectClientIndex(client.indexUri)"
                     v-if="!hideList.includes(client.clientKey)">
                     <div class="ui-img-vertical">
-                        <span :style="{backgroundImage:'url('+client.clientHeader+')'}"></span>
+                        <span :style="{background: 'url(' + client.clientHeader + ') center center / 80px 80px no-repeat'}"></span>
                     </div>
                     <div class="ui-grid-info text-center margin-bottom-1em">
                         <span class="font-weight-bolder">{{client.clientName}}</span>
