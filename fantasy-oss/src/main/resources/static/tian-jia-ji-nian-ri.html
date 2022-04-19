@@ -216,7 +216,7 @@
                 return;
             }
             userInfo = JSON.parse(userInfo);
-            if (userInfo.username && userInfo.mail && userInfo.mail.indexOf("@") === -1) {
+            if (userInfo.username && userInfo.mail && userInfo.mail.indexOf("@") !== -1) {
                 this.matterSelectSet.push({"label": userInfo.username, "code": userInfo.mail})
             }
             if (!userInfo.mail && userInfo.mail.indexOf("@") === -1 && window.confirm("您没有设置邮箱，无法发送提醒至邮箱。<br/>点击确定快速跳转我的信息修改邮箱。")) {
