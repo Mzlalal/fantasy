@@ -83,6 +83,10 @@ public enum GlobalResult {
      */
     USER_NOT_LOGIN(1405, "当前未登录，请登录"),
     /**
+     * 登录信息已失效，请重新登录
+     */
+    REFRESH_TOKEN_NOT_CORRECT(1450, "登录信息已失效，请重新登录"),
+    /**
      * 服务器繁忙
      */
     SEVER_ERROR(1500, "服务器繁忙，请稍后再试"),

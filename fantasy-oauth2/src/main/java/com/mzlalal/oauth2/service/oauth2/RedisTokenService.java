@@ -110,10 +110,10 @@ public class RedisTokenService {
         AssertUtil.notNull(clientEntity, GlobalResult.OAUTH_FAIL);
         // 获取刷新TOKEN绑定的用户ID
         String userId = (String) redisTemplate.opsForValue().get(GlobalConstant.userToken(req.getRefreshToken()));
-        AssertUtil.notBlank(userId, GlobalResult.USER_NOT_LOGIN);
+        AssertUtil.notBlank(userId, GlobalResult.REFRESH_TOKEN_NOT_CORRECT);
         // 查询用户
         UserEntity userEntity = userService.getById(userId);
-        AssertUtil.notNull(userEntity, GlobalResult.USER_NOT_LOGIN);
+        AssertUtil.notNull(userEntity, GlobalResult.REFRESH_TOKEN_NOT_CORRECT);
         // 创建新的TOKEN
         return Result.ok(this.createAccessToken(userEntity, clientEntity));
     }

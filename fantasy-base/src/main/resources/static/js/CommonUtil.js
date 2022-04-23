@@ -64,6 +64,8 @@
                     retryRequest.forEach((retry) => retry(refreshTokenRes.data.accessToken));
                     // 重新请求完清空
                     retryRequest = [];
+                    // 更新当前请求TOKEN
+                    res.config.headers['F-Authorization'] = refreshTokenRes.data.accessToken;
                     // 重试当前请求
                     return axios(res.config);
                 }).catch(() => {
@@ -75,7 +77,7 @@
                 return new Promise(resolve => {
                     // 用函数形式将 resolve 存入，等待刷新后再执行
                     retryRequest.push(token => {
-                        res.headers['F-Authorization'] = token;
+                        res.config.headers['F-Authorization'] = token;
                         resolve(res.config);
                     })
                 })
@@ -150,7 +152,7 @@
         // 跳转到默认地址
         redirectDefaultUri: function () {
             // 提示
-            alert("信息失效，请重新登录");
+            alert("登录信息已失效，请重新登录");
             // 刷新令牌失败 跳转到登录页
             window.location = window.defaultRedirectUri;
         }
