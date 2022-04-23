@@ -86,25 +86,26 @@
                 <label class="width-80px username-display">
                     用户名
                 </label>
-                <input v-model="user.username" type="text" placeholder="请输入用户名"/>
+                <input type="text" v-model="user.username" placeholder="请输入用户名"/>
             </div>
             <div class="ui-form-item ui-border-b">
                 <label class="width-80px username-display">
                     手机号
                 </label>
-                <input v-model="user.mobile" type="text" pattern="[0-9]*" class="width-100p" placeholder="请输入手机号"/>
+                <input type="text" pattern="[0-9]*" v-model="user.mobile" class="width-100p" placeholder="请输入手机号"/>
             </div>
             <div class="ui-form-item ui-border-b">
                 <label class="width-80px">
                     电子邮箱
                 </label>
-                <input v-model="user.mail" style="max-width: calc(100vw - 80px)" type="text" placeholder="请输入电子邮箱"/>
+                <input type="text" v-model="user.mail" style="width: calc(100vw - 100px)" placeholder="请输入电子邮箱"/>
             </div>
             <div class="ui-form-item ui-border-b">
                 <label class="width-80px">
-                    用户密码
+                    修改密码
                 </label>
-                <input v-model="user.password" style="max-width: calc(100vw - 80px)" type="text" placeholder="请输入密码"/>
+                <input type="text" pattern="[0-9]*" v-model="user.password" style="width: calc(100vw - 100px)"
+                       onfocus="this.type='password'" autocomplete="new-password" placeholder="请输入新密码"/>
             </div>
         </div>
         <div class="ui-tooltips ui-tooltips-guide ui-tooltips-function" v-if="tips">

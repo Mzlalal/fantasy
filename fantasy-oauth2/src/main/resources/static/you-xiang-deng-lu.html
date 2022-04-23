@@ -77,8 +77,8 @@
         <div class="ui-form ui-border-t">
             <div class="ui-form-item ui-border-b margin-top-1em">
                 <div class="ui-input ui-input-text padding-0 margin-0">
-                    <input type="text" class="width-100p" @blur="rememberUsername"
-                           v-model="username" placeholder="请输入邮箱"/>
+                    <input type="text" class="width-100p" @blur="rememberUsername" v-model="username"
+                           placeholder="请输入邮箱"/>
                 </div>
                 <button class="ui-btn-s" @click="verifyCode" :disabled="!verifyCodeBtn">
                     📬发送
@@ -86,7 +86,8 @@
             </div>
             <div class="ui-form-item ui-border-b margin-top-1em">
                 <div class="ui-input ui-input-text padding-0 margin-0">
-                    <input type="number" pattern="/d*" class="width-100p" v-model="password" placeholder="请输入收到的验证码"/>
+                    <input type="text" pattern="[0-9]*" class="width-100p" v-model="password"
+                           placeholder="请输入收到的验证码"/>
                 </div>
             </div>
         </div>

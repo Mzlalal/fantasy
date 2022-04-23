@@ -83,7 +83,8 @@
             </div>
             <div class="ui-form-item ui-border-b margin-top-1em">
                 <div class="ui-input ui-input-text padding-0 margin-0">
-                    <input type="password" class="width-100p" v-model="password" autocomplete="false"
+                    <input type="text" pattern="[0-9]*" class="width-100p"
+                           v-model="password" onfocus="this.type='password'" autocomplete="new-password"
                            placeholder="请输入密码"/>
                 </div>
             </div>

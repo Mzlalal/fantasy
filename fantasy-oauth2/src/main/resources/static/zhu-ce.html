@@ -86,26 +86,26 @@
                 <label class="width-80px username-display">
                     用户名
                 </label>
-                <input v-model="username" type="text" placeholder="请输入用户名">
+                <input type="text" v-model="username" placeholder="请输入用户名">
             </div>
             <div class="ui-form-item ui-border-b">
                 <label class="width-80px username-display">
                     手机号
                 </label>
-                <input v-model="mobile" type="tel" placeholder="请输入手机号">
+                <input type="text" pattern="[0-9]*" v-model="mobile" placeholder="请输入手机号">
             </div>
             <div class="ui-form-item ui-border-b">
                 <label class="width-80px">
                     电子邮箱
                 </label>
-                <input v-model="mail" style="max-width: calc(100vw - 80px)" type="text" placeholder="请输入邮箱（选填）">
+                <input type="text" v-model="mail" style="width: calc(100vw - 100px)" placeholder="请输入邮箱（选填）">
             </div>
             <div class="ui-form-item ui-border-b">
                 <label class="width-80px">
                     用户密码
                 </label>
-                <input v-model="password" style="max-width: calc(100vw - 80px)" type="text"
-                       placeholder="默认密码123456（选填）">
+                <input type="text" pattern="[0-9]*" v-model="password" style="width: calc(100vw - 100px)"
+                       onfocus="this.type='password'" autocomplete="new-password" placeholder="默认密码123456（选填）"/>
             </div>
         </div>
         <div class="ui-tooltips ui-tooltips-guide ui-tooltips-function" v-if="tips">

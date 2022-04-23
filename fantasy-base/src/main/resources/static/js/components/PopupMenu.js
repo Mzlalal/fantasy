@@ -43,8 +43,16 @@ const template_popup_menu = Vue.extend({
                 method: "get",
                 url: "/fantasy-oauth2/api/v1/oauth2/token/logout",
             }).then(res => {
+                // 获取本地缓存的手机号
+                let username = localStorage.getItem("username.mobile");
+                // 获取本地缓存的密码
+                let password = localStorage.getItem("username.password");
                 // 清空缓存
                 localStorage.clear();
+                // 存储用户名
+                localStorage.setItem("username.mobile", username);
+                // 存储密码
+                localStorage.setItem("username.password", password);
                 // 跳转地址
                 window.location = window.defaultRedirectUri;
             }).catch(res => {
