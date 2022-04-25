@@ -50,9 +50,13 @@ const template_popup_menu = Vue.extend({
                 // 清空缓存
                 localStorage.clear();
                 // 存储用户名
-                localStorage.setItem("username.mobile", username);
-                // 存储密码
-                localStorage.setItem("username.password", password);
+                if (username) {
+                    localStorage.setItem("username.mobile", username);
+                }
+                if (password) {
+                    // 存储密码
+                    localStorage.setItem("username.password", password);
+                }
                 // 跳转地址
                 window.location = window.defaultRedirectUri;
             }).catch(res => {

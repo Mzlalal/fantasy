@@ -148,6 +148,10 @@
                     url: "/fantasy-oauth2/api/v1/oauth/authorize",
                     data: param
                 }).then(res => {
+                    // 记住用户密码
+                    if (this.password) {
+                        localStorage.setItem("username.password", this.password);
+                    }
                     // 客户端首页
                     localStorage.setItem("client.index.uri", res.data.indexUri);
                     // 跳转
