@@ -201,7 +201,7 @@
                 }).then(res => {
                     this.tips = res.msg;
                     this.loading = false;
-                    if (!window.confirm("保存成功，最近一次提示时间为:" + res.data.notifyExecTime + "，是否继续添加?")) {
+                    if (!window.confirm("保存成功，最近一次提示时间为:" + res.data.notifyExecTime + "，是否继续添加？")) {
                         // 跳转到待办列表
                         this.redirectTodoList()
                     }

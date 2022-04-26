@@ -1,6 +1,6 @@
 // 定义组件注册的模板template html
 const template_down_slide_stream_html =
-    `<div class="ui-form ui-border-t ui-container overflow-auto" :style="{'min-height': '30vh', 'max-height': 'calc(100vh - 120px)'}" 
+    `<div class="ui-form ui-border-t ui-container overflow-auto" :style="{'min-height': '30vh', 'max-height': 'calc(100vh - 125px)'}" 
         @scroll="onScroll" ref="scrollTarget">
         <style>body{overflow: hidden !important;height: 100vh;}</style>
         <slot></slot>
@@ -13,7 +13,7 @@ const template_down_slide_stream_html =
             <i class="ui-loading"></i>
         </div>
         <section class="ui-notice margin-top-1em" style="height: unset; position: unset;" v-if="loading === false && hasData && hasBeenBottom">
-            <p>没有更多了~</p>
+            <p>没有更多了</p>
         </section>
     </div>`;
 // Vue定义组件

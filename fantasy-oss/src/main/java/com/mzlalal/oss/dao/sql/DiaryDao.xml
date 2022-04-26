@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mzlalal.oss.dao.DiaryDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.mzlalal.base.entity.oss.dto.DiaryEntity" id="diaryMap">
+        <result property="id" column="id"/>
+        <result property="diaryContent" column="diary_content"/>
+        <result property="diaryDate" column="diary_date"/>
+        <result property="isHide" column="is_hide"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createName" column="create_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="updateName" column="update_name"/>
+    </resultMap>
+
+    <select id="queryRecentDate" resultType="java.lang.String">
+        select DISTINCT diary_date from t_diary
+    </select>
+</mapper>

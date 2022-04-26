@@ -150,6 +150,11 @@ body {
     margin-left: 5px;
 }
 
+/* 向左边距10px */
+.margin-left-10px {
+    margin-left: 10px;
+}
+
 /* 宽度70px */
 .width-70px {
     width: 70px;

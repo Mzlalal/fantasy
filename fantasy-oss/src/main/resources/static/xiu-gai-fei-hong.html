@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, initial-scale=1.0, user-scalable=no">
+    <title>修改飞虹</title>
+    <link rel="stylesheet" href="css/plugin/frozen.css"/>
+    <link rel="stylesheet" href="css/common.css"/>
+    <script src="js/plugin/axios.min.js"></script>
+    <script src="js/plugin/vue.min.js"></script>
+    <script src="js/plugin/calcTextareaHeight.js"></script>
+    <script src="js/CommonUtil.js"></script>
+    <script src="js/FantasyConstant.js"></script>
+    <style>
+        .page-min-width {
+            min-width: 50vw;
+            max-width: 70vw;
+        }
+
+        .date-text {
+            text-align: center;
+            color: gray;
+            font-size: 13px;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <header class="ui-header ui-header-positive ui-border-b text-center">
+        <!--<span class="font-weight-bolder font-size-20px">添加待办</span>-->
+        <span class="position-right username-display" @click="redirectDiaryList">返回</span>
+    </header>
+    <div class="ui-form ui-border-t ui-container">
+        <div class="ui-form-item ui-form-item-switch ui-border-b">
+            <p>提醒TA查看此便签</p>
+            <label class="ui-switch">
+                <input type="checkbox" v-model="diaryNotice">
+            </label>
+        </div>
+        <div class="ui-nowrap ui-whitespace date-text">
+            {{currentTime}}
+        </div>
+        <transition name="fade">
+            <div class="ui-tooltips ui-tooltips-guide ui-tooltips-function" v-if="tips">
+                <div class="ui-tooltips-cnt ui-border-b">
+                    <i></i>{{tips}}
+                </div>
+            </div>
+        </transition>
+        <textarea style="height: 240px" v-model="diaryContent"
+                  class="ui-txt-infotextarea border-none ui-whitespace width-100p"
+                  placeholder="写点什么呢"></textarea>
+        <div class="ui-loading-wrap margin-top-1em" v-if="loading">
+            <p>加载中</p>
+            <i class="ui-loading"></i>
+        </div>
+        <div class="ui-btn-wrap" v-else>
+            <button class="ui-btn-lg ui-btn-primary" @click="updateDiary">
+                保存
+            </button>
+        </div>
+        <div class="ui-btn-wrap" style="padding-top: 0" v-if="!loading">
+            <button class="ui-btn-lg ui-btn-danger" @click="resetDiary">
+                重置
+            </button>
+        </div>
+        <div class="ui-btn-wrap" style="padding-top: 0" v-if="!loading">
+            <button class="ui-btn-lg ui-btn-danger" @click="deleteDiary">
+                删除
+            </button>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    new Vue({
+        el: "#app",
+        data() {
+            return {
+                // ID
+                diaryId: null,
+                // 文本
+                diaryContent: null,
+                // 邮件提醒
+                diaryNotice: false,
+                // 提示
+                tips: null,
+                // 加载中
+                loading: false,
+                // 当前时间
+                currentTime: new Date().Format('yyyy-MM-dd hh:mm:ss'),
+            }
+        },
+        methods: {
+            // 跳转到飞虹列表
+            redirectDiaryList() {
+                // 跳转到飞虹列表
+                window.location = "/fantasy-oss/fei-hong-lie-biao.html";
+            },
+            // 删除飞虹
+            deleteDiary() {
+                // 确认删除
+                if (!window.confirm("确认删除当前飞虹日记吗？")) {
+                    return;
+                }
+                this.loading = true;
+                // 请求接口
+                axios({
+                    method: "post",
+                    url: "/fantasy-oss/api/v1/oss/diary/delete",
+                    data: [this.diaryId]
+                }).then(res => {
+                    sessionStorage.removeItem("oss.diary.update.content." + this.diaryId);
+                    this.redirectDiaryList();
+                }).catch(res => {
+                    this.loading = false
+                    if (res.data && res.data.msg) {
+                        this.tips = res.data.msg;
+                    } else {
+                        alert("服务器繁忙，请稍后再试")
+                    }
+                })
+            },
+            // 更新飞虹
+            updateDiary() {
+                this.loading = true;
+                let param = {
+                    "id": this.diaryId,
+                    "diaryContent": this.diaryContent
+                }
+                // 请求接口
+                axios({
+                    method: "post",
+                    url: "/fantasy-oss/api/v1/oss/diary/update",
+                    data: param
+                }).then(res => {
+                    this.loading = false;
+                    if (!window.confirm("保存成功，是否继续添加？")) {
+                        // 跳转到待办列表
+                        this.redirectDiaryList()
+                    }
+                }).catch(res => {
+                    this.loading = false
+                    if (res.data && res.data.msg) {
+                        this.tips = res.data.msg;
+                    } else {
+                        alert("服务器繁忙，请稍后再试")
+                    }
+                })
+            },
+            // 初始化飞虹
+            initDiary() {
+                this.loading = true;
+                // 请求接口
+                axios({
+                    method: "get",
+                    url: "/fantasy-oss/api/v1/oss/diary/info/" + this.diaryId
+                }).then(res => {
+                    this.loading = false;
+                    this.diaryContent = res.data.diaryContent;
+                    // 添加watch事件
+                    this.$watch('diaryContent', this.diaryContentChanged);
+                }).catch(res => {
+                    this.loading = false
+                    if (res.data && res.data.msg) {
+                        this.tips = res.data.msg;
+                    } else {
+                        alert("服务器繁忙，请稍后再试")
+                    }
+                })
+            },
+            // 重置
+            resetDiary() {
+                if (!window.confirm("此操作将清除本地缓存更新记录，确认继续重置飞虹内容吗？")) {
+                    return;
+                }
+                // 重新加载飞虹
+                this.initDiary();
+            },
+            // 监听文本框的值
+            diaryContentChanged(newVal, oldVal) {
+                commonUtil.debounce(() => {
+                    sessionStorage.setItem("oss.diary.update.content." + this.diaryId, newVal);
+                    let date = new Date().Format('yyyy-MM-dd hh:mm:ss');
+                    this.tips = `[ ${date} ] 自动保存成功`;
+                }, 1000)
+            }
+        },
+        created() {
+            let userInfo = localStorage.getItem("user.info");
+            // 重新登录
+            if (!userInfo) {
+                window.location = window.defaultRedirectUri;
+                return;
+            }
+            // 飞虹ID
+            this.diaryId = localStorage.getItem("oss.diary.id");
+            if (!this.diaryId) {
+                this.redirectDiaryList();
+                return;
+            }
+            // 如果缓存有值则设置值
+            let content = sessionStorage.getItem("oss.diary.update.content." + this.diaryId);
+            if (content) {
+                this.diaryContent = content;
+                this.tips = "已加载本地缓存更新记录";
+                // 添加watch事件
+                this.$watch('diaryContent', this.diaryContentChanged);
+            } else {
+                // 初始化值
+                this.initDiary();
+            }
+            // 时钟
+            setInterval(() => {
+                this.currentTime = new Date().Format('yyyy-MM-dd hh:mm:ss');
+            }, 1000);
+        }
+    });
+</script>
+
+</html>

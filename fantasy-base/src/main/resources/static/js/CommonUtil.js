@@ -43,14 +43,16 @@
                 if (!refreshToken) {
                     // 无刷新令牌,跳转到登录页
                     window.commonUtil.redirectDefaultUri();
-                    return;
+                    return new Promise(() => {
+                        console.log(res.data.msg);
+                    });
                 }
                 let param = {
                     "clientKey": window.clientKey,
                     "refreshToken": refreshToken
                 }
                 // 请求刷新token
-                return axios({
+                axios({
                     method: "post",
                     url: "/fantasy-oauth2/api/v1/oauth/refresh.token",
                     data: param
@@ -64,24 +66,19 @@
                     retryRequest.forEach((retry) => retry(refreshTokenRes.data.accessToken));
                     // 重新请求完清空
                     retryRequest = [];
-                    // 更新当前请求TOKEN
-                    res.config.headers['F-Authorization'] = refreshTokenRes.data.accessToken;
-                    // 重试当前请求
-                    return axios(res.config);
                 }).catch(() => {
                     // 刷新令牌失败,跳转到登录页
                     window.commonUtil.redirectDefaultUri();
                 })
-            } else {
-                // 返回未执行 resolve 的 Promise
-                return new Promise(resolve => {
-                    // 用函数形式将 resolve 存入，等待刷新后再执行
-                    retryRequest.push(token => {
-                        res.config.headers['F-Authorization'] = token;
-                        resolve(res.config);
-                    })
-                })
             }
+            // 返回未执行 resolve 的 Promise
+            return new Promise(resolve => {
+                // 用函数形式将 resolve 存入，等待刷新后再执行
+                retryRequest.push(token => {
+                    res.config.headers['F-Authorization'] = token;
+                    resolve(axios(res.config));
+                })
+            })
         }
         // 业务状态错误直接使用catch方法
         return Promise.reject(res);
@@ -207,7 +204,7 @@ Date.prototype.Format = function (fmt) {
 }
 
 // 计算两个日期之间的天数差
-Date.prototype.daysDistance = function (date1, date2) {
+Date.prototype.DaysDistance = function (date1, date2) {
     // date是yyyy-MM-dd格式
     date1 = Date.parse(date1);
     date2 = date2 ? Date.parse(date2) : new Date();

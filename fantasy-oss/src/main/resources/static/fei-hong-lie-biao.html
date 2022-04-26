@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, initial-scale=1.0, user-scalable=no">
+    <title>尺墨飞虹</title>
+    <link rel="stylesheet" href="css/plugin/frozen.css"/>
+    <link rel="stylesheet" href="css/common.css"/>
+    <link rel="stylesheet" href="css/plugin/vant.css">
+    <script src="js/plugin/axios.min.js"></script>
+    <script src="js/plugin/vue.min.js"></script>
+    <script src="js/plugin/vant.min.js"></script>
+    <script src="js/CommonUtil.js"></script>
+    <script src="js/FantasyConstant.js"></script>
+    <script src="js/components/DownSlideStream.js"></script>
+    <script src="js/components/PopupMenu.js"></script>
+    <style>
+        .diary-cell {
+            padding: 30px 16px 0;
+        }
+
+        .diary-create-time {
+            text-align: right;
+        }
+
+        .diary-content {
+            margin-top: 8px;
+            line-height: 18px;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <header class="ui-header ui-header-positive ui-border-b text-center">
+        <span class="position-left username-display" @click="menuShow = true">我的菜单</span>
+        <span class="position-right username-display">共享</span>
+    </header>
+    <template-down-slide-stream :distance-to-bottom="0"
+                                :offset-to-bottom="45"
+                                :has-been-bottom="currPage >= totalPage"
+                                :loading="loading"
+                                :has-data="diaryGroup && Object.keys(diaryGroup).length > 0"
+                                @on-scroll-to-bottom="onScrollToBottom">
+        <slot>
+            <van-steps direction="vertical" active-color="#969799">
+                <van-step v-for="(value, key, index) in diaryGroup" :key="index">
+                    <p>{{key}}</p>
+                    <div v-for="item in value" class="diary-cell" @click="updateDiary(item)">
+                        <van-row>
+                            <van-col :span="12" class="font-size-12px ui-txt-default">{{item.createName}}</van-col>
+                            <van-col :span="12" class="diary-create-time font-size-12px">{{item.createTime}}</van-col>
+                        </van-row>
+                        <van-row class="diary-content ui-txt-default font-size-16px">
+                            <van-col :span="24" v-html="item.diaryContent"></van-col>
+                        </van-row>
+                    </div>
+                </van-step>
+            </van-steps>
+        </slot>
+    </template-down-slide-stream>
+
+    <footer class="ui-footer ui-footer-btn">
+        <ul class="ui-tiled ui-border-t">
+            <li class="ui-border-r">
+                <div>
+                    <a href="/fantasy-oss/tian-jia-fei-hong.html">添加</a>
+                </div>
+            </li>
+        </ul>
+    </footer>
+
+    <template-popup-menu :menu-show="menuShow" @on-close="menuShow = false"></template-popup-menu>
+</div>
+</body>
+<script>
+    new Vue({
+        el: "#app",
+        data() {
+            return {
+                // 加载中
+                loading: false,
+                // 菜单显示
+                menuShow: false,
+                // 列表哦数据
+                diaryGroup: {},
+                // 当前页
+                currPage: 10,
+                // 总页数
+                totalPage: 0,
+            }
+        },
+        methods: {
+            onScrollToBottom() {
+                this.loading = true;
+                // 防抖动
+                commonUtil.debounce(() => {
+                    // 总页数小于等于当前页,则不加载
+                    if (this.totalPage <= this.currPage) {
+                        this.loading = false;
+                        return;
+                    }
+                    // 当前页+1
+                    this.currPage = this.currPage + 10;
+                    // 加载下一页
+                    this.initDiaryList()
+                }, 250);
+            },
+            // 初始化数据
+            initDiaryList() {
+                this.loading = true;
+                const param = {
+                    "entity": {},
+                    "pageInfo": {
+                        "currPage": this.currPage,
+                        "pageSize": 1
+                    }
+                }
+                // 请求
+                axios({
+                    method: "post",
+                    url: "/fantasy-oss/api/v1/oss/diary/query.diary.group.by.date",
+                    data: param
+                }).then(res => {
+                    // 追加到集合中
+                    this.diaryGroup = Object.assign(this.diaryGroup, res.data);
+                    // 获取到总页数
+                    this.totalPage = commonUtil.getTotalPage(res);
+                    this.loading = false;
+                }).catch(res => {
+                    debugger
+                    this.loading = false;
+                    if (res.data && res.data.msg) {
+                        alert(res.data.msg)
+                    } else {
+                        alert("服务器繁忙，请稍后再试")
+                    }
+                })
+            },
+            // 更新飞虹
+            updateDiary(diary) {
+                localStorage.setItem("oss.diary.id", diary.id);
+                window.location = "/fantasy-oss/xiu-gai-fei-hong.html";
+            }
+        },
+        created() {
+            // 初始化数据
+            this.initDiaryList();
+        }
+    });
+</script>
+
+</html>

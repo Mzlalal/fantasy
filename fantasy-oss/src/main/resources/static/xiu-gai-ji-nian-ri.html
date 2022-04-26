@@ -91,7 +91,7 @@
         </div>
         <div class="ui-btn-wrap" style="padding-top: 0" v-if="!loading">
             <button class="ui-btn-lg ui-btn-danger" @click="deleteDayMatter">
-                删除当前待办
+                删除当前纪念日
             </button>
         </div>
     </div>
@@ -211,7 +211,7 @@
             // 删除待办
             deleteDayMatter() {
                 // 确认删除
-                if (!window.confirm("确认删除当前纪念日吗?")) {
+                if (!window.confirm("确认删除当前纪念日吗？")) {
                     return;
                 }
                 this.loading = true;
