@@ -11,9 +11,9 @@
 - 演示环境请在bootstrap-dev.properties中配置如下设置：
 
 ```properties
-spring.cloud.nacos.discovery.server-addr=http://nacos.mzlalal.icu
+spring.cloud.nacos.discovery.server-addr=http://120.78.148.113:8848
 spring.cloud.nacos.discovery.namespace=2abf2a56-8efa-4045-b719-8d26b1e4a281
-spring.cloud.nacos.config.server-addr=http://nacos.mzlalal.icu
+spring.cloud.nacos.config.server-addr=http://120.78.148.113:8848
 spring.cloud.nacos.config.namespace=2abf2a56-8efa-4045-b719-8d26b1e4a281
 spring.cloud.nacos.discovery.register-enabled=false
 spring.cloud.nacos.username=fantasy-gitee
@@ -25,9 +25,9 @@ spring.cloud.nacos.password=G3CXv$kaq9KVuyZz6h
 ```properties
 -Dspring.cloud.nacos.username=fantasy-gitee
 -Dspring.cloud.nacos.password=G3CXv$kaq9KVuyZz6h
--Dspring.cloud.nacos.discovery.server-addr=http://nacos.mzlalal.icu
+-Dspring.cloud.nacos.discovery.server-addr=http://120.78.148.113:8848
 -Dspring.cloud.nacos.discovery.namespace=2abf2a56-8efa-4045-b719-8d26b1e4a281
--Dspring.cloud.nacos.config.server-addr=http://nacos.mzlalal.icu
+-Dspring.cloud.nacos.config.server-addr=http://120.78.148.113:8848
 -Dspring.cloud.nacos.config.namespace=2abf2a56-8efa-4045-b719-8d26b1e4a281
 -Dspring.cloud.nacos.discovery.register-enabled=false
 ```
