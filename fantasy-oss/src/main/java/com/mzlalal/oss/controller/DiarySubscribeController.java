@@ -1,0 +1,92 @@
+package com.mzlalal.oss.controller;
+
+import cn.hutool.core.collection.CollUtil;
+import com.mzlalal.base.entity.global.Result;
+import com.mzlalal.base.entity.global.po.Po;
+import com.mzlalal.base.entity.oss.dto.DiarySubscribeEntity;
+import com.mzlalal.base.feign.oss.DiarySubscribeFeignApi;
+import com.mzlalal.base.util.Page;
+import com.mzlalal.oss.enums.SubscribeStatusEnum;
+import com.mzlalal.oss.service.DiarySubscribeService;
+import io.swagger.annotations.Api;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * 尺墨飞虹订阅表controller
+ *
+ * @author Mzlalal
+ * @date 2022-05-29 21:29:53
+ */
+@Api(tags = "飞虹订阅")
+@RestController
+@RequestMapping("/api/v1/oss/diary.subscribe")
+public class DiarySubscribeController implements DiarySubscribeFeignApi {
+
+    private final DiarySubscribeService diarySubscribeService;
+
+    @Autowired
+    public DiarySubscribeController(DiarySubscribeService diarySubscribeService) {
+        this.diarySubscribeService = diarySubscribeService;
+    }
+
+    @Override
+    public Result<DiarySubscribeEntity> list(@RequestBody Po<DiarySubscribeEntity> po) {
+        Page<DiarySubscribeEntity> page = diarySubscribeService.queryPage(po);
+        return Result.ok(page);
+    }
+
+    @Override
+    public Result<DiarySubscribeEntity> info(@PathVariable("id") String id) {
+        DiarySubscribeEntity diarySubscribe = diarySubscribeService.getById(id);
+        return Result.ok(diarySubscribe);
+    }
+
+    @Override
+    public Result<Void> save(@RequestBody DiarySubscribeEntity diarySubscribe) {
+        if (diarySubscribeService.save(diarySubscribe)) {
+            return Result.ok();
+        }
+        return Result.fail();
+    }
+
+    @Override
+    public Result<Void> update(@RequestBody DiarySubscribeEntity diarySubscribe) {
+        if (diarySubscribeService.updateById(diarySubscribe)) {
+            return Result.ok();
+        }
+        return Result.fail();
+    }
+
+    @Override
+    public Result<Void> delete(@RequestBody String[] ids) {
+        if (diarySubscribeService.removeByIds(CollUtil.newArrayList(ids))) {
+            return Result.ok();
+        }
+        return Result.fail();
+    }
+
+    @Override
+    public Result<Void> batchSave(@RequestBody String[] ids) {
+        // 根据ID数组遍历生成订阅请求
+        List<DiarySubscribeEntity> diarySubscribeEntityList = new ArrayList<>();
+        for (String id : ids) {
+            DiarySubscribeEntity diarySubscribeEntity = new DiarySubscribeEntity();
+            diarySubscribeEntity.setSubscribeUserId(id);
+            diarySubscribeEntity.setSubscribeStatus(SubscribeStatusEnum.SUBSCRIBE_CONFIRM.getStatus());
+            diarySubscribeEntityList.add(diarySubscribeEntity);
+        }
+        // 批量保存
+        if (diarySubscribeService.saveBatch(diarySubscribeEntityList)) {
+            return Result.ok();
+        }
+        return Result.fail();
+    }
+
+}

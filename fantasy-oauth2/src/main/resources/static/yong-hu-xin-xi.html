@@ -61,7 +61,8 @@
                 <label class="width-80px">
                     用户角色
                 </label>
-                <v-select class="page-min-width" placeholder="请输入姓名" :close-on-select="false" style="padding-left: 24px"
+                <v-select class="page-min-width" placeholder="请输入姓名" :close-on-select="false"
+                          style="padding: 4px 0 0 24px"
                           v-model="selectedRoleList" :options="roleOption" :multiple="true" :loading="vueSelectLoading">
                     <template slot="no-options">
                         暂无数据

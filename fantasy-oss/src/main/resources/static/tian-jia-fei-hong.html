@@ -63,7 +63,7 @@
         </div>
         <div class="ui-btn-wrap" style="padding-top: 0" v-if="!loading">
             <button class="ui-btn-lg ui-btn-danger" @click="clearContent">
-                清除文本
+                清空文本
             </button>
         </div>
     </div>
@@ -94,7 +94,9 @@
             },
             // 清除文本
             clearContent() {
-                this.diaryContent = null;
+                if (window.confirm("此操作不可撤回，确认继续清空文本？")) {
+                    this.diaryContent = null;
+                }
             },
             // 保存飞虹
             saveDiary() {

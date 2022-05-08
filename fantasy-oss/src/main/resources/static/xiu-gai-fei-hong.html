@@ -58,12 +58,12 @@
         </div>
         <div class="ui-btn-wrap" v-else>
             <button class="ui-btn-lg ui-btn-primary" @click="updateDiary">
-                保存
+                更新
             </button>
         </div>
         <div class="ui-btn-wrap" style="padding-top: 0" v-if="!loading">
             <button class="ui-btn-lg ui-btn-danger" @click="resetDiary">
-                重置
+                重置文本
             </button>
         </div>
         <div class="ui-btn-wrap" style="padding-top: 0" v-if="!loading">
@@ -137,7 +137,7 @@
                     data: param
                 }).then(res => {
                     this.loading = false;
-                    if (!window.confirm("保存成功，是否继续添加？")) {
+                    if (!window.confirm("更新成功，是否继续修改？")) {
                         // 跳转到待办列表
                         this.redirectDiaryList()
                     }
@@ -173,7 +173,7 @@
             },
             // 重置
             resetDiary() {
-                if (!window.confirm("此操作将清除本地缓存更新记录，确认继续重置飞虹内容吗？")) {
+                if (!window.confirm("此操作将清除本地更新记录并恢复为初始状态，确认继续重置文本吗？")) {
                     return;
                 }
                 // 重新加载飞虹
@@ -205,7 +205,7 @@
             let content = sessionStorage.getItem("oss.diary.update.content." + this.diaryId);
             if (content) {
                 this.diaryContent = content;
-                this.tips = "已加载本地缓存更新记录";
+                this.tips = "已加载本地更新记录";
                 // 添加watch事件
                 this.$watch('diaryContent', this.diaryContentChanged);
             } else {

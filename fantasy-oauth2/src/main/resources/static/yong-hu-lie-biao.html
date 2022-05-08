@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, initial-scale=1.0, user-scalable=no">
-    <title>房间列表</title>
+    <title>用户列表</title>
     <link rel="stylesheet" href="css/plugin/frozen.css"/>
     <link rel="stylesheet" href="css/common.css"/>
     <script src="js/plugin/axios.min.js"></script>
@@ -52,7 +52,6 @@
                         </h4>
                         <p>
                             <span class="ui-txt-highlight font-size-12px">{{user.mobile}}</span>
-                            <span class="ui-txt-highlight font-size-12px margin-left-5px">{{user.mail || '未设置'}}</span>
                             <span class="ui-txt-highlight font-size-12px margin-left-5px"
                                   v-for="role in user.roleList">
                                 {{role.name}}

@@ -1,6 +1,6 @@
 // 定义组件注册的模板template html
 const template_down_slide_stream_html =
-    `<div class="ui-form ui-border-t ui-container overflow-auto" :style="{'min-height': '30vh', 'max-height': 'calc(100vh - 125px)'}" 
+    `<div class="ui-form ui-border-t ui-container overflow-auto" :style="{'min-height': '30vh', 'max-height': maxHeight}" 
         @scroll="onScroll" ref="scrollTarget">
         <style>body{overflow: hidden !important;height: 100vh;}</style>
         <slot></slot>
@@ -12,7 +12,7 @@ const template_down_slide_stream_html =
             <p>加载中</p>
             <i class="ui-loading"></i>
         </div>
-        <section class="ui-notice margin-top-1em" style="height: unset; position: unset;" v-if="loading === false && hasData && hasBeenBottom">
+        <section class="ui-notice margin-top-bottom-1em" style="height: unset; position: unset;" v-if="loading === false && hasData && hasBeenBottom">
             <p>没有更多了</p>
         </section>
     </div>`;
@@ -21,7 +21,9 @@ const template_down_slide_stream = Vue.extend({
     template: template_down_slide_stream_html,
     // 这里的data与vue对象的data类似，只不过组件中的data必须是函数的形式
     data() {
-        return {}
+        return {
+            maxHeight: 'calc(100vh - 80px - ' + this.offsetToBottom + 'px)'
+        }
     },
     // 这里的methods与vue对象的methods一样，可以在这里定义组件的函数 没用到也可以不写
     methods: {
