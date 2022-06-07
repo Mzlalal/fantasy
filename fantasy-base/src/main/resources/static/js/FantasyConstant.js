@@ -402,4 +402,20 @@
             "label": "30天提醒一次"
         }
     ];
+    // 订阅状态
+    window.subscribeStatusOption = [
+        {
+            "code": 1,
+            "label": "订阅待确认"
+        }, {
+            "code": 2,
+            "label": "订阅被拒绝"
+        }, {
+            "code": 3,
+            "label": "已订阅"
+        }, {
+            "code": 4,
+            "label": "取消订阅"
+        }
+    ];
 })(window);

@@ -54,7 +54,7 @@ public interface DiarySubscribeFeignApi {
     @ApiOperation("保存")
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 30)
-    Result<Void> save(@RequestBody DiarySubscribeEntity diarySubscribe);
+    Result<DiarySubscribeEntity> save(@RequestBody DiarySubscribeEntity diarySubscribe);
 
     /**
      * 更新
@@ -87,4 +87,44 @@ public interface DiarySubscribeFeignApi {
     @ApiOperation("批量保存")
     @RequestMapping(value = "/batch.save", method = RequestMethod.POST)
     Result<Void> batchSave(@RequestBody String[] ids);
+
+    /**
+     * 保存或更新
+     *
+     * @param diarySubscribe 实体
+     * @return Result
+     */
+    @ApiOperation("保存或更新")
+    @RequestMapping(value = "/save.or.update", method = RequestMethod.POST)
+    Result<Void> saveOrUpdate(@RequestBody DiarySubscribeEntity diarySubscribe);
+
+    /**
+     * 查看我的粉丝列表
+     *
+     * @param po 分页参数
+     * @return Result
+     */
+    @ApiOperation("查看我的粉丝列表")
+    @RequestMapping(value = "/follower.list", method = RequestMethod.POST)
+    Result<DiarySubscribeEntity> followerList(@RequestBody Po<DiarySubscribeEntity> po);
+
+    /**
+     * 查看我的订阅列表
+     *
+     * @param po 分页参数
+     * @return Result
+     */
+    @ApiOperation("查看我的订阅列表")
+    @RequestMapping(value = "/subscribe.list", method = RequestMethod.POST)
+    Result<DiarySubscribeEntity> subscribeList(@RequestBody Po<DiarySubscribeEntity> po);
+
+    /**
+     * 根据关键字搜索用户订阅列表
+     *
+     * @param po 分页信息
+     * @return Result
+     */
+    @ApiOperation("根据关键字搜索用户订阅列表")
+    @RequestMapping(value = "/apply.subscribe.list", method = RequestMethod.POST)
+    Result<DiarySubscribeEntity> applySubscribeList(@RequestBody Po<String> po);
 }

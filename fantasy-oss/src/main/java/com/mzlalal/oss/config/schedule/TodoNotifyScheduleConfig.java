@@ -2,6 +2,7 @@ package com.mzlalal.oss.config.schedule;
 
 import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.oss.service.TodoNotifyService;
+import lombok.AllArgsConstructor;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +19,7 @@ import java.util.concurrent.TimeUnit;
  **/
 @Configuration
 @EnableScheduling
+@AllArgsConstructor
 public class TodoNotifyScheduleConfig {
     /**
      * 待办提醒service
@@ -28,11 +30,6 @@ public class TodoNotifyScheduleConfig {
      */
     private final RedissonClient redissonClient;
 
-    public TodoNotifyScheduleConfig(TodoNotifyService todoNotifyService, RedissonClient redissonClient) {
-        this.todoNotifyService = todoNotifyService;
-        this.redissonClient = redissonClient;
-    }
-
     /**
      * 每五分钟的五秒后执行,例如: 01:05:05, 01:10:05, 01:15:05
      */
@@ -42,7 +39,7 @@ public class TodoNotifyScheduleConfig {
         RLock lock = redissonClient.getLock(GlobalConstant.todoNotifySchedule());
         try {
             // 尝试获取锁,最大等待时间30秒,超过30秒自动释放
-            boolean tryLock = lock.tryLock(30, 300, TimeUnit.SECONDS);
+            boolean tryLock = lock.tryLock(0, 300, TimeUnit.SECONDS);
             if (!tryLock) {
                 // 获取锁失败
                 return;

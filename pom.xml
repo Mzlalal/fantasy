@@ -142,7 +142,7 @@
                     <configuration>
                         <!-- 相当于 Dockerfile 中的 FROM -->
                         <from>
-                            <image>airdock/oraclejdk:1.8</image>
+                            <image>adoptopenjdk/openjdk8-openj9</image>
                         </from>
                         <to>
                             <!-- 构建镜像名称，阿里云镜像仓库地址 -->

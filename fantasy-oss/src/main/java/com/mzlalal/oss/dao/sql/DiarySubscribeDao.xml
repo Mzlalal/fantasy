@@ -16,9 +16,27 @@
         <result property="updateTime" column="update_time"/>
         <association property="subscribeUsername" column="subscribe_user_id" javaType="string"
                      select="queryUsernameById"/>
+        <association property="followerUsername" column="create_by" javaType="string"
+                     select="queryUsernameById"/>
     </resultMap>
 
     <select id="queryUsernameById" resultType="string">
         select username from t_user where id = #{id}
     </select>
+
+    <select id="queryApplySubscribeUsernameBySearchKeyword"
+            resultType="com.mzlalal.base.entity.oss.dto.DiarySubscribeEntity">
+        SELECT
+        u.id AS subscribe_user_id,
+        u.username AS subscribe_username,
+        ds.id AS id,
+        IFNULL(ds.subscribe_status, 0) AS subscribe_status
+        FROM
+        t_user u
+        LEFT JOIN t_diary_subscribe ds ON u.id = ds.subscribe_user_id
+        WHERE
+        (u.username LIKE concat('%', #{searchKeyword}, '%') OR u.mobile LIKE concat('%', #{searchKeyword}, '%'))
+        AND u.id NOT IN (#{currentUserId})
+    </select>
+
 </mapper>

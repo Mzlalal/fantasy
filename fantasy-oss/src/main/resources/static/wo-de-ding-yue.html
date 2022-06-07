@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, initial-scale=1.0, user-scalable=no">
+    <title>我的订阅</title>
+    <link rel="stylesheet" href="css/plugin/frozen.css"/>
+    <link rel="stylesheet" href="css/common.css"/>
+    <script src="js/plugin/axios.min.js"></script>
+    <script src="js/plugin/vue.min.js"></script>
+    <script src="js/CommonUtil.js"></script>
+    <script src="js/FantasyConstant.js"></script>
+    <script src="js/components/PopupMenu.js"></script>
+    <script src="js/components/DownSlideStream.js"></script>
+</head>
+<style>
+
+</style>
+<body>
+<div id="app">
+    <header class="ui-header ui-header-positive ui-border-b text-center">
+        <span class="font-weight-bolder font-size-20px">我的订阅</span>
+        <span class="position-right username-display" @click="redirectDiary">返回</span>
+    </header>
+
+    <template-down-slide-stream :distance-to-bottom="0"
+                                :offset-to-bottom="45"
+                                :has-been-bottom="currPage >= totalPage"
+                                :loading="loading"
+                                :has-data="subscribeList && subscribeList.length > 0"
+                                @on-scroll-to-bottom="onScrollToBottom">
+        <slot>
+            <ul class="ui-tab-nav ui-border-b ">
+                <li class="current"><span>我的订阅</span></li>
+                <li><span @click="redirectFollower">我的粉丝</span></li>
+            </ul>
+            <ul class="ui-list-function ui-border-tb">
+                <li class="ui-whitespace" v-for="subscribe in subscribeList">
+                    <div class="ui-list-info ui-border-t">
+                        <h4 class="ui-nowrap font-size-16px">
+                            {{subscribe.subscribeUsername}}
+                        </h4>
+                        <div class="ui-nowrap">
+                            <span class="ui-txt-highlight font-size-12px">{{subscribe.updateTime}}</span>
+                        </div>
+                        <div class="ui-btn" @click="subscribeOperation(subscribe)">
+                            {{subscribe.subscribeStatus | subscribeStatusFilter}}
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </slot>
+    </template-down-slide-stream>
+
+    <footer class="ui-footer ui-footer-btn">
+        <ul class="ui-tiled ui-border-t">
+            <li class="ui-border-r">
+                <div>
+                    <a href="/fantasy-oss/tian-jia-ding-yue.html">申请订阅</a>
+                </div>
+            </li>
+        </ul>
+    </footer>
+
+    <template-popup-menu :menu-show="menuShow" @on-close="menuShow = false"></template-popup-menu>
+
+    <div class="ui-actionsheet show" v-if="subscribeOperationMenu" @click.self="subscribeOperationMenu = false">
+        <div class="ui-actionsheet-cnt am-actionsheet-down">
+            <h4>订阅成功后，您可以订阅查看TA发布的动态<br/>此操作可以随时修改</h4>
+            <div v-if="loading">
+                <button>
+                    <p>加载中</p>
+                </button>
+            </div>
+            <div v-else>
+                <button @click="subscribeUpdate(1)">申请订阅</button>
+                <button class="ui-actionsheet-del" @click="subscribeUpdate(4)">取消订阅</button>
+            </div>
+            <div class="ui-actionsheet-split-line"></div>
+            <button id="cancel" @click="subscribeOperationMenu = false">取消</button>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    new Vue({
+        el: "#app",
+        data: {
+            // 当前页
+            currPage: 1,
+            // 总页数
+            totalPage: 0,
+            // 加载中
+            loading: false,
+            // 菜单显示
+            menuShow: false,
+            // 订阅操作菜单显示
+            subscribeOperationMenu: false,
+            // 默认列表
+            subscribeList: [],
+            // 当前选中的订阅
+            currentSubscribe: null
+        },
+        filters: {
+            subscribeStatusFilter(subscribeStatus) {
+                // 0=未订阅,1=订阅待确认,2=订阅被拒绝,3=已订阅,4=取消订阅
+                if (subscribeStatus === 1) {
+                    return "订阅待确认";
+                } else if (subscribeStatus === 2) {
+                    return "对方已拒绝";
+                } else if (subscribeStatus === 3) {
+                    return "对方已同意";
+                } else if (subscribeStatus === 4) {
+                    return "取消订阅";
+                }
+            }
+        },
+        methods: {
+            // 跳转到飞虹列表
+            redirectDiary() {
+                // 跳转到飞虹列表
+                window.location = "/fantasy-oss/fei-hong-lie-biao.html";
+            },
+            // 初始化列表
+            initSubscribeList() {
+                this.loading = true;
+                const param = {
+                    "entity": {},
+                    "pageInfo": {
+                        "currPage": this.currPage,
+                        "pageSize": 15
+                    }
+                }
+                // 请求
+                axios({
+                    method: "post",
+                    url: "/fantasy-oss/api/v1/oss/diary.subscribe/subscribe.list",
+                    data: param
+                }).then(res => {
+                    // 追加到集合中
+                    this.subscribeList = this.subscribeList.concat(commonUtil.getPageList(res));
+                    // 获取到总页数
+                    this.totalPage = commonUtil.getTotalPage(res);
+                    this.loading = false;
+                }).catch(res => {
+                    this.loading = false;
+                    if (res.data && res.data.msg) {
+                        alert(res.data.msg)
+                    } else {
+                        alert("服务器繁忙，请稍后再试")
+                    }
+                })
+            },
+            // 滚动到底部
+            onScrollToBottom() {
+                this.loading = true;
+                // 防抖动
+                commonUtil.debounce(() => {
+                    // 总页数小于等于当前页,则不加载
+                    if (this.totalPage <= this.currPage) {
+                        this.loading = false;
+                        return;
+                    }
+                    // 当前页+1
+                    this.currPage++;
+                    // 加载下一页
+                    this.initSubscribeList()
+                }, 250);
+            },
+            // 订阅操作
+            subscribeOperation(subscribe) {
+                this.currentSubscribe = subscribe;
+                this.subscribeOperationMenu = true;
+            },
+            // 订阅更新
+            subscribeUpdate(status) {
+                this.loading = true;
+                const param = {
+                    "id": this.currentSubscribe.id,
+                    "subscribeStatus": status,
+                }
+                // 请求
+                axios({
+                    method: "post",
+                    url: "/fantasy-oss/api/v1/oss/diary.subscribe/update",
+                    data: param
+                }).then(res => {
+                    // 修改状态
+                    this.currentSubscribe.subscribeStatus = status;
+                    this.subscribeOperationMenu = false;
+                    this.loading = false;
+                }).catch(res => {
+                    this.loading = false;
+                    this.subscribeOperationMenu = false;
+                    if (res.data && res.data.msg) {
+                        alert(res.data.msg)
+                    } else {
+                        alert("服务器繁忙，请稍后再试")
+                    }
+                })
+            },
+            // 重定向到我的粉丝
+            redirectFollower() {
+                window.location = "/fantasy-oss/wo-de-fen-si.html";
+            },
+        },
+        created() {
+            // 初始化列表
+            this.initSubscribeList();
+        },
+    });
+</script>
+
+</html>

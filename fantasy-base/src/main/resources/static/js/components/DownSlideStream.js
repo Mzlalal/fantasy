@@ -33,8 +33,6 @@ const template_down_slide_stream = Vue.extend({
             let scrollBottom = this.$refs.scrollTarget.scrollHeight - this.$refs.scrollTarget.scrollTop - this.$refs.scrollTarget.offsetHeight;
             // 加上容器计算offsetToBottom的高度
             scrollBottom += this.offsetToBottom;
-            // 打印
-            console.log(scrollBottom);
             // 滚动到底部小于distanceToBottom的距离,则提供事件
             if (scrollBottom <= this.distanceToBottom && this.hasBeenBottom === false && this.loading === false) {
                 // 提供事件出去

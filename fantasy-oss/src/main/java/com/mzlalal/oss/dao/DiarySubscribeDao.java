@@ -5,6 +5,8 @@ import com.mzlalal.base.entity.oss.dto.DiarySubscribeEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * 尺墨飞虹订阅表dao
  *
@@ -21,4 +23,14 @@ public interface DiarySubscribeDao extends BaseMapper<DiarySubscribeEntity> {
      * @return String
      */
     String queryUsernameById(@Param("id") String id);
+
+    /**
+     * 根据关键字搜索用户订阅列表
+     *
+     * @param searchKeyword 关键字
+     * @param currentUserId 当前用户
+     * @return String
+     */
+    List<DiarySubscribeEntity> queryApplySubscribeUsernameBySearchKeyword(@Param("searchKeyword") String searchKeyword
+            , @Param("currentUserId") String currentUserId);
 }

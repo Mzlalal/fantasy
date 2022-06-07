@@ -1,6 +1,7 @@
 // 定义组件注册的模板template html
 const template_html = `<div class="ui-actionsheet show" v-if="menuShow" @click="onClose">
         <div class="ui-actionsheet-cnt am-actionsheet-down">
+            <slot></slot>
             <button @click="redirectUpdateUserInfo">我的信息</button>
             <button @click="redirectClientCenter">应用中心</button>
             <button class="ui-actionsheet-del" @click="logout">退出登录</button>

@@ -5,6 +5,7 @@ import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oss.dto.DiarySubscribeEntity;
 import com.mzlalal.base.feign.oss.DiarySubscribeFeignApi;
+import com.mzlalal.base.util.AssertUtil;
 import com.mzlalal.base.util.Page;
 import com.mzlalal.oss.enums.SubscribeStatusEnum;
 import com.mzlalal.oss.service.DiarySubscribeService;
@@ -49,9 +50,9 @@ public class DiarySubscribeController implements DiarySubscribeFeignApi {
     }
 
     @Override
-    public Result<Void> save(@RequestBody DiarySubscribeEntity diarySubscribe) {
+    public Result<DiarySubscribeEntity> save(@RequestBody DiarySubscribeEntity diarySubscribe) {
         if (diarySubscribeService.save(diarySubscribe)) {
-            return Result.ok();
+            return Result.ok(diarySubscribe);
         }
         return Result.fail();
     }
@@ -89,4 +90,27 @@ public class DiarySubscribeController implements DiarySubscribeFeignApi {
         return Result.fail();
     }
 
+    @Override
+    public Result<Void> saveOrUpdate(DiarySubscribeEntity diarySubscribe) {
+        if (diarySubscribeService.saveOrUpdate(diarySubscribe)) {
+            return Result.ok();
+        }
+        return Result.fail();
+    }
+
+    @Override
+    public Result<DiarySubscribeEntity> followerList(@RequestBody Po<DiarySubscribeEntity> po) {
+        return Result.ok(diarySubscribeService.followerList(po));
+    }
+
+    @Override
+    public Result<DiarySubscribeEntity> subscribeList(@RequestBody Po<DiarySubscribeEntity> po) {
+        return Result.ok(diarySubscribeService.subscribeList(po));
+    }
+
+    @Override
+    public Result<DiarySubscribeEntity> applySubscribeList(@RequestBody Po<String> po) {
+        AssertUtil.notBlank(po.getEntity(), "关键字不能为空");
+        return Result.ok(diarySubscribeService.applySubscribeList(po));
+    }
 }

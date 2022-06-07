@@ -34,7 +34,7 @@
 <div id="app">
     <header class="ui-header ui-header-positive ui-border-b text-center">
         <span class="position-left username-display" @click="menuShow = true">我的菜单</span>
-        <span class="position-right username-display">共享</span>
+        <span class="position-right username-display" @click="redirectFollower">我的粉丝</span>
     </header>
     <template-down-slide-stream :distance-to-bottom="0"
                                 :offset-to-bottom="100"
@@ -64,13 +64,17 @@
         <ul class="ui-tiled ui-border-t">
             <li class="ui-border-r">
                 <div>
-                    <a href="/fantasy-oss/tian-jia-fei-hong.html">添加</a>
+                    <a href="/fantasy-oss/tian-jia-fei-hong.html">发个动态</a>
                 </div>
             </li>
         </ul>
     </footer>
 
-    <template-popup-menu :menu-show="menuShow" @on-close="menuShow = false"></template-popup-menu>
+    <template-popup-menu :menu-show="menuShow" @on-close="menuShow = false">
+        <slot>
+            <button @click="redirectSubscribe">我的订阅</button>
+        </slot>
+    </template-popup-menu>
 </div>
 </body>
 <script>
@@ -101,7 +105,7 @@
                         return;
                     }
                     // 当前页+1
-                    this.currPage = this.currPage + 10;
+                    this.currPage++;
                     // 加载下一页
                     this.initDiaryList()
                 }, 250);
@@ -113,7 +117,7 @@
                     "entity": {},
                     "pageInfo": {
                         "currPage": this.currPage,
-                        "pageSize": 1
+                        "pageSize": 15
                     }
                 }
                 // 请求
@@ -128,7 +132,6 @@
                     this.totalPage = commonUtil.getTotalPage(res);
                     this.loading = false;
                 }).catch(res => {
-                    debugger
                     this.loading = false;
                     if (res.data && res.data.msg) {
                         alert(res.data.msg)
@@ -141,6 +144,14 @@
             updateDiary(diary) {
                 localStorage.setItem("oss.diary.id", diary.id);
                 window.location = "/fantasy-oss/xiu-gai-fei-hong.html";
+            },
+            // 重定向到我的粉丝
+            redirectFollower() {
+                window.location = "/fantasy-oss/wo-de-fen-si.html";
+            },
+            // 重定向到我的订阅
+            redirectSubscribe() {
+                window.location = "/fantasy-oss/wo-de-ding-yue.html";
             }
         },
         created() {

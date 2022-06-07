@@ -38,7 +38,11 @@ public class DiarySubscribeEntity implements Serializable {
     @TableField(exist = false)
     private String subscribeUsername;
 
-    @ApiModelProperty("订阅状态,例:1=订阅待确认,2=订阅被拒绝,3=已订阅,4=取消订阅")
+    @ApiModelProperty("粉丝用户名")
+    @TableField(exist = false)
+    private String followerUsername;
+
+    @ApiModelProperty("订阅状态,例:0=未订阅,1=订阅待确认,2=订阅被拒绝,3=已订阅,4=取消订阅")
     private Integer subscribeStatus;
 
     @ApiModelProperty("创建人ID")

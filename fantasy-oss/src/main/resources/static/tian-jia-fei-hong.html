@@ -147,9 +147,11 @@
             if (content) {
                 this.diaryContent = content;
                 this.tips = "已加载本地缓存更新记录";
+            }
+            setTimeout(() => {
                 // 添加watch事件
                 this.$watch('diaryContent', this.diaryContentChanged);
-            }
+            })
             // 时钟
             setInterval(() => {
                 this.currentTime = new Date().Format('yyyy-MM-dd hh:mm:ss');

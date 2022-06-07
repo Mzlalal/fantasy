@@ -42,7 +42,7 @@
                     </div>
                     <i class="ui-icon-close" v-on:click.stop="changeSearchBar(false)"></i>
                 </div>
-                <button class="ui-searchbar-cancel" @click="initUserList">确认</button>
+                <button class="ui-searchbar-cancel" @click="searchConfirm">确认</button>
             </div>
             <ul class="ui-list ui-list-function ui-border-tb">
                 <li v-for="user in userList">
@@ -91,6 +91,13 @@
             }
         },
         methods: {
+            // 查询确认
+            searchConfirm() {
+                // 清空列表
+                this.userList = [];
+                // 查询
+                this.initUserList();
+            },
             // 加载房间列表
             initUserList() {
                 this.loading = true;
