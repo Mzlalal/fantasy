@@ -24,6 +24,18 @@
         select username from t_user where id = #{id}
     </select>
 
+    <select id="queryMailByUserIdList" resultType="java.lang.String">
+        SELECT
+        mail
+        FROM
+        t_user
+        <where>
+            <foreach collection="userIdList" open="and id in (" item="userId" close=")">
+                #{userId}
+            </foreach>
+        </where>
+    </select>
+
     <select id="queryApplySubscribeUsernameBySearchKeyword"
             resultType="com.mzlalal.base.entity.oss.dto.DiarySubscribeEntity">
         SELECT
@@ -38,5 +50,4 @@
         (u.username LIKE concat('%', #{searchKeyword}, '%') OR u.mobile LIKE concat('%', #{searchKeyword}, '%'))
         AND u.id NOT IN (#{currentUserId})
     </select>
-
 </mapper>

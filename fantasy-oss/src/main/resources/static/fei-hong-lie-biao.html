@@ -52,7 +52,7 @@
                             <van-col :span="12" class="diary-create-time font-size-12px">{{item.createTime}}</van-col>
                         </van-row>
                         <van-row class="diary-content ui-txt-default font-size-16px">
-                            <van-col :span="24" v-html="item.diaryContent"></van-col>
+                            <van-col class="auto-wrap" :span="24" v-html="item.diaryContent"></van-col>
                         </van-row>
                     </div>
                 </van-step>
@@ -92,6 +92,8 @@
                 currPage: 10,
                 // 总页数
                 totalPage: 0,
+                // 用户信息
+                user: null,
             }
         },
         methods: {
@@ -142,6 +144,10 @@
             },
             // 更新飞虹
             updateDiary(diary) {
+                // 如果不是自己的动态,则无法修改
+                if (diary.createBy !== this.user.id) {
+                    return;
+                }
                 localStorage.setItem("oss.diary.id", diary.id);
                 window.location = "/fantasy-oss/xiu-gai-fei-hong.html";
             },
@@ -157,6 +163,11 @@
         created() {
             // 初始化数据
             this.initDiaryList();
+            // 用户信息
+            let userInfo = localStorage.getItem("user.info");
+            if (userInfo) {
+                this.user = JSON.parse(userInfo);
+            }
         }
     });
 </script>

@@ -255,3 +255,12 @@ body {
 .ui-notice {
     height: calc(100% - 50px);
 }
+
+/* 自动换行 */
+.auto-wrap {
+    width: 100%;
+    height: auto;
+    word-wrap: break-word;
+    word-break: break-all;
+    overflow: hidden;
+}

@@ -127,4 +127,13 @@ public interface DiarySubscribeFeignApi {
     @ApiOperation("根据关键字搜索用户订阅列表")
     @RequestMapping(value = "/apply.subscribe.list", method = RequestMethod.POST)
     Result<DiarySubscribeEntity> applySubscribeList(@RequestBody Po<String> po);
+
+    /**
+     * 通知我的粉丝动态更新
+     *
+     * @return Result
+     */
+    @ApiOperation("通知我的粉丝动态更新")
+    @RequestMapping(value = "/notify.follower", method = RequestMethod.GET)
+    Result<Void> notifyFollower();
 }

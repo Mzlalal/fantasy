@@ -10,7 +10,7 @@ import com.mzlalal.base.util.Page;
 import com.mzlalal.oss.enums.SubscribeStatusEnum;
 import com.mzlalal.oss.service.DiarySubscribeService;
 import io.swagger.annotations.Api;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,15 +27,13 @@ import java.util.List;
  */
 @Api(tags = "飞虹订阅")
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/v1/oss/diary.subscribe")
 public class DiarySubscribeController implements DiarySubscribeFeignApi {
-
+    /**
+     * 订阅service
+     */
     private final DiarySubscribeService diarySubscribeService;
-
-    @Autowired
-    public DiarySubscribeController(DiarySubscribeService diarySubscribeService) {
-        this.diarySubscribeService = diarySubscribeService;
-    }
 
     @Override
     public Result<DiarySubscribeEntity> list(@RequestBody Po<DiarySubscribeEntity> po) {
@@ -112,5 +110,12 @@ public class DiarySubscribeController implements DiarySubscribeFeignApi {
     public Result<DiarySubscribeEntity> applySubscribeList(@RequestBody Po<String> po) {
         AssertUtil.notBlank(po.getEntity(), "关键字不能为空");
         return Result.ok(diarySubscribeService.applySubscribeList(po));
+    }
+
+    @Override
+    public Result<Void> notifyFollower() {
+        // 通知我的粉丝
+        diarySubscribeService.notifyFollower();
+        return Result.ok();
     }
 }

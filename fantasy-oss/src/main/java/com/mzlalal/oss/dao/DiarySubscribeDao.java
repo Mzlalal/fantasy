@@ -25,6 +25,14 @@ public interface DiarySubscribeDao extends BaseMapper<DiarySubscribeEntity> {
     String queryUsernameById(@Param("id") String id);
 
     /**
+     * 根据用户ID列表查询用户邮箱
+     *
+     * @param userIdList 用户ID列表
+     * @return List<String> 邮箱
+     */
+    List<String> queryMailByUserIdList(@Param("userIdList") List<String> userIdList);
+
+    /**
      * 根据关键字搜索用户订阅列表
      *
      * @param searchKeyword 关键字

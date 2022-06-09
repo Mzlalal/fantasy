@@ -35,4 +35,9 @@ public interface DiarySubscribeService extends BaseService<DiarySubscribeEntity>
      * @return Page<DiarySubscribeEntity>
      */
     Page<DiarySubscribeEntity> applySubscribeList(Po<String> po);
+
+    /**
+     * 通知我的粉丝动态更新
+     */
+    void notifyFollower();
 }

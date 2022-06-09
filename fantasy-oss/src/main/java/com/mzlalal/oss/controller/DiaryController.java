@@ -1,10 +1,13 @@
 package com.mzlalal.oss.controller;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
 import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oss.dto.DiaryEntity;
 import com.mzlalal.base.feign.oss.DiaryFeignApi;
+import com.mzlalal.base.oauth2.Oauth2Context;
+import com.mzlalal.base.util.AssertUtil;
 import com.mzlalal.base.util.Page;
 import com.mzlalal.oss.service.DiaryService;
 import io.swagger.annotations.Api;
@@ -58,6 +61,11 @@ public class DiaryController implements DiaryFeignApi {
 
     @Override
     public Result<Void> update(@Validated @RequestBody DiaryEntity diary) {
+        DiaryEntity entity = diaryService.getById(diary.getId());
+        AssertUtil.notNull(entity, "动态查询不存在");
+        AssertUtil.isTrue(StrUtil.equals(entity.getCreateBy(), Oauth2Context.getUserIdElseThrow())
+                , "您无权修改当前动态");
+        
         if (diaryService.updateById(diary)) {
             return Result.ok();
         }

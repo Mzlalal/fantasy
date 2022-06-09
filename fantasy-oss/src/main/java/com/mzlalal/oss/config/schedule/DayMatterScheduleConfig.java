@@ -70,7 +70,7 @@ public class DayMatterScheduleConfig {
                 dayMatterList.parallelStream().forEach(item -> {
                     // 至今距离天数
                     long betweenDay = DateUtil.betweenDay(item.getMatterDate(), DateUtil.date(), true);
-                    // content
+                    // 邮件内容
                     String content = StrUtil.format("{}已经{}天啦!", item.getMatterMemo(), betweenDay);
                     // 用户ID集合
                     List<String> userIdList = StrUtil.split(item.getMatterMailSet(), ",");

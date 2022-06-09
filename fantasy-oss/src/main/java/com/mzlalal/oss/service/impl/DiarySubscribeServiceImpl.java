@@ -1,17 +1,22 @@
 package com.mzlalal.oss.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oss.dto.DiarySubscribeEntity;
 import com.mzlalal.base.oauth2.Oauth2Context;
 import com.mzlalal.base.util.Page;
+import com.mzlalal.notify.service.MailNotifyService;
 import com.mzlalal.oss.dao.DiarySubscribeDao;
 import com.mzlalal.oss.service.DiarySubscribeService;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 尺墨飞虹订阅表ServiceImpl
@@ -20,7 +25,12 @@ import java.util.List;
  * @date 2022-05-29 21:29:53
  */
 @Service("diarySubscribeServiceImpl")
+@AllArgsConstructor
 public class DiarySubscribeServiceImpl extends ServiceImpl<DiarySubscribeDao, DiarySubscribeEntity> implements DiarySubscribeService {
+    /**
+     * 邮件提醒service
+     */
+    private final MailNotifyService mailNotifyService;
 
     /**
      * 根据 PagePara 查询分页
@@ -96,5 +106,31 @@ public class DiarySubscribeServiceImpl extends ServiceImpl<DiarySubscribeDao, Di
                 , Oauth2Context.getUserIdElseThrow());
         // 返回结果
         return new Page<>(entityList, pageResult.getTotal(), po.getPageInfo());
+    }
+
+    @Override
+    public void notifyFollower() {
+        // 查询订阅我的粉丝列表
+        List<DiarySubscribeEntity> entityList = baseMapper.selectList(Wrappers.<DiarySubscribeEntity>lambdaQuery()
+                // 只查询创建人的列
+                .select(DiarySubscribeEntity::getCreateBy)
+                // where条件
+                // 订阅我的
+                .eq(DiarySubscribeEntity::getSubscribeUserId, Oauth2Context.getUserIdElseThrow())
+                // 我同意的
+                .eq(DiarySubscribeEntity::getSubscribeStatus, "3"));
+        // 为空返回
+        if (CollUtil.isEmpty(entityList)) {
+            return;
+        }
+        // 获取用户ID列表
+        List<String> userIdList = entityList.stream().map(DiarySubscribeEntity::getCreateBy)
+                .collect(Collectors.toList());
+        // 根据用户ID列表查询邮箱列表
+        List<String> mailList = baseMapper.queryMailByUserIdList(userIdList);
+        // 邮件内容
+        String content = StrUtil.format("您订阅的UP主：{}更新啦!", Oauth2Context.getUsernameElseThrow());
+        // 发送到邮箱
+        mailNotifyService.sendText(mailList, "尺墨飞虹-Fantasy", content);
     }
 }

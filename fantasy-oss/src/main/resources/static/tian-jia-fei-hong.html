@@ -112,6 +112,13 @@
                     data: param
                 }).then(res => {
                     this.loading = false;
+                    // 提醒粉丝
+                    if (this.diaryNotice) {
+                        axios({
+                            method: "get",
+                            url: "/fantasy-oss/api/v1/oss/diary.subscribe/notify.follower"
+                        })
+                    }
                     if (!window.confirm("保存成功，是否继续添加？")) {
                         // 跳转到待办列表
                         this.redirectDiaryList();
