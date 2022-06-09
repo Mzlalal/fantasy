@@ -5,6 +5,8 @@ import com.mzlalal.base.entity.oss.dto.DiarySubscribeEntity;
 import com.mzlalal.base.service.BaseService;
 import com.mzlalal.base.util.Page;
 
+import java.util.List;
+
 /**
  * 尺墨飞虹订阅表service
  *
@@ -40,4 +42,11 @@ public interface DiarySubscribeService extends BaseService<DiarySubscribeEntity>
      * 通知我的粉丝动态更新
      */
     void notifyFollower();
+
+    /**
+     * 查询我订阅的用户列表
+     *
+     * @return 订阅的用户列表
+     */
+    List<String> queryMySubscribeUserIdList();
 }

@@ -4,6 +4,9 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.mzlalal.base.entity.oss.dto.DiaryEntity;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.Date;
+import java.util.List;
+
 /**
  * 飞虹dao
  *
@@ -18,5 +21,5 @@ public interface DiaryDao extends BaseMapper<DiaryEntity> {
      *
      * @return 最近的日期
      */
-    String queryRecentDate();
+    List<Date> queryRecentDate();
 }

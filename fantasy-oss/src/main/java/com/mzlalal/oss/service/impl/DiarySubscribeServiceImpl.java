@@ -133,4 +133,20 @@ public class DiarySubscribeServiceImpl extends ServiceImpl<DiarySubscribeDao, Di
         // 发送到邮箱
         mailNotifyService.sendText(mailList, "尺墨飞虹-Fantasy", content);
     }
+
+    @Override
+    public List<String> queryMySubscribeUserIdList() {
+        // 查询订阅我的粉丝列表
+        List<DiarySubscribeEntity> entityList = baseMapper.selectList(Wrappers.<DiarySubscribeEntity>lambdaQuery()
+                // 只查询订阅用户的ID
+                .select(DiarySubscribeEntity::getSubscribeUserId)
+                // where条件
+                // 我订阅的
+                .eq(DiarySubscribeEntity::getCreateBy, Oauth2Context.getUserIdElseThrow())
+                // 对方同意的
+                .eq(DiarySubscribeEntity::getSubscribeStatus, "3"));
+        // 获取用户ID列表
+        return entityList.stream().map(DiarySubscribeEntity::getSubscribeUserId)
+                .collect(Collectors.toList());
+    }
 }

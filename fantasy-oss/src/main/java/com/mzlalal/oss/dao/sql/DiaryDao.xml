@@ -17,7 +17,7 @@
         <result property="updateName" column="update_name"/>
     </resultMap>
 
-    <select id="queryRecentDate" resultType="java.lang.String">
-        select DISTINCT diary_date from t_diary
+    <select id="queryRecentDate" resultType="java.util.Date">
+        SELECT DISTINCT diary_date FROM t_diary ORDER BY diary_date DESC
     </select>
 </mapper>

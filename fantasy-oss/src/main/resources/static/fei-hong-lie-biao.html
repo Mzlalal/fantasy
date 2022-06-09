@@ -17,7 +17,7 @@
     <script src="js/components/PopupMenu.js"></script>
     <style>
         .diary-cell {
-            padding: 30px 16px 0;
+            padding: 16px 16px 0;
         }
 
         .diary-create-time {
@@ -89,7 +89,7 @@
                 // 列表哦数据
                 diaryGroup: {},
                 // 当前页
-                currPage: 10,
+                currPage: 1,
                 // 总页数
                 totalPage: 0,
                 // 用户信息
@@ -119,7 +119,7 @@
                     "entity": {},
                     "pageInfo": {
                         "currPage": this.currPage,
-                        "pageSize": 15
+                        "pageSize": 10
                     }
                 }
                 // 请求
