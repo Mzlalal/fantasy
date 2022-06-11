@@ -156,10 +156,19 @@ public interface GlobalConstant {
     /**
      * 待办调度redisKey
      *
-     * @return String fantasy:notify:schedule
+     * @return String fantasy:todo:notify:schedule
      */
     static String todoNotifySchedule() {
         return StrUtil.format("fantasy:todo:notify:schedule");
+    }
+
+    /**
+     * 纪念日redisKey
+     *
+     * @return String fantasy:day:matter:schedule
+     */
+    static String dayMatterSchedule() {
+        return StrUtil.format("fantasy:day:matter:schedule");
     }
 
     /**

@@ -2,6 +2,7 @@ package com.mzlalal.oss.config.schedule;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
+import com.github.pagehelper.Page;
 import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.entity.global.po.PageInfo;
 import com.mzlalal.base.entity.oss.dto.DayMatterEntity;
@@ -46,7 +47,7 @@ public class DayMatterScheduleConfig {
     @Scheduled(cron = "0 30 0 1/1 * ?")
     public void dayMatterSchedule() {
         // 获取锁
-        RLock lock = redissonClient.getLock(GlobalConstant.todoNotifySchedule());
+        RLock lock = redissonClient.getLock(GlobalConstant.dayMatterSchedule());
         try {
             // 尝试获取锁,最大等待时间30秒,超过30秒自动释放
             boolean tryLock = lock.tryLock(0, 300, TimeUnit.SECONDS);
@@ -54,22 +55,25 @@ public class DayMatterScheduleConfig {
                 // 获取锁失败
                 return;
             }
-            // 查询所有
-            long count = dayMatterService.count();
             // 每页查询
             int pageSize = 200;
-            // 创建分页
-            PageInfo pageInfo = PageInfo.builder().pageSize(pageSize).build();
+            // 创建分页信息
+            Page<DayMatterEntity> page = dayMatterService.createPageQuery(PageInfo.builder().pageSize(pageSize).build());
+            // 查询
+            List<DayMatterEntity> dayMatterList = dayMatterService.list();
             // 遍历
-            for (int i = 0; i < (count / pageSize) + 1; i++) {
-                // 创建分页信息
-                dayMatterService.createPageQuery(pageInfo);
-                // 查询
-                List<DayMatterEntity> dayMatterList = dayMatterService.list();
+            int currentPage = 1;
+            while (currentPage <= page.getTotal()) {
                 // 遍历查询
                 dayMatterList.parallelStream().forEach(item -> {
                     // 至今距离天数
-                    long betweenDay = DateUtil.betweenDay(item.getMatterDate(), DateUtil.date(), true);
+                    Long betweenDay = DateUtil.betweenDay(item.getMatterDate(), DateUtil.date(), true);
+                    // 提醒间隔
+                    Integer interval = item.getMatterInterval();
+                    // 如果提醒间隔为0 或者 相距天数与提醒间隔余数不等于则不需要提醒
+                    if (interval <= 0 || betweenDay.intValue() % interval != 0) {
+                        return;
+                    }
                     // 邮件内容
                     String content = StrUtil.format("{}已经{}天啦!", item.getMatterMemo(), betweenDay);
                     // 用户ID集合
@@ -77,6 +81,10 @@ public class DayMatterScheduleConfig {
                     // 发送到邮箱
                     mailNotifyService.sendText(userIdList, "纪念日-Fantasy", content);
                 });
+                // 创建分页信息
+                dayMatterService.createPageQuery(PageInfo.builder().currPage(++currentPage).pageSize(pageSize).build());
+                // 查询
+                dayMatterList = dayMatterService.list();
             }
         } catch (InterruptedException ignored) {
             // 忽略
