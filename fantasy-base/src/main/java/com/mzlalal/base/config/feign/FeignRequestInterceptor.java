@@ -1,6 +1,7 @@
 package com.mzlalal.base.config.feign;
 
 import cn.hutool.core.util.StrUtil;
+import com.mzlalal.base.common.GlobalConstant;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import org.springframework.context.annotation.Configuration;
@@ -20,10 +21,10 @@ public class FeignRequestInterceptor implements RequestInterceptor {
     public void apply(RequestTemplate requestTemplate) {
         // 从request获取token
         RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
-        String authorization = (String) requestAttributes.getAttribute("F-Authorization", RequestAttributes.SCOPE_REQUEST);
+        String authorization = (String) requestAttributes.getAttribute(GlobalConstant.F_AUTHORIZATION, RequestAttributes.SCOPE_REQUEST);
         // 设置头部,服务之间需要验证
         if (StrUtil.isNotBlank(authorization)) {
-            requestTemplate.header("F-Authorization", authorization);
+            requestTemplate.header(GlobalConstant.F_AUTHORIZATION, authorization);
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.mzlalal.oss.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.lang.Validator;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -128,6 +129,11 @@ public class DiarySubscribeServiceImpl extends ServiceImpl<DiarySubscribeDao, Di
                 .collect(Collectors.toList());
         // 根据用户ID列表查询邮箱列表
         List<String> mailList = baseMapper.queryMailByUserIdList(userIdList);
+        if (CollUtil.isEmpty(mailList)) {
+            return;
+        }
+        // 过滤非法的邮箱地址
+        mailList = mailList.stream().filter(Validator::isEmail).collect(Collectors.toList());
         // 邮件内容
         String content = StrUtil.format("您订阅的UP主：{}更新啦!", Oauth2Context.getUsernameElseThrow());
         // 发送到邮箱

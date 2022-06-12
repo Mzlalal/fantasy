@@ -63,7 +63,8 @@ public class DayMatterScheduleConfig {
             List<DayMatterEntity> dayMatterList = dayMatterService.list();
             // 遍历
             int currentPage = 1;
-            while (currentPage <= page.getTotal()) {
+            // 小于等于当前页
+            while (currentPage <= page.getPages()) {
                 // 遍历查询
                 dayMatterList.parallelStream().forEach(item -> {
                     // 至今距离天数
