@@ -75,12 +75,14 @@ public class DayMatterScheduleConfig {
                     if (interval <= 0 || betweenDay.intValue() % interval != 0) {
                         return;
                     }
+                    // 邮件标题
+                    String subject = StrUtil.format("纪念日-{}-Fantasy", item.getMatterMemo());
                     // 邮件内容
                     String content = StrUtil.format("{}已经{}天啦!", item.getMatterMemo(), betweenDay);
                     // 用户ID集合
                     List<String> userIdList = StrUtil.split(item.getMatterMailSet(), ",");
                     // 发送到邮箱
-                    mailNotifyService.sendText(userIdList, "纪念日-Fantasy", content);
+                    mailNotifyService.sendText(userIdList, subject, content);
                 });
                 // 创建分页信息
                 dayMatterService.createPageQuery(PageInfo.builder().currPage(++currentPage).pageSize(pageSize).build());

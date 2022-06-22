@@ -29,6 +29,7 @@ public class PageInfo {
     @Min(value = 1, message = "每页展示的行数pageSize最小不能小于1")
     @Max(value = 50, message = "每页展示的行数pageSize最大不能大于50")
     @ApiModelProperty(value = "每页展示的行数", example = "10")
+    @Builder.Default
     protected int pageSize = 10;
 
     /**
@@ -36,5 +37,6 @@ public class PageInfo {
      */
     @Min(value = 1, message = "当前页码最小不能小于1")
     @ApiModelProperty(value = "当前页码", example = "1")
+    @Builder.Default
     protected int currPage = 1;
 }

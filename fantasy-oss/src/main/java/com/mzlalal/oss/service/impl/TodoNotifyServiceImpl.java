@@ -86,8 +86,10 @@ public class TodoNotifyServiceImpl extends ServiceImpl<TodoNotifyDao, TodoNotify
             }
             // 转换类型
             TodoNotifyVo todoNotifyVo = (TodoNotifyVo) item;
+            // 邮箱标题
+            String subject = StrUtil.format("待办提醒-{}-懒人模式-Fantasy", todoNotifyVo.getNotifyMemo());
             // 发送到邮箱
-            mailNotifyService.sendText(todoNotifyVo.getNotifyMailSet(), "待办提醒-懒人模式-Fantasy", todoNotifyVo.getNotifyMemo());
+            mailNotifyService.sendText(todoNotifyVo.getNotifyMailSet(), subject, todoNotifyVo.getNotifyMemo());
             // 更新次数
             int notifyLazyModeTimes = todoNotifyVo.getNotifyLazyModeTimes() - 1;
             // 如果提醒次数仍然大于0,则加入到集合中
@@ -119,8 +121,10 @@ public class TodoNotifyServiceImpl extends ServiceImpl<TodoNotifyDao, TodoNotify
         Iterator<TodoNotifyEntity> iterator = todoNotifyList.iterator();
         while (iterator.hasNext()) {
             TodoNotifyEntity todoNotify = iterator.next();
+            // 邮箱标题
+            String subject = StrUtil.format("待办提醒-{}-Fantasy", todoNotify.getNotifyMemo());
             // 发送到邮箱
-            mailNotifyService.sendText(todoNotify.getNotifyMailSet(), "待办提醒-Fantasy", todoNotify.getNotifyMemo());
+            mailNotifyService.sendText(todoNotify.getNotifyMailSet(), subject, todoNotify.getNotifyMemo());
             // 重复提醒的存放在redis列表中
             if (todoNotify.getNotifyLazyModeTimes() > 0) {
                 TodoNotifyVo todoNotifyVo = new TodoNotifyVo();
