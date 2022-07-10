@@ -3,7 +3,7 @@ package com.mzlalal.oss.service;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oss.dto.DiarySubscribeEntity;
 import com.mzlalal.base.service.BaseService;
-import com.mzlalal.base.util.Page;
+import com.mzlalal.base.util.FantasyPage;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ public interface DiarySubscribeService extends BaseService<DiarySubscribeEntity>
      * @param po 分页信息
      * @return Page<DiarySubscribeEntity>
      */
-    Page<DiarySubscribeEntity> followerList(Po<DiarySubscribeEntity> po);
+    FantasyPage<DiarySubscribeEntity> followerList(Po<DiarySubscribeEntity> po);
 
     /**
      * 查看我的订阅列表
@@ -28,7 +28,7 @@ public interface DiarySubscribeService extends BaseService<DiarySubscribeEntity>
      * @param po 分页信息
      * @return Page<DiarySubscribeEntity>
      */
-    Page<DiarySubscribeEntity> subscribeList(Po<DiarySubscribeEntity> po);
+    FantasyPage<DiarySubscribeEntity> subscribeList(Po<DiarySubscribeEntity> po);
 
     /**
      * 根据关键字搜索用户订阅列表
@@ -36,7 +36,7 @@ public interface DiarySubscribeService extends BaseService<DiarySubscribeEntity>
      * @param po 分页信息
      * @return Page<DiarySubscribeEntity>
      */
-    Page<DiarySubscribeEntity> applySubscribeList(Po<String> po);
+    FantasyPage<DiarySubscribeEntity> applySubscribeList(Po<String> po);
 
     /**
      * 通知我的粉丝动态更新

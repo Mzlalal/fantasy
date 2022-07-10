@@ -10,7 +10,7 @@ import com.mzlalal.base.entity.oauth2.dto.UserEntity;
 import com.mzlalal.base.entity.oauth2.req.UpdateUserByAdminReq;
 import com.mzlalal.base.entity.oss.req.UserVueSelectReq;
 import com.mzlalal.base.feign.oauth2.UserFeignApi;
-import com.mzlalal.base.util.Page;
+import com.mzlalal.base.util.FantasyPage;
 import com.mzlalal.oauth2.service.UserService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -91,13 +91,13 @@ public class UserController implements UserFeignApi {
 
     @Override
     public Result<VueSelect> queryUserIdVueSelectListByUsername(@Validated @RequestBody UserVueSelectReq req) {
-        Page<VueSelect> page = Page.list(userService.queryUserIdVueSelectListByUsername(req.getUsername()));
+        FantasyPage<VueSelect> page = FantasyPage.list(userService.queryUserIdVueSelectListByUsername(req.getUsername()));
         return Result.ok(page);
     }
 
     @Override
     public Result<VueSelect> queryUserMailVueSelectListByUsername(@Validated @RequestBody UserVueSelectReq req) {
-        Page<VueSelect> page = Page.list(userService.queryUserMailVueSelectListByUsername(req.getUsername()));
+        FantasyPage<VueSelect> page = FantasyPage.list(userService.queryUserMailVueSelectListByUsername(req.getUsername()));
         return Result.ok(page);
     }
 

@@ -5,11 +5,12 @@ import cn.hutool.core.map.MapUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.pagehelper.Page;
 import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oss.dto.DiaryEntity;
 import com.mzlalal.base.oauth2.Oauth2Context;
-import com.mzlalal.base.util.Page;
+import com.mzlalal.base.util.FantasyPage;
 import com.mzlalal.oss.dao.DiaryDao;
 import com.mzlalal.oss.service.DiaryService;
 import com.mzlalal.oss.service.DiarySubscribeService;
@@ -43,15 +44,15 @@ public class DiaryServiceImpl extends ServiceImpl<DiaryDao, DiaryEntity> impleme
      * @return 分页信息
      */
     @Override
-    public Page<DiaryEntity> queryPage(Po<DiaryEntity> po) {
+    public FantasyPage<DiaryEntity> queryPage(Po<DiaryEntity> po) {
         // 查询参数
         QueryWrapper<DiaryEntity> wrapper = new QueryWrapper<>(po.getEntity());
         // 创建分页条件
-        com.github.pagehelper.Page<DiaryEntity> pageResult = this.createPageQuery(po.getPageInfo());
+        Page<DiaryEntity> pageResult = this.createPageQuery(po.getPageInfo());
         // 查询结果集
         List<DiaryEntity> entityList = baseMapper.selectList(wrapper);
         // 返回结果
-        return new Page<>(entityList, pageResult.getTotal(), po.getPageInfo());
+        return new FantasyPage<>(entityList, pageResult.getTotal(), po.getPageInfo());
     }
 
     /**
@@ -63,7 +64,7 @@ public class DiaryServiceImpl extends ServiceImpl<DiaryDao, DiaryEntity> impleme
     @Override
     public Result<Map<String, List<DiaryEntity>>> queryDiaryGroupByDate(Po<DiaryEntity> po) {
         // 创建分页条件
-        com.github.pagehelper.Page<DiaryEntity> pageResult = this.createPageQuery(po.getPageInfo());
+        Page<DiaryEntity> pageResult = this.createPageQuery(po.getPageInfo());
         // 查询最近时间
         List<Date> recentDate = baseMapper.queryRecentDate();
         if (CollUtil.isEmpty(recentDate)) {

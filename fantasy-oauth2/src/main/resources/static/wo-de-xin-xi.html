@@ -188,14 +188,13 @@
             }
         },
         created() {
-            let userInfo = localStorage.getItem("user.info");
-            if (userInfo) {
-                this.user = JSON.parse(userInfo);
-                if (this.user.mail.indexOf("@") === -1) {
-                    this.user.mail = "";
-                }
-                this.user.password = "";
+            // 获取用户信息
+            this.user = commonUtil.getUserInfo();
+            // 如果用户邮箱没有@符号,则重置为空
+            if (this.user.mail.indexOf("@") === -1) {
+                this.user.mail = "";
             }
+            this.user.password = "";
         }
     });
 </script>

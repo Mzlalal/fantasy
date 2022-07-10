@@ -6,10 +6,11 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.pagehelper.Page;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oss.dto.DiarySubscribeEntity;
 import com.mzlalal.base.oauth2.Oauth2Context;
-import com.mzlalal.base.util.Page;
+import com.mzlalal.base.util.FantasyPage;
 import com.mzlalal.notify.service.MailNotifyService;
 import com.mzlalal.oss.dao.DiarySubscribeDao;
 import com.mzlalal.oss.service.DiarySubscribeService;
@@ -40,9 +41,9 @@ public class DiarySubscribeServiceImpl extends ServiceImpl<DiarySubscribeDao, Di
      * @return 分页信息
      */
     @Override
-    public Page<DiarySubscribeEntity> queryPage(Po<DiarySubscribeEntity> po) {
+    public FantasyPage<DiarySubscribeEntity> queryPage(Po<DiarySubscribeEntity> po) {
         // 创建分页条件
-        com.github.pagehelper.Page<DiarySubscribeEntity> pageResult = this.createPageQuery(po.getPageInfo());
+        Page<DiarySubscribeEntity> pageResult = this.createPageQuery(po.getPageInfo());
         // 查询参数
         LambdaQueryWrapper<DiarySubscribeEntity> wrapper = new LambdaQueryWrapper<>();
 
@@ -67,11 +68,11 @@ public class DiarySubscribeServiceImpl extends ServiceImpl<DiarySubscribeDao, Di
         // 查询结果集
         List<DiarySubscribeEntity> entityList = baseMapper.selectList(wrapper);
         // 返回结果
-        return new Page<>(entityList, pageResult.getTotal(), po.getPageInfo());
+        return new FantasyPage<>(entityList, pageResult.getTotal(), po.getPageInfo());
     }
 
     @Override
-    public Page<DiarySubscribeEntity> followerList(Po<DiarySubscribeEntity> po) {
+    public FantasyPage<DiarySubscribeEntity> followerList(Po<DiarySubscribeEntity> po) {
         DiarySubscribeEntity entity = po.getEntity();
         if (entity == null) {
             entity = new DiarySubscribeEntity();
@@ -88,7 +89,7 @@ public class DiarySubscribeServiceImpl extends ServiceImpl<DiarySubscribeDao, Di
      * @return 分页信息
      */
     @Override
-    public Page<DiarySubscribeEntity> subscribeList(Po<DiarySubscribeEntity> po) {
+    public FantasyPage<DiarySubscribeEntity> subscribeList(Po<DiarySubscribeEntity> po) {
         DiarySubscribeEntity entity = po.getEntity();
         if (entity == null) {
             entity = new DiarySubscribeEntity();
@@ -99,14 +100,14 @@ public class DiarySubscribeServiceImpl extends ServiceImpl<DiarySubscribeDao, Di
     }
 
     @Override
-    public Page<DiarySubscribeEntity> applySubscribeList(Po<String> po) {
+    public FantasyPage<DiarySubscribeEntity> applySubscribeList(Po<String> po) {
         // 创建分页条件
-        com.github.pagehelper.Page<DiarySubscribeEntity> pageResult = this.createPageQuery(po.getPageInfo());
+        Page<DiarySubscribeEntity> pageResult = this.createPageQuery(po.getPageInfo());
         // 查询列表
         List<DiarySubscribeEntity> entityList = baseMapper.queryApplySubscribeUsernameBySearchKeyword(po.getEntity()
                 , Oauth2Context.getUserIdElseThrow());
         // 返回结果
-        return new Page<>(entityList, pageResult.getTotal(), po.getPageInfo());
+        return new FantasyPage<>(entityList, pageResult.getTotal(), po.getPageInfo());
     }
 
     @Override

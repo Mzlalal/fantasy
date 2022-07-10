@@ -1,10 +1,11 @@
 package com.mzlalal.base.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.mzlalal.base.entity.global.po.PageInfo;
 import com.mzlalal.base.entity.global.po.Po;
-import com.mzlalal.base.util.Page;
+import com.mzlalal.base.util.FantasyPage;
 
 /**
  * 基础Service
@@ -20,15 +21,15 @@ public interface BaseService<T> extends IService<T> {
      * @param po 分页参数
      * @return 分页数据
      */
-    Page<T> queryPage(Po<T> po);
+    FantasyPage<T> queryPage(Po<T> po);
 
     /**
      * 设置分页
      *
      * @param pageInfo 分页参数
-     * @return com.github.pagehelper.Page<T>
+     * @return Page<T>
      */
-    default com.github.pagehelper.Page<T> createPageQuery(PageInfo pageInfo) {
+    default Page<T> createPageQuery(PageInfo pageInfo) {
         // 分页信息
         return PageHelper.startPage(pageInfo.getCurrPage(), pageInfo.getPageSize());
     }

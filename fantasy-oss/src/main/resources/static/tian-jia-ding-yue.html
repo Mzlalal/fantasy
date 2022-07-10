@@ -188,6 +188,10 @@
             },
             // 订阅更新
             subscribeSave(status) {
+                if (this.currentSubscribe.subscribeStatus === 3) {
+                    alert("对方已同意了您的订阅申请（若此状态不符合您的预期，您可以尝试刷新后重试）");
+                    return;
+                }
                 this.loading = true;
                 const param = {
                     "subscribeUserId": this.currentSubscribe.subscribeUserId,

@@ -1,7 +1,7 @@
 package com.mzlalal.base.entity.global;
 
 import cn.hutool.core.date.DateUtil;
-import com.mzlalal.base.util.Page;
+import com.mzlalal.base.util.FantasyPage;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -45,7 +45,7 @@ public class WsResult<T> implements Serializable {
 
     @Builder.Default
     @ApiModelProperty("分页数据")
-    private Page<T> page = Page.empty();
+    private FantasyPage<T> page = FantasyPage.empty();
 
     @Builder.Default
     @ApiModelProperty("时间")

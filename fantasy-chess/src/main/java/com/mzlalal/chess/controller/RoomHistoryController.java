@@ -5,7 +5,7 @@ import com.mzlalal.base.entity.chess.dto.RoomHistoryEntity;
 import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.feign.chess.RoomHistoryFeignApi;
-import com.mzlalal.base.util.Page;
+import com.mzlalal.base.util.FantasyPage;
 import com.mzlalal.chess.service.RoomHistoryService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public class RoomHistoryController implements RoomHistoryFeignApi {
 
     @Override
     public Result<RoomHistoryEntity> list(@RequestBody Po<RoomHistoryEntity> po) {
-        Page<RoomHistoryEntity> page = roomHistoryService.queryPage(po);
+        FantasyPage<RoomHistoryEntity> page = roomHistoryService.queryPage(po);
         return Result.ok(page);
     }
 

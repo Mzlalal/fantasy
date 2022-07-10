@@ -7,12 +7,13 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.pagehelper.Page;
 import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oss.dto.TodoNotifyEntity;
 import com.mzlalal.base.entity.oss.vo.TodoNotifyVo;
 import com.mzlalal.base.oauth2.Oauth2Context;
-import com.mzlalal.base.util.Page;
+import com.mzlalal.base.util.FantasyPage;
 import com.mzlalal.notify.service.MailNotifyService;
 import com.mzlalal.oss.dao.TodoNotifyDao;
 import com.mzlalal.oss.service.TodoNotifyService;
@@ -52,7 +53,7 @@ public class TodoNotifyServiceImpl extends ServiceImpl<TodoNotifyDao, TodoNotify
      * @return 分页信息
      */
     @Override
-    public Page<TodoNotifyEntity> queryPage(Po<TodoNotifyEntity> po) {
+    public FantasyPage<TodoNotifyEntity> queryPage(Po<TodoNotifyEntity> po) {
         // 查询参数
         QueryWrapper<TodoNotifyEntity> wrapper = new QueryWrapper<>();
         wrapper.eq("create_by", Oauth2Context.getUserIdElseThrow());
@@ -60,11 +61,11 @@ public class TodoNotifyServiceImpl extends ServiceImpl<TodoNotifyDao, TodoNotify
         wrapper.orderByDesc("notify_top_status");
         wrapper.orderByDesc("update_time");
         // 创建分页条件
-        com.github.pagehelper.Page<TodoNotifyEntity> pageResult = this.createPageQuery(po.getPageInfo());
+        Page<TodoNotifyEntity> pageResult = this.createPageQuery(po.getPageInfo());
         // 查询结果集
         List<TodoNotifyEntity> entityList = baseMapper.selectList(wrapper);
         // 返回结果
-        return new Page<>(entityList, pageResult.getTotal(), po.getPageInfo());
+        return new FantasyPage<>(entityList, pageResult.getTotal(), po.getPageInfo());
     }
 
     @Override

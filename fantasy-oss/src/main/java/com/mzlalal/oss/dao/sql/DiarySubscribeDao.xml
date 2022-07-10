@@ -45,7 +45,7 @@
         IFNULL(ds.subscribe_status, 0) AS subscribe_status
         FROM
         t_user u
-        LEFT JOIN t_diary_subscribe ds ON u.id = ds.subscribe_user_id
+        LEFT JOIN t_diary_subscribe ds ON u.id = ds.subscribe_user_id AND ds.create_by = #{currentUserId}
         WHERE
         (u.username LIKE concat('%', #{searchKeyword}, '%') OR u.mobile LIKE concat('%', #{searchKeyword}, '%'))
         AND u.id NOT IN (#{currentUserId})

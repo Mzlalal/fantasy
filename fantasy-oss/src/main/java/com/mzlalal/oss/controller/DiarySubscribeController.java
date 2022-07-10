@@ -6,7 +6,7 @@ import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oss.dto.DiarySubscribeEntity;
 import com.mzlalal.base.feign.oss.DiarySubscribeFeignApi;
 import com.mzlalal.base.util.AssertUtil;
-import com.mzlalal.base.util.Page;
+import com.mzlalal.base.util.FantasyPage;
 import com.mzlalal.oss.enums.SubscribeStatusEnum;
 import com.mzlalal.oss.service.DiarySubscribeService;
 import io.swagger.annotations.Api;
@@ -37,7 +37,7 @@ public class DiarySubscribeController implements DiarySubscribeFeignApi {
 
     @Override
     public Result<DiarySubscribeEntity> list(@RequestBody Po<DiarySubscribeEntity> po) {
-        Page<DiarySubscribeEntity> page = diarySubscribeService.queryPage(po);
+        FantasyPage<DiarySubscribeEntity> page = diarySubscribeService.queryPage(po);
         return Result.ok(page);
     }
 

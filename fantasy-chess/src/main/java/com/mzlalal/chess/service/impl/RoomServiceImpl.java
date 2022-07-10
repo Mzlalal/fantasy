@@ -3,10 +3,11 @@ package com.mzlalal.chess.service.impl;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.pagehelper.Page;
 import com.mzlalal.base.entity.chess.dto.RoomEntity;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.util.AssertUtil;
-import com.mzlalal.base.util.Page;
+import com.mzlalal.base.util.FantasyPage;
 import com.mzlalal.chess.dao.RoomDao;
 import com.mzlalal.chess.service.RoomService;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,7 @@ public class RoomServiceImpl extends ServiceImpl<RoomDao, RoomEntity> implements
      * @return 分页信息
      */
     @Override
-    public Page<RoomEntity> queryPage(Po<RoomEntity> po) {
+    public FantasyPage<RoomEntity> queryPage(Po<RoomEntity> po) {
         // 查询参数
         QueryWrapper<RoomEntity> wrapper = new QueryWrapper<>();
         // 房间名
@@ -39,11 +40,11 @@ public class RoomServiceImpl extends ServiceImpl<RoomDao, RoomEntity> implements
             wrapper.like("name" , name);
         }
         // 创建分页条件
-        com.github.pagehelper.Page<RoomEntity> pageResult = this.createPageQuery(po.getPageInfo());
+        Page<RoomEntity> pageResult = this.createPageQuery(po.getPageInfo());
         // 查询结果集
         List<RoomEntity> entityList = baseMapper.selectList(wrapper);
         // 返回结果
-        return new Page<>(entityList, pageResult.getTotal(), po.getPageInfo());
+        return new FantasyPage<>(entityList, pageResult.getTotal(), po.getPageInfo());
     }
 
     @Override

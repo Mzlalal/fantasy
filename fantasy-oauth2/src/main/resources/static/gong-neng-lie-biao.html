@@ -53,7 +53,7 @@
                 // 客户端列表
                 clientList: [],
                 // 需要隐藏的客户端
-                hideList: [clientKey],
+                hideList: [],
             }
         },
         methods: {
@@ -64,12 +64,10 @@
             }
         },
         created() {
+            // 获取用户信息
+            let userInfo = commonUtil.getUserInfo();
             // 获取用户客户端
-            let userInfo = localStorage.getItem("user.info");
-            if (userInfo) {
-                userInfo = JSON.parse(userInfo);
-                this.clientList = userInfo.clientList;
-            }
+            this.clientList = userInfo.clientList;
         }
     });
 </script>

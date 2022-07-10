@@ -189,12 +189,8 @@
             }
         },
         created() {
-            let userInfo = localStorage.getItem("user.info");
-            // 重新登录
-            if (!userInfo) {
-                window.location = window.defaultRedirectUri;
-                return;
-            }
+            // 校验用户是否登录
+            commonUtil.getUserInfo();
             // 飞虹ID
             this.diaryId = localStorage.getItem("oss.diary.id");
             if (!this.diaryId) {

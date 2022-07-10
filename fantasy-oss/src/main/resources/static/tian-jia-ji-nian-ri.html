@@ -209,16 +209,13 @@
             },
         },
         created() {
-            let userInfo = localStorage.getItem("user.info");
-            // 重新登录
-            if (!userInfo) {
-                window.location = window.defaultRedirectUri;
-                return;
-            }
-            userInfo = JSON.parse(userInfo);
+            // 获取用户信息
+            let userInfo = commonUtil.getUserInfo();
+            // 如果用户邮箱有@符号,则默认加载到下拉框
             if (userInfo.username && userInfo.mail && userInfo.mail.indexOf("@") !== -1) {
                 this.matterSelectSet.push({"label": userInfo.username, "code": userInfo.mail})
             }
+            // 如果用户邮箱没有@符号,则提示添加邮箱
             if (!userInfo.mail && userInfo.mail.indexOf("@") === -1 && window.confirm("您没有设置邮箱，无法发送提醒至邮箱。<br/>点击确定快速跳转我的信息修改邮箱。")) {
                 // 保存URL
                 localStorage.setItem("user.href.from", window.location.href);

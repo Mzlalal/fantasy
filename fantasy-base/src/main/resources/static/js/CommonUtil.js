@@ -152,6 +152,15 @@
             alert("登录信息已失效，请重新登录");
             // 刷新令牌失败 跳转到登录页
             window.location = window.defaultRedirectUri;
+        },
+        // 获取用户信息
+        getUserInfo() {
+            // 获取用户缓存
+            let userInfo = localStorage.getItem("user.info");
+            if (userInfo) {
+                return JSON.parse(userInfo);
+            }
+            window.location = window.defaultRedirectUri;
         }
     }
 

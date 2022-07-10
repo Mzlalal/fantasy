@@ -7,8 +7,8 @@ import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oss.dto.DayMatterEntity;
 import com.mzlalal.base.feign.oss.DayMatterFeignApi;
 import com.mzlalal.base.util.AssertUtil;
+import com.mzlalal.base.util.FantasyPage;
 import com.mzlalal.base.util.LambdaUtil;
-import com.mzlalal.base.util.Page;
 import com.mzlalal.oss.service.DayMatterService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,7 @@ public class DayMatterController implements DayMatterFeignApi {
 
     @Override
     public Result<DayMatterEntity> list(@RequestBody Po<DayMatterEntity> po) {
-        Page<DayMatterEntity> page = dayMatterService.queryPage(po);
+        FantasyPage<DayMatterEntity> page = dayMatterService.queryPage(po);
         return Result.ok(page);
     }
 

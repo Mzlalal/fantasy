@@ -8,7 +8,7 @@ import com.mzlalal.base.entity.oss.dto.DiaryEntity;
 import com.mzlalal.base.feign.oss.DiaryFeignApi;
 import com.mzlalal.base.oauth2.Oauth2Context;
 import com.mzlalal.base.util.AssertUtil;
-import com.mzlalal.base.util.Page;
+import com.mzlalal.base.util.FantasyPage;
 import com.mzlalal.oss.service.DiaryService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +41,7 @@ public class DiaryController implements DiaryFeignApi {
 
     @Override
     public Result<DiaryEntity> list(@RequestBody Po<DiaryEntity> po) {
-        Page<DiaryEntity> page = diaryService.queryPage(po);
+        FantasyPage<DiaryEntity> page = diaryService.queryPage(po);
         return Result.ok(page);
     }
 

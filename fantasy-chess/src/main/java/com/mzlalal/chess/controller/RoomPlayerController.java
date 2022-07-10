@@ -9,7 +9,7 @@ import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.feign.chess.RoomPlayerFeignApi;
 import com.mzlalal.base.util.AssertUtil;
-import com.mzlalal.base.util.Page;
+import com.mzlalal.base.util.FantasyPage;
 import com.mzlalal.chess.service.RoomPlayerService;
 import com.mzlalal.chess.service.impl.StatScoreSessionService;
 import io.swagger.annotations.Api;
@@ -44,7 +44,7 @@ public class RoomPlayerController implements RoomPlayerFeignApi {
 
     @Override
     public Result<RoomPlayerEntity> list(@RequestBody Po<RoomPlayerEntity> po) {
-        Page<RoomPlayerEntity> page = roomPlayerService.queryPage(po);
+        FantasyPage<RoomPlayerEntity> page = roomPlayerService.queryPage(po);
         return Result.ok(page);
     }
 
@@ -103,7 +103,7 @@ public class RoomPlayerController implements RoomPlayerFeignApi {
         // 获取历史消息
         List<HistoryMessageVo> historyMessageVoList = roomPlayerService.queryPlayerHistoryMessage(roomId);
         // 封装到分页信息
-        Page<HistoryMessageVo> page = Page.list(historyMessageVoList);
+        FantasyPage<HistoryMessageVo> page = FantasyPage.list(historyMessageVoList);
         return Result.ok(page);
     }
 

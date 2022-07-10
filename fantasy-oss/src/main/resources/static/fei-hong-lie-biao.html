@@ -164,10 +164,7 @@
             // 初始化数据
             this.initDiaryList();
             // 用户信息
-            let userInfo = localStorage.getItem("user.info");
-            if (userInfo) {
-                this.user = JSON.parse(userInfo);
-            }
+            this.user = commonUtil.getUserInfo();
         }
     });
 </script>

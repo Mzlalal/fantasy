@@ -355,13 +355,12 @@
             }
         },
         created() {
+            // 获取用户信息
+            let userInfo = commonUtil.getUserInfo();
             // 获取用户ID
-            let userInfo = localStorage.getItem("user.info");
-            if (userInfo) {
-                userInfo = JSON.parse(userInfo);
-                this.userId = userInfo.id;
-                this.username = userInfo.username;
-            }
+            this.userId = userInfo.id;
+            // 获取用户名
+            this.username = userInfo.username;
             // 获取房间号
             let roomCode = localStorage.getItem("chess.room.code");
             if (roomCode) {

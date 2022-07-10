@@ -1,6 +1,6 @@
 package com.mzlalal.base.entity.global;
 
-import com.mzlalal.base.util.Page;
+import com.mzlalal.base.util.FantasyPage;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -53,7 +53,7 @@ public class Result<T> implements Serializable {
 
     @Builder.Default
     @ApiModelProperty("分页数据")
-    private Page<T> page = Page.empty();
+    private FantasyPage<T> page = FantasyPage.empty();
 
     public static <T> Result<T> ok() {
         return Result.<T>builder().state(STATE_OK).msg(STATE_OK_MSG).build();
@@ -71,7 +71,7 @@ public class Result<T> implements Serializable {
         return Result.<T>builder().state(STATE_OK).msg(msg).data(entity).build();
     }
 
-    public static <T> Result<T> ok(Page<T> page) {
+    public static <T> Result<T> ok(FantasyPage<T> page) {
         return Result.<T>builder().state(STATE_OK).msg(STATE_OK_MSG).page(page).build();
     }
 

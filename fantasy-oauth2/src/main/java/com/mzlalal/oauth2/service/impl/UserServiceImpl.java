@@ -5,13 +5,14 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.pagehelper.Page;
 import com.mzlalal.base.common.GlobalResult;
 import com.mzlalal.base.entity.global.component.VueSelect;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oauth2.dto.UserEntity;
 import com.mzlalal.base.oauth2.Oauth2Context;
 import com.mzlalal.base.util.AssertUtil;
-import com.mzlalal.base.util.Page;
+import com.mzlalal.base.util.FantasyPage;
 import com.mzlalal.oauth2.dao.UserDao;
 import com.mzlalal.oauth2.service.UserService;
 import com.mzlalal.oauth2.service.oauth2.GrantResponseEnum;
@@ -40,7 +41,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     }
 
     @Override
-    public Page<UserEntity> queryPage(Po<UserEntity> po) {
+    public FantasyPage<UserEntity> queryPage(Po<UserEntity> po) {
         // 查询参数
         QueryWrapper<UserEntity> wrapper = new QueryWrapper<>();
         String mail = po.getEntity().getMail();
@@ -52,11 +53,11 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
             wrapper.like("mobile", mobile).or().like("mail", mail).or().like("username", username);
         }
         // 创建分页条件
-        com.github.pagehelper.Page<UserEntity> pageResult = this.createPageQuery(po.getPageInfo());
+        Page<UserEntity> pageResult = this.createPageQuery(po.getPageInfo());
         // 查询结果集
         List<UserEntity> entityList = baseMapper.selectList(wrapper);
         // 返回结果
-        return new Page<>(entityList, pageResult.getTotal(), po.getPageInfo());
+        return new FantasyPage<>(entityList, pageResult.getTotal(), po.getPageInfo());
     }
 
     @Override

@@ -2,9 +2,10 @@ package com.mzlalal.oauth2.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.pagehelper.Page;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oauth2.dto.ClientEntity;
-import com.mzlalal.base.util.Page;
+import com.mzlalal.base.util.FantasyPage;
 import com.mzlalal.oauth2.dao.ClientDao;
 import com.mzlalal.oauth2.service.ClientService;
 import org.springframework.stereotype.Service;
@@ -21,21 +22,21 @@ import java.util.List;
 public class ClientServiceImpl extends ServiceImpl<ClientDao, ClientEntity> implements ClientService {
 
     @Override
-    public Page<ClientEntity> queryPage(Po<ClientEntity> po) {
+    public FantasyPage<ClientEntity> queryPage(Po<ClientEntity> po) {
         // 查询参数
         QueryWrapper<ClientEntity> wrapper = new QueryWrapper<>(po.getEntity());
         // 创建分页条件
-        com.github.pagehelper.Page<ClientEntity> pageResult = this.createPageQuery(po.getPageInfo());
+        Page<ClientEntity> pageResult = this.createPageQuery(po.getPageInfo());
         // 查询结果集
         List<ClientEntity> entityList = baseMapper.selectList(wrapper);
         // 返回结果
-        return new Page<>(entityList, pageResult.getTotal(), po.getPageInfo());
+        return new FantasyPage<>(entityList, pageResult.getTotal(), po.getPageInfo());
     }
 
     @Override
     public ClientEntity getOneByClientKey(String clientKey) {
         QueryWrapper<ClientEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("client_key" , clientKey);
+        queryWrapper.eq("client_key", clientKey);
         return this.getOne(queryWrapper);
     }
 }

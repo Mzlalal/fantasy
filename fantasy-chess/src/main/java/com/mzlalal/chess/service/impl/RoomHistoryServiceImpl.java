@@ -3,10 +3,11 @@ package com.mzlalal.chess.service.impl;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.pagehelper.Page;
 import com.mzlalal.base.entity.chess.dto.RoomHistoryEntity;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.oauth2.Oauth2Context;
-import com.mzlalal.base.util.Page;
+import com.mzlalal.base.util.FantasyPage;
 import com.mzlalal.chess.dao.RoomHistoryDao;
 import com.mzlalal.chess.service.RoomHistoryService;
 import org.springframework.stereotype.Service;
@@ -29,17 +30,17 @@ public class RoomHistoryServiceImpl extends ServiceImpl<RoomHistoryDao, RoomHist
      * @return 分页信息
      */
     @Override
-    public Page<RoomHistoryEntity> queryPage(Po<RoomHistoryEntity> po) {
+    public FantasyPage<RoomHistoryEntity> queryPage(Po<RoomHistoryEntity> po) {
         // 查询参数
         QueryWrapper<RoomHistoryEntity> wrapper = new QueryWrapper<>();
         // 根据用户ID查询
         String userId = Oauth2Context.getUserIdElseThrow();
         wrapper.apply(StrUtil.isNotBlank(userId), "FIND_IN_SET('" + userId + "', player_id_set)");
         // 创建分页条件
-        com.github.pagehelper.Page<RoomHistoryEntity> pageResult = this.createPageQuery(po.getPageInfo());
+        Page<RoomHistoryEntity> pageResult = this.createPageQuery(po.getPageInfo());
         // 查询结果集
         List<RoomHistoryEntity> entityList = baseMapper.selectList(wrapper);
         // 返回结果
-        return new Page<>(entityList, pageResult.getTotal(), po.getPageInfo());
+        return new FantasyPage<>(entityList, pageResult.getTotal(), po.getPageInfo());
     }
 }

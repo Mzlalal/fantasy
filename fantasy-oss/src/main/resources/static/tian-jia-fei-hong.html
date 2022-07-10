@@ -144,11 +144,8 @@
             }
         },
         created() {
-            let userInfo = localStorage.getItem("user.info");
-            // 重新登录
-            if (!userInfo) {
-                window.location = window.defaultRedirectUri;
-            }
+            // 校验用户是否登录
+            commonUtil.getUserInfo();
             // 如果缓存有值则设置值
             let content = localStorage.getItem("oss.diary.save.content");
             if (content) {

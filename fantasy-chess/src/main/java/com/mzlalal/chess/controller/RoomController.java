@@ -9,7 +9,7 @@ import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.feign.chess.RoomFeignApi;
 import com.mzlalal.base.oauth2.Oauth2Context;
-import com.mzlalal.base.util.Page;
+import com.mzlalal.base.util.FantasyPage;
 import com.mzlalal.chess.service.RoomPlayerService;
 import com.mzlalal.chess.service.RoomService;
 import io.swagger.annotations.Api;
@@ -42,7 +42,7 @@ public class RoomController implements RoomFeignApi {
 
     @Override
     public Result<RoomEntity> list(@RequestBody Po<RoomEntity> po) {
-        Page<RoomEntity> page = roomService.queryPage(po);
+        FantasyPage<RoomEntity> page = roomService.queryPage(po);
         return Result.ok(page);
     }
 

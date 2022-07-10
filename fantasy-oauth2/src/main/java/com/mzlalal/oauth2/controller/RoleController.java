@@ -6,7 +6,7 @@ import com.mzlalal.base.entity.global.component.VueSelect;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oauth2.dto.RoleEntity;
 import com.mzlalal.base.feign.oauth2.RoleFeignApi;
-import com.mzlalal.base.util.Page;
+import com.mzlalal.base.util.FantasyPage;
 import com.mzlalal.oauth2.service.RoleService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ public class RoleController implements RoleFeignApi {
 
     @Override
     public Result<RoleEntity> list(@RequestBody Po<RoleEntity> po) {
-        Page<RoleEntity> page = roleService.queryPage(po);
+        FantasyPage<RoleEntity> page = roleService.queryPage(po);
         return Result.ok(page);
     }
 
@@ -76,7 +76,7 @@ public class RoleController implements RoleFeignApi {
         // 查询列表
         List<VueSelect> vueSelectList = roleService.queryRoleVueSelectList();
         // 返回
-        Page<VueSelect> page = Page.list(vueSelectList);
+        FantasyPage<VueSelect> page = FantasyPage.list(vueSelectList);
         return Result.ok(page);
     }
 

@@ -7,7 +7,7 @@ import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oss.dto.TodoNotifyEntity;
 import com.mzlalal.base.feign.oss.TodoNotifyFeignApi;
 import com.mzlalal.base.oauth2.Oauth2Context;
-import com.mzlalal.base.util.Page;
+import com.mzlalal.base.util.FantasyPage;
 import com.mzlalal.oss.service.TodoNotifyService;
 import com.mzlalal.oss.service.todo.NotifyTypeEnum;
 import io.swagger.annotations.Api;
@@ -38,7 +38,7 @@ public class TodoNotifyController implements TodoNotifyFeignApi {
 
     @Override
     public Result<TodoNotifyEntity> list(@RequestBody Po<TodoNotifyEntity> po) {
-        Page<TodoNotifyEntity> page = todoNotifyService.queryPage(po);
+        FantasyPage<TodoNotifyEntity> page = todoNotifyService.queryPage(po);
         return Result.ok(page);
     }
 

@@ -93,7 +93,7 @@ public class FeignEnvProcessor implements EnvironmentPostProcessor {
         // 遍历请求微服务swagger文档地址
         serviceIdList.parallelStream().forEach(serviceId -> {
             // 检查服务端口
-            String servicePort = feignServiceProperties.getProperty(serviceId + ".service.port");
+            String servicePort = getServicePort(serviceId);
             AssertUtil.notBlank(servicePort, "serviceId:{}未设置feign访问端口(请检查feign-service.properties)"
                     , serviceId);
             // 微服务的URL指向配置名

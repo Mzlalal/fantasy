@@ -3,10 +3,11 @@ package com.mzlalal.oss.service.impl;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.pagehelper.Page;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oss.dto.DayMatterEntity;
 import com.mzlalal.base.oauth2.Oauth2Context;
-import com.mzlalal.base.util.Page;
+import com.mzlalal.base.util.FantasyPage;
 import com.mzlalal.oss.dao.DayMatterDao;
 import com.mzlalal.oss.service.DayMatterService;
 import org.springframework.stereotype.Service;
@@ -29,17 +30,17 @@ public class DayMatterServiceImpl extends ServiceImpl<DayMatterDao, DayMatterEnt
      * @return 分页信息
      */
     @Override
-    public Page<DayMatterEntity> queryPage(Po<DayMatterEntity> po) {
+    public FantasyPage<DayMatterEntity> queryPage(Po<DayMatterEntity> po) {
         // 查询参数
         QueryWrapper<DayMatterEntity> wrapper = new QueryWrapper<>();
         // 根据用户邮箱查询
         String mail = Oauth2Context.getElseThrow().getMail();
         wrapper.apply(StrUtil.isNotBlank(mail), "FIND_IN_SET('" + mail + "', matter_mail_set)");
         // 创建分页条件
-        com.github.pagehelper.Page<DayMatterEntity> pageResult = this.createPageQuery(po.getPageInfo());
+        Page<DayMatterEntity> pageResult = this.createPageQuery(po.getPageInfo());
         // 查询结果集
         List<DayMatterEntity> entityList = baseMapper.selectList(wrapper);
         // 返回结果
-        return new Page<>(entityList, pageResult.getTotal(), po.getPageInfo());
+        return new FantasyPage<>(entityList, pageResult.getTotal(), po.getPageInfo());
     }
 }
