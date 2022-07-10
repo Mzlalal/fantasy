@@ -23,6 +23,7 @@
 
     <properties>
         <java.version>1.8</java.version>
+        <jib.docker.version>1.1</jib.docker.version>
         <hutool.version>5.8.3</hutool.version>
         <hutool.zxing.version>3.5.0</hutool.zxing.version>
         <knife4j.version>2.0.8</knife4j.version>
@@ -35,7 +36,7 @@
         <spring.cloud.alibaba.version>2021.1</spring.cloud.alibaba.version>
         <spring.cloud.nacos.version>2021.1</spring.cloud.nacos.version>
         <!-- Mz -->
-        <mz.fantasy.base.version>${project.version}</mz.fantasy.base.version>
+        <mz.fantasy.base.version>1.0</mz.fantasy.base.version>
         <mz.minio.stater.version>1.1.1</mz.minio.stater.version>
         <mz.system.log.stater.version>1.0.2</mz.system.log.stater.version>
         <mz.mybatis.interceptor.stater.version>1.0.4</mz.mybatis.interceptor.stater.version>
@@ -159,10 +160,10 @@
                                 <username>影子之城啊</username>
                                 <password>Mzlalal88</password>
                             </auth>
-                            <!-- Docker 镜像的 tag 这里使用maven定义的版本号 -->
+                            <!-- Docker镜像的tag,这里使用maven定义的属性 -->
                             <tags>
                                 <tag>
-                                    ${project.version}
+                                    ${jib.docker.version}
                                 </tag>
                             </tags>
                         </to>
