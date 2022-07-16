@@ -1,0 +1,13 @@
+spring:
+  cloud:
+    nacos:
+      config:
+        namespace: 2abf2a56-8efa-4045-b719-8d26b1e4a281
+        server-addr: http://124.223.174.58:8800
+        file-extension: yaml
+      discovery:
+        namespace: 2abf2a56-8efa-4045-b719-8d26b1e4a281
+        server-addr: http://124.223.174.58:8800
+        register-enabled: false
+      password: G3CXv$kaq9KVuyZz6h
+      username: fantasy-gitee

@@ -1,0 +1,19 @@
+spring:
+  cloud:
+    nacos:
+      config:
+        namespace: ed3cb1a6-640f-4f47-b5c1-239755ddb545
+        server-addr: 127.0.0.1:8800
+        file-extension: yaml
+      discovery:
+        namespace: ed3cb1a6-640f-4f47-b5c1-239755ddb545
+        server-addr: 127.0.0.1:8800
+        register-enabled: true
+      password: ''
+      username: ''
+  web:
+    resources:
+      # 静态资源不缓存
+      cache:
+        cachecontrol:
+          no-store: true

@@ -1,0 +1,25 @@
+server:
+  port: 9000
+spring:
+  application:
+    name: fantasy-oauth2
+  cloud:
+    nacos:
+      config:
+        shared-configs:
+          - data-id: mysql-alone.yaml
+            refresh: true
+          - data-id: mybatis-plus.yaml
+            refresh: true
+          - data-id: pagehelper.yaml
+            refresh: true
+          - data-id: redis-alone.yaml
+            refresh: true
+          - data-id: repeat-submit.yaml
+            refresh: true
+          - data-id: notify-mail.yaml
+            refresh: true
+          - data-id: swagger-knife.yaml
+            refresh: true
+  profiles:
+    active: '@env@'
