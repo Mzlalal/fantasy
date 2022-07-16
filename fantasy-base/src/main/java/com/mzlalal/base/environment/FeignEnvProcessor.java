@@ -119,8 +119,8 @@ public class FeignEnvProcessor implements EnvironmentPostProcessor {
             String serviceSwaggerUrl = StrUtil.format(this.serviceSwaggerUrl, servicePort);
             // 异常则设置为空
             try {
-                // 发送请求,1.5秒超时
-                HttpResponse response = HttpRequest.get(serviceSwaggerUrl).timeout(1500).execute();
+                // 发送请求,0.5秒超时
+                HttpResponse response = HttpRequest.get(serviceSwaggerUrl).timeout(500).execute();
                 // 查看返回
                 if (response.isOk()) {
                     // 添加到已启动的本地服务列表

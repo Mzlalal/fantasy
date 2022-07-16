@@ -138,6 +138,101 @@
         </dependencies>
     </dependencyManagement>
 
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <env>dev</env>
+            </properties>
+            <activation>
+                <!-- 默认使用开发环境 -->
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>product</id>
+            <properties>
+                <env>product</env>
+            </properties>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <!-- docker打包工具Jib -->
+                        <plugin>
+                            <groupId>com.google.cloud.tools</groupId>
+                            <artifactId>jib-maven-plugin</artifactId>
+                            <version>3.2.0</version>
+                            <configuration>
+                                <!-- 相当于 Dockerfile 中的 FROM -->
+                                <from>
+                                    <image>adoptopenjdk/openjdk8-openj9</image>
+                                </from>
+                                <to>
+                                    <!-- 构建镜像名称，阿里云镜像仓库地址 -->
+                                    <!--suppress UnresolvedMavenProperty -->
+                                    <image>registry.cn-hangzhou.aliyuncs.com/mzlalal/${jib.name}</image>
+                                    <!-- 阿里云镜像仓库账号密码 -->
+                                    <auth>
+                                        <username>影子之城啊</username>
+                                        <password>Mzlalal88</password>
+                                    </auth>
+                                    <!-- Docker镜像的tag,这里使用maven定义的属性 -->
+                                    <tags>
+                                        <tag>
+                                            ${jib.docker.version}
+                                        </tag>
+                                    </tags>
+                                </to>
+                                <container>
+                                    <!-- 启动类 -->
+                                    <!--suppress UnresolvedMavenProperty -->
+                                    <mainClass>${jib.main.class}</mainClass>
+                                    <!-- jvm参数 -->
+                                    <jvmFlags>
+                                        <jvmFlag>-Xms96M</jvmFlag>
+                                        <jvmFlag>-Xmx96M</jvmFlag>
+                                        <jvmFlag>-XX:+HeapDumpOnOutOfMemoryError</jvmFlag>
+                                        <!--suppress UnresolvedMavenProperty -->
+                                        <jvmFlag>-XX:HeapDumpPath=/root/logs/dump/${jib.name}-dump.log</jvmFlag>
+                                        <jvmFlag>-verbose:gc</jvmFlag>
+                                        <jvmFlag>-XX:+PrintGCDetails</jvmFlag>
+                                        <jvmFlag>-XX:+PrintGCDateStamps</jvmFlag>
+                                        <!--suppress UnresolvedMavenProperty -->
+                                        <jvmFlag>-Xloggc:/root/logs/gc/${jib.name}-gc.log</jvmFlag>
+                                        <jvmFlag>-Duser.timezone=GMT+08</jvmFlag>
+                                    </jvmFlags>
+                                    <args>
+                                        <arg>
+                                            --spring.profiles.active=product
+                                        </arg>
+                                    </args>
+                                    <!-- 使用当前时间 -->
+                                    <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
+                                    <!-- 容器在运行时暴露的端口 -->
+                                    <ports>
+                                        <!--suppress UnresolvedMavenProperty -->
+                                        <port>${jib.port}</port>
+                                    </ports>
+                                </container>
+                                <!-- 如果私有镜像仓库没有启用https，设置allowInsecureRegistries参数为true -->
+                                <allowInsecureRegistries>true</allowInsecureRegistries>
+                            </configuration>
+                            <!-- 绑定jib:build到 Maven生命周期，例如package/install/deploy -->
+                            <executions>
+                                <execution>
+                                    <phase>install</phase>
+                                    <goals>
+                                        <goal>build</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+    </profiles>
+
     <build>
         <pluginManagement>
             <plugins>
@@ -146,70 +241,6 @@
                     <groupId>com.google.cloud.tools</groupId>
                     <artifactId>jib-maven-plugin</artifactId>
                     <version>3.2.0</version>
-                    <configuration>
-                        <!-- 相当于 Dockerfile 中的 FROM -->
-                        <from>
-                            <image>adoptopenjdk/openjdk8-openj9</image>
-                        </from>
-                        <to>
-                            <!-- 构建镜像名称，阿里云镜像仓库地址 -->
-                            <!--suppress UnresolvedMavenProperty -->
-                            <image>registry.cn-hangzhou.aliyuncs.com/mzlalal/${jib.name}</image>
-                            <!-- 阿里云镜像仓库账号密码 -->
-                            <auth>
-                                <username>影子之城啊</username>
-                                <password>Mzlalal88</password>
-                            </auth>
-                            <!-- Docker镜像的tag,这里使用maven定义的属性 -->
-                            <tags>
-                                <tag>
-                                    ${jib.docker.version}
-                                </tag>
-                            </tags>
-                        </to>
-                        <container>
-                            <!-- 启动类 -->
-                            <!--suppress UnresolvedMavenProperty -->
-                            <mainClass>${jib.main.class}</mainClass>
-                            <!-- jvm参数 -->
-                            <jvmFlags>
-                                <jvmFlag>-Xms96M</jvmFlag>
-                                <jvmFlag>-Xmx96M</jvmFlag>
-                                <jvmFlag>-XX:+HeapDumpOnOutOfMemoryError</jvmFlag>
-                                <!--suppress UnresolvedMavenProperty -->
-                                <jvmFlag>-XX:HeapDumpPath=/root/logs/dump/${jib.name}-dump-%t.log</jvmFlag>
-                                <jvmFlag>-verbose:gc</jvmFlag>
-                                <jvmFlag>-XX:+PrintGCDetails</jvmFlag>
-                                <jvmFlag>-XX:+PrintGCDateStamps</jvmFlag>
-                                <!--suppress UnresolvedMavenProperty -->
-                                <jvmFlag>-Xloggc:/root/logs/gc/${jib.name}-gc-%t.log</jvmFlag>
-                                <jvmFlag>-Duser.timezone=GMT+08</jvmFlag>
-                            </jvmFlags>
-                            <args>
-                                <arg>
-                                    --spring.profiles.active=product
-                                </arg>
-                            </args>
-                            <!-- 使用当前时间 -->
-                            <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
-                            <!-- 容器在运行时暴露的端口 -->
-                            <ports>
-                                <!--suppress UnresolvedMavenProperty -->
-                                <port>${jib.port}</port>
-                            </ports>
-                        </container>
-                        <!-- 如果私有镜像仓库没有启用https，设置allowInsecureRegistries参数为true -->
-                        <allowInsecureRegistries>true</allowInsecureRegistries>
-                    </configuration>
-                    <!-- 绑定jib:build到 Maven生命周期，例如package/install/deploy -->
-                    <executions>
-                        <execution>
-                            <phase>install</phase>
-                            <goals>
-                                <goal>build</goal>
-                            </goals>
-                        </execution>
-                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>

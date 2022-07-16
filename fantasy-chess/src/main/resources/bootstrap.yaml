@@ -11,6 +11,8 @@ spring:
             refresh: true
           - data-id: mybatis-plus.yaml
             refresh: true
+          - data-id: mybatis-plus-base-meta.yaml
+            refresh: true
           - data-id: pagehelper.yaml
             refresh: true
           - data-id: redis-alone.yaml

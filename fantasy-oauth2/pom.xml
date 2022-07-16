@@ -132,26 +132,6 @@
         </dependency>
     </dependencies>
 
-    <!-- 启动环境 使用 mvn clean package -p ${env}-->
-    <profiles>
-        <profile>
-            <id>dev</id>
-            <properties>
-                <env>dev</env>
-            </properties>
-            <activation>
-                <!-- 默认使用开发环境 -->
-                <activeByDefault>true</activeByDefault>
-            </activation>
-        </profile>
-        <profile>
-            <id>product</id>
-            <properties>
-                <env>product</env>
-            </properties>
-        </profile>
-    </profiles>
-
     <build>
         <finalName>${project.name}</finalName>
         <resources>

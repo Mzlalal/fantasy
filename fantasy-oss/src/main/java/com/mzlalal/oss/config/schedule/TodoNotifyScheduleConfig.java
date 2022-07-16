@@ -52,7 +52,7 @@ public class TodoNotifyScheduleConfig {
             // 忽略
         } finally {
             // 解锁
-            if (lock.isLocked()) {
+            if (lock.isLocked() && lock.isHeldByCurrentThread()) {
                 lock.unlock();
             }
         }
