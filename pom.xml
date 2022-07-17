@@ -40,7 +40,7 @@
         <mz.minio.stater.version>1.1.1</mz.minio.stater.version>
         <mz.system.log.stater.version>1.0.2</mz.system.log.stater.version>
         <mz.mybatis.interceptor.stater.version>1.0.4</mz.mybatis.interceptor.stater.version>
-        <mz.repeat.submit.starter.version>1.0.5</mz.repeat.submit.starter.version>
+        <mz.repeat.submit.starter.version>1.1.0</mz.repeat.submit.starter.version>
         <mz.notify.service.stater.version>1.0.1</mz.notify.service.stater.version>
     </properties>
 
