@@ -136,6 +136,13 @@
                 // 跳转到待办列表
                 window.location = "/fantasy-oss/ji-nian-ri-lie-biao.html";
             },
+            // 跳转到修改纪念日
+            redirectUpdateDayMatter(dayMatter) {
+                // 保存ID
+                localStorage.setItem("oss.day.matter.id", dayMatter.id);
+                // 跳转到修改纪念日
+                window.location = "/fantasy-oss/xiu-gai-ji-nian-ri.html";
+            },
             // 获取文本框高度
             getHeight() {
                 this.height = calcTextareaHeight(this.$refs.textarea, 1, null).height;
@@ -166,9 +173,14 @@
                 }).then(res => {
                     this.tips = res.msg;
                     this.loading = false;
-                    if (!window.confirm("保存成功，是否继续添加？")) {
-                        // 跳转到待办列表
+                    if (window.confirm("保存成功，是否跳转到纪念日列表？")) {
+                        // 跳转到纪念日列表
                         this.redirectDayMatterList();
+                    } else {
+                        setTimeout(() => {
+                            // 跳转到修改纪念日
+                            this.redirectUpdateDayMatter(res.data);
+                        }, 500);
                     }
                 }).catch(res => {
                     this.loading = false

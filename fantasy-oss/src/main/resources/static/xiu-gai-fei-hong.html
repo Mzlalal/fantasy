@@ -137,9 +137,9 @@
                     data: param
                 }).then(res => {
                     this.loading = false;
-                    if (!window.confirm("更新成功，是否继续修改？")) {
-                        // 跳转到待办列表
-                        this.redirectDiaryList()
+                    if (window.confirm("更新成功，是否跳转到动态列表？")) {
+                        // 跳转到动态列表
+                        this.redirectDiaryList();
                     }
                 }).catch(res => {
                     this.loading = false

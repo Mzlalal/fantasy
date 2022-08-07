@@ -58,7 +58,7 @@ public interface DiaryFeignApi {
     @ApiOperation("保存")
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 30)
-    Result<Void> save(@Validated @RequestBody DiaryEntity diary);
+    Result<DiaryEntity> save(@Validated @RequestBody DiaryEntity diary);
 
     /**
      * 更新

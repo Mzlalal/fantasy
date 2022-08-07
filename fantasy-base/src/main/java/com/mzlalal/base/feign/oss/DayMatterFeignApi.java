@@ -54,7 +54,7 @@ public interface DayMatterFeignApi {
     @ApiOperation("保存")
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 30)
-    Result<Void> save(@RequestBody DayMatterEntity dayMatter);
+    Result<DayMatterEntity> save(@RequestBody DayMatterEntity dayMatter);
 
     /**
      * 更新

@@ -216,7 +216,7 @@ Date.prototype.Format = function (fmt) {
 Date.prototype.DaysDistance = function (date1, date2) {
     // date是yyyy-MM-dd格式
     date1 = Date.parse(date1);
-    date2 = date2 ? Date.parse(date2) : new Date();
+    date2 = date2 ? Date.parse(date2) : Date.parse(new Date().Format("yyyy-MM-dd"));
     // 计算两个日期之间相差的毫秒数的绝对值
     const distance = Math.abs(date2 - date1);
     // 毫秒数除以一天的毫秒数,就得到了天数

@@ -51,7 +51,7 @@ public class DayMatterController implements DayMatterFeignApi {
     }
 
     @Override
-    public Result<Void> save(@Validated @RequestBody DayMatterEntity dayMatter) {
+    public Result<DayMatterEntity> save(@Validated @RequestBody DayMatterEntity dayMatter) {
         // 提醒列表
         List<VueSelect> matterSelectSet = dayMatter.getMatterSelectSet();
         // 不能超过N人
@@ -62,7 +62,7 @@ public class DayMatterController implements DayMatterFeignApi {
         dayMatter.setMatterMailSet(collect);
         // 保存
         if (dayMatterService.save(dayMatter)) {
-            return Result.ok();
+            return Result.ok(dayMatter);
         }
         return Result.fail();
     }

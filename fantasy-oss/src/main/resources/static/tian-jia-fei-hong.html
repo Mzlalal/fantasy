@@ -75,7 +75,7 @@
         data() {
             return {
                 // 文本
-                diaryContent: null,
+                diaryContent: "",
                 // 邮件提醒
                 diaryNotice: false,
                 // 提示
@@ -92,10 +92,15 @@
                 // 跳转到飞虹列表
                 window.location = "/fantasy-oss/fei-hong-lie-biao.html";
             },
+            // 更新飞虹
+            updateDiary(diary) {
+                localStorage.setItem("oss.diary.id", diary.id);
+                window.location = "/fantasy-oss/xiu-gai-fei-hong.html";
+            },
             // 清除文本
             clearContent() {
                 if (window.confirm("此操作不可撤回，确认继续清空文本？")) {
-                    this.diaryContent = null;
+                    this.diaryContent = "";
                 }
             },
             // 保存飞虹
@@ -119,11 +124,16 @@
                             url: "/fantasy-oss/api/v1/oss/diary.subscribe/notify.follower"
                         })
                     }
-                    if (!window.confirm("保存成功，是否继续添加？")) {
-                        // 跳转到待办列表
+                    if (window.confirm("保存成功，是否跳转到动态列表？")) {
+                        // 跳转到动态列表
                         this.redirectDiaryList();
                         // 清除缓存
                         localStorage.removeItem("oss.diary.save.content")
+                    } else {
+                        setTimeout(() => {
+                            // 跳转到修改飞虹
+                            this.updateDiary(res.data);
+                        }, 500);
                     }
                 }).catch(res => {
                     this.loading = false

@@ -35,7 +35,7 @@
             <ul class="ui-list-function ui-border-tb">
                 <li class="ui-whitespace" v-for="todo in todoList"
                     v-bind:class="{'background-color-ghostwhite': todo.notifyTopStatus === '1'}"
-                    @click="redirectUpdateTodo(todo.id)">
+                    @click="redirectUpdateTodo(todo)">
                     <div class="ui-list-info ui-border-t">
                         <h4 class="ui-nowrap font-size-16px">
                             {{todo.notifyMemo}}
@@ -99,9 +99,9 @@
                 window.location = "/fantasy-oss/tian-jia-dai-ban.html";
             },
             // 跳转到修改待办
-            redirectUpdateTodo(id) {
+            redirectUpdateTodo(todo) {
                 // 保存ID
-                localStorage.setItem("oss.todo.notify.id", id);
+                localStorage.setItem("oss.todo.notify.id", todo.id);
                 // 跳转到修改待办
                 window.location = "/fantasy-oss/xiu-gai-dai-ban.html";
             },

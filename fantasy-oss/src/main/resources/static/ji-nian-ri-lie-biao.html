@@ -32,7 +32,7 @@
             <ul class="ui-list-function ui-border-tb">
                 <li class="ui-whitespace" v-for="dayMatter in dayMatterList"
                     v-bind:class="{'background-color-ghostwhite': dayMatter.matterTopStatus === '1'}"
-                    @click="redirectUpdateDayMatter(dayMatter.id)">
+                    @click="redirectUpdateDayMatter(dayMatter)">
                     <div class="ui-list-info ui-border-t">
                         <h4 class="ui-nowrap font-size-16px">
                             {{dayMatter.matterMemo}}已经
@@ -79,9 +79,9 @@
                 window.location = "/fantasy-oss/tian-jia-ji-nian-ri.html";
             },
             // 跳转到修改纪念日
-            redirectUpdateDayMatter(id) {
+            redirectUpdateDayMatter(dayMatter) {
                 // 保存ID
-                localStorage.setItem("oss.day.matter.id", id);
+                localStorage.setItem("oss.day.matter.id", dayMatter.id);
                 // 跳转到修改纪念日
                 window.location = "/fantasy-oss/xiu-gai-ji-nian-ri.html";
             },

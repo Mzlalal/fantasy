@@ -52,9 +52,9 @@ public class DiaryController implements DiaryFeignApi {
     }
 
     @Override
-    public Result<Void> save(@Validated @RequestBody DiaryEntity diary) {
+    public Result<DiaryEntity> save(@Validated @RequestBody DiaryEntity diary) {
         if (diaryService.save(diary)) {
-            return Result.ok();
+            return Result.ok(diary);
         }
         return Result.fail();
     }
