@@ -165,7 +165,7 @@
             },
             // 订阅更新
             subscribeUpdate(status) {
-                if (this.currentSubscribe.subscribeStatus === 3) {
+                if (status === 3 && this.currentSubscribe.subscribeStatus === 3) {
                     alert("您已同意了对方的订阅申请（若此状态不符合您的预期，您可以尝试刷新后重试）");
                     return;
                 }

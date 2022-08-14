@@ -34,7 +34,8 @@ public class GatewayDynamicServiceRouteConfig {
         for (String serviceId : FeignEnvProcessor.getLocalServiceStartedIdList()) {
             // 获取feign访问端口
             String servicePort = FeignEnvProcessor.getServicePort(serviceId);
-            AssertUtil.notBlank(servicePort, "serviceId:{}未设置feign访问端口(请检查feign-service.properties)"
+            AssertUtil.notBlank(servicePort
+                    , "serviceId:{}未设置feign访问端口(请检查feign-service.properties)"
                     , serviceId);
             // 本地服务启动时直接访问本地服务,本地服务未启动访问注册中心的服务
             routes.route(serviceId, route -> route

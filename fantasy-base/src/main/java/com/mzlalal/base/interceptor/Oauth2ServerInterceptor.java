@@ -1,12 +1,13 @@
 package com.mzlalal.base.interceptor;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.servlet.ServletUtil;
+import com.alibaba.fastjson.JSON;
 import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.common.GlobalResult;
 import com.mzlalal.base.entity.oauth2.dto.UserEntity;
 import com.mzlalal.base.oauth2.Oauth2Context;
-import com.mzlalal.base.oauth2.Oauth2Property;
-import com.mzlalal.base.util.FilterUtil;
+import lombok.AllArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -21,15 +22,12 @@ import javax.servlet.http.HttpServletResponse;
  * @author Mzlalal
  * @date 2021/7/26 10:42
  */
+@AllArgsConstructor
 public class Oauth2ServerInterceptor implements HandlerInterceptor {
     /**
      * string=>对象 redis操作模板
      */
     private final RedisTemplate<String, Object> redisTemplate;
-    /**
-     * oauth配置(nacos配置中心)
-     */
-    private final Oauth2Property oauth2Property;
 
     /**
      * 不需要登录即可访问的地址
@@ -61,11 +59,6 @@ public class Oauth2ServerInterceptor implements HandlerInterceptor {
         return includePath;
     }
 
-    public Oauth2ServerInterceptor(RedisTemplate<String, Object> redisTemplate, Oauth2Property oauth2Property) {
-        this.redisTemplate = redisTemplate;
-        this.oauth2Property = oauth2Property;
-    }
-
     @Override
     @SuppressWarnings("all")
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
@@ -73,14 +66,18 @@ public class Oauth2ServerInterceptor implements HandlerInterceptor {
         String token = request.getHeader(GlobalConstant.F_AUTHORIZATION);
         // 未登录
         if (StrUtil.isBlank(token)) {
-            FilterUtil.writeJson(response, GlobalResult.USER_NOT_LOGIN.result(oauth2Property.getLogin()));
+            ServletUtil.write(response
+                    , JSON.toJSONString(GlobalResult.USER_NOT_LOGIN.result())
+                    , "application/json; charset=UTF-8");
             return false;
         }
         // 根据TOKEN获取redis用户信息
         UserEntity userEntity = (UserEntity) redisTemplate.opsForValue().get(GlobalConstant.userToken(token));
         // 用户长时间未登录
         if (userEntity == null) {
-            FilterUtil.writeJson(response, GlobalResult.LONG_TIME_NO_OPERATION.result(oauth2Property.getLogin()));
+            ServletUtil.write(response
+                    , JSON.toJSONString(GlobalResult.LONG_TIME_NO_OPERATION.result())
+                    , "application/json; charset=UTF-8");
             return false;
         }
         // 设置上下文
