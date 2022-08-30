@@ -9,6 +9,7 @@ import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.feign.chess.RoomFeignApi;
 import com.mzlalal.base.oauth2.Oauth2Context;
+import com.mzlalal.base.util.AssertUtil;
 import com.mzlalal.base.util.FantasyPage;
 import com.mzlalal.chess.service.RoomPlayerService;
 import com.mzlalal.chess.service.RoomService;
@@ -61,9 +62,7 @@ public class RoomController implements RoomFeignApi {
         // 判断房间是否存在
         RoomEntity existRoom = roomService.getById(userId);
         // 存在直接返回
-        if (existRoom != null) {
-            return GlobalResult.ROOM_EXIST.result(existRoom);
-        }
+        AssertUtil.notNull(existRoom, GlobalResult.ROOM_EXIST);
         // 房间号
         int code = RandomUtil.randomInt(1000, 9999);
         // 格式房间名

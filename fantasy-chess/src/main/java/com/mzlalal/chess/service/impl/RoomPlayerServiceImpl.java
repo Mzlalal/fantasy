@@ -2,6 +2,7 @@ package com.mzlalal.chess.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -131,27 +132,18 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
     public List<HistoryMessageVo> queryPlayerHistoryMessage(String roomId) {
         // 用户ID
         String userId = Oauth2Context.getUserIdElseThrow();
-        // 获取房间内的选手
+        // 获取房间内的历史信息
         String redisKey = GlobalConstant.messageInRoom(roomId);
         Set<HistoryMessageVo> historyMessageVoSet = redisTemplate.opsForSet().members(redisKey);
         // 为空返回空集合
-        List<HistoryMessageVo> historyList = CollUtil.newArrayList();
         if (CollUtil.isEmpty(historyMessageVoSet)) {
-            return historyList;
-        }
-        // 遍历过滤
-        for (HistoryMessageVo historyMessageVo : historyMessageVoSet) {
-            // 过滤from为当前选手ID的集合
-            if (StrUtil.equalsAny(userId, historyMessageVo.getFrom(), historyMessageVo.getTo())) {
-                historyList.add(historyMessageVo);
-            }
+            return CollUtil.newArrayList();
         }
         // 根据时间排序
-        historyList = historyList.stream()
+        return historyMessageVoSet.stream()
+                .filter(item -> StrUtil.equalsAny(userId, item.getFrom(), item.getTo()))
                 .sorted(Comparator.comparing(HistoryMessageVo::getTime))
                 .collect(Collectors.toList());
-        // 翻转
-        return historyList;
     }
 
     @Override
@@ -179,9 +171,9 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
         }
 
         // 删除房间内的所有选手
-        QueryWrapper<RoomPlayerEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.in("room_id", roomIdList);
-        AssertUtil.isTrue(baseMapper.delete(queryWrapper) > 0, "关闭房间失败,可能房间不存在");
+        LambdaQueryWrapper<RoomPlayerEntity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.in(RoomPlayerEntity::getRoomId, roomIdList);
+        AssertUtil.isTrue(baseMapper.delete(wrapper) > 0, "关闭房间失败,可能房间不存在");
 
         // 删除房间
         roomService.removeByIds(roomIdList);

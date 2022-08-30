@@ -1,7 +1,8 @@
 package com.mzlalal.chess.service.impl;
 
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.Page;
 import com.mzlalal.base.entity.chess.dto.RoomEntity;
@@ -25,20 +26,17 @@ import java.util.List;
 public class RoomServiceImpl extends ServiceImpl<RoomDao, RoomEntity> implements RoomService {
 
     /**
-     * 根据 PagePara 查询分页
+     * 根据 Page 查询分页
      *
      * @param po 分页参数
      * @return 分页信息
      */
     @Override
     public FantasyPage<RoomEntity> queryPage(Po<RoomEntity> po) {
-        // 查询参数
-        QueryWrapper<RoomEntity> wrapper = new QueryWrapper<>();
-        // 房间名
+        // c房间名
         String name = po.getEntity().getName();
-        if (StrUtil.isNotBlank(name)) {
-            wrapper.like("name" , name);
-        }
+        LambdaQueryWrapper<RoomEntity> wrapper = Wrappers.<RoomEntity>lambdaQuery()
+                .like(StrUtil.isNotBlank(name), RoomEntity::getName, name);
         // 创建分页条件
         Page<RoomEntity> pageResult = this.createPageQuery(po.getPageInfo());
         // 查询结果集

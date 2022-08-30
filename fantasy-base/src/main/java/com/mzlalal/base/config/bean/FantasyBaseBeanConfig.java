@@ -5,18 +5,12 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
-import com.mzlalal.base.entity.chess.vo.HistoryMessageVo;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
-
-import java.util.Collections;
 
 /**
  * base类加载注册
@@ -46,31 +40,13 @@ public class FantasyBaseBeanConfig {
     }
 
     /**
-     * redisTemplate存储对象
-     *
-     * @param redisConnectionFactory redis连接工厂
-     * @return RedisTemplate<String, Object>
-     */
-    @Bean("redisTemplateStoreHistoryMessage")
-    public RedisTemplate<String, HistoryMessageVo> redisTemplateStoreHistoryMessage(RedisConnectionFactory redisConnectionFactory) {
-        RedisTemplate<String, HistoryMessageVo> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(redisConnectionFactory);
-        //使用Jackson2JsonRedisSerializer来序列化和反序列化redis的value值（默认使用JDK的序列化方式）
-        Jackson2JsonRedisSerializer<HistoryMessageVo> jacksonSerialize = new Jackson2JsonRedisSerializer<>(HistoryMessageVo.class);
-        // 创建redis模板通用操作
-        this.createRedisTemplate(redisTemplate, jacksonSerialize);
-        // 返回redis模板
-        return redisTemplate;
-    }
-
-    /**
      * 创建redis模板
      *
      * @param redisTemplate    redis模板
      * @param jacksonSerialize 对象序列化
      * @param <T>              泛型
      */
-    private <T> void createRedisTemplate(RedisTemplate<String, T> redisTemplate
+    protected <T> void createRedisTemplate(RedisTemplate<String, T> redisTemplate
             , Jackson2JsonRedisSerializer<T> jacksonSerialize) {
         // 对象映射
         ObjectMapper om = new ObjectMapper();
@@ -88,24 +64,5 @@ public class FantasyBaseBeanConfig {
         redisTemplate.setHashKeySerializer(new StringRedisSerializer());
         redisTemplate.setHashValueSerializer(jacksonSerialize);
         redisTemplate.afterPropertiesSet();
-    }
-
-    /**
-     * 跨域请求拦截放行
-     * gateway配置了全局跨域,此增加跨域配置方法弃用
-     *
-     * @return CorsFilter
-     */
-    @Deprecated
-    public CorsFilter corsFilter() {
-        CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowCredentials(true);
-        corsConfiguration.setAllowedOriginPatterns(Collections.singletonList(CorsConfiguration.ALL));
-        corsConfiguration.addAllowedHeader(CorsConfiguration.ALL);
-        corsConfiguration.addAllowedMethod(CorsConfiguration.ALL);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", corsConfiguration);
-        return new CorsFilter(source);
     }
 }

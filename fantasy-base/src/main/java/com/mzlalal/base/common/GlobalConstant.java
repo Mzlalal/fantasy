@@ -156,7 +156,7 @@ public interface GlobalConstant {
     /**
      * 待办调度redisKey
      *
-     * @return String fantasy:todo:notify:schedule
+     * @return String
      */
     static String todoNotifySchedule() {
         return StrUtil.format("fantasy:todo:notify:schedule");
@@ -174,7 +174,7 @@ public interface GlobalConstant {
     /**
      * 待办重复提醒redisKey
      *
-     * @return String fantasy:notify:repeat
+     * @return String
      */
     static String todoNotifyLazyMode() {
         return StrUtil.format("fantasy:todo:notify:lazy:mode");
