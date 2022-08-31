@@ -5,6 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.Page;
 import com.mzlalal.base.common.GlobalConstant;
@@ -92,14 +93,10 @@ public class RoomPlayerServiceImpl extends ServiceImpl<RoomPlayerDao, RoomPlayer
 
     @Override
     public List<RoomPlayerEntity> queryRoomPlayerListByRoomId(String roomId) {
-        // 使用roomId查询
-        RoomPlayerEntity queryEntity = RoomPlayerEntity.builder()
-                .roomId(roomId)
-                .build();
-        QueryWrapper<RoomPlayerEntity> queryWrapper = new QueryWrapper<>(queryEntity);
-
-        // 查询
-        return this.list(queryWrapper);
+        // 降序查询
+        return this.list(Wrappers.<RoomPlayerEntity>lambdaQuery()
+                .eq(RoomPlayerEntity::getRoomId, roomId)
+                .orderByDesc(RoomPlayerEntity::getPlayerScore));
     }
 
     @Override
