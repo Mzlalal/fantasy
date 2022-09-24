@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @author Mzlalal
  * @date 2021-07-29 20:36:48
  **/
-@FeignClient(contextId = "UserFeignApi", name = GlobalConstant.FANTASY_OAUTH2, url = "${fantasy-oauth2.feign.url}"
+@FeignClient(contextId = "UserFeignApi", name = GlobalConstant.FANTASY_OAUTH2, url = "${fantasy-oauth2.feign.url:}"
         , path = "/api/v1/oauth/user")
 public interface UserFeignApi {
 

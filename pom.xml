@@ -189,8 +189,8 @@
                                     <mainClass>${jib.main.class}</mainClass>
                                     <!-- jvm参数 -->
                                     <jvmFlags>
-                                        <jvmFlag>-Xms96M</jvmFlag>
-                                        <jvmFlag>-Xmx96M</jvmFlag>
+                                        <jvmFlag>-Xms128M</jvmFlag>
+                                        <jvmFlag>-Xmx128M</jvmFlag>
                                         <jvmFlag>-XX:+HeapDumpOnOutOfMemoryError</jvmFlag>
                                         <!--suppress UnresolvedMavenProperty -->
                                         <jvmFlag>-XX:HeapDumpPath=/root/logs/dump/${jib.name}-dump.log</jvmFlag>

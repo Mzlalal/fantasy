@@ -17,3 +17,6 @@ spring:
       cache:
         cachecontrol:
           no-store: true
+logging:
+  file:
+    path: /root/logs

@@ -26,4 +26,4 @@ spring:
           - data-id: minio-alone.yaml
             refresh: true
   profiles:
-    active: '@env@'
+    active: 'dev'

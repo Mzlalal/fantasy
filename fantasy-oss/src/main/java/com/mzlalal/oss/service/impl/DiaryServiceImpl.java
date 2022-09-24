@@ -2,7 +2,7 @@ package com.mzlalal.oss.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.map.MapUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.Page;
@@ -45,12 +45,12 @@ public class DiaryServiceImpl extends ServiceImpl<DiaryDao, DiaryEntity> impleme
      */
     @Override
     public FantasyPage<DiaryEntity> queryPage(Po<DiaryEntity> po) {
-        // 查询参数
-        QueryWrapper<DiaryEntity> wrapper = new QueryWrapper<>(po.getEntity());
+        String diaryContent = po.getEntity().getDiaryContent();
         // 创建分页条件
         Page<DiaryEntity> pageResult = this.createPageQuery(po.getPageInfo());
         // 查询结果集
-        List<DiaryEntity> entityList = baseMapper.selectList(wrapper);
+        List<DiaryEntity> entityList = baseMapper.selectList(Wrappers.<DiaryEntity>lambdaQuery()
+                .like(StrUtil.isNotBlank(diaryContent), DiaryEntity::getDiaryContent, diaryContent));
         // 返回结果
         return new FantasyPage<>(entityList, pageResult.getTotal(), po.getPageInfo());
     }
@@ -79,8 +79,9 @@ public class DiaryServiceImpl extends ServiceImpl<DiaryDao, DiaryEntity> impleme
                 // 订阅用户列表(包括自己)
                 .in(DiaryEntity::getCreateBy, subscribeUserIdList)
                 // 大于等于当前分页最小的时间
-                .ge(DiaryEntity::getCreateTime, CollUtil.min(recentDate))
+                .ge(DiaryEntity::getDiaryDate, CollUtil.min(recentDate))
                 // 根据创建时间排序
+                .orderByDesc(DiaryEntity::getDiaryDate)
                 .orderByDesc(DiaryEntity::getCreateTime)
         );
         // 根据日期分组

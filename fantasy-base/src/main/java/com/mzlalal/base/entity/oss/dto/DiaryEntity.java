@@ -56,7 +56,6 @@ public class DiaryEntity implements Serializable {
 
     @ApiModelProperty("创建时间")
     @TableField(fill = FieldFill.INSERT)
-    @JsonFormat(pattern = DatePattern.NORM_TIME_PATTERN, timezone = "GMT+8")
     private Date createTime;
 
     @ApiModelProperty("更新人ID")

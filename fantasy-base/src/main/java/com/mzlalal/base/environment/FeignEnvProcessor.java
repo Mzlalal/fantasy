@@ -85,6 +85,10 @@ public class FeignEnvProcessor implements EnvironmentPostProcessor {
         // 加载配置文件
         feignServiceProperties = PropertiesLoaderUtils.loadAllProperties("feign-service.properties");
         // 获取需要本地运行的微服务名称
+        String enable = feignServiceProperties.getProperty("feign.service.enable");
+        if (Boolean.FALSE.toString().equalsIgnoreCase(enable) || GlobalConstant.PRODUCT.equals(activeProfile)) {
+            return;
+        }
         String serviceIds = feignServiceProperties.getProperty("feign.service.ids");
         // 获取微服务名称切割成数组
         List<String> serviceIdList = StrUtil.split(serviceIds, ",");
@@ -98,12 +102,6 @@ public class FeignEnvProcessor implements EnvironmentPostProcessor {
                     , serviceId);
             // 微服务的URL指向配置名
             String feignUrlKey = StrUtil.format(this.feignUrlFormat, serviceId);
-            // 生产环境直接覆盖为空
-            if (GlobalConstant.PRODUCT.equals(activeProfile)) {
-                // 为空时获取会获取注册中心服务列表
-                feignConfig.put(feignUrlKey, "");
-                return;
-            }
             // 微服务URL配置值
             String feignUrlValue = StrUtil.format(this.feignUrlValueFormat, servicePort);
             // 设置默认值为本地服务启动,若请求失败则设置为空

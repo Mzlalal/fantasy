@@ -1,7 +1,6 @@
 package com.mzlalal.chess.service.impl;
 
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.Page;
@@ -33,14 +32,13 @@ public class RoomServiceImpl extends ServiceImpl<RoomDao, RoomEntity> implements
      */
     @Override
     public FantasyPage<RoomEntity> queryPage(Po<RoomEntity> po) {
-        // c房间名
+        // 房间名
         String name = po.getEntity().getName();
-        LambdaQueryWrapper<RoomEntity> wrapper = Wrappers.<RoomEntity>lambdaQuery()
-                .like(StrUtil.isNotBlank(name), RoomEntity::getName, name);
         // 创建分页条件
         Page<RoomEntity> pageResult = this.createPageQuery(po.getPageInfo());
         // 查询结果集
-        List<RoomEntity> entityList = baseMapper.selectList(wrapper);
+        List<RoomEntity> entityList = baseMapper.selectList(Wrappers.<RoomEntity>lambdaQuery()
+                .like(StrUtil.isNotBlank(name), RoomEntity::getName, name));
         // 返回结果
         return new FantasyPage<>(entityList, pageResult.getTotal(), po.getPageInfo());
     }

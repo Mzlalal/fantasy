@@ -84,10 +84,8 @@
                 searchBar: false,
                 // 搜索关键字
                 searchKeyword: null,
-                // 房间列表
+                // 用户列表
                 userList: [],
-                // 已存在房间
-                existRoom: null
             }
         },
         methods: {
@@ -98,7 +96,7 @@
                 // 查询
                 this.initUserList();
             },
-            // 加载房间列表
+            // 加载用户列表
             initUserList() {
                 this.loading = true;
                 const param = {
@@ -132,7 +130,7 @@
                     }
                 })
             },
-            // 加入房间
+            // 修改用户
             updateUser(user) {
                 // 房间ID
                 localStorage.setItem("oauth2.update.user.id", user.id);
@@ -178,7 +176,7 @@
             }
         },
         created() {
-            // 加载房间列表
+            // 加载用户列表
             this.initUserList();
         }
     });

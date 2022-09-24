@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @author Mzlalal
  * @date 2022-05-29 21:29:53
  **/
-@FeignClient(contextId = "DiarySubscribeFeignApi", name = GlobalConstant.FANTASY_OSS, url = "${fantasy-oss.feign.url}"
+@FeignClient(contextId = "DiarySubscribeFeignApi", name = GlobalConstant.FANTASY_OSS, url = "${fantasy-oss.feign.url:}"
         , path = "/api/v1/oss/diary.subscribe")
 public interface DiarySubscribeFeignApi {
 

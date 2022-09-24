@@ -23,7 +23,7 @@ import java.util.Map;
  * @author Mzlalal
  * @date 2022-04-28 20:08:41
  **/
-@FeignClient(contextId = "DiaryFeignApi", name = GlobalConstant.FANTASY_OSS, url = "${fantasy-oss.feign.url}"
+@FeignClient(contextId = "DiaryFeignApi", name = GlobalConstant.FANTASY_OSS, url = "${fantasy-oss.feign.url:}"
         , path = "/api/v1/oss/diary")
 public interface DiaryFeignApi {
 

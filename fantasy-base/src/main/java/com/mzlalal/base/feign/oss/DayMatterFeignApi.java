@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @author Mzlalal
  * @date 2022-03-23 19:39:24
  **/
-@FeignClient(contextId = "DayMatterFeignApi", name = GlobalConstant.FANTASY_OSS, url = "${fantasy-oss.feign.url}"
+@FeignClient(contextId = "DayMatterFeignApi", name = GlobalConstant.FANTASY_OSS, url = "${fantasy-oss.feign.url:}"
         , path = "/api/v1/oss/day.matter")
 public interface DayMatterFeignApi {
 

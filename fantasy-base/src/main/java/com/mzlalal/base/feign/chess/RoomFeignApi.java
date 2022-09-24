@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @author Mzlalal
  * @date 2022-02-11 09:18:06
  **/
-@FeignClient(contextId = "RoomFeignApi", name = GlobalConstant.FANTASY_CHESS, url = "${fantasy-chess.feign.url}"
+@FeignClient(contextId = "RoomFeignApi", name = GlobalConstant.FANTASY_CHESS, url = "${fantasy-chess.feign.url:}"
         , path = "/api/v1/chess/room")
 public interface RoomFeignApi {
 

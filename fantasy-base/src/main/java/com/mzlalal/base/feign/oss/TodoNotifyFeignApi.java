@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @author Mzlalal
  * @date 2022-03-04 21:58:11
  **/
-@FeignClient(contextId = "NotifyFeignApi", name = GlobalConstant.FANTASY_OSS, url = "${fantasy-oss.feign.url}"
+@FeignClient(contextId = "NotifyFeignApi", name = GlobalConstant.FANTASY_OSS, url = "${fantasy-oss.feign.url:}"
         , path = "/api/v1/oss/todo.notify")
 public interface TodoNotifyFeignApi {
 

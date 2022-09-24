@@ -7,17 +7,16 @@
     <title>添加飞虹</title>
     <link rel="stylesheet" href="css/plugin/frozen.css"/>
     <link rel="stylesheet" href="css/common.css"/>
+    <link rel="stylesheet" href="css/plugin/vue.select.css"/>
+    <link rel="stylesheet" href="css/plugin/vant.css">
     <script src="js/plugin/axios.min.js"></script>
     <script src="js/plugin/vue.min.js"></script>
+    <script src="js/plugin/vant.min.js"></script>
+    <script src="js/plugin/vue.select.js"></script>
     <script src="js/plugin/calcTextareaHeight.js"></script>
     <script src="js/CommonUtil.js"></script>
     <script src="js/FantasyConstant.js"></script>
     <style>
-        .page-min-width {
-            min-width: 50vw;
-            max-width: 70vw;
-        }
-
         .date-text {
             text-align: center;
             color: gray;
@@ -33,12 +32,22 @@
         <span class="position-right username-display" @click="redirectDiaryList">返回</span>
     </header>
     <div class="ui-form ui-border-t ui-container">
-        <div class="ui-form-item ui-form-item-switch ui-border-b">
-            <p>邮件提醒我的粉丝</p>
-            <label class="ui-switch">
-                <input type="checkbox" v-model="diaryNotice">
-            </label>
-        </div>
+        <ul class="ui-list ui-list-single ui-border-tb">
+            <li class="ui-border-t">
+                <div class="ui-list-info">
+                    <h4 class="ui-nowrap">日期</h4>
+                    <div class="ui-txt-info" v-html="diaryDate" @click="popupShow = true"></div>
+                </div>
+            </li>
+            <li class="ui-border-t">
+                <div class="ui-list-info">
+                    <h4 class="ui-nowrap">邮件提醒我的粉丝</h4>
+                    <label class="ui-switch">
+                        <input type="checkbox" v-model="diaryNotice">
+                    </label>
+                </div>
+            </li>
+        </ul>
         <transition name="fade">
             <div class="ui-tooltips ui-tooltips-guide ui-tooltips-function" v-if="tips">
                 <div class="ui-tooltips-cnt ui-border-b">
@@ -67,9 +76,20 @@
             </button>
         </div>
     </div>
+
+    <van-popup v-model="popupShow" position="bottom">
+        <van-datetime-picker
+                type="date"
+                v-model="popupDate"
+                @confirm="onPopupConfirm"
+                :max-date="maxDate"
+                @cancel="popupShow = false"/>
+    </van-popup>
 </div>
 </body>
 <script>
+    Vue.component('v-select', VueSelect.VueSelect);
+
     new Vue({
         el: "#app",
         data() {
@@ -84,6 +104,14 @@
                 loading: false,
                 // 当前时间
                 currentTime: new Date().Format('yyyy-MM-dd hh:mm:ss'),
+                // 最大日期
+                maxDate: new Date(),
+                // 当前日期
+                popupDate: new Date(),
+                // 显示选择时间弹窗
+                popupShow: false,
+                // 日期
+                diaryDate: new Date().Format('yyyy-MM-dd'),
             }
         },
         methods: {
@@ -108,7 +136,7 @@
                 this.loading = true;
                 let param = {
                     "diaryContent": this.diaryContent,
-                    "diaryDate": new Date().Format('yyyy-MM-dd')
+                    "diaryDate": this.diaryDate
                 }
                 // 请求接口
                 axios({
@@ -151,7 +179,15 @@
                     let date = new Date().Format('yyyy-MM-dd hh:mm:ss');
                     this.tips = `[ ${date} ] 自动保存成功`;
                 }, 1000)
-            }
+            },
+            // 弹窗确认
+            onPopupConfirm(event) {
+                console.log(event);
+                // 格式化
+                this.diaryDate = event.Format("yyyy-MM-dd");
+                // 隐藏
+                this.popupShow = false;
+            },
         },
         created() {
             // 校验用户是否登录

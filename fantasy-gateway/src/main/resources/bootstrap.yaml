@@ -4,4 +4,4 @@ spring:
   application:
     name: fantasy-gateway
   profiles:
-    active: '@env@'
+    active: 'dev'
