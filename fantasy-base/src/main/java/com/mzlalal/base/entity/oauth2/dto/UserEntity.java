@@ -12,7 +12,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
@@ -30,7 +29,6 @@ import java.util.List;
 @Data
 @ApiModel("用户DTO")
 @TableName(value = "t_user", resultMap = "userMap")
-@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserEntity implements Serializable {

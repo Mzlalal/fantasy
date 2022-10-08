@@ -3,7 +3,6 @@ package com.mzlalal.base.entity.oss.req;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.NotBlank;
@@ -17,7 +16,6 @@ import java.io.Serializable;
  */
 @Data
 @ApiModel("人名脱敏参数")
-@EqualsAndHashCode
 public class DesensitizedNameReq implements Serializable {
     private static final long serialVersionUID = 2175016931124244291L;
 

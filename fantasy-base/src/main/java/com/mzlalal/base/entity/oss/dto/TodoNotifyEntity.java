@@ -8,7 +8,10 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -24,7 +27,6 @@ import java.util.Date;
 @Data
 @Builder
 @ApiModel("待办提醒DTO")
-@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName("t_todo_notify")

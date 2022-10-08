@@ -16,8 +16,8 @@ import com.mzlalal.base.oauth2.Oauth2Context;
 import com.mzlalal.base.util.FantasyPage;
 import com.mzlalal.notify.service.MailNotifyService;
 import com.mzlalal.oss.dao.TodoNotifyDao;
+import com.mzlalal.oss.enums.NotifyTypeEnum;
 import com.mzlalal.oss.service.TodoNotifyService;
-import com.mzlalal.oss.service.todo.NotifyTypeEnum;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 

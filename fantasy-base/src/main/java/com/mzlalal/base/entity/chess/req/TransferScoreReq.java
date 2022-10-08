@@ -2,7 +2,10 @@ package com.mzlalal.base.entity.chess.req;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotBlank;
@@ -17,7 +20,6 @@ import java.io.Serializable;
 @Data
 @Builder
 @ApiModel("转账分数请求")
-@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 public class TransferScoreReq implements Serializable {

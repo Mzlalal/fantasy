@@ -2,7 +2,10 @@ package com.mzlalal.base.entity.oauth2.vo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -16,7 +19,6 @@ import java.util.Date;
 @Data
 @Builder
 @ApiModel("用户令牌返回结果")
-@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 public class AccessToken implements Serializable {

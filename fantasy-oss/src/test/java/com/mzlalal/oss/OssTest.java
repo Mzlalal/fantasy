@@ -7,6 +7,7 @@ import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.ReUtil;
 import com.mzlalal.minio.service.MinioService;
 import io.minio.errors.MinioException;
 import org.json.JSONException;
@@ -64,7 +65,7 @@ public class OssTest {
         for (int i = 1; i <= 31; i++) {
             JSONObject jsonObject = new JSONObject();
             if (i < 10) {
-                jsonObject.put("code", "0" + String.valueOf(i));
+                jsonObject.put("code", "0" + i);
             } else {
                 jsonObject.put("code", String.valueOf(i));
             }
@@ -93,4 +94,17 @@ public class OssTest {
         System.out.println(new DateTime(chineseDate.getGregorianCalendar()));
     }
 
+    @Test
+    public void extractUrlByText() {
+        String text = "发票PDF下载： http://www.fapiao.com/dzfp-web/pdf/download?request=h1-wpcDiW9sVUPRDQKwdbss-RZMdAKimLhljW-K4npQwWZryG5oYfxtW9kwMmZ4C%5EbBDHchjDg\n" +
+                "\n" +
+                "发票图片下载： https://www.fapiao.com/dzfp-web/pdf/view?request=h1-wpcDiW9sVUPRDQKwdbss-RZMdAKimLhljW-K4npQwWZryG5oYfxtW9kwMmZ4C%5EbBDHchjDg";
+        List<String> urlList = ReUtil.findAllGroup0("(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]", text);
+        System.out.println(urlList);
+    }
+
+    @Test
+    public void msTime() {
+        System.out.println(DateUtil.format(DateUtil.date(), DatePattern.NORM_DATETIME_MS_PATTERN));
+    }
 }

@@ -25,13 +25,10 @@
     </select>
 
     <select id="queryMailByUserIdList" resultType="java.lang.String">
-        SELECT
-        mail
-        FROM
-        t_user
+        select mail from t_user
         <where>
-            <foreach collection="userIdList" open="and id in (" item="userId" close=")">
-                #{userId}
+            <foreach collection="userIdList" open="and id in (" item="item" close=")">
+                #{item}
             </foreach>
         </where>
     </select>

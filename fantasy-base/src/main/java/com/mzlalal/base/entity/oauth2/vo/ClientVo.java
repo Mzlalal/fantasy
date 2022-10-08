@@ -3,7 +3,6 @@ package com.mzlalal.base.entity.oauth2.vo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 
@@ -15,7 +14,6 @@ import java.io.Serializable;
  */
 @Data
 @ApiModel("客户端VO")
-@EqualsAndHashCode
 public class ClientVo implements Serializable {
     private static final long serialVersionUID = 5633041303958946875L;
 

@@ -6,7 +6,10 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -19,8 +22,7 @@ import java.util.Date;
  */
 @Data
 @Builder
-@ApiModel("尺墨飞虹订阅表DTO")
-@EqualsAndHashCode
+@ApiModel("飞虹订阅列表DTO")
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName(value = "t_diary_subscribe", resultMap = "diarySubscribeMap")

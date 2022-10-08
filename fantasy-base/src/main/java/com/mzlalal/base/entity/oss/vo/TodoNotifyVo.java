@@ -2,7 +2,10 @@ package com.mzlalal.base.entity.oss.vo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -16,7 +19,6 @@ import java.io.Serializable;
 @Data
 @Builder
 @ApiModel("待办提醒VO")
-@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 public class TodoNotifyVo implements Serializable {

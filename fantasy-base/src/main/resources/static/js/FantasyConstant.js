@@ -418,4 +418,27 @@
             "label": "取消订阅"
         }
     ];
+    // 发票转发状态
+    window.invoiceForwardStatusOption = [
+        {
+            "code": "1",
+            "label": "已转发"
+        }, {
+            "code": "0",
+            "label": "未转发"
+        }
+    ];
+    // 发票扩展名
+    window.invoiceExtNameOption = [
+        {
+            "code": ".pdf",
+            "label": "pdf"
+        }, {
+            "code": ".png",
+            "label": "png"
+        }, {
+            "code": ".jpg",
+            "label": "jpg"
+        }
+    ];
 })(window);

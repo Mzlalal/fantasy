@@ -2,10 +2,12 @@ package com.mzlalal.chess.config.swagger;
 
 import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j;
 import com.github.xiaoymin.knife4j.spring.extension.OpenApiExtensionResolver;
+import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.config.swagger.BaseFantasySwagger2Config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration;
 import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
@@ -20,6 +22,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
 @Configuration
 @EnableKnife4j
 @EnableSwagger2WebMvc
+@Profile(GlobalConstant.DEV)
 @Import(BeanValidatorPluginsConfiguration.class)
 public class Swagger2ConfigBase extends BaseFantasySwagger2Config {
 

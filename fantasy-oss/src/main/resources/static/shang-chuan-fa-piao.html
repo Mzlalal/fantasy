@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, initial-scale=1.0, user-scalable=no">
+    <title>上传发票</title>
+    <link rel="stylesheet" href="css/plugin/frozen.css"/>
+    <link rel="stylesheet" href="css/common.css"/>
+    <link rel="stylesheet" href="css/plugin/vant.css">
+    <script src="js/plugin/axios.min.js"></script>
+    <script src="js/plugin/vue.min.js"></script>
+    <script src="js/plugin/vant.min.js"></script>
+    <script src="js/plugin/calcTextareaHeight.js"></script>
+    <script src="js/CommonUtil.js"></script>
+    <script src="js/FantasyConstant.js"></script>
+    <style>
+        .checkbox-center {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            margin: auto;
+            padding-left: 10px;
+            text-align: center;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <header class="ui-header ui-header-positive ui-border-b text-center">
+        <!--<span class="font-weight-bolder font-size-20px">上传发票</span>-->
+        <span class="position-right username-display" @click="redirectInvoiceList">返回</span>
+    </header>
+    <div class="ui-form ui-border-t ui-container">
+        <transition name="fade">
+            <div class="ui-tooltips ui-tooltips-guide ui-tooltips-function" v-if="tips">
+                <div class="ui-tooltips-cnt ui-border-b">
+                    <i></i>{{tips}}
+                </div>
+            </div>
+        </transition>
+        <textarea style="height: 240px" v-model="text"
+                  class="ui-txt-infotextarea border-none ui-whitespace width-100p"
+                  placeholder="输入文本分析发票URL地址"></textarea>
+        <div class="ui-loading-wrap margin-top-1em" v-if="loading">
+            <p>加载中</p>
+            <i class="ui-loading"></i>
+        </div>
+        <div class="ui-btn-wrap" v-else>
+            <button class="ui-btn-lg ui-btn-primary" @click="analysisInvoiceUrlByText">
+                分析发票地址
+            </button>
+        </div>
+        <div class="ui-btn-wrap" style="padding-top: 0" v-if="!loading">
+            <button class="ui-btn-lg ui-btn-danger" @click="clearContent">
+                清空文本
+            </button>
+        </div>
+    </div>
+    <van-action-sheet v-model="popupShow" title="选择发票地址上传">
+        <van-form @submit="batchSaveInvoice" @failed="onFailed">
+            <van-cell-group v-for="(item, index) in invoiceSourceUrlList">
+                <van-row>
+                    <van-col span="2">
+                        <van-checkbox class="checkbox-center" v-model="item.checked" shape="square"></van-checkbox>
+                    </van-col>
+                    <van-col span="22">
+                        <van-field v-model="item.invoiceSourceUrl" name="invoiceSourceUrl" label="发票源地址"
+                                   required="true" :rules="[{ required: true, message: '请输入发票源地址' }]">
+                        </van-field>
+                        <van-field label="单选框">
+                            <template #input>
+                                <van-radio-group v-model="item.invoiceExtName" direction="horizontal"
+                                                 v-for="extName in window.invoiceExtNameOption">
+                                    <van-radio :name="extName.code">{{extName.label}}</van-radio>
+                                </van-radio-group>
+                            </template>
+                        </van-field>
+                        <van-field v-if="item.tip" name="tip" v-model="item.tip" error disabled>
+                        </van-field>
+                    </van-col>
+                </van-row>
+            </van-cell-group>
+
+            <van-button type="primary" block color="#12B7F5" style="margin-top: 27px"
+                        native-type="submit" :disabled="uploadBtnDisabled"
+                        :loading="popupShow && loading" loading-text="正在上传...">
+                确认上传
+            </van-button>
+        </van-form>
+    </van-action-sheet>
+</div>
+</body>
+<script>
+    new Vue({
+        el: "#app",
+        data() {
+            return {
+                // 文本
+                text: "",
+                // 提示
+                tips: null,
+                // 加载中
+                loading: false,
+                // 显示弹出窗
+                popupShow: false,
+                // 上传按钮禁用状态
+                uploadBtnDisabled: false,
+                // 发票源地址集合
+                invoiceSourceUrlList: [],
+            }
+        },
+        methods: {
+            // 表单验证失败
+            onFailed() {
+                this.uploadBtnDisabled = true;
+            },
+            // 跳转到列表
+            redirectInvoiceList() {
+                // 跳转到飞虹列表
+                window.location = "/fantasy-oss/fa-piao-lie-biao.html";
+            },
+            // 清除文本
+            clearContent() {
+                if (window.confirm("此操作不可撤回，确认继续清空文本？")) {
+                    this.text = "";
+                }
+            },
+            // 根据文本分析发票URL地址
+            analysisInvoiceUrlByText() {
+                this.loading = true;
+                let param = this.text;
+                if (!param) {
+                    this.loading = false;
+                    // 提示
+                    vant.Toast.fail("请输入文本");
+                    return;
+                }
+                // 请求接口
+                axios({
+                    method: "post",
+                    url: "/fantasy-oss/api/v1/oss/invoice/analysis.invoice.url.by.text",
+                    data: param,
+                    headers: {
+                        "Content-Type": "application/json; charset=utf-8"
+                    }
+                }).then(res => {
+                    this.loading = false;
+                    if (res.page.list.length > 0) {
+                        // 清空旧数据
+                        this.invoiceSourceUrlList = [];
+                        // 遍历显示新数据
+                        res.page.list.forEach(item => {
+                            this.invoiceSourceUrlList.push({
+                                "checked": true,
+                                "invoiceName": "",
+                                "invoiceSourceUrl": item,
+                                "invoiceExtName": ".pdf",
+                                "tip": "",
+                            })
+                        });
+                        // 显示弹窗
+                        this.popupShow = true;
+                    } else {
+                        // 提示
+                        vant.Toast.fail("发票地址为空\n请重试");
+                    }
+                }).catch(res => {
+                    this.loading = false
+                    if (res.data && res.data.msg) {
+                        // 提示
+                        vant.Toast.fail(res.data.msg);
+                    } else {
+                        alert("服务器繁忙，请稍后再试")
+                    }
+                })
+            },
+            // 监听文本框的值
+            textContentChanged(newVal, oldVal) {
+                commonUtil.debounce(() => {
+                    localStorage.setItem("oss.invoice.save.content", newVal);
+                    let date = new Date().Format('yyyy-MM-dd hh:mm:ss');
+                    this.tips = `[ ${date} ] 自动保存成功`;
+                }, 1000)
+            },
+            // 批量上传
+            batchSaveInvoice() {
+                this.loading = true;
+                let param = this.invoiceSourceUrlList.filter(item => {
+                    return item.checked;
+                });
+                if (param.length <= 0) {
+                    this.loading = false;
+                    // 提示
+                    vant.Toast.fail("请选择发票");
+                    return;
+                }
+                // 请求接口
+                axios({
+                    method: "post",
+                    url: "/fantasy-oss/api/v1/oss/invoice/batch.save.invoice.by.url",
+                    data: param
+                }).then(res => {
+                    this.loading = false;
+                    if (res.page.list.length > 0) {
+                        // 清空旧数据
+                        this.invoiceSourceUrlList = res.page.list;
+                        // 显示弹窗
+                        this.popupShow = true;
+                        // 提示
+                        vant.Toast.fail("部分发票异常\n请重试");
+                    } else {
+                        // 关闭弹窗
+                        this.popupShow = false;
+                    }
+                }).catch(res => {
+                    this.loading = false
+                    if (res.data && res.data.msg) {
+                        // 提示
+                        vant.Toast.fail(res.data.msg);
+                    } else {
+                        alert("服务器繁忙，请稍后再试")
+                    }
+                })
+            }
+        },
+        created() {
+            // 校验用户是否登录
+            commonUtil.getUserInfo();
+            // 如果缓存有值则设置值
+            let content = localStorage.getItem("oss.invoice.save.content");
+            if (content) {
+                this.text = content;
+                this.tips = "已加载本地缓存更新记录";
+            }
+            setTimeout(() => {
+                // 添加watch事件
+                this.$watch('text', this.textContentChanged);
+            })
+        }
+    });
+</script>
+
+</html>

@@ -35,6 +35,10 @@ public interface GlobalConstant {
      */
     String PASSWORD = "password";
     /**
+     * 开发环境
+     */
+    String DEV = "dev";
+    /**
      * 生产环境
      */
     String PRODUCT = "product";
@@ -70,6 +74,10 @@ public interface GlobalConstant {
      * 用户展示名HTML
      */
     String USERNAME_DISPLAY = "<span class=\"username-display\">{}</span>";
+    /**
+     * URL正则表达式
+     */
+    String URL_REG_EXP = "(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]";
 
     /**
      * UUID与clientKey绑定的授权码 redis key

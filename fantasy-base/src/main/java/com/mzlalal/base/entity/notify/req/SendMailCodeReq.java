@@ -2,7 +2,10 @@ package com.mzlalal.base.entity.notify.req;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -19,7 +22,6 @@ import java.io.Serializable;
 @ApiModel("发送邮件验证码参数")
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
 public class SendMailCodeReq implements Serializable {
     private static final long serialVersionUID = -2518161278977360761L;
 

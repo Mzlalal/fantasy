@@ -7,8 +7,10 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.*;
-import lombok.experimental.Accessors;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -23,10 +25,8 @@ import java.util.List;
 @Data
 @Builder
 @ApiModel("结算完成的房间")
-@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-@Accessors(chain = true)
 @TableName(value = "t_room_history", autoResultMap = true)
 public class RoomHistoryEntity implements Serializable {
     private static final long serialVersionUID = -5719743286587838808L;

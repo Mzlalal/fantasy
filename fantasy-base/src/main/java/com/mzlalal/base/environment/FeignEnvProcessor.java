@@ -70,7 +70,6 @@ public class FeignEnvProcessor implements EnvironmentPostProcessor {
      * @param application 应用
      */
     @Override
-    @SneakyThrows
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
         // 是否已加载
         if (alreadyLoaded) {
@@ -83,10 +82,9 @@ public class FeignEnvProcessor implements EnvironmentPostProcessor {
         // 应用名
         String applicationName = environment.getProperty("spring.application.name");
         // 加载配置文件
-        feignServiceProperties = PropertiesLoaderUtils.loadAllProperties("feign-service.properties");
-        // 获取需要本地运行的微服务名称
-        String enable = feignServiceProperties.getProperty("feign.service.enable");
-        if (Boolean.FALSE.toString().equalsIgnoreCase(enable) || GlobalConstant.PRODUCT.equals(activeProfile)) {
+        loadFeignProperties();
+        // 禁用feign直调本地服务 或者 生产环境不开启
+        if (checkLocalServiceEnableIsFalse() || GlobalConstant.PRODUCT.equals(activeProfile)) {
             return;
         }
         String serviceIds = feignServiceProperties.getProperty("feign.service.ids");
@@ -149,6 +147,15 @@ public class FeignEnvProcessor implements EnvironmentPostProcessor {
     }
 
     /**
+     * 加载配置文件
+     * feign-service.properties
+     */
+    @SneakyThrows
+    public static void loadFeignProperties() {
+        feignServiceProperties = PropertiesLoaderUtils.loadAllProperties("feign-service.properties");
+    }
+
+    /**
      * 根据服务ID获取feign的端口配置(feign-service.properties)
      *
      * @param serviceId 服务ID
@@ -156,5 +163,14 @@ public class FeignEnvProcessor implements EnvironmentPostProcessor {
      */
     public static String getServicePort(String serviceId) {
         return feignServiceProperties.getProperty(serviceId + ".service.port");
+    }
+
+    /**
+     * 检查是否开启feign直调本地服务
+     *
+     * @return true 开启 false 关闭
+     */
+    public static boolean checkLocalServiceEnableIsFalse() {
+        return Boolean.FALSE.toString().equalsIgnoreCase(feignServiceProperties.getProperty("feign.local.service.enable"));
     }
 }

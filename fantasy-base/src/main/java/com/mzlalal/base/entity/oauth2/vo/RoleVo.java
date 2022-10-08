@@ -3,7 +3,10 @@ package com.mzlalal.base.entity.oauth2.vo;
 import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -16,7 +19,6 @@ import java.io.Serializable;
 @Data
 @Builder
 @ApiModel("角色VO")
-@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 public class RoleVo implements Serializable {

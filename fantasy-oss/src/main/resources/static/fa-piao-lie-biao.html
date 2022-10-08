@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, initial-scale=1.0, user-scalable=no">
-    <title>待办列表</title>
+    <title>发票列表</title>
     <link rel="stylesheet" href="css/plugin/frozen.css"/>
     <link rel="stylesheet" href="css/common.css"/>
     <script src="js/plugin/axios.min.js"></script>
@@ -21,34 +21,41 @@
 <div id="app">
     <header class="ui-header ui-header-positive ui-border-b text-center">
         <span class="position-left username-display" @click="menuShow = true">我的菜单</span>
-        <!--<span class="font-weight-bolder font-size-20px">待办列表</span>-->
-        <span class="position-right username-display" @click="redirectSaveTodo">添加待办</span>
+        <!--<span class="font-weight-bolder font-size-20px">发票列表</span>-->
     </header>
 
     <template-down-slide-stream :distance-to-bottom="90"
                                 :offset-to-bottom="45"
                                 :has-been-bottom="currPage >= totalPage"
                                 :loading="loading"
-                                :has-data="todoList && todoList.length > 0"
+                                :has-data="invoiceList && invoiceList.length > 0"
                                 @on-scroll-to-bottom="onScrollToBottom">
         <slot>
             <ul class="ui-list-function ui-border-tb">
-                <li class="ui-whitespace" v-for="todo in todoList"
-                    v-bind:class="{'background-color-ghostwhite': todo.notifyTopStatus === '1'}"
-                    @click="redirectUpdateTodo(todo)">
+                <li class="ui-whitespace" v-for="item in invoiceList">
                     <div class="ui-list-info ui-border-t">
                         <h4 class="ui-nowrap font-size-16px">
-                            {{todo.notifyMemo}}
+                            {{item.invoiceName}}
                         </h4>
                         <div class="ui-nowrap">
-                            <span class="ui-txt-highlight font-size-12px">最近提醒时间：{{todo.notifyExecTime}}</span>
-                            <span class="ui-txt-highlight font-size-12px margin-left-5px">{{todo.notifyType | repeatNotifyModeFilter}}</span>
+                            <span class="ui-txt-highlight font-size-12px">发票上传时间：{{item.invoiceDate}}</span>
+                            <span class="ui-txt-highlight font-size-12px margin-left-5px">{{item.invoiceForwardStatus | invoiceForwardStatusFilter}}</span>
                         </div>
                     </div>
                 </li>
             </ul>
         </slot>
     </template-down-slide-stream>
+
+    <footer class="ui-footer ui-footer-btn">
+        <ul class="ui-tiled ui-border-t">
+            <li class="ui-border-r">
+                <div>
+                    <a href="/fantasy-oss/shang-chuan-fa-piao.html">上传发票</a>
+                </div>
+            </li>
+        </ul>
+    </footer>
 
     <template-popup-menu :menu-show="menuShow" @on-close="menuShow = false"></template-popup-menu>
 </div>
@@ -66,36 +73,21 @@
             // 菜单显示
             menuShow: false,
             // 默认列表
-            todoList: [],
+            invoiceList: [],
         },
         filters: {
-            repeatNotifyModeFilter(notifyType) {
-                if (notifyType <= 0) {
-                    return "提醒一次";
-                }
-                for (let index in window.repeatModeOption) {
-                    let item = window.repeatModeOption[index];
-                    if (notifyType === item.code) {
+            invoiceForwardStatusFilter(invoiceForwardStatus) {
+                for (let index in window.invoiceForwardStatusOption) {
+                    let item = window.invoiceForwardStatusOption[index];
+                    if (invoiceForwardStatus === item.code) {
                         return item.label;
                     }
                 }
             }
         },
         methods: {
-            // 跳转到添加待办
-            redirectSaveTodo() {
-                // 跳转到保存待办
-                window.location = "/fantasy-oss/tian-jia-dai-ban.html";
-            },
-            // 跳转到修改待办
-            redirectUpdateTodo(todo) {
-                // 保存ID
-                localStorage.setItem("oss.todo.notify.id", todo.id);
-                // 跳转到修改待办
-                window.location = "/fantasy-oss/xiu-gai-dai-ban.html";
-            },
             // 初始化列表
-            initTodoList() {
+            initInvoiceList() {
                 this.loading = true;
                 const param = {
                     "entity": {},
@@ -107,11 +99,11 @@
                 // 请求
                 axios({
                     method: "post",
-                    url: "/fantasy-oss/api/v1/oss/todo.notify/list",
+                    url: "/fantasy-oss/api/v1/oss/invoice/list",
                     data: param
                 }).then(res => {
                     // 追加到集合中
-                    this.todoList = this.todoList.concat(commonUtil.getPageList(res));
+                    this.invoiceList = this.invoiceList.concat(commonUtil.getPageList(res));
                     // 获取到总页数
                     this.totalPage = commonUtil.getTotalPage(res);
                     this.loading = false;
@@ -137,13 +129,13 @@
                     // 当前页+1
                     this.currPage++;
                     // 加载下一页
-                    this.initTodoList()
+                    this.initInvoiceList()
                 }, 250);
             }
         },
         created() {
             // 初始化列表
-            this.initTodoList();
+            this.initInvoiceList();
         },
     });
 </script>

@@ -4,7 +4,6 @@ import cn.hutool.core.date.DateUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 
@@ -16,7 +15,6 @@ import java.io.Serializable;
  */
 @Data
 @ApiModel("历史消息VO")
-@EqualsAndHashCode
 public class HistoryMessageVo implements Serializable {
     private static final long serialVersionUID = 5048960753867921159L;
 

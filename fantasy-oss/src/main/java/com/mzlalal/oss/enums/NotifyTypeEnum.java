@@ -1,4 +1,4 @@
-package com.mzlalal.oss.service.todo;
+package com.mzlalal.oss.enums;
 
 import cn.hutool.core.date.ChineseDate;
 import cn.hutool.core.date.DateField;
@@ -244,23 +244,23 @@ public enum NotifyTypeEnum {
         // 农历转换的公历日期
         Date gregorianDate = chineseDate.getGregorianDate();
         // 根据重复提醒周期处理
-        switch (todoNotifyEntity.getNotifyType()) {
+        switch (NotifyTypeEnum.getEnum(todoNotifyEntity.getNotifyType())) {
             // 每年
-            case "1":
+            case YEAR:
                 while (gregorianDate.before(DateUtil.date())) {
                     chineseDate = new ChineseDate(year + 1, month, day);
                     gregorianDate = chineseDate.getGregorianDate();
                 }
                 break;
             // 每月
-            case "2":
+            case MONTH:
                 while (gregorianDate.before(DateUtil.date())) {
                     chineseDate = new ChineseDate(year, month + 1, day);
                     gregorianDate = chineseDate.getGregorianDate();
                 }
                 break;
             // 每周(转换为公历逻辑)
-            case "3":
+            case WEEK:
                 if (gregorianDate.before(DateUtil.date())) {
                     return this.offsetDate(new DateTime(gregorianDate)
                                     .offset(DateField.HOUR, Integer.parseInt(todoNotifyEntity.getNotifyHour()))
@@ -269,7 +269,7 @@ public enum NotifyTypeEnum {
                 }
                 break;
             // 每日(转换为公历逻辑)
-            case "4":
+            case DAY:
                 if (gregorianDate.before(DateUtil.date())) {
                     return this.offsetDate(new DateTime(gregorianDate)
                                     .offset(DateField.HOUR, Integer.parseInt(todoNotifyEntity.getNotifyHour()))

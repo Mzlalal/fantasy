@@ -3,7 +3,6 @@ package com.mzlalal.base.entity.oss.req;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
@@ -16,7 +15,6 @@ import java.io.Serializable;
  **/
 @Data
 @ApiModel("用户信息下拉框查询请求")
-@EqualsAndHashCode
 public class UserVueSelectReq implements Serializable {
     private static final long serialVersionUID = -2398907302450016019L;
 
