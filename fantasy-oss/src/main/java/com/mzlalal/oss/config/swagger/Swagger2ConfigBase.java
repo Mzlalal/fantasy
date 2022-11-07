@@ -22,7 +22,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
 @EnableKnife4j
 @EnableSwagger2WebMvc
 @Import(BeanValidatorPluginsConfiguration.class)
-@ConditionalOnProperty(value = "knife.enable", matchIfMissing = true)
+@ConditionalOnProperty(value = "knife.enable", havingValue = "true")
 public class Swagger2ConfigBase extends BaseFantasySwagger2Config {
 
     @Autowired
