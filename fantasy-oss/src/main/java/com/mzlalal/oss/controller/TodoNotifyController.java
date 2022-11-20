@@ -2,6 +2,8 @@ package com.mzlalal.oss.controller;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oss.dto.TodoNotifyEntity;
@@ -17,6 +19,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * 待办提醒controller
@@ -88,6 +92,19 @@ public class TodoNotifyController implements TodoNotifyFeignApi {
             return Result.ok();
         }
         return Result.fail();
+    }
+
+    @Override
+    public Result<Void> calculateNextExecuteDateAgain() {
+        List<TodoNotifyEntity> todoNotifyList = todoNotifyService.list(Wrappers.<TodoNotifyEntity>lambdaQuery()
+                .eq(TodoNotifyEntity::getIsHide, GlobalConstant.STATUS_ZERO));
+        for (TodoNotifyEntity item : todoNotifyList) {
+            // 获取下次执行时间
+            NotifyTypeEnum.getEnum(item.getNotifyType()).checkAndCreateNextTime(item);
+            // 更新待办
+            todoNotifyService.updateById(item);
+        }
+        return Result.ok();
     }
 
 }

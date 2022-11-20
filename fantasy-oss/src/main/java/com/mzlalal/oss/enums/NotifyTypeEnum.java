@@ -199,7 +199,7 @@ public enum NotifyTypeEnum {
                 break;
             case "2":
                 // 计算阴历时间
-                date = this.offsetChineseDate(date, todoNotifyEntity);
+                date = this.offsetChineseDate(todoNotifyEntity);
                 // 保存
                 todoNotifyEntity.setNotifyExecTime(date);
                 break;
@@ -230,15 +230,13 @@ public enum NotifyTypeEnum {
     /**
      * 计算农历的便宜时间
      *
-     * @param date             参数时间
      * @param todoNotifyEntity 待办事项
      * @return 计算后的日期
      */
-    public Date offsetChineseDate(Date date, TodoNotifyEntity todoNotifyEntity) {
-        DateTime dateTime = new DateTime(date);
-        int year = dateTime.year();
-        int month = dateTime.month();
-        int day = dateTime.dayOfMonth();
+    public Date offsetChineseDate(TodoNotifyEntity todoNotifyEntity) {
+        int year = DateUtil.thisYear();
+        int month = Integer.parseInt(todoNotifyEntity.getNotifyMonth());
+        int day = Integer.parseInt(todoNotifyEntity.getNotifyDay());
         // 阴历(农历)
         ChineseDate chineseDate = new ChineseDate(year, month, day);
         // 农历转换的公历日期

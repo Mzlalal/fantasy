@@ -77,4 +77,13 @@ public interface TodoNotifyFeignApi {
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 50)
     Result<Void> delete(@RequestBody String[] ids);
+
+    /**
+     * 重新计算下次执行时间
+     *
+     * @return Result
+     */
+    @ApiOperation("重新计算下次执行时间")
+    @RequestMapping(value = "/calculateNextExecuteDateAgain", method = RequestMethod.GET)
+    Result<Void> calculateNextExecuteDateAgain();
 }
