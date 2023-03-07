@@ -197,6 +197,9 @@
                                         <jvmFlag>-verbose:gc</jvmFlag>
                                         <jvmFlag>-XX:+PrintGCDetails</jvmFlag>
                                         <jvmFlag>-XX:+PrintGCDateStamps</jvmFlag>
+                                        <jvmFlag>-XX:+UseContainerSupport</jvmFlag>
+                                        <jvmFlag>-XX:+UnlockExperimentalVMOptions</jvmFlag>
+                                        <jvmFlag>-XX:+UseCGroupMemoryLimitForHeap</jvmFlag>
                                         <!--suppress UnresolvedMavenProperty -->
                                         <jvmFlag>-Xloggc:/root/logs/gc/${jib.name}-gc.log</jvmFlag>
                                         <jvmFlag>-Duser.timezone=GMT+08</jvmFlag>
