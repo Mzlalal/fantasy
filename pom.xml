@@ -23,7 +23,7 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <jib.docker.version>1.1</jib.docker.version>
+        <jib.docker.version>1.2</jib.docker.version>
         <hutool.version>5.8.8</hutool.version>
         <hutool.zxing.version>3.5.0</hutool.zxing.version>
         <knife4j.version>2.0.8</knife4j.version>
@@ -165,7 +165,11 @@
                             <configuration>
                                 <!-- 相当于 Dockerfile 中的 FROM -->
                                 <from>
-                                    <image>adoptopenjdk/openjdk8-openj9</image>
+                                    <image>registry.cn-hangzhou.aliyuncs.com/mzlalal/mzlalal-jdk:1.0</image>
+                                    <auth>
+                                        <username>影子之城啊</username>
+                                        <password>Mzlalal88</password>
+                                    </auth>
                                 </from>
                                 <to>
                                     <!-- 构建镜像名称，阿里云镜像仓库地址 -->

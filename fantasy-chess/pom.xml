@@ -13,7 +13,6 @@
     <description>Fantasy Chess Project for Spring Cloud</description>
     <properties>
         <java.version>1.8</java.version>
-        <package.name>fantasy-chess</package.name>
         <jib.name>fantasy-chess</jib.name>
         <jib.port>9020</jib.port>
         <jib.main.class>com.mzlalal.chess.ChessApplication</jib.main.class>
