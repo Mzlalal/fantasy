@@ -18,6 +18,18 @@
     </resultMap>
 
     <select id="queryRecentDate" resultType="java.util.Date">
-        SELECT DISTINCT diary_date FROM t_diary ORDER BY diary_date DESC
+        SELECT DISTINCT diary_date FROM t_diary
+        <where>
+            <if test="subscribeUserIdList != null and subscribeUserIdList.size() > 0">
+                AND create_by IN
+                <foreach collection="subscribeUserIdList" item="item" index="index" open="( " separator="," close=" )">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="diaryContent != null and diaryContent != ''">
+                AND diary_content LIKE CONCAT('%', #{diaryContent}, '%')
+            </if>
+        </where>
+        ORDER BY diary_date DESC
     </select>
 </mapper>

@@ -28,6 +28,18 @@
             margin-top: 8px;
             line-height: 18px;
         }
+
+        .position-left-search {
+            margin-top: 45px;
+        }
+
+        .ui-header ~ .ui-container {
+            border-top: 0 !important;
+        }
+
+        .ui-searchbar input {
+            padding: unset !important;
+        }
     </style>
 </head>
 <body>
@@ -36,6 +48,18 @@
         <span class="position-left username-display" @click="menuShow = true">我的菜单</span>
         <span class="position-right username-display" @click="redirectFollower">我的粉丝</span>
     </header>
+    <div class="position-left-search ui-searchbar-wrap ui-border-b" v-bind:class="{'focus': searchBar}">
+        <div class="ui-searchbar ui-border-radius" @click="changeSearchBar(true)">
+            <i class="ui-icon-search"></i>
+            <div class="ui-searchbar-text">搜索关键字</div>
+            <div class="ui-searchbar-input">
+                <input v-model="searchKeyword" type="text" placeholder="搜索关键字"
+                       ref="searchInput" autocapitalize="off">
+            </div>
+            <i class="ui-icon-close" v-on:click.stop="changeSearchBar(false)"></i>
+        </div>
+        <button class="ui-searchbar-cancel" @click="searchConfirm">确认</button>
+    </div>
     <template-down-slide-stream :distance-to-bottom="90"
                                 :offset-to-bottom="100"
                                 :has-been-bottom="currPage >= totalPage"
@@ -97,6 +121,10 @@
                 totalPage: 0,
                 // 用户信息
                 user: null,
+                // 搜索框
+                searchBar: false,
+                // 搜索关键字
+                searchKeyword: null,
             }
         },
         methods: {
@@ -119,7 +147,9 @@
             initDiaryList() {
                 this.loading = true;
                 const param = {
-                    "entity": {},
+                    "entity": {
+                        "diaryContent": this.searchKeyword,
+                    },
                     "pageInfo": {
                         "currPage": this.currPage,
                         "pageSize": 10
@@ -161,6 +191,34 @@
             // 重定向到我的订阅
             redirectSubscribe() {
                 window.location = "/fantasy-oss/wo-de-ding-yue.html";
+            },
+            // 更改搜索框
+            changeSearchBar(bool) {
+                // 设置搜索框状态
+                this.searchBar = bool;
+                // 清空列表
+                this.diaryGroup = {};
+                // 重置为第一页
+                this.currPage = 1;
+                // 关闭窗口
+                if (bool) {
+                    // 获取焦点
+                    this.$nextTick(() => {
+                        this.$refs.searchInput.focus();
+                    });
+                } else {
+                    // 关键字
+                    this.searchKeyword = null;
+                    // 重新查询
+                    this.initDiaryList();
+                }
+            },
+            // 查询确认
+            searchConfirm() {
+                // 清空列表
+                this.diaryGroup = {};
+                // 查询
+                this.initDiaryList();
             },
             // 切换至旧版本
             redirectOlderVersion() {

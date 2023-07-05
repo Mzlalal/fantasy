@@ -63,15 +63,17 @@ public class DiaryServiceImpl extends ServiceImpl<DiaryDao, DiaryEntity> impleme
      */
     @Override
     public Result<Map<String, List<DiaryEntity>>> queryDiaryGroupByDate(Po<DiaryEntity> po) {
+        // 搜索日记内容
+        String diaryContent = po.getEntity().getDiaryContent();
         // 创建分页条件
         Page<DiaryEntity> pageResult = this.createPageQuery(po.getPageInfo());
+        // 我订阅的用户列表
+        List<String> subscribeUserIdList = diarySubscribeService.queryMySubscribeUserIdList();
         // 查询最近时间
-        List<Date> recentDate = baseMapper.queryRecentDate();
+        List<Date> recentDate = baseMapper.queryRecentDate(subscribeUserIdList, diaryContent);
         if (CollUtil.isEmpty(recentDate)) {
             return Result.ok(MapUtil.newHashMap());
         }
-        // 我订阅的用户列表
-        List<String> subscribeUserIdList = diarySubscribeService.queryMySubscribeUserIdList();
         // 查询包括我自己的
         subscribeUserIdList.add(Oauth2Context.getUserIdElseThrow());
         // 查询结果集
@@ -80,6 +82,8 @@ public class DiaryServiceImpl extends ServiceImpl<DiaryDao, DiaryEntity> impleme
                 .in(DiaryEntity::getCreateBy, subscribeUserIdList)
                 // 大于等于当前分页最小的时间
                 .ge(DiaryEntity::getDiaryDate, CollUtil.min(recentDate))
+                // 搜索日记内容
+                .like(StrUtil.isNotBlank(diaryContent), DiaryEntity::getDiaryContent, diaryContent)
                 // 根据创建时间排序
                 .orderByDesc(DiaryEntity::getDiaryDate)
                 .orderByDesc(DiaryEntity::getCreateTime)
