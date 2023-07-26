@@ -1,6 +1,6 @@
 (function (window) {
-    // 请求服务器的网关
-    window.gateway = "http://" + location.host;
+    // 请求服务器的网关,location.protocol支持http和https
+    window.gateway = location.protocol + "//" + location.host;
     // 默认跳转页
     window.defaultRedirectUri = "/fantasy-oauth2/mi-ma-deng-lu.html";
     // 客户端Key
