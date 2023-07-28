@@ -26,4 +26,4 @@ spring:
           - data-id: swagger-knife.yaml
             refresh: true
   profiles:
-    active: 'dev'
+    active: 'product'

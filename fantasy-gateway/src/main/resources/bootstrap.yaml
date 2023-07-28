@@ -4,4 +4,4 @@ spring:
   application:
     name: fantasy-gateway
   profiles:
-    active: 'dev'
+    active: 'product'

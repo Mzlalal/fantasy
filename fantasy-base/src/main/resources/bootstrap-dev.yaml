@@ -2,12 +2,21 @@ spring:
   cloud:
     nacos:
       config:
-        namespace: 2abf2a56-8efa-4045-b719-8d26b1e4a281
-        server-addr: http://124.223.174.58:8800
+        namespace: ed3cb1a6-640f-4f47-b5c1-239755ddb545
+        server-addr: 192.168.31.117:4800
         file-extension: yaml
       discovery:
-        namespace: 2abf2a56-8efa-4045-b719-8d26b1e4a281
-        server-addr: http://124.223.174.58:8800
-        register-enabled: false
-      password: G3CXv$kaq9KVuyZz6h
-      username: fantasy-gitee
+        namespace: ed3cb1a6-640f-4f47-b5c1-239755ddb545
+        server-addr: 192.168.31.117:4800
+        register-enabled: true
+      username: nacos
+      password: 4i2H@7&UFRCOQ*d_e#f~
+  web:
+    resources:
+      # 静态资源不缓存
+      cache:
+        cachecontrol:
+          no-store: true
+logging:
+  file:
+    path: /root/logs

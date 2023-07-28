@@ -65,10 +65,12 @@ public class DiaryServiceImpl extends ServiceImpl<DiaryDao, DiaryEntity> impleme
     public Result<Map<String, List<DiaryEntity>>> queryDiaryGroupByDate(Po<DiaryEntity> po) {
         // 搜索日记内容
         String diaryContent = po.getEntity().getDiaryContent();
-        // 创建分页条件
-        Page<DiaryEntity> pageResult = this.createPageQuery(po.getPageInfo());
         // 我订阅的用户列表
         List<String> subscribeUserIdList = diarySubscribeService.queryMySubscribeUserIdList();
+        // 添加自己的用户ID
+        subscribeUserIdList.add(Oauth2Context.getUserIdElseThrow());
+        // 创建分页条件
+        Page<DiaryEntity> pageResult = this.createPageQuery(po.getPageInfo());
         // 查询最近时间
         List<Date> recentDate = baseMapper.queryRecentDate(subscribeUserIdList, diaryContent);
         if (CollUtil.isEmpty(recentDate)) {

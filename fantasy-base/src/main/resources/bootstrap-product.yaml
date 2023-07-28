@@ -3,14 +3,14 @@ spring:
     nacos:
       config:
         namespace: ed3cb1a6-640f-4f47-b5c1-239755ddb545
-        server-addr: 127.0.0.1:4800
+        server-addr: 192.168.31.117:4800
         file-extension: yaml
       discovery:
         namespace: ed3cb1a6-640f-4f47-b5c1-239755ddb545
-        server-addr: 127.0.0.1:4800
+        server-addr: 192.168.31.117:4800
         register-enabled: true
-      password: nacos
-      username: 4i2H@7&UFRCOQ*d_e#f~
+      username: nacos
+      password: 4i2H@7&UFRCOQ*d_e#f~
   web:
     resources:
       # 静态资源不缓存
