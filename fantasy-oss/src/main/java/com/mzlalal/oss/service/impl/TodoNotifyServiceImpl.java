@@ -143,6 +143,8 @@ public class TodoNotifyServiceImpl extends ServiceImpl<TodoNotifyDao, TodoNotify
             String notifyType = todoNotify.getNotifyType();
             // 等于0,只提醒一次
             if (StrUtil.equals(GlobalConstant.STATUS_ZERO, notifyType)) {
+                // 把下次执行时间推迟到未来
+                todoNotify.setNotifyExecTime(DateUtil.parse("9999-12-31 23:59:59"));
                 return;
             }
             // 生成下次执行时间
