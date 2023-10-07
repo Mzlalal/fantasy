@@ -50,7 +50,8 @@ public class DiaryServiceImpl extends ServiceImpl<DiaryDao, DiaryEntity> impleme
         Page<DiaryEntity> pageResult = this.createPageQuery(po.getPageInfo());
         // 查询结果集
         List<DiaryEntity> entityList = baseMapper.selectList(Wrappers.<DiaryEntity>lambdaQuery()
-                .like(StrUtil.isNotBlank(diaryContent), DiaryEntity::getDiaryContent, diaryContent));
+                .like(StrUtil.isNotBlank(diaryContent), DiaryEntity::getDiaryContent, diaryContent)
+                .orderByAsc(DiaryEntity::getDiaryDate));
         // 返回结果
         return new FantasyPage<>(entityList, pageResult.getTotal(), po.getPageInfo());
     }
