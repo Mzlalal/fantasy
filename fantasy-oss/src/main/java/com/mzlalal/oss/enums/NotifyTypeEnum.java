@@ -239,22 +239,30 @@ public enum NotifyTypeEnum {
         int day = Integer.parseInt(todoNotifyEntity.getNotifyDay());
         // 阴历(农历)
         ChineseDate chineseDate = new ChineseDate(year, month, day);
-        // 农历转换的公历日期
+        // 阴历(农历)转换的公历日期
         Date gregorianDate = chineseDate.getGregorianDate();
         // 根据重复提醒周期处理
         switch (NotifyTypeEnum.getEnum(todoNotifyEntity.getNotifyType())) {
             // 每年
             case YEAR:
                 while (gregorianDate.before(DateUtil.date())) {
-                    chineseDate = new ChineseDate(year + 1, month, day);
-                    gregorianDate = chineseDate.getGregorianDate();
+                    // 不存在的日期不需要前推一年
+                    if (!(chineseDate.getGregorianYear() < 0 || chineseDate.getGregorianMonth() < 0 || chineseDate.getGregorianDay() < 0)) {
+                        year += 1;
+                    }
+                    // 处理阴历不存在日期
+                    gregorianDate = this.processNotExistDay(year, month, day).getGregorianDate();
                 }
                 break;
             // 每月
             case MONTH:
                 while (gregorianDate.before(DateUtil.date())) {
-                    chineseDate = new ChineseDate(year, month + 1, day);
-                    gregorianDate = chineseDate.getGregorianDate();
+                    // 不存在的日期不需要前推一月
+                    if (!(chineseDate.getGregorianYear() < 0 || chineseDate.getGregorianMonth() < 0 || chineseDate.getGregorianDay() < 0)) {
+                        month += 1;
+                    }
+                    // 处理阴历不存在日期
+                    gregorianDate = this.processNotExistDay(year, month, day).getGregorianDate();
                 }
                 break;
             // 每周(转换为公历逻辑)
@@ -283,6 +291,23 @@ public enum NotifyTypeEnum {
         return new DateTime(gregorianDate)
                 .offset(DateField.HOUR, Integer.parseInt(todoNotifyEntity.getNotifyHour()))
                 .offset(DateField.MINUTE, Integer.parseInt(todoNotifyEntity.getNotifyMinute()));
+    }
+
+    /**
+     * 处理阴历不存在日期
+     *
+     * @param year  年
+     * @param month 月
+     * @param day   日
+     * @return 距离目标阴历往前推最近的日期
+     */
+    public ChineseDate processNotExistDay(int year, int month, int day) {
+        ChineseDate chineseDate = new ChineseDate(year, month, day);
+        // 如果获取年月日小于0代表日期不存在,递减一天
+        while (chineseDate.getGregorianYear() < 0 || chineseDate.getGregorianMonth() < 0 || chineseDate.getGregorianDay() < 0) {
+            chineseDate = new ChineseDate(year, month, day - 1);
+        }
+        return chineseDate;
     }
 
     /**

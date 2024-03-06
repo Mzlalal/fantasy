@@ -59,7 +59,7 @@ public class TodoNotifyServiceImpl extends ServiceImpl<TodoNotifyDao, TodoNotify
         wrapper.eq("create_by", Oauth2Context.getUserIdElseThrow());
         // 排序
         wrapper.orderByDesc("notify_top_status");
-        wrapper.orderByDesc("update_time");
+        wrapper.orderByDesc("notify_exec_time");
         // 创建分页条件
         Page<TodoNotifyEntity> pageResult = this.createPageQuery(po.getPageInfo());
         // 查询结果集
@@ -109,9 +109,7 @@ public class TodoNotifyServiceImpl extends ServiceImpl<TodoNotifyDao, TodoNotify
         // 当前年月日时分
         String currentTime = DateUtil.format(DateUtil.date(), DatePattern.NORM_DATETIME_MINUTE_PATTERN);
         // 小于等于当前执行时间
-        queryWrapper.le(true, "notify_exec_time", currentTime);
-        // 逻辑删除
-        queryWrapper.eq("is_hide", GlobalConstant.STATUS_ZERO);
+        queryWrapper.le("notify_exec_time", currentTime);
         // 查询数据库
         List<TodoNotifyEntity> todoNotifyList = baseMapper.selectList(queryWrapper);
         // 为空则跳过
@@ -145,7 +143,7 @@ public class TodoNotifyServiceImpl extends ServiceImpl<TodoNotifyDao, TodoNotify
             if (StrUtil.equals(GlobalConstant.STATUS_ZERO, notifyType)) {
                 // 把下次执行时间推迟到未来
                 todoNotify.setNotifyExecTime(DateUtil.parse("9999-12-31 23:59:59"));
-                return;
+                continue;
             }
             // 生成下次执行时间
             NotifyTypeEnum.getEnum(notifyType).createNextTime(todoNotify.getNotifyExecTime(), todoNotify);
