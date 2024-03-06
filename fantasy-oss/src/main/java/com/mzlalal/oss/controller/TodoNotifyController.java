@@ -13,13 +13,13 @@ import com.mzlalal.base.util.FantasyPage;
 import com.mzlalal.oss.enums.NotifyTypeEnum;
 import com.mzlalal.oss.service.TodoNotifyService;
 import io.swagger.annotations.Api;
-import org.simpleframework.xml.core.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -53,7 +53,7 @@ public class TodoNotifyController implements TodoNotifyFeignApi {
     }
 
     @Override
-    public Result<TodoNotifyEntity> save(@Validate @RequestBody TodoNotifyEntity todoNotify) {
+    public Result<TodoNotifyEntity> save(@Valid @RequestBody TodoNotifyEntity todoNotify) {
         // 验证重复提醒的值
         NotifyTypeEnum.getEnum(todoNotify.getNotifyType()).checkAndCreateNextTime(todoNotify);
         // 设置邮箱

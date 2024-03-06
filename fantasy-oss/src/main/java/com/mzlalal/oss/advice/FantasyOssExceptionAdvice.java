@@ -1,13 +1,8 @@
 package com.mzlalal.oss.advice;
 
-import cn.hutool.core.exceptions.ExceptionUtil;
 import com.mzlalal.base.advice.FantasyExceptionAdvice;
-import com.mzlalal.base.common.GlobalResult;
-import com.mzlalal.base.entity.global.Result;
-import io.minio.errors.MinioException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -22,15 +17,4 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @ResponseStatus(HttpStatus.OK)
 public class FantasyOssExceptionAdvice extends FantasyExceptionAdvice {
 
-    /**
-     * 未知异常
-     *
-     * @param exception 异常信息
-     * @return Result
-     */
-    @ExceptionHandler(MinioException.class)
-    public Result<String> handleMinioException(Exception exception) {
-        this.printExceptionAndParams(exception);
-        return GlobalResult.SEVER_ERROR.result(ExceptionUtil.getMessage(exception));
-    }
 }

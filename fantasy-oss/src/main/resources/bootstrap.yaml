@@ -23,7 +23,5 @@ spring:
             refresh: true
           - data-id: swagger-knife.yaml
             refresh: true
-          - data-id: minio-alone.yaml
-            refresh: true
   profiles:
     active: 'product'

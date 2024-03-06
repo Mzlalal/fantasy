@@ -25,20 +25,6 @@
         </dependency>
         <dependency>
             <groupId>com.mzlalal</groupId>
-            <artifactId>mz-minio-stater</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>checker-qual</artifactId>
-                    <groupId>org.checkerframework</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>error_prone_annotations</artifactId>
-                    <groupId>com.google.errorprone</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.mzlalal</groupId>
             <artifactId>mz-repeat-submit-stater</artifactId>
         </dependency>
         <dependency>
@@ -58,17 +44,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-freemarker</artifactId>
         </dependency>
-
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
             <version>${spring.cloud.nacos.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>guava</artifactId>
-                    <groupId>com.google.guava</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
