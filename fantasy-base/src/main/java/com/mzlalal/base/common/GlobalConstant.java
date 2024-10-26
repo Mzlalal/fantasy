@@ -10,6 +10,7 @@ import cn.hutool.core.util.StrUtil;
  * @date 2021/5/24 21:39
  **/
 public interface GlobalConstant {
+
     /**
      * 邮箱
      */
@@ -186,5 +187,14 @@ public interface GlobalConstant {
      */
     static String todoNotifyLazyMode() {
         return StrUtil.format("fantasy:todo:notify:lazy:mode");
+    }
+
+    /**
+     * 设置闹钟redisKey
+     *
+     * @return String fantasy:open:clock:schedule
+     */
+    static String openClockSchedule() {
+        return StrUtil.format("fantasy:open:clock:schedule");
     }
 }
