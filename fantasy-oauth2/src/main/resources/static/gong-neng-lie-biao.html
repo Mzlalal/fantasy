@@ -2,11 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, initial-scale=1.0, user-scalable=no">
+    <meta content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, initial-scale=1.0, user-scalable=no"
+          name="viewport">
     <title>功能列表</title>
-    <link rel="stylesheet" href="css/plugin/frozen.css"/>
-    <link rel="stylesheet" href="css/common.css"/>
+    <meta content="尺墨飞虹" name="apple-mobile-web-app-title">
+    <link href="ignore/oss-images/apple-bookmark.png" rel="apple-touch-icon">
+    <link href="ignore/oss-images/apple-bookmark.png" rel="apple-touch-icon" sizes="76x76">
+    <link href="ignore/oss-images/apple-bookmark.png" rel="apple-touch-icon" sizes="120x120">
+    <link href="ignore/oss-images/apple-bookmark.png" rel="apple-touch-icon" sizes="152x152">
+    <link href="ignore/oss-images/apple-bookmark.png" rel="apple-touch-icon-precomposed" sizes="152x152">
+    <link href="css/plugin/frozen.css" rel="stylesheet"/>
+    <link href="css/common.css" rel="stylesheet"/>
     <script src="js/plugin/axios.min.js"></script>
     <script src="js/plugin/vue.min.js"></script>
     <script src="js/CommonUtil.js"></script>
@@ -21,13 +27,13 @@
 <body>
 <div id="app">
     <header class="ui-header ui-header-positive ui-border-b text-center">
-        <span class="position-left username-display" @click="menuShow = true">我的菜单</span>
+        <span @click="menuShow = true" class="position-left username-display">我的菜单</span>
         <span class="font-weight-bolder font-size-20px">Fantasy</span>
     </header>
     <div class="ui-form ui-border-t ui-container">
         <div class="ui-grid ui-grid-trisect">
             <ul class="ui-border-b ui-whitespace">
-                <li v-for="client in clientList" @click="redirectClientIndex(client.indexUri)"
+                <li @click="redirectClientIndex(client.indexUri)" v-for="client in clientList"
                     v-if="!hideList.includes(client.clientKey)">
                     <div class="ui-img-vertical">
                         <span style="font-size: 20cqw; text-align: center;">{{randomEmoji()}}</span>
@@ -55,7 +61,7 @@
                 // 需要隐藏的客户端
                 hideList: [],
                 // emoji列表
-                emojiList: ['😀', '😃', '😄', '😁', '😆', '😅', '😂', '🤣', '😊', '😚', '😙', '😗', '😘', '😍', '😌', '😉', '🙃', '🙂', '😇', '😋', '😜', '😝', '😛', '🤑', '🤗', '🤓', '😎', '🤡', '🤠', '😖', '😣', '🙁', '😕', '😟', '😔', '😞', '😒', '😏', '😫', '😩', '😤', '😠', '😡', '😶', '😐', '😑', '😯', '😦', '😥', '😢', '😨', '😱', '😳', '😵', '😲', '😮', '😦', '🤤', '😭', '😪', '😴', '🙄', '🤔', '😬', '🤥', '🤐', '👺', '👹', '👿', '😈', '🤕', '🤒', '😷', '🤧', '🤢', '👻', '💀', '☠', '👾', '🤖', '🎃', '😺', '😸', '😹', '🙏', '👏', '🙌', '👐', '😾', '😿', '🙀', '😽', '😼', '😻'],
+                emojiList: ['😀', '😃', '😄', '😁', '😆', '😅', '😂', '🤣', '😊', '😚', '😙', '😗', '😘', '😍', '😌', '😉', '🙃', '🙂', '😇', '😋', '😜', '😝', '😛', '🤑', '🤗', '🤓', '😎', '🤠', '😖', '😣', '🙁', '😕', '😟', '😔', '😞', '😒', '😏', '😫', '😩', '😤', '😠', '😡', '😶', '😐', '😑', '😯', '😦', '😥', '😢', '😨', '😱', '😳', '😵', '😲', '😮', '😦', '🤤', '😭', '😪', '😴', '🙄', '🤔', '😬', '🤥', '🤐', '👺', '👹', '👿', '😈', '🤕', '🤒', '😷', '🤧', '👻', '👾', '😺', '😸', '😹', '🙏', '👏', '🙌', '👐', '😾', '😿', '🙀', '😽', '😼', '😻'],
             }
         },
         methods: {
@@ -66,7 +72,9 @@
             },
             // 随机生成一个emoji
             randomEmoji() {
-                return this.emojiList[Math.floor(Math.random() * (this.emojiList.length + 1))];
+                let random = Math.floor(Math.random() * this.emojiList.length);
+                console.log(random);
+                return this.emojiList[random];
             }
         },
         created() {
