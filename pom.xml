@@ -1,9 +1,115 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <artifactId>fantasy</artifactId>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <!-- docker打包工具Jib -->
+                <plugin>
+                    <artifactId>jib-maven-plugin</artifactId>
+                    <groupId>com.google.cloud.tools</groupId>
+                    <version>3.2.0</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <artifactId>core</artifactId>
+                <groupId>com.google.zxing</groupId>
+                <version>${hutool.zxing.version}</version>
+            </dependency>
+            <dependency>
+                <artifactId>fantasy-base</artifactId>
+                <groupId>com.mzlalal</groupId>
+                <version>${mz.fantasy.base.version}</version>
+            </dependency>
+            <dependency>
+                <artifactId>mz-system-log-stater</artifactId>
+                <groupId>com.mzlalal</groupId>
+                <version>${mz.system.log.stater.version}</version>
+            </dependency>
+            <dependency>
+                <artifactId>mz-notify-service-stater</artifactId>
+                <groupId>com.mzlalal</groupId>
+                <version>${mz.notify.service.stater.version}</version>
+            </dependency>
+            <dependency>
+                <artifactId>mz-mybatis-interceptor-stater</artifactId>
+                <groupId>com.mzlalal</groupId>
+                <version>${mz.mybatis.interceptor.stater.version}</version>
+            </dependency>
+            <dependency>
+                <artifactId>mz-minio-stater</artifactId>
+                <groupId>com.mzlalal</groupId>
+                <version>${mz.minio.stater.version}</version>
+            </dependency>
+            <dependency>
+                <artifactId>mz-repeat-submit-stater</artifactId>
+                <groupId>com.mzlalal</groupId>
+                <version>${mz.repeat.submit.starter.version}</version>
+            </dependency>
+            <dependency>
+                <artifactId>knife4j-aggregation-spring-boot-starter</artifactId>
+                <groupId>com.github.xiaoymin</groupId>
+                <version>${knife4j.aggregation.version}</version>
+            </dependency>
+            <dependency>
+                <artifactId>knife4j-micro-spring-boot-starter</artifactId>
+                <groupId>com.github.xiaoymin</groupId>
+                <version>${knife4j.version}</version>
+            </dependency>
+            <dependency>
+                <artifactId>knife4j-spring-boot-starter</artifactId>
+                <groupId>com.github.xiaoymin</groupId>
+                <version>${knife4j.version}</version>
+            </dependency>
+            <dependency>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <groupId>com.alibaba.cloud</groupId>
+                <scope>import</scope>
+                <type>pom</type>
+                <version>${spring.cloud.alibaba.version}</version>
+            </dependency>
+            <dependency>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <groupId>org.springframework.cloud</groupId>
+                <scope>import</scope>
+                <type>pom</type>
+                <version>${spring.cloud.version}</version>
+            </dependency>
+            <dependency>
+                <artifactId>redisson-spring-boot-starter</artifactId>
+                <groupId>org.redisson</groupId>
+                <version>${redisson.version}</version>
+            </dependency>
+            <dependency>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <groupId>com.baomidou</groupId>
+                <version>${mybatis.plus.version}</version>
+            </dependency>
+            <dependency>
+                <artifactId>pagehelper-spring-boot-starter</artifactId>
+                <groupId>com.github.pagehelper</groupId>
+                <version>${mybatis.page.helper.version}</version>
+            </dependency>
+            <dependency>
+                <artifactId>fastjson</artifactId>
+                <groupId>com.alibaba</groupId>
+                <version>${fastjson.version}</version>
+            </dependency>
+            <dependency>
+                <artifactId>hutool-all</artifactId>
+                <groupId>cn.hutool</groupId>
+                <version>${hutool.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    <groupId>com.mzlalal</groupId>
     <modelVersion>4.0.0</modelVersion>
-    <packaging>pom</packaging>
     <modules>
         <module>fantasy-base</module>
         <module>fantasy-gateway</module>
@@ -11,187 +117,46 @@
         <module>fantasy-oss</module>
         <module>fantasy-chess</module>
     </modules>
+    <packaging>pom</packaging>
+
     <parent>
-        <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.5.5</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <groupId>org.springframework.boot</groupId>
+        <relativePath/>
+        <version>2.5.5</version> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.mzlalal</groupId>
-    <artifactId>fantasy</artifactId>
-    <version>1.0</version>
-
-    <properties>
-        <java.version>1.8</java.version>
-        <jib.docker.version>1.2</jib.docker.version>
-        <hutool.version>5.8.8</hutool.version>
-        <hutool.zxing.version>3.5.0</hutool.zxing.version>
-        <knife4j.version>2.0.8</knife4j.version>
-        <knife4j.aggregation.version>2.0.8</knife4j.aggregation.version>
-        <fastjson.version>2.0.7</fastjson.version>
-        <redisson.version>3.15.3</redisson.version>
-        <mybatis.plus.version>3.5.2</mybatis.plus.version>
-        <mybatis.page.helper.version>1.4.5</mybatis.page.helper.version>
-        <spring.cloud.version>2020.0.3</spring.cloud.version>
-        <spring.cloud.alibaba.version>2021.1</spring.cloud.alibaba.version>
-        <spring.cloud.nacos.version>2021.1</spring.cloud.nacos.version>
-        <!-- Mz -->
-        <mz.fantasy.base.version>1.0</mz.fantasy.base.version>
-        <mz.minio.stater.version>1.1.1</mz.minio.stater.version>
-        <mz.system.log.stater.version>1.0.2</mz.system.log.stater.version>
-        <mz.mybatis.interceptor.stater.version>1.0.4</mz.mybatis.interceptor.stater.version>
-        <mz.repeat.submit.starter.version>1.1.1</mz.repeat.submit.starter.version>
-        <mz.notify.service.stater.version>1.0.1</mz.notify.service.stater.version>
-    </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.google.zxing</groupId>
-                <artifactId>core</artifactId>
-                <version>${hutool.zxing.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.mzlalal</groupId>
-                <artifactId>fantasy-base</artifactId>
-                <version>${mz.fantasy.base.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.mzlalal</groupId>
-                <artifactId>mz-system-log-stater</artifactId>
-                <version>${mz.system.log.stater.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.mzlalal</groupId>
-                <artifactId>mz-notify-service-stater</artifactId>
-                <version>${mz.notify.service.stater.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.mzlalal</groupId>
-                <artifactId>mz-mybatis-interceptor-stater</artifactId>
-                <version>${mz.mybatis.interceptor.stater.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.mzlalal</groupId>
-                <artifactId>mz-minio-stater</artifactId>
-                <version>${mz.minio.stater.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.mzlalal</groupId>
-                <artifactId>mz-repeat-submit-stater</artifactId>
-                <version>${mz.repeat.submit.starter.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.xiaoymin</groupId>
-                <artifactId>knife4j-aggregation-spring-boot-starter</artifactId>
-                <version>${knife4j.aggregation.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.xiaoymin</groupId>
-                <artifactId>knife4j-micro-spring-boot-starter</artifactId>
-                <version>${knife4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.xiaoymin</groupId>
-                <artifactId>knife4j-spring-boot-starter</artifactId>
-                <version>${knife4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.alibaba.cloud</groupId>
-                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
-                <version>${spring.cloud.alibaba.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-dependencies</artifactId>
-                <version>${spring.cloud.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.redisson</groupId>
-                <artifactId>redisson-spring-boot-starter</artifactId>
-                <version>${redisson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-boot-starter</artifactId>
-                <version>${mybatis.plus.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.pagehelper</groupId>
-                <artifactId>pagehelper-spring-boot-starter</artifactId>
-                <version>${mybatis.page.helper.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>fastjson</artifactId>
-                <version>${fastjson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.hutool</groupId>
-                <artifactId>hutool-all</artifactId>
-                <version>${hutool.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <profiles>
         <profile>
-            <id>dev</id>
-            <properties>
-                <env>dev</env>
-            </properties>
             <activation>
                 <!-- 默认使用开发环境 -->
                 <activeByDefault>true</activeByDefault>
             </activation>
+            <id>dev</id>
+            <properties>
+                <env>dev</env>
+            </properties>
         </profile>
         <profile>
-            <id>product</id>
-            <properties>
-                <env>product</env>
-            </properties>
             <build>
                 <pluginManagement>
                     <plugins>
                         <!-- docker打包工具Jib -->
                         <plugin>
-                            <groupId>com.google.cloud.tools</groupId>
                             <artifactId>jib-maven-plugin</artifactId>
-                            <version>3.2.0</version>
                             <configuration>
                                 <!-- 相当于 Dockerfile 中的 FROM -->
-                                <from>
-                                    <image>registry.cn-hangzhou.aliyuncs.com/mzlalal/mzlalal-jdk:1.0</image>
-                                    <auth>
-                                        <username>影子之城啊</username>
-                                        <password>Mzlalal88</password>
-                                    </auth>
-                                </from>
-                                <to>
-                                    <!-- 构建镜像名称，阿里云镜像仓库地址 -->
-                                    <!--suppress UnresolvedMavenProperty -->
-                                    <image>registry.cn-hangzhou.aliyuncs.com/mzlalal/${jib.name}</image>
-                                    <!-- 阿里云镜像仓库账号密码 -->
-                                    <auth>
-                                        <username>影子之城啊</username>
-                                        <password>Mzlalal88</password>
-                                    </auth>
-                                    <!-- Docker镜像的tag,这里使用maven定义的属性 -->
-                                    <tags>
-                                        <tag>
-                                            ${jib.docker.version}
-                                        </tag>
-                                    </tags>
-                                </to>
+                                <allowInsecureRegistries>true</allowInsecureRegistries>
                                 <container>
                                     <!-- 启动类 -->
                                     <!--suppress UnresolvedMavenProperty -->
-                                    <mainClass>${jib.main.class}</mainClass>
+                                    <args>
+                                        <arg>
+                                            --spring.profiles.active=product
+                                        </arg>
+                                    </args>
                                     <!-- jvm参数 -->
+                                    <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
                                     <jvmFlags>
                                         <jvmFlag>-Xms128M</jvmFlag>
                                         <jvmFlag>-Xmx128M</jvmFlag>
@@ -208,48 +173,85 @@
                                         <jvmFlag>-Xloggc:/root/logs/gc/${jib.name}-gc.log</jvmFlag>
                                         <jvmFlag>-Duser.timezone=GMT+08</jvmFlag>
                                     </jvmFlags>
-                                    <args>
-                                        <arg>
-                                            --spring.profiles.active=product
-                                        </arg>
-                                    </args>
                                     <!-- 使用当前时间 -->
-                                    <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
+                                    <mainClass>${jib.main.class}</mainClass>
                                     <!-- 容器在运行时暴露的端口 -->
                                     <ports>
                                         <!--suppress UnresolvedMavenProperty -->
                                         <port>${jib.port}</port>
                                     </ports>
                                 </container>
+                                <from>
+                                    <auth>
+                                        <password>Mzlalal88</password>
+                                        <username>影子之城啊</username>
+                                    </auth>
+                                    <image>
+                                        registry.cn-hangzhou.aliyuncs.com/mzlalal/mzlalal-jdk:1.0@sha256:0812fa44f740d76b13f1b6bf43772ce7ccf97e087165d1c408c7e11570ecc27a
+                                    </image>
+                                </from>
                                 <!-- 如果私有镜像仓库没有启用https，设置allowInsecureRegistries参数为true -->
-                                <allowInsecureRegistries>true</allowInsecureRegistries>
+                                <to>
+                                    <!-- 构建镜像名称，阿里云镜像仓库地址 -->
+                                    <!--suppress UnresolvedMavenProperty -->
+                                    <auth>
+                                        <password>Mzlalal88</password>
+                                        <username>影子之城啊</username>
+                                    </auth>
+                                    <!-- 阿里云镜像仓库账号密码 -->
+                                    <image>registry.cn-hangzhou.aliyuncs.com/mzlalal/${jib.name}</image>
+                                    <!-- Docker镜像的tag,这里使用maven定义的属性 -->
+                                    <tags>
+                                        <tag>
+                                            ${jib.docker.version}
+                                        </tag>
+                                    </tags>
+                                </to>
                             </configuration>
-                            <!-- 绑定jib:build到 Maven生命周期，例如package/install/deploy -->
                             <executions>
                                 <execution>
-                                    <phase>install</phase>
                                     <goals>
                                         <goal>build</goal>
                                     </goals>
+                                    <phase>install</phase>
                                 </execution>
                             </executions>
+                            <groupId>com.google.cloud.tools</groupId>
+                            <!-- 绑定jib:build到 Maven生命周期，例如package/install/deploy -->
+                            <version>3.2.0</version>
                         </plugin>
                     </plugins>
                 </pluginManagement>
             </build>
+            <id>product</id>
+            <properties>
+                <env>product</env>
+            </properties>
         </profile>
     </profiles>
 
-    <build>
-        <pluginManagement>
-            <plugins>
-                <!-- docker打包工具Jib -->
-                <plugin>
-                    <groupId>com.google.cloud.tools</groupId>
-                    <artifactId>jib-maven-plugin</artifactId>
-                    <version>3.2.0</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
+    <properties>
+        <fastjson.version>2.0.7</fastjson.version>
+        <hutool.version>5.8.8</hutool.version>
+        <hutool.zxing.version>3.5.0</hutool.zxing.version>
+        <java.version>1.8</java.version>
+        <jib.docker.version>1.2</jib.docker.version>
+        <knife4j.aggregation.version>2.0.8</knife4j.aggregation.version>
+        <knife4j.version>2.0.8</knife4j.version>
+        <mybatis.page.helper.version>1.4.5</mybatis.page.helper.version>
+        <mybatis.plus.version>3.5.2</mybatis.plus.version>
+        <mz.fantasy.base.version>1.0</mz.fantasy.base.version>
+        <mz.minio.stater.version>1.1.1</mz.minio.stater.version>
+        <mz.mybatis.interceptor.stater.version>1.0.4</mz.mybatis.interceptor.stater.version>
+        <mz.notify.service.stater.version>1.0.1</mz.notify.service.stater.version>
+        <!-- Mz -->
+        <mz.repeat.submit.starter.version>1.1.1</mz.repeat.submit.starter.version>
+        <mz.system.log.stater.version>1.0.2</mz.system.log.stater.version>
+        <redisson.version>3.15.3</redisson.version>
+        <spring.cloud.alibaba.version>2021.1</spring.cloud.alibaba.version>
+        <spring.cloud.nacos.version>2021.1</spring.cloud.nacos.version>
+        <spring.cloud.version>2020.0.3</spring.cloud.version>
+    </properties>
+
+    <version>1.0</version>
 </project>

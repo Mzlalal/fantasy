@@ -11,12 +11,6 @@ spring:
         register-enabled: true
       username: nacos
       password: 4i2H@7&UFRCOQ*d_e#f~
-  web:
-    resources:
-      # 静态资源不缓存
-      cache:
-        cachecontrol:
-          no-store: true
 logging:
   file:
     path: /root/logs
