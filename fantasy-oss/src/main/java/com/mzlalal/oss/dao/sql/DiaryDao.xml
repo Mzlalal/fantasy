@@ -4,17 +4,17 @@
 <mapper namespace="com.mzlalal.oss.dao.DiaryDao">
 
     <!-- 可根据自己的需求，是否要使用 -->
-    <resultMap type="com.mzlalal.base.entity.oss.dto.DiaryEntity" id="diaryMap">
-        <result property="id" column="id"/>
-        <result property="diaryContent" column="diary_content"/>
-        <result property="diaryDate" column="diary_date"/>
-        <result property="isHide" column="is_hide"/>
-        <result property="createBy" column="create_by"/>
-        <result property="createName" column="create_name"/>
-        <result property="createTime" column="create_time"/>
-        <result property="updateBy" column="update_by"/>
-        <result property="updateTime" column="update_time"/>
-        <result property="updateName" column="update_name"/>
+    <resultMap id="diaryMap" type="com.mzlalal.base.entity.oss.dto.DiaryEntity">
+        <result column="id" property="id"/>
+        <result column="diary_content" property="diaryContent"/>
+        <result column="diary_date" property="diaryDate"/>
+        <result column="is_hide" property="isHide"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_name" property="createName"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="update_name" property="updateName"/>
     </resultMap>
 
     <select id="queryRecentDate" resultType="java.util.Date">
@@ -22,7 +22,7 @@
         <where>
             <if test="subscribeUserIdList != null and subscribeUserIdList.size() > 0">
                 AND create_by IN
-                <foreach collection="subscribeUserIdList" item="item" index="index" open="( " separator="," close=" )">
+                <foreach close=" )" collection="subscribeUserIdList" index="index" item="item" open="( " separator=",">
                     #{item}
                 </foreach>
             </if>
@@ -31,5 +31,18 @@
             </if>
         </where>
         ORDER BY diary_date DESC
+    </select>
+
+    <select id="queryDiaryContentStatistics" parameterType="java.util.List" resultType="com.mzlalal.base.entity.oss.vo.DiaryStatVo">
+        select
+        td.create_by user_id,
+        (select tu.username from t_user tu where tu.id = td.create_by) user_name,
+        sum(length(td.diary_content)) total_word
+        from t_diary td
+        where td.create_by in
+        <foreach close=" )" collection="subscribeUserIdList" index="index" item="item" open="( " separator=",">
+            #{item}
+        </foreach>
+        group by td.create_by
     </select>
 </mapper>

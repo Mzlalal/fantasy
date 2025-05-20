@@ -99,6 +99,9 @@
             <button @click="redirectOlderVersion">切换至旧版本</button>
         </slot>
         <slot>
+            <button @click="redirectStat">尺墨虹记</button>
+        </slot>
+        <slot>
             <button @click="redirectSubscribe">我的订阅</button>
         </slot>
     </template-popup-menu>
@@ -223,6 +226,10 @@
             // 切换至旧版本
             redirectOlderVersion() {
                 window.location = "/fantasy-oss/fei-hong-lie-biao-jiu-ban-ben.html";
+            },
+            // 切换至尺墨虹记
+            redirectStat() {
+                window.location = "/fantasy-oss/chi-mo-hong-ji.html";
             }
         },
         created() {

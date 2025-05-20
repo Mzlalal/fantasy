@@ -6,6 +6,8 @@ import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oss.dto.DiaryEntity;
 import io.swagger.annotations.ApiOperation;
+import java.util.List;
+import java.util.Map;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.core.Ordered;
 import org.springframework.validation.annotation.Validated;
@@ -14,9 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.List;
-import java.util.Map;
-
 /**
  * feign调用类
  *
@@ -24,7 +23,7 @@ import java.util.Map;
  * @date 2022-04-28 20:08:41
  **/
 @FeignClient(contextId = "DiaryFeignApi", name = GlobalConstant.FANTASY_OSS, url = "${fantasy-oss.feign.url:}"
-        , path = "/api/v1/oss/diary")
+    , path = "/api/v1/oss/diary")
 public interface DiaryFeignApi {
 
     /**
@@ -91,4 +90,13 @@ public interface DiaryFeignApi {
     @ApiOperation("查询飞虹根据日期分组")
     @RequestMapping(value = "/query.diary.group.by.date", method = RequestMethod.POST)
     Result<Map<String, List<DiaryEntity>>> queryDiaryGroupByDate(@RequestBody Po<DiaryEntity> po);
+
+    /**
+     * 查询飞虹订阅用户的字符统计百分比
+     *
+     * @return Result<List < Map < String, Object>>>
+     */
+    @ApiOperation("查询飞虹订阅用户的字符统计百分比")
+    @RequestMapping(value = "/query.diary.content.statistics", method = RequestMethod.GET)
+    Result<List<Map<String, Object>>> queryDiaryContentStatistics();
 }

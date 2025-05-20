@@ -4,7 +4,6 @@ import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oss.dto.DiaryEntity;
 import com.mzlalal.base.service.BaseService;
-
 import java.util.List;
 import java.util.Map;
 
@@ -23,4 +22,11 @@ public interface DiaryService extends BaseService<DiaryEntity> {
      * @return Result<Map < Date, List < DiaryEntity>>>
      */
     Result<Map<String, List<DiaryEntity>>> queryDiaryGroupByDate(Po<DiaryEntity> po);
+
+    /**
+     * 查询飞虹订阅用户的字符统计百分比
+     *
+     * @return 字符统计百分比
+     */
+    Result<List<Map<String, Object>>> queryDiaryContentStatistics();
 }

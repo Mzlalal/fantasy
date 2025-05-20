@@ -11,15 +11,14 @@ import com.mzlalal.base.util.AssertUtil;
 import com.mzlalal.base.util.FantasyPage;
 import com.mzlalal.oss.service.DiaryService;
 import io.swagger.annotations.Api;
+import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * 飞虹controller
@@ -64,8 +63,8 @@ public class DiaryController implements DiaryFeignApi {
         DiaryEntity entity = diaryService.getById(diary.getId());
         AssertUtil.notNull(entity, "动态查询不存在");
         AssertUtil.isTrue(StrUtil.equals(entity.getCreateBy(), Oauth2Context.getUserIdElseThrow())
-                , "您无权修改当前动态");
-        
+            , "您无权修改当前动态");
+
         if (diaryService.updateById(diary)) {
             return Result.ok();
         }
@@ -83,5 +82,10 @@ public class DiaryController implements DiaryFeignApi {
     @Override
     public Result<Map<String, List<DiaryEntity>>> queryDiaryGroupByDate(@RequestBody Po<DiaryEntity> po) {
         return diaryService.queryDiaryGroupByDate(po);
+    }
+
+    @Override
+    public Result<List<Map<String, Object>>> queryDiaryContentStatistics() {
+        return diaryService.queryDiaryContentStatistics();
     }
 }

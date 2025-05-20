@@ -71,6 +71,9 @@
         <slot>
             <button @click="redirectLatestVersion">切换至新版本</button>
         </slot>
+        <slot>
+            <button @click="redirectStat">尺墨虹记</button>
+        </slot>
     </template-popup-menu>
 </div>
 </body>
@@ -164,6 +167,10 @@
             // 切换至新版本
             redirectLatestVersion() {
                 window.location = "/fantasy-oss/fei-hong-lie-biao.html";
+            },
+            // 切换至尺墨虹记
+            redirectStat() {
+                window.location = "/fantasy-oss/chi-mo-hong-ji.html";
             }
         },
         created() {
