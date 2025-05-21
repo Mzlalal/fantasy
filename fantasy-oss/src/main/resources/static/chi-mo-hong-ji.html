@@ -24,23 +24,27 @@
         margin: 0;
         display: flex;
         justify-content: center;
-        align-items: center;
-        height: 100vh;
+        align-items: flex-start; /* 改为顶部对齐 */
+        min-height: 100vh;
         background-color: #f5f5f5;
         font-family: "Arial", sans-serif;
+        padding-top: 10px; /* 减少顶部填充 */
       }
 
       .container {
         display: flex;
         flex-direction: column;
         align-items: center;
+        max-width: 100%;
+        padding: 0 10px;
+        margin-top: 100px; /* 增加顶部边距，使奶茶杯下移 */
       }
 
       .cup-container {
         position: relative;
-        width: 240px;
-        height: 480px;
-        margin-bottom: 30px;
+        width: 200px; /* 减小宽度 */
+        height: 400px; /* 减小高度 */
+        margin-bottom: 20px; /* 减小下边距 */
         perspective: 1000px;
       }
 
@@ -54,11 +58,11 @@
 
       .cup-body {
         position: absolute;
-        top: 50px;
+        top: 40px; /* 减小顶部距离 */
         left: 50%;
         transform: translateX(-50%);
-        width: 180px;
-        height: 360px;
+        width: 150px; /* 减小宽度 */
+        height: 300px; /* 减小高度 */
         background-color: rgba(255, 255, 255, 0.7);
         border-radius: 10px 10px 50px 50px;
         overflow: hidden;
@@ -71,8 +75,8 @@
         top: 0;
         left: 50%;
         transform: translateX(-50%);
-        width: 180px;
-        height: 50px;
+        width: 150px; /* 减小宽度 */
+        height: 40px; /* 减小高度 */
         background: linear-gradient(to bottom, #ffffff, #f5f5dc);
         border-radius: 50px 50px 0 0;
         z-index: 2;
@@ -85,7 +89,7 @@
         top: -10px;
         left: 0;
         width: 100%;
-        height: 60px;
+        height: 50px; /* 减小高度 */
         background: radial-gradient(circle at center, #ffffff 0%, #f5f5dc 100%);
         border-radius: 50%;
         box-shadow: inset 0 -5px 10px rgba(0, 0, 0, 0.1);
@@ -93,8 +97,8 @@
 
       .cream-topping {
         position: absolute;
-        width: 8px;
-        height: 8px;
+        width: 6px; /* 减小大小 */
+        height: 6px; /* 减小大小 */
         background-color: #8b4513;
         border-radius: 50%;
         z-index: 3;
@@ -102,11 +106,11 @@
 
       .cup-lid {
         position: absolute;
-        top: 30px;
+        top: 35px; /* 减小顶部距离 */
         left: 50%;
         transform: translateX(-50%);
-        width: 190px;
-        height: 10px;
+        width: 160px; /* 减小宽度 */
+        height: 8px; /* 减小高度 */
         background-color: rgba(255, 255, 255, 0.9);
         border-radius: 5px;
         z-index: 3;
@@ -123,17 +127,17 @@
       }
 
       .emoji {
-        font-size: 40px;
+        font-size: 30px; /* 减小字体大小 */
         z-index: 6;
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
       }
 
       .wave-divider {
         position: absolute;
-        bottom: -2px; /* 确保与下面的区域连接 */
+        bottom: -2px;
         left: 0;
         width: 100%;
-        height: 8px; /* 较小高度的波浪 */
+        height: 8px;
         background: linear-gradient(
           to bottom,
           transparent,
@@ -170,8 +174,8 @@
         top: 30px;
         left: 50%;
         transform: translateX(-50%);
-        width: 180px;
-        height: 360px;
+        width: 150px; /* 减小宽度 */
+        height: 300px; /* 减小高度 */
         background: linear-gradient(
           90deg,
           rgba(255, 255, 255, 0.3) 0%,
@@ -189,7 +193,7 @@
         bottom: 10px;
         left: 50%;
         transform: translateX(-50%);
-        width: 160px;
+        width: 140px; /* 减小宽度 */
         height: 20px;
         background: rgba(0, 0, 0, 0.15);
         border-radius: 50%;
@@ -199,26 +203,38 @@
 
       .user-legend {
         display: flex;
-        flex-wrap: wrap;
+        flex-wrap: nowrap; /* 改为不换行 */
         justify-content: center;
-        max-width: 600px;
-        margin-top: 20px;
+        overflow-x: auto; /* 允许水平滚动 */
+        max-width: 100%;
+        margin-top: 10px; /* 减小上边距 */
+        padding: 5px;
+        white-space: nowrap; /* 防止文本换行 */
       }
 
       .legend-item {
         display: flex;
         align-items: center;
-        margin: 5px 10px;
-        padding: 8px 15px;
-        border-radius: 20px;
-        font-size: 14px;
+        margin: 2px 5px; /* 减小外边距 */
+        padding: 4px 8px; /* 减小内边距 */
+        border-radius: 15px;
+        font-size: 12px; /* 减小字体大小 */
         font-weight: bold;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        white-space: nowrap; /* 防止文本换行 */
       }
 
       .legend-emoji {
-        margin-right: 8px;
-        font-size: 20px;
+        margin-right: 4px; /* 减小右边距 */
+        font-size: 16px; /* 减小字体大小 */
+      }
+
+      /* 适配移动设备 */
+      @media (max-width: 768px) {
+        .user-legend {
+          justify-content: flex-start;
+          width: 100%;
+        }
       }
     </style>
   </head>
@@ -238,7 +254,7 @@
                 class="cream-topping"
                 :style="{
                                  top: Math.random() * 30 + 'px',
-                                 left: Math.random() * 180 + 'px'
+                                 left: Math.random() * 150 + 'px'
                              }"
               ></div>
             </div>
@@ -359,11 +375,24 @@
             const milkTeaCup = this.$refs.milkTeaCup;
 
             const shake = () => {
-              // 随机选择抖动方向和幅度
-              const directions = ["translateX", "translateY", "rotate"];
+              // 随机选择抖动方向，增加左右摇晃的权重
+              const directions = ["rotate"];
               const direction =
                 directions[Math.floor(Math.random() * directions.length)];
-              const amount = Math.random() * 5 - 2.5; // -2.5到2.5之间的随机值
+
+              // 根据方向设置不同的幅度
+              let amount;
+              if (direction === "translateX") {
+                // 左右摇晃幅度加大
+                amount = Math.random() * 20 - 10; // -10到10之间的随机值
+              } else if (direction === "translateY") {
+                // 上下摇晃幅度保持适中
+                amount = Math.random() * 8 - 4; // -4到4之间的随机值
+              } else {
+                // 旋转幅度轻微增加
+                amount = Math.random() * 12 - 6; // -6到6之间的随机值
+              }
+
               const unit = direction === "rotate" ? "deg" : "px";
 
               // 应用抖动效果
@@ -372,15 +401,15 @@
               // 恢复原位置
               setTimeout(() => {
                 milkTeaCup.style.transform = "none";
-              }, 500);
+              }, 300); // 保持较快的恢复时间
 
-              // 下一次抖动的时间间隔（3-8秒）
-              const nextTime = Math.random() * 5000 + 3000;
+              // 下一次抖动的时间间隔（1.5-4秒）
+              const nextTime = Math.random() * 2500 + 1500;
               setTimeout(shake, nextTime);
             };
 
             // 开始第一次抖动
-            const initialDelay = Math.random() * 3000;
+            const initialDelay = Math.random() * 1500;
             setTimeout(shake, initialDelay);
           },
           lightenColor(color, percent) {
