@@ -112,10 +112,10 @@
     <modelVersion>4.0.0</modelVersion>
     <modules>
         <module>fantasy-base</module>
-        <module>fantasy-gateway</module>
+        <!--        <module>fantasy-gateway</module>-->
         <module>fantasy-oauth2</module>
         <module>fantasy-oss</module>
-        <module>fantasy-chess</module>
+        <!--        <module>fantasy-chess</module>-->
     </modules>
     <packaging>pom</packaging>
 
