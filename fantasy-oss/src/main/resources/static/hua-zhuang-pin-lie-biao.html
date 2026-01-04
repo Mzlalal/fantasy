@@ -107,14 +107,12 @@
     /* 空状态样式 */
     .empty-state {
         text-align: center;
-        padding: 60px 20px;
+        padding: 60px 0px;
         color: #999;
     }
 
-    .empty-state i {
-        font-size: 48px;
-        margin-bottom: 16px;
-        display: block;
+    .ui-notice {
+        display: none;
     }
 
     /* 置顶图标 */
@@ -184,7 +182,7 @@
             </div>
 
             <!-- 空状态 -->
-            <div class="empty-state" v-else>
+            <div class="empty-state" v-if="!loading && todoList && todoList.length == 0">
                 <div>💄</div>
                 <div>暂无化妆品</div>
                 <div style="font-size: 14px; margin-top: 8px;">点击右上角添加您的第一个化妆品提醒吧</div>
