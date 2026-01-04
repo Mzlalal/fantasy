@@ -1,5 +1,6 @@
 package com.mzlalal.oss.controller;
 
+import cn.hutool.core.collection.CollUtil;
 import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oss.dto.TodoCosmeticEntity;
@@ -9,7 +10,6 @@ import com.mzlalal.base.util.FantasyPage;
 import com.mzlalal.oss.enums.NotifyTypeEnum;
 import com.mzlalal.oss.service.TodoCosmeticService;
 import io.swagger.annotations.Api;
-import java.util.Collections;
 import lombok.AllArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -74,7 +74,7 @@ public class TodoCosmeticController implements TodoCosmeticFeignApi {
 
     @Override
     public Result<Void> delete(@RequestBody String[] ids) {
-        if (todoCosmeticService.removeByIds(Collections.singletonList(ids))) {
+        if (todoCosmeticService.removeByIds(CollUtil.newArrayList(ids))) {
             return Result.ok();
         }
         return Result.fail();
