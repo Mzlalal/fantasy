@@ -42,6 +42,7 @@
         position: relative;
         overflow: hidden;
         padding-top: 15px; /* 为右上角的类型标签留空间 */
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     }
 
     .todo-card::before {
@@ -67,13 +68,13 @@
     }
 
     .todo-card.top-priority {
-        background: linear-gradient(135deg, rgba(255, 235, 59, 0.08), rgba(255, 255, 255, 0.95));
-        border-left: 4px solid #ff9800;
-        box-shadow: 0 4px 20px rgba(255, 152, 0, 0.15);
+        background: linear-gradient(135deg, rgba(24, 180, 237, 0.08), rgba(255, 255, 255, 0.95));
+        border-left: 4px solid #18b4ed;
+        box-shadow: 0 4px 20px rgba(24, 180, 237, 0.15);
     }
 
     .todo-card.top-priority::before {
-        background: linear-gradient(90deg, #ff9800, #ff5722);
+        background: linear-gradient(90deg, #18b4ed, #4fc3f7);
         opacity: 1;
     }
 
@@ -155,6 +156,7 @@
             right: 10px;
             font-size: 11px;
             padding: 3px 8px;
+            background-color: #4fc3f7;
         }
 
         .todo-title {
@@ -198,7 +200,7 @@
 
     /* 置顶状态的特殊样式 */
     .todo-card.top-priority .todo-title {
-        color: #e65100;
+        color: #1565c0;
     }
 </style>
 <body>

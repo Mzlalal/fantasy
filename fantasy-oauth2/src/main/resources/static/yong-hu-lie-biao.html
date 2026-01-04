@@ -15,14 +15,134 @@
     <script src="js/components/DownSlideStream.js"></script>
 </head>
 <style>
+    .user-card {
+        background: #ffffff;
+        border-radius: 12px;
+        margin-bottom: 15px;
+        padding: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        border: 1px solid #f0f0f0;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        margin: 0px 10px 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        padding-top: 15px; /* 为右上角的租户信息留空间 */
+    }
 
+    .user-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, #18b4ed, #4fc3f7);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .user-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        border-color: #e0e0e0;
+    }
+
+    .user-card:hover::before {
+        opacity: 1;
+    }
+
+    .user-tenant {
+        position: absolute;
+        top: 12px;
+        right: 15px;
+        background: linear-gradient(135deg, #18b4ed, #4fc3f7);
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        box-shadow: 0 2px 8px rgba(24, 180, 237, 0.3);
+        z-index: 2;
+    }
+
+    .user-name {
+        font-size: 16px;
+        font-weight: 500;
+        color: #323233;
+        margin-bottom: 8px;
+    }
+
+    .user-info {
+        font-size: 14px;
+    }
+
+    .user-mobile {
+        display: block;
+        margin-bottom: 8px;
+    }
+
+    .user-roles {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .user-role {
+        background: linear-gradient(135deg, #18b4ed, #4fc3f7);
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 500;
+        box-shadow: 0 2px 8px rgba(24, 180, 237, 0.3);
+    }
+
+    /* 加载动画 */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .user-card {
+        animation: fadeInUp 0.6s ease-out;
+        animation-fill-mode: both;
+    }
+
+    .user-card:nth-child(1) { animation-delay: 0.1s; }
+    .user-card:nth-child(2) { animation-delay: 0.2s; }
+    .user-card:nth-child(3) { animation-delay: 0.3s; }
+    .user-card:nth-child(4) { animation-delay: 0.4s; }
+    .user-card:nth-child(5) { animation-delay: 0.5s; }
+    .user-card:nth-child(6) { animation-delay: 0.6s; }
+    .user-card:nth-child(7) { animation-delay: 0.7s; }
+    .user-card:nth-child(8) { animation-delay: 0.8s; }
+    .user-card:nth-child(9) { animation-delay: 0.9s; }
+    .user-card:nth-child(10) { animation-delay: 1.0s; }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+        .user-card {
+            padding-top: 12px;
+        }
+
+        .user-tenant {
+            top: 8px;
+            right: 10px;
+            font-size: 11px;
+            padding: 3px 8px;
+        }
+    }
 </style>
 <body>
 <div id="app">
     <header class="ui-header ui-header-positive ui-border-b text-center">
         <span class="position-left username-display" @click="menuShow = true">我的菜单</span>
-        <!--<span class="font-weight-bolder font-size-20px">斗也斗得</span>-->
-        <!--<a class="position-right username-display" href="/fantasy-chess/li-shi-ji-lu.html">历史记录</a>-->
     </header>
 
     <template-down-slide-stream :distance-to-bottom="90"
@@ -44,23 +164,22 @@
                 </div>
                 <button class="ui-searchbar-cancel" @click="searchConfirm">确认</button>
             </div>
-            <ul class="ui-list ui-list-function ui-border-tb">
-                <li v-for="user in userList">
-                    <div class="ui-list-info ui-border-t">
-                        <h4 class="ui-nowrap">
-                            {{user.username}}
-                        </h4>
-                        <p>
-                            <span class="ui-txt-highlight font-size-12px">{{user.mobile}}</span>
-                            <span class="ui-txt-highlight font-size-12px margin-left-5px"
-                                  v-for="role in user.roleList">
+            <div class="user-list">
+                <div class="user-card" v-for="user in userList" :key="user.id" @click="updateUser(user)">
+                    <div class="user-tenant">
+                        🏢 {{user.tenantId || 'ERROR'}}
+                    </div>
+                    <div class="user-name">{{user.username}}</div>
+                    <div class="user-info">
+                        <span class="user-mobile">📱 {{user.mobile}}</span>
+                        <div class="user-roles">
+                            <span class="user-role" v-for="role in user.roleList" :key="role.id">
                                 {{role.name}}
                             </span>
-                        </p>
+                        </div>
                     </div>
-                    <div class="ui-btn" @click="updateUser(user)">修改</div>
-                </li>
-            </ul>
+                </div>
+            </div>
         </slot>
     </template-down-slide-stream>
 
