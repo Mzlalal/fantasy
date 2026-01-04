@@ -16,29 +16,173 @@
     <script src="js/components/DownSlideStream.js"></script>
     <script src="js/components/PopupMenu.js"></script>
     <style>
+        /* 动态卡片样式优化 */
         .diary-cell {
-            padding: 16px 16px 0;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            margin: 12px auto;
+            padding: 16px;
+            border: 1px solid #f5f5f5;
+            transition: all 0.3s ease;
+            width: 400px;
+            max-width: 90vw;
+            box-sizing: border-box;
+        }
+
+        .diary-cell:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+
+        /* 用户信息区域 */
+        .diary-user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .diary-username {
+            font-size: 14px;
+            font-weight: 500;
+            color: #323233;
         }
 
         .diary-create-time {
+            font-size: 12px;
+            color: #969799;
             text-align: right;
         }
 
+        /* 内容区域 */
         .diary-content {
-            margin-top: 8px;
-            line-height: 18px;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #323233;
+            word-break: break-word;
+            margin: 0;
+            padding: 0;
+            white-space: pre-wrap;
+            font-family: inherit;
+            text-align: left;
         }
 
+        .diary-content p {
+            margin: 0 0 8px 0;
+        }
+
+        .diary-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* 搜索框定位 */
         .position-left-search {
             margin-top: 45px;
         }
 
+        /* 头部容器样式 */
         .ui-header ~ .ui-container {
             border-top: 0 !important;
         }
 
+        /* 搜索框输入框样式 */
         .ui-searchbar input {
             padding: unset !important;
+        }
+
+        /* 步骤组件样式调整 */
+        .van-steps {
+            background: #f8f8f8;
+            padding: 8px 0;
+        }
+
+        .van-step__title {
+            padding: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #646566;
+            text-align: center;
+            background: #f2f3f5;
+            border-radius: 20px;
+            display: inline-block;
+            margin: 6px 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .van-step--vertical {
+            padding: unset;
+        }
+
+        .van-step__circle-container {
+            display: none;
+        }
+
+        .van-step__line {
+            display: none;
+        }
+
+        /* 底部按钮优化 */
+        .ui-footer-btn {
+            background: #ffffff;
+            border-top: 1px solid #ebedf0;
+        }
+
+        .ui-footer-btn a {
+            color: #18b4ed;
+            font-weight: 500;
+        }
+
+        /* 底部按钮区域优化 */
+        .ui-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+
+        /* 页面内容区域调整，确保底部按钮不遮挡内容 */
+        .van-steps {
+            padding-bottom: 80px; /* 为固定底部按钮留出空间 */
+        }
+
+        /* 空状态样式 */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #969799;
+            font-size: 14px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 480px) {
+            .diary-cell {
+                width: 85vw;
+                max-width: none;
+                margin: 6px 6px;
+                padding: 6px;
+            }
+
+            .diary-content {
+                font-size: 15px;
+            }
+
+            .diary-user-info {
+                margin-bottom: 8px;
+            }
+
+            .van-steps {
+                padding-bottom: 70px;
+            }
+        }
+
+        /* 加载状态优化 */
+        .loading-indicator {
+            text-align: center;
+            padding: 20px;
+            color: #969799;
         }
     </style>
 </head>
@@ -67,20 +211,26 @@
                                 :offset-to-bottom="100"
                                 @on-scroll-to-bottom="onScrollToBottom">
         <slot>
-            <van-steps active-color="#969799" direction="vertical">
+            <!-- 有数据时显示列表 -->
+            <van-steps v-if="diaryGroup && Object.keys(diaryGroup).length > 0" active-color="#969799" direction="vertical">
                 <van-step :key="index" v-for="(value, key, index) in diaryGroup">
-                    <p>{{key}}</p>
+                    <div class="van-step__title"> 📅 {{key}}</div>
                     <div @click="updateDiary(item)" class="diary-cell" v-for="item in value">
-                        <van-row>
-                            <van-col :span="12" class="font-size-12px ui-txt-default">{{item.createName}}</van-col>
-                            <van-col :span="12" class="diary-create-time font-size-12px">{{item.createTime}}</van-col>
-                        </van-row>
-                        <van-row class="diary-content ui-txt-default font-size-16px">
-                            <van-col :span="24" class="auto-wrap" v-html="item.diaryContent"></van-col>
-                        </van-row>
+                        <!-- 用户信息区域 -->
+                        <div class="diary-user-info">
+                            <div class="diary-username">{{item.createName}}</div>
+                            <div class="diary-create-time">{{item.createTime}}</div>
+                        </div>
+                        <!-- 内容区域 -->
+                        <pre class="diary-content">{{item.diaryContent}}</pre>
                     </div>
                 </van-step>
             </van-steps>
+
+            <!-- 加载状态 -->
+            <div v-if="loading && currPage === 1" class="loading-indicator">
+                正在加载中...
+            </div>
         </slot>
     </template-down-slide-stream>
 

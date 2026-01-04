@@ -282,3 +282,24 @@ body {
     /* 如果右侧空间不足，菜单会自动调整位置 */
     transform: translateX(0) !important;
 }
+
+/* 底部按钮样式 */
+.ui-footer-btn .ui-tiled li {
+    background: #18b4ed;
+    border-radius: 8px;
+    margin: 8px;
+}
+
+.ui-footer-btn .ui-tiled li a {
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 500;
+    display: block;
+    padding: 12px 16px;
+    text-align: center;
+    text-decoration: none;
+}
+
+.ui-btn-lg {
+    border-radius: 8px;
+}
