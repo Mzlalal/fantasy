@@ -4,7 +4,7 @@ import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.global.po.Po;
-import com.mzlalal.base.entity.oss.dto.TodoNotifyEntity;
+import com.mzlalal.base.entity.oss.dto.TodoCosmeticEntity;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.core.Ordered;
@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
- * 待办提醒feign调用类
+ * 化妆品待办feign调用类
  *
  * @author Mzlalal
- * @date 2022-03-04 21:58:11
+ * @date 2026-01-03 13:33:07
  **/
-@FeignClient(contextId = "TodoNotifyFeignApi", name = GlobalConstant.FANTASY_OSS, url = "${fantasy-oss.feign.url:}"
-    , path = "/api/v1/oss/todo.notify")
-public interface TodoNotifyFeignApi {
+@FeignClient(contextId = "TodoCosmeticFeignApi", name = GlobalConstant.FANTASY_OSS, url = "${fantasy-oss.feign.url:}"
+    , path = "/api/v1/oss/todo.cosmetic")
+public interface TodoCosmeticFeignApi {
 
     /**
      * 查询分页信息
@@ -32,7 +32,7 @@ public interface TodoNotifyFeignApi {
     @ApiOperation("查看列表")
     @RequestMapping(value = "/list", method = RequestMethod.POST)
     @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 10)
-    Result<TodoNotifyEntity> list(@RequestBody Po<TodoNotifyEntity> po);
+    Result<TodoCosmeticEntity> list(@RequestBody Po<TodoCosmeticEntity> po);
 
     /**
      * 详情
@@ -43,7 +43,7 @@ public interface TodoNotifyFeignApi {
     @ApiOperation("查看详情")
     @RequestMapping(value = "/info/{id}", method = RequestMethod.GET)
     @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 20)
-    Result<TodoNotifyEntity> info(@PathVariable("id") String id);
+    Result<TodoCosmeticEntity> info(@PathVariable("id") String id);
 
     /**
      * 保存
@@ -54,7 +54,7 @@ public interface TodoNotifyFeignApi {
     @ApiOperation("保存")
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 30)
-    Result<TodoNotifyEntity> save(@RequestBody TodoNotifyEntity notify);
+    Result<TodoCosmeticEntity> save(@RequestBody TodoCosmeticEntity notify);
 
     /**
      * 更新
@@ -65,7 +65,7 @@ public interface TodoNotifyFeignApi {
     @ApiOperation("更新")
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 40)
-    Result<Void> update(@RequestBody TodoNotifyEntity notify);
+    Result<Void> update(@RequestBody TodoCosmeticEntity notify);
 
     /**
      * 根据ID数组批量删除
@@ -77,13 +77,4 @@ public interface TodoNotifyFeignApi {
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 50)
     Result<Void> delete(@RequestBody String[] ids);
-
-    /**
-     * 重新计算下次执行时间
-     *
-     * @return Result
-     */
-    @ApiOperation("重新计算下次执行时间")
-    @RequestMapping(value = "/calculate.next.execute.date.again", method = RequestMethod.GET)
-    Result<Void> calculateNextExecuteDateAgain();
 }

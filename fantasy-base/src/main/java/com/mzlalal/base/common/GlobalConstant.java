@@ -172,6 +172,15 @@ public interface GlobalConstant {
     }
 
     /**
+     * 化妆品待办调度redisKey
+     *
+     * @return String
+     */
+    static String todoCosmeticSchedule() {
+        return StrUtil.format("fantasy:todo:cosmetic:schedule");
+    }
+
+    /**
      * 纪念日redisKey
      *
      * @return String fantasy:day:matter:schedule

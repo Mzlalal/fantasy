@@ -265,3 +265,20 @@ body {
     white-space: pre-wrap;
     overflow: hidden;
 }
+
+/* v-select 样式优化 */
+.v-select {
+    min-width: 80px !important;
+}
+
+/* 确保下拉菜单在容器内完全可见 */
+.vs__dropdown-menu {
+    min-width: 160px !important;
+    /* 默认向右对齐，防止选项超出屏幕右侧 */
+    right: 0 !important;
+    left: auto !important;
+    /* 确保菜单不会超出视窗 */
+    max-width: calc(100vw - 20px) !important;
+    /* 如果右侧空间不足，菜单会自动调整位置 */
+    transform: translateX(0) !important;
+}

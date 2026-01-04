@@ -1,7 +1,7 @@
 package com.mzlalal.oss.config.schedule;
 
 import com.mzlalal.base.common.GlobalConstant;
-import com.mzlalal.oss.service.TodoCosmeticService;
+import com.mzlalal.oss.service.TodoNotifyService;
 import java.util.concurrent.TimeUnit;
 import lombok.AllArgsConstructor;
 import org.redisson.api.RLock;
@@ -11,20 +11,20 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 /**
- * 化妆品待办提醒调度
+ * 待办提醒调度
  *
  * @author Mzlalal
- * @date 2026/1/4 15:10
+ * @date 2022/3/17 21:32
  **/
 @Configuration
 @EnableScheduling
 @AllArgsConstructor
-public class TodoNotifyScheduleConfig {
+public class TodoCosmeticScheduleConfig {
 
     /**
      * 待办提醒service
      */
-    private final TodoCosmeticService todoCosmeticService;
+    private final TodoNotifyService todoNotifyService;
     /**
      * redissonClient连接
      */
@@ -34,9 +34,9 @@ public class TodoNotifyScheduleConfig {
      * 每五分钟的五秒后执行,例如: 01:05:05, 01:10:05, 01:15:05
      */
     @Scheduled(cron = "5 0/5 * * * ?")
-    public void todoCosmeticSchedule() {
+    public void todoNotifySchedule() {
         // 获取锁
-        RLock lock = redissonClient.getLock(GlobalConstant.todoCosmeticSchedule());
+        RLock lock = redissonClient.getLock(GlobalConstant.todoNotifySchedule());
         try {
             // 尝试获取锁,最大等待时间30秒,超过30秒自动释放
             boolean tryLock = lock.tryLock(0, 300, TimeUnit.SECONDS);
@@ -45,9 +45,9 @@ public class TodoNotifyScheduleConfig {
                 return;
             }
             // 对懒人模式的邮件进行提醒
-            todoCosmeticService.notifyLazyModeTodoList();
+            todoNotifyService.notifyLazyModeTodoList();
             // 对待办列表进行邮件通知
-            todoCosmeticService.notifyCurrentTimeTodoList();
+            todoNotifyService.notifyCurrentTimeTodoList();
         } catch (InterruptedException ignored) {
             // 忽略
         } finally {

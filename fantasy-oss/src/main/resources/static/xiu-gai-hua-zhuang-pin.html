@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, initial-scale=1.0, user-scalable=no"
+          name="viewport">
+    <title>修改化妆品</title>
+    <link href="css/plugin/frozen.css" rel="stylesheet"/>
+    <link href="css/plugin/vue.select.css" rel="stylesheet"/>
+    <link href="css/common.css" rel="stylesheet"/>
+    <script src="js/plugin/axios.min.js"></script>
+    <script src="js/plugin/vue.min.js"></script>
+    <script src="js/plugin/vue.select.js"></script>
+    <script src="js/plugin/calcTextareaHeight.js"></script>
+    <script src="js/CommonUtil.js"></script>
+    <script src="js/FantasyConstant.js"></script>
+</head>
+<style>
+
+</style>
+<body>
+<div id="app">
+    <header class="ui-header ui-header-positive ui-border-b text-center">
+        <span @click="redirectTodoList" class="position-right username-display">返回</span>
+    </header>
+    <div class="ui-form ui-border-t ui-container">
+        <ul class="ui-list ui-list-single ui-border-tb">
+            <li class="ui-border-t">
+                <div class="ui-list-info">
+                    <h4 class="ui-nowrap">化妆品名称</h4>
+                    <textarea :style="{'height': cosmeticNameHeight}" class="ui-txt-info textarea border-none" placeholder="请输入化妆品名称"
+                              ref="cosmeticNameTextarea" v-model="cosmeticName"></textarea>
+                </div>
+            </li>
+            <li class="ui-border-t">
+                <div class="ui-list-info">
+                    <h4 class="ui-nowrap">库存</h4>
+                    <input class="ui-txt-info textarea border-none" placeholder="请输入库存数量" style="width: 164px;" type="number" v-model="cosmeticStock">
+                </div>
+            </li>
+        </ul>
+        <div class="ui-form-item ui-form-item-switch ui-border-b">
+            <p>重复提醒</p>
+            <label class="ui-switch">
+                <input type="checkbox" v-model="enableRepeatNotifyMode">
+            </label>
+        </div>
+        <ul class="ui-list ui-list-single ui-border-tb">
+            <transition name="fade">
+                <li class="ui-border-t" v-if="enableRepeatNotifyMode">
+                    <div class="ui-list-info">
+                        <h4 class="ui-nowrap">周期</h4>
+                        <div class="ui-txt-info">
+                            <v-select :clearable="false" :options="cosmeticRepeatModeOption" :reduce="item => item.code"
+                                      :searchable="false" v-model="notifyType"></v-select>
+                        </div>
+                    </div>
+                </li>
+            </transition>
+            <li class="ui-border-t">
+                <div class="ui-list-info">
+                    <h4 class="ui-nowrap"></h4>
+                    <div class="ui-txt-info" v-if="notifyType === '2'">
+                        <v-select :clearable="false" :options="calendarMonthOption" :reduce="item => item.code"
+                                  :searchable="false" v-model="notifyMonth"></v-select>
+                    </div>
+                    <div class="ui-txt-info" v-if="notifyType === '2'">
+                        <v-select :clearable="false" :options="calendarDayOption" :reduce="item => item.code"
+                                  :searchable="false" v-model="notifyDay"></v-select>
+                    </div>
+                    <div class="ui-txt-info" v-if="notifyType === '3'">
+                        <v-select :clearable="false" :options="weekdayOption" :reduce="item => item.code"
+                                  :searchable="false" v-model="notifyWeekday"></v-select>
+                    </div>
+                    <div class="ui-txt-info">
+                        <v-select :clearable="false" :options="calendarHourOption" :reduce="item => item.code"
+                                  :searchable="false" v-model="notifyHour"></v-select>
+                    </div>
+                    <div class="ui-txt-info">
+                        <v-select :clearable="false" :options="calendarMinuteOption" :reduce="item => item.code"
+                                  :searchable="false" v-model="notifyMinute"></v-select>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <div class="ui-form-item ui-form-item-switch ui-border-b">
+            <p>懒人模式</p>
+            <label class="ui-switch">
+                <input type="checkbox" v-model="enableLazyMode">
+            </label>
+        </div>
+        <ul class="ui-list ui-list-single ui-border-tb" v-if="enableLazyMode">
+            <li class="ui-border-t">
+                <div class="ui-list-info">
+                    <h4 class="ui-nowrap"></h4>
+                    <div class="ui-txt-info">
+                        <v-select :clearable="false" :options="lazyTimesOption" :reduce="item => item.code"
+                                  :searchable="false" v-model="notifyLazyModeTimes"></v-select>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <div class="ui-form-item ui-form-item-switch ui-border-b">
+            <p>置顶</p>
+            <label class="ui-switch">
+                <input type="checkbox" v-model="notifyTopStatus">
+            </label>
+        </div>
+        <transition name="fade">
+            <div class="ui-form-item ui-form-item-switch ui-border-b" v-if="!enableRepeatNotifyMode">
+                <p>提醒后自动删除</p>
+                <label class="ui-switch">
+                    <input type="checkbox" v-model="notifyAfterDelete">
+                </label>
+            </div>
+        </transition>
+        <ul class="ui-list ui-list-single ui-border-tb">
+            <li class="ui-border-t">
+                <div class="ui-list-info">
+                    <h4 class="ui-nowrap">备注</h4>
+                    <textarea :style="{'height': height}" class="ui-txt-infotextarea border-none" placeholder="请输入备注"
+                              ref="textarea" v-model="notifyMemo"></textarea>
+                </div>
+            </li>
+        </ul>
+        <transition name="fade">
+            <div class="ui-tooltips ui-tooltips-guide ui-tooltips-function" v-if="tips">
+                <div class="ui-tooltips-cnt ui-border-b">
+                    <i></i>{{tips}}
+                </div>
+            </div>
+        </transition>
+        <div class="ui-loading-wrap margin-top-1em" v-if="loading">
+            <p>加载中</p>
+            <i class="ui-loading"></i>
+        </div>
+        <div class="ui-btn-wrap" v-if="!loading">
+            <button @click="updateTodo" class="ui-btn-lg ui-btn-primary">
+                保存
+            </button>
+        </div>
+        <div class="ui-btn-wrap" style="padding-top: 0" v-if="!loading">
+            <button @click="deleteTodo" class="ui-btn-lg ui-btn-danger">
+                删除当前化妆品待办
+            </button>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    Vue.component('v-select', VueSelect.VueSelect);
+
+    new Vue({
+        el: "#app",
+        data() {
+            return {
+                id: null,
+                cosmeticName: null,
+                cosmeticStock: null,
+                enableRepeatNotifyMode: false,
+                notifyType: "2",
+                notifyMonth: null,
+                notifyDay: null,
+                notifyWeekday: null,
+                notifyHour: null,
+                notifyMinute: null,
+                enableLazyMode: false,
+                notifyLazyModeTimes: 0,
+                notifyMemo: null,
+                notifyTopStatus: false,
+                notifyAfterDelete: false,
+                height: '24px',
+                // 化妆品名称文本框高度
+                cosmeticNameHeight: '24px',
+                tips: null,
+                loading: false,
+            }
+        },
+        computed: {
+            cosmeticRepeatModeOption() {
+                // 化妆品待办只支持月、周、天提醒
+                return window.repeatModeOption.filter(item => item.code >= 2 && item.code <= 4);
+            }
+        },
+        methods: {
+            // 跳转到化妆品待办列表
+            redirectTodoList() {
+                // 跳转到化妆品待办列表
+                window.location = "/fantasy-oss/hua-zhuang-pin-lie-biao.html";
+            },
+            // 获取文本框高度
+            getHeight() {
+                this.height = calcTextareaHeight(this.$refs.textarea, 1, null).height;
+            },
+            // 获取化妆品名称文本框高度
+            getCosmeticNameHeight() {
+                this.cosmeticNameHeight = calcTextareaHeight(this.$refs.cosmeticNameTextarea, 1, null).height;
+            },
+            // 初始化化妆品待办信息
+            initTodo() {
+                this.loading = true;
+                // 请求接口
+                axios({
+                    method: "get",
+                    url: "/fantasy-oss/api/v1/oss/todo.cosmetic/info/" + this.id,
+                }).then(res => {
+                    this.loading = false;
+                    this.cosmeticName = res.data.cosmeticName;
+                    this.cosmeticStock = res.data.cosmeticStock;
+                    this.enableRepeatNotifyMode = res.data.notifyType > 0;
+                    this.notifyMinute = res.data.notifyMinute;
+                    this.enableLazyMode = res.data.notifyLazyModeTimes > 0;
+                    this.notifyMemo = res.data.notifyMemo;
+                    this.notifyTopStatus = res.data.notifyTopStatus === "1";
+                    this.notifyAfterDelete = res.data.notifyAfterDelete === "1";
+                    // 初始化备注高度
+                    setTimeout(() => {
+                        this.notifyType = res.data.notifyType;
+                        setTimeout(() => {
+                            this.notifyMonth = res.data.notifyMonth;
+                            this.notifyDay = res.data.notifyDay;
+                            this.notifyWeekday = res.data.notifyWeekday;
+                            this.notifyHour = res.data.notifyHour;
+                            this.notifyLazyModeTimes = res.data.notifyLazyModeTimes;
+                        })
+                        this.getHeight();
+                        this.getCosmeticNameHeight();
+                    })
+                }).catch(res => {
+                    this.loading = false
+                    if (res.data && res.data.msg) {
+                        this.tips = res.data.msg;
+                    } else {
+                        alert("服务器繁忙，请稍后再试")
+                    }
+                })
+            },
+            // 更新化妆品待办
+            updateTodo() {
+                this.loading = true;
+                let param = {
+                    "id": this.id,
+                    "cosmeticName": this.cosmeticName,
+                    "cosmeticStock": this.cosmeticStock,
+                    "notifyCalendarType": "1", // 化妆品待办固定为公历
+                    "notifyType": this.notifyType,
+                    "notifyMonth": this.notifyMonth,
+                    "notifyDay": this.notifyDay,
+                    "notifyWeekday": this.notifyWeekday,
+                    "notifyHour": this.notifyHour,
+                    "notifyMinute": this.notifyMinute,
+                    "notifyLazyModeTimes": this.notifyLazyModeTimes,
+                    "notifyMemo": this.notifyMemo,
+                    "notifyTopStatus": this.notifyTopStatus ? "1" : "0",
+                    "notifyAfterDelete": this.notifyAfterDelete ? "1" : "0",
+                }
+                // 请求接口
+                axios({
+                    method: "post",
+                    url: "/fantasy-oss/api/v1/oss/todo.cosmetic/update",
+                    data: param
+                }).then(res => {
+                    this.tips = res.msg;
+                    this.loading = false;
+                }).catch(res => {
+                    this.loading = false
+                    if (res.data && res.data.msg) {
+                        this.tips = res.data.msg;
+                    } else {
+                        alert("服务器繁忙，请稍后再试")
+                    }
+                })
+            },
+            // 删除化妆品待办
+            deleteTodo() {
+                // 确认删除
+                if (!window.confirm("确认删除当前化妆品待办事项吗？")) {
+                    return;
+                }
+                this.loading = true;
+                // 请求接口
+                axios({
+                    method: "post",
+                    url: "/fantasy-oss/api/v1/oss/todo.cosmetic/delete",
+                    data: [this.id]
+                }).then(res => {
+                    // 跳转回列表
+                    this.redirectTodoList();
+                }).catch(res => {
+                    this.loading = false
+                    if (res.data && res.data.msg) {
+                        this.tips = res.data.msg;
+                    } else {
+                        alert("服务器繁忙，请稍后再试")
+                    }
+                })
+            }
+        },
+        created() {
+            // 从缓存中获取ID
+            this.id = localStorage.getItem("oss.todo.cosmetic.id");
+            // 初始化化妆品待办
+            this.initTodo()
+        },
+        watch: {
+            enableRepeatNotifyMode(newVal, oldVal) {
+                if (newVal === false) {
+                    this.notifyType = "0";
+                }
+                if (newVal === true) {
+                    this.notifyType = "2"; // 默认每月提醒
+                }
+                // 每次更改提醒后删除都重置为false
+                this.notifyAfterDelete = false;
+            },
+            enableLazyMode(newVal, oldVal) {
+                if (newVal === false) {
+                    this.notifyLazyModeTimes = 0;
+                }
+                if (newVal === true) {
+                    this.notifyLazyModeTimes = window.lazyTimesOption[0].code;
+                }
+            },
+            notifyType(newVal, oldVal) {
+                if (newVal === '3') {
+                    this.notifyWeekday = window.weekdayOption[0].code;
+                } else {
+                    this.notifyWeekday = null;
+                }
+            },
+            notifyMemo() {
+                this.getHeight();
+            },
+            cosmeticName() {
+                this.getCosmeticNameHeight();
+            }
+        }
+    });
+</script>
+
+</html>

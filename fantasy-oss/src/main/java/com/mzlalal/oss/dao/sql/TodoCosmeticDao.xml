@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mzlalal.oss.dao.TodoCosmeticDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap id="todoCosmeticMap" type="com.mzlalal.base.entity.oss.dto.TodoCosmeticEntity">
+        <result column="id" property="id"/>
+        <result column="cosmetic_name" property="cosmeticName"/>
+        <result column="cosmetic_stock" property="cosmeticStock"/>
+        <result column="notify_calendar_type" property="notifyCalendarType"/>
+        <result column="notify_type" property="notifyType"/>
+        <result column="notify_month" property="notifyMonth"/>
+        <result column="notify_day" property="notifyDay"/>
+        <result column="notify_weekday" property="notifyWeekday"/>
+        <result column="notify_hour" property="notifyHour"/>
+        <result column="notify_minute" property="notifyMinute"/>
+        <result column="notify_lazy_mode_times" property="notifyLazyModeTimes"/>
+        <result column="notify_exec_time" property="notifyExecTime"/>
+        <result column="notify_top_status" property="notifyTopStatus"/>
+        <result column="notify_after_delete" property="notifyAfterDelete"/>
+        <result column="notify_mail_set" property="notifyMailSet"/>
+        <result column="is_hide" property="isHide"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_name" property="createName"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_name" property="updateName"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+</mapper>
