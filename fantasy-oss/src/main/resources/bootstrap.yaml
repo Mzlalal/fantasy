@@ -21,7 +21,7 @@ spring:
             refresh: true
           - data-id: notify-mail.yaml
             refresh: true
-          - data-id: swagger-knife.yaml
-            refresh: true
+  #          - data-id: swagger-knife.yaml
+  #            refresh: true
   profiles:
     active: 'product'

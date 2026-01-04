@@ -19,7 +19,7 @@ spring:
             refresh: true
           - data-id: repeat-submit.yaml
             refresh: true
-          - data-id: swagger-knife.yaml
-            refresh: true
+  #          - data-id: swagger-knife.yaml
+  #            refresh: true
   profiles:
     active: 'product'
