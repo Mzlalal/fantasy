@@ -11,13 +11,4 @@ import com.mzlalal.base.service.BaseService;
  */
 public interface TodoNotifyService extends BaseService<TodoNotifyEntity> {
 
-    /**
-     * 对懒人模式的邮件进行提醒
-     */
-    void notifyLazyModeTodoList();
-
-    /**
-     * 对待办列表进行邮件通知
-     */
-    void notifyCurrentTimeTodoList();
 }
