@@ -97,6 +97,8 @@
         }
 
         .van-step__title {
+            border: 1px solid gray;
+            background: #ffffff;
             padding: 6px;
             font-size: 14px;
             font-weight: 500;
@@ -106,6 +108,16 @@
             display: block;
             margin: 6px 12px;
             box-shadow: 2px 4px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .van-step__title .van-step__title {
+            border: unset;
+            text-align: left;
+            box-shadow: unset;
+        }
+
+        .van-step--vertical:not(:last-child)::after {
+            border: unset;
         }
 
         .van-step--vertical {
@@ -159,6 +171,7 @@
                 max-width: none;
                 margin: 6px 6px;
                 padding: 6px;
+                border: 1px solid gray;
             }
 
             .diary-content {
