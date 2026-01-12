@@ -4,10 +4,10 @@ import cn.hutool.core.collection.CollUtil;
 import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oss.dto.TodoCosmeticEntity;
+import com.mzlalal.base.entity.oss.req.UpdatePercentReq;
 import com.mzlalal.base.feign.oss.TodoCosmeticFeignApi;
 import com.mzlalal.base.oauth2.Oauth2Context;
 import com.mzlalal.base.util.FantasyPage;
-import com.mzlalal.oss.enums.NotifyTypeEnum;
 import com.mzlalal.oss.service.TodoCosmeticService;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
@@ -48,8 +48,6 @@ public class TodoCosmeticController implements TodoCosmeticFeignApi {
 
     @Override
     public Result<TodoCosmeticEntity> save(@Validated @RequestBody TodoCosmeticEntity todoCosmetic) {
-        // 验证重复提醒的值
-        NotifyTypeEnum.getEnum(todoCosmetic.getNotifyType()).checkAndCreateNextTime(todoCosmetic);
         // 设置邮箱
         todoCosmetic.setNotifyMailSet(Oauth2Context.getElseThrow().getMail());
         // 保存
@@ -61,8 +59,6 @@ public class TodoCosmeticController implements TodoCosmeticFeignApi {
 
     @Override
     public Result<Void> update(@RequestBody TodoCosmeticEntity todoCosmetic) {
-        // 获取下次执行时间
-        NotifyTypeEnum.getEnum(todoCosmetic.getNotifyType()).checkAndCreateNextTime(todoCosmetic);
         // 设置邮箱
         todoCosmetic.setNotifyMailSet(Oauth2Context.getElseThrow().getMail());
         // 更新
@@ -75,6 +71,20 @@ public class TodoCosmeticController implements TodoCosmeticFeignApi {
     @Override
     public Result<Void> delete(@RequestBody String[] ids) {
         if (todoCosmeticService.removeByIds(CollUtil.newArrayList(ids))) {
+            return Result.ok();
+        }
+        return Result.fail();
+    }
+
+    @Override
+    public Result<Void> updatePercent(@Validated @RequestBody UpdatePercentReq req) {
+        // 构建更新实体
+        TodoCosmeticEntity todoCosmetic = new TodoCosmeticEntity();
+        todoCosmetic.setId(req.getId());
+        todoCosmetic.setCosmeticPercent(req.getCosmeticPercent());
+
+        // 只更新百分比字段
+        if (todoCosmeticService.updateById(todoCosmetic)) {
             return Result.ok();
         }
         return Result.fail();

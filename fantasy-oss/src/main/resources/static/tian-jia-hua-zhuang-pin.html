@@ -8,121 +8,134 @@
     <link href="https://static-4518.obs.cn-south-1.myhuaweicloud.com/frozen.css" rel="stylesheet"/>
     <link href="https://static-4518.obs.cn-south-1.myhuaweicloud.com/vue.select.css" rel="stylesheet"/>
     <link href="css/common.css" rel="stylesheet"/>
+    <!-- Vant 组件库 -->
+    <link href="https://static-4518.obs.cn-south-1.myhuaweicloud.com/vant.css" rel="stylesheet"/>
     <script src="https://static-4518.obs.cn-south-1.myhuaweicloud.com/axios.min.js"></script>
     <script src="https://static-4518.obs.cn-south-1.myhuaweicloud.com/vue.min.js"></script>
+    <script src="https://static-4518.obs.cn-south-1.myhuaweicloud.com/vant.min.js"></script>
     <script src="https://static-4518.obs.cn-south-1.myhuaweicloud.com/vue.select.js"></script>
     <script src="js/plugin/calcTextareaHeight.js"></script>
     <script src="js/CommonUtil.js"></script>
     <script src="js/FantasyConstant.js"></script>
 </head>
 <style>
+    .fade-enter-active, .fade-leave-active {
+        transition: opacity 0.3s, transform 0.3s;
+    }
 
+    .fade-enter, .fade-leave-to {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    
+    /* 滑块容器样式 */
+    .slider-container {
+        padding: 20px 15px;
+        background: #fff;
+    }
+    
+    .slider-label {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        font-size: 14px;
+        color: #646566;
+    }
+    
+    .slider-value {
+        font-size: 18px;
+        font-weight: bold;
+        color: #18b4ed;
+    }
 </style>
 <body>
 <div id="app">
     <header class="ui-header ui-header-positive ui-border-b text-center">
-        <span @click="redirectTodoList" class="position-right username-display">返回</span>
+        <span @click="redirectCosmeticList" class="position-left username-display">返回</span>
+        <span class="font-weight-bolder font-size-20px">添加化妆品</span>
     </header>
     <div class="ui-form ui-border-t ui-container">
         <ul class="ui-list ui-list-single ui-border-tb">
             <li class="ui-border-t">
                 <div class="ui-list-info">
                     <h4 class="ui-nowrap">化妆品名称</h4>
-                    <textarea :style="{'height': cosmeticNameHeight}" class="ui-txt-info textarea border-none" placeholder="请输入化妆品名称"
-                              ref="cosmeticNameTextarea" v-model="cosmeticName"></textarea>
+                    <textarea :style="{'height': cosmeticNameHeight}" class="ui-txt-info textarea border-none"
+                              placeholder="请输入化妆品名称" ref="cosmeticNameTextarea"
+                              v-model="cosmeticName"></textarea>
                 </div>
             </li>
             <li class="ui-border-t">
                 <div class="ui-list-info">
                     <h4 class="ui-nowrap">库存</h4>
-                    <input class="ui-txt-info textarea border-none" placeholder="请输入库存数量" type="number" v-model="cosmeticStock">
+                    <textarea :style="{'height': stockHeight}" class="ui-txt-info textarea border-none"
+                              placeholder="请输入库存数量" ref="stockTextarea"
+                              v-model="cosmeticStock"></textarea>
+                </div>
+            </li>
+            <li class="ui-border-t">
+                <div class="ui-list-info">
+                    <h4 class="ui-nowrap">备注</h4>
+                    <textarea :style="{'height': memoHeight}" class="ui-txt-info textarea border-none"
+                              placeholder="请输入备注" ref="memoTextarea"
+                              v-model="cosmeticMemo"></textarea>
                 </div>
             </li>
         </ul>
-        <div class="ui-form-item ui-form-item-switch ui-border-b">
-            <p>重复提醒</p>
-            <label class="ui-switch">
-                <input type="checkbox" v-model="enableRepeatNotifyMode">
-            </label>
+
+        <!-- 百分比滑块 -->
+        <div class="slider-container ui-border-tb">
+            <div class="slider-label">
+                <span>百分比</span>
+                <span class="slider-value">{{cosmeticPercent}}%</span>
+            </div>
+            <van-slider :max="100" :min="0" :step="1" active-color="#18b4ed"
+                        bar-height="6px" v-model="cosmeticPercent"></van-slider>
         </div>
+
         <ul class="ui-list ui-list-single ui-border-tb">
+            <li class="ui-border-t">
+                <div class="ui-list-info">
+                    <h4 class="ui-nowrap">提醒周期</h4>
+                    <div class="ui-txt-info">
+                        <v-select :clearable="false" :options="notifyTypeOptions" :reduce="item => item.code"
+                                  :searchable="false" v-model="notifyType"></v-select>
+                    </div>
+                </div>
+            </li>
             <transition name="fade">
-                <li class="ui-border-t" v-if="enableRepeatNotifyMode">
+                <li class="ui-border-t" v-if="notifyType === '3'">
                     <div class="ui-list-info">
-                        <h4 class="ui-nowrap">周期</h4>
+                        <h4 class="ui-nowrap">星期几</h4>
                         <div class="ui-txt-info">
-                            <v-select :clearable="false" :options="cosmeticRepeatModeOption" :reduce="item => item.code"
-                                      :searchable="false" v-model="notifyType"></v-select>
+                            <v-select :clearable="false" :options="weekdayOptions" :reduce="item => item.code"
+                                      :searchable="false" v-model="notifyWeekday"></v-select>
                         </div>
                     </div>
                 </li>
             </transition>
             <li class="ui-border-t">
                 <div class="ui-list-info">
-                    <h4 class="ui-nowrap"></h4>
-                    <div class="ui-txt-info" v-if="notifyType === '0' || notifyType === '2'">
-                        <v-select :clearable="false" :options="calendarMonthOption" :reduce="item => item.code"
-                                  :searchable="false" v-model="notifyMonth"></v-select>
-                    </div>
-                    <div class="ui-txt-info" v-if="notifyType === '0' || notifyType === '2'">
-                        <v-select :clearable="false" :options="calendarDayOption" :reduce="item => item.code"
-                                  :searchable="false" v-model="notifyDay"></v-select>
-                    </div>
-                    <div class="ui-txt-info" v-if="notifyType === '3'">
-                        <v-select :clearable="false" :options="weekdayOption" :reduce="item => item.code"
-                                  :searchable="false" v-model="notifyWeekday"></v-select>
+                    <h4 class="ui-nowrap">提醒时间</h4>
+                    <div class="ui-txt-info">
+                        <v-select :clearable="false" :options="hourOptions" :reduce="item => item.code"
+                                  :searchable="false" placeholder="时" v-model="notifyHour"></v-select>
                     </div>
                     <div class="ui-txt-info">
-                        <v-select :clearable="false" :options="calendarHourOption" :reduce="item => item.code"
-                                  :searchable="false" v-model="notifyHour"></v-select>
-                    </div>
-                    <div class="ui-txt-info">
-                        <v-select :clearable="false" :options="calendarMinuteOption" :reduce="item => item.code"
-                                  :searchable="false" v-model="notifyMinute"></v-select>
+                        <v-select :clearable="false" :options="minuteOptions" :reduce="item => item.code"
+                                  :searchable="false" placeholder="分" v-model="notifyMinute"></v-select>
                     </div>
                 </div>
             </li>
         </ul>
-        <div class="ui-form-item ui-form-item-switch ui-border-b">
-            <p>懒人模式</p>
-            <label class="ui-switch">
-                <input type="checkbox" v-model="enableLazyMode">
-            </label>
-        </div>
-        <ul class="ui-list ui-list-single ui-border-tb" v-if="enableLazyMode">
-            <li class="ui-border-t">
-                <div class="ui-list-info">
-                    <h4 class="ui-nowrap"></h4>
-                    <div class="ui-txt-info">
-                        <v-select :clearable="false" :options="lazyTimesOption" :reduce="item => item.code"
-                                  :searchable="false" v-model="notifyLazyModeTimes"></v-select>
-                    </div>
-                </div>
-            </li>
-        </ul>
+
         <div class="ui-form-item ui-form-item-switch ui-border-b">
             <p>置顶</p>
             <label class="ui-switch">
-                <input type="checkbox" v-model="notifyTopStatus">
+                <input type="checkbox" v-model="cosmeticTopStatus">
             </label>
         </div>
-        <transition name="fade">
-            <div class="ui-form-item ui-form-item-switch ui-border-b" v-if="!enableRepeatNotifyMode">
-                <p>提醒后自动删除</p>
-                <label class="ui-switch">
-                    <input type="checkbox" v-model="notifyAfterDelete">
-                </label>
-            </div>
-        </transition>
-        <ul class="ui-list ui-list-single ui-border-tb">
-            <li class="ui-border-t">
-                <div class="ui-list-info">
-                    <h4 class="ui-nowrap">备注</h4>
-                    <textarea :style="{'height': height}" class="ui-txt-info textarea border-none" placeholder="请输入备注"
-                              ref="textarea" v-model="notifyMemo"></textarea>
-                </div>
-            </li>
-        </ul>
+
         <transition name="fade">
             <div class="ui-tooltips ui-tooltips-guide ui-tooltips-function" v-if="tips">
                 <div class="ui-tooltips-cnt ui-border-b">
@@ -130,13 +143,15 @@
                 </div>
             </div>
         </transition>
+
         <div class="ui-loading-wrap margin-top-1em" v-if="loading">
-            <p>加载中</p>
+            <p>保存中</p>
             <i class="ui-loading"></i>
         </div>
+
         <div class="ui-btn-wrap" v-if="!loading">
-            <button @click="saveTodo" class="ui-btn-lg ui-btn-primary">
-                添加
+            <button @click="saveCosmetic" class="ui-btn-lg ui-btn-primary">
+                保存
             </button>
         </div>
         <div class="ui-btn-wrap" style="padding-top: 0" v-if="!loading">
@@ -149,199 +164,235 @@
 </body>
 <script>
     Vue.component('v-select', VueSelect.VueSelect);
+    Vue.use(vant);
 
     new Vue({
         el: "#app",
         data() {
             return {
+                // 化妆品信息
                 cosmeticName: null,
                 cosmeticStock: 1,
-                enableRepeatNotifyMode: false,
-                notifyType: "0",
-                notifyMonth: null,
-                notifyDay: null,
-                notifyWeekday: null,
-                notifyHour: null,
-                notifyMinute: "30",
-                enableLazyMode: false,
-                notifyLazyModeTimes: 0,
-                notifyMemo: null,
-                notifyTopStatus: false,
-                notifyAfterDelete: false,
-                // 文本框高度
-                height: '24px',
-                // 化妆品名称文本框高度
-                cosmeticNameHeight: '24px',
-                // 提示
-                tips: null,
-                // 加载中
+                cosmeticPercent: 100,
+                cosmeticMemo: null,
+                cosmeticTopStatus: false,
+
+                // 提醒设置
+                notifyType: "4", // 默认每天
+                notifyWeekday: "1",
+                notifyHour: "09",
+                notifyMinute: "00",
+
+                // UI状态
                 loading: false,
-            }
-        },
-        computed: {
-            cosmeticRepeatModeOption() {
-                // 化妆品待办只支持月、周、天提醒
-                return window.repeatModeOption.filter(item => item.code >= 2 && item.code <= 4);
-            }
-        },
-        methods: {
-            // 跳转到化妆品待办列表
-            redirectTodoList() {
-                // 跳转到化妆品待办列表
-                window.location = "/fantasy-oss/hua-zhuang-pin-lie-biao.html";
-            },
-            // 跳转到修改化妆品待办
-            redirectUpdateTodo(todo) {
-                // 保存ID
-                localStorage.setItem("oss.todo.cosmetic.id", todo.id);
-                // 跳转到修改化妆品待办
-                window.location = "/fantasy-oss/xiu-gai-hua-zhuang-pin.html";
-            },
-            // 获取文本框高度
-            getHeight() {
-                this.height = calcTextareaHeight(this.$refs.textarea, 1, null).height;
-            },
-            // 获取化妆品名称文本框高度
-            getCosmeticNameHeight() {
-                this.cosmeticNameHeight = calcTextareaHeight(this.$refs.cosmeticNameTextarea, 1, null).height;
-            },
-            // 保存化妆品待办
-            saveTodo() {
-                this.loading = true;
-                let param = {
-                    "cosmeticName": this.cosmeticName,
-                    "cosmeticStock": this.cosmeticStock,
-                    "notifyCalendarType": "1", // 化妆品待办固定为公历
-                    "notifyType": this.notifyType,
-                    "notifyMonth": this.notifyMonth,
-                    "notifyDay": this.notifyDay,
-                    "notifyWeekday": this.notifyWeekday,
-                    "notifyHour": this.notifyHour,
-                    "notifyMinute": this.notifyMinute,
-                    "notifyLazyModeTimes": this.notifyLazyModeTimes,
-                    "notifyMemo": this.notifyMemo,
-                    "notifyTopStatus": this.notifyTopStatus ? "1" : "0",
-                    "notifyAfterDelete": this.notifyAfterDelete ? "1" : "0",
-                }
-                // 请求接口
-                axios({
-                    method: "post",
-                    url: "/fantasy-oss/api/v1/oss/todo.cosmetic/save",
-                    data: param
-                }).then(res => {
-                    this.tips = res.msg;
-                    this.loading = false;
-                    if (window.confirm("保存成功，最近一次提示时间为:" + res.data.notifyExecTime + "，是否跳转到化妆品待办列表？")) {
-                        // 跳转到化妆品待办列表
-                        this.redirectTodoList();
-                    } else {
-                        setTimeout(() => {
-                            // 跳转到修改化妆品待办
-                            this.redirectUpdateTodo(res.data);
-                        }, 500);
-                    }
-                }).catch(res => {
-                    this.loading = false
-                    if (res.data && res.data.msg) {
-                        this.tips = res.data.msg;
-                    } else {
-                        alert("服务器繁忙，请稍后再试")
-                    }
-                })
-            },
-            // 保存并继续添加化妆品待办
-            saveAndContinue() {
-                this.loading = true;
-                let param = {
-                    "cosmeticName": this.cosmeticName,
-                    "cosmeticStock": this.cosmeticStock,
-                    "notifyCalendarType": "1", // 化妆品待办固定为公历
-                    "notifyType": this.notifyType,
-                    "notifyMonth": this.notifyMonth,
-                    "notifyDay": this.notifyDay,
-                    "notifyWeekday": this.notifyWeekday,
-                    "notifyHour": this.notifyHour,
-                    "notifyMinute": this.notifyMinute,
-                    "notifyLazyModeTimes": this.notifyLazyModeTimes,
-                    "notifyMemo": this.notifyMemo,
-                    "notifyTopStatus": this.notifyTopStatus ? "1" : "0",
-                    "notifyAfterDelete": this.notifyAfterDelete ? "1" : "0",
-                }
-                // 请求接口
-                axios({
-                    method: "post",
-                    url: "/fantasy-oss/api/v1/oss/todo.cosmetic/save",
-                    data: param
-                }).then(res => {
-                    this.tips = "保存成功！最近一次提示时间为:" + res.data.notifyExecTime;
-                    this.loading = false;
-                    // 重置表单，保持提醒设置
-                    this.cosmeticName = null;
-                    this.cosmeticStock = 1;
-                    // 清空tips提示
-                    setTimeout(() => {
-                        this.tips = null;
-                    }, 3000);
-                }).catch(res => {
-                    this.loading = false
-                    if (res.data && res.data.msg) {
-                        this.tips = res.data.msg;
-                    } else {
-                        alert("服务器繁忙，请稍后再试")
-                    }
-                })
-            }
-        },
-        created() {
-            let current = new Date();
-            this.notifyMonth = (current.getMonth() + 1).toString();
-            if (this.notifyMonth < 10) {
-                this.notifyMonth = "0" + this.notifyMonth;
-            }
-            this.notifyDay = current.getDate().toString();
-            if (this.notifyDay < 10) {
-                this.notifyDay = "0" + this.notifyDay;
-            }
-            this.notifyHour = current.getHours().toString();
-            if (this.notifyHour < 10) {
-                this.notifyHour = "0" + this.notifyHour;
+                tips: null,
+                cosmeticNameHeight: '30px',
+                stockHeight: '30px',
+                memoHeight: '30px',
+                
+                // 选项
+                notifyTypeOptions: [
+                    {code: "3", label: "每周"},
+                    {code: "4", label: "每天"}
+                ],
+                weekdayOptions: [
+                    {code: "1", label: "星期一"},
+                    {code: "2", label: "星期二"},
+                    {code: "3", label: "星期三"},
+                    {code: "4", label: "星期四"},
+                    {code: "5", label: "星期五"},
+                    {code: "6", label: "星期六"},
+                    {code: "7", label: "星期日"}
+                ],
+                hourOptions: [],
+                minuteOptions: []
             }
         },
         watch: {
-            enableRepeatNotifyMode(newVal, oldVal) {
-                if (newVal === false) {
-                    this.notifyType = "0";
-                }
-                if (newVal === true) {
-                    // 默认每月提醒
-                    this.notifyType = "2"; 
-                }
-                // 每次更改提醒后删除都重置为false
-                this.notifyAfterDelete = false;
-            },
-            enableLazyMode(newVal, oldVal) {
-                if (newVal === false) {
-                    this.notifyLazyModeTimes = 0;
-                }
-                if (newVal === true) {
-                    this.notifyLazyModeTimes = window.lazyTimesOption[0].code;
-                }
-            },
-            notifyType(newVal, oldVal) {
-                if (newVal === '3') {
-                    this.notifyWeekday = window.weekdayOption[0].code;
-                } else {
-                    this.notifyWeekday = null;
-                }
-            },
-            notifyMemo() {
-                this.getHeight();
-            },
             cosmeticName() {
-                this.getCosmeticNameHeight();
+                this.$nextTick(() => {
+                    this.cosmeticNameHeight = calcTextareaHeight(this.$refs.cosmeticNameTextarea);
+                });
+            },
+            cosmeticStock() {
+                this.$nextTick(() => {
+                    this.stockHeight = calcTextareaHeight(this.$refs.stockTextarea);
+                });
+            },
+            cosmeticMemo() {
+                this.$nextTick(() => {
+                    this.memoHeight = calcTextareaHeight(this.$refs.memoTextarea);
+                });
             }
+        },
+        methods: {
+            // 返回列表
+            redirectCosmeticList() {
+                window.location = "/fantasy-oss/hua-zhuang-pin-lie-biao.html";
+            },
+            
+            // 保存化妆品
+            saveCosmetic() {
+                if (!this.validateForm()) {
+                    return;
+                }
+                
+                this.loading = true;
+                const param = this.buildParam();
+                
+                axios({
+                    method: "post",
+                    url: "/fantasy-oss/api/v1/oss/todo.cosmetic/save",
+                    data: param
+                }).then(res => {
+                    this.tips = "保存成功";
+                    setTimeout(() => {
+                        this.redirectCosmeticList();
+                    }, 1000);
+                }).catch(err => {
+                    this.loading = false;
+                    if (err.response && err.response.data && err.response.data.msg) {
+                        this.tips = err.response.data.msg;
+                    } else {
+                        this.tips = "保存失败，请稍后再试";
+                    }
+                    setTimeout(() => {
+                        this.tips = null;
+                    }, 3000);
+                });
+            },
+            
+            // 保存并继续添加
+            saveAndContinue() {
+                if (!this.validateForm()) {
+                    return;
+                }
+                
+                this.loading = true;
+                const param = this.buildParam();
+                
+                axios({
+                    method: "post",
+                    url: "/fantasy-oss/api/v1/oss/todo.cosmetic/save",
+                    data: param
+                }).then(res => {
+                    this.tips = "保存成功";
+                    this.loading = false;
+                    // 清空表单
+                    this.resetForm();
+                    setTimeout(() => {
+                        this.tips = null;
+                    }, 2000);
+                }).catch(err => {
+                    this.loading = false;
+                    if (err.response && err.response.data && err.response.data.msg) {
+                        this.tips = err.response.data.msg;
+                    } else {
+                        this.tips = "保存失败，请稍后再试";
+                    }
+                    setTimeout(() => {
+                        this.tips = null;
+                    }, 3000);
+                });
+            },
+            
+            // 验证表单
+            validateForm() {
+                if (!this.cosmeticName || this.cosmeticName.trim() === '') {
+                    this.tips = "请输入化妆品名称";
+                    setTimeout(() => {
+                        this.tips = null;
+                    }, 3000);
+                    return false;
+                }
+
+                const stock = parseInt(this.cosmeticStock);
+                if (isNaN(stock) || stock < 0) {
+                    this.tips = "请输入正确的库存数量";
+                    setTimeout(() => {
+                        this.tips = null;
+                    }, 3000);
+                    return false;
+                }
+
+                const percent = parseInt(this.cosmeticPercent);
+                if (isNaN(percent) || percent < 0 || percent > 100) {
+                    this.tips = "请输入正确的百分比(0-100)";
+                    setTimeout(() => {
+                        this.tips = null;
+                    }, 3000);
+                    return false;
+                }
+                
+                if (!this.notifyHour || !this.notifyMinute) {
+                    this.tips = "请选择提醒时间";
+                    setTimeout(() => {
+                        this.tips = null;
+                    }, 3000);
+                    return false;
+                }
+
+                if (this.notifyType === '3' && !this.notifyWeekday) {
+                    this.tips = "请选择星期几";
+                    setTimeout(() => {
+                        this.tips = null;
+                    }, 3000);
+                    return false;
+                }
+                
+                return true;
+            },
+            
+            // 构建参数
+            buildParam() {
+                return {
+                    cosmeticName: this.cosmeticName,
+                    cosmeticStock: parseInt(this.cosmeticStock),
+                    cosmeticPercent: parseInt(this.cosmeticPercent),
+                    cosmeticMemo: this.cosmeticMemo,
+                    cosmeticTopStatus: this.cosmeticTopStatus ? 1 : 0,
+                    notifyType: this.notifyType,
+                    notifyWeekday: this.notifyType === '3' ? parseInt(this.notifyWeekday) : null,
+                    notifyHour: this.notifyHour,
+                    notifyMinute: this.notifyMinute
+                };
+            },
+            
+            // 重置表单
+            resetForm() {
+                this.cosmeticName = null;
+                this.cosmeticStock = null;
+                this.cosmeticPercent = 100;
+                this.cosmeticMemo = null;
+                this.cosmeticTopStatus = false;
+                this.notifyType = "4";
+                this.notifyWeekday = "1";
+                this.notifyHour = "09";
+                this.notifyMinute = "00";
+            },
+            
+            // 初始化时分选项
+            initTimeOptions() {
+                // 小时选项 00-23
+                for (let i = 0; i < 24; i++) {
+                    this.hourOptions.push({
+                        code: i.toString().padStart(2, '0'),
+                        label: i.toString().padStart(2, '0') + '时'
+                    });
+                }
+                
+                // 分钟选项 00、05、10...55（5的倍数）
+                for (let i = 0; i < 60; i += 5) {
+                    this.minuteOptions.push({
+                        code: i.toString().padStart(2, '0'),
+                        label: i.toString().padStart(2, '0') + '分'
+                    });
+                }
+            }
+        },
+        created() {
+            this.initTimeOptions();
         }
     });
 </script>
-
 </html>

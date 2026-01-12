@@ -7,242 +7,345 @@
     <title>化妆品列表</title>
     <link href="https://static-4518.obs.cn-south-1.myhuaweicloud.com/frozen.css" rel="stylesheet"/>
     <link href="css/common.css" rel="stylesheet"/>
+    <!-- Vant 组件库 -->
+    <link href="https://cdn.jsdelivr.net/npm/vant@2.12/lib/index.css" rel="stylesheet"/>
     <script src="https://static-4518.obs.cn-south-1.myhuaweicloud.com/axios.min.js"></script>
     <script src="https://static-4518.obs.cn-south-1.myhuaweicloud.com/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vant@2.12/lib/vant.min.js"></script>
     <script src="js/CommonUtil.js"></script>
     <script src="js/FantasyConstant.js"></script>
     <script src="js/components/PopupMenu.js"></script>
     <script src="js/components/DownSlideStream.js"></script>
 </head>
 <style>
-    /* 化妆品卡片样式 */
+    body {
+        margin: 0;
+        font-family: 'Arial', sans-serif;
+        background: #ffffff;
+        min-height: 100vh;
+        padding-bottom: 20px;
+    }
+
+    .cosmetic-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        margin-top: 60px;
+    }
+
     .cosmetic-card {
-        background: white;
-        border-radius: 8px;
-        margin: 8px 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        padding: 16px;
-        position: relative;
+        background: #ffffff;
+        border-radius: 12px;
+        margin-bottom: 15px;
+        padding: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         transition: all 0.3s ease;
+        border: 1px solid #f0f0f0;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        padding-top: 15px;
+    }
+
+    .cosmetic-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
     }
 
     .cosmetic-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        border-color: #e0e0e0;
     }
 
-    .cosmetic-card.top-pinned {
-        border-left: 4px solid #ff6b6b;
-        background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%);
+    .cosmetic-card:hover::before {
+        opacity: 1;
     }
 
-    /* 化妆品名称区域 */
-    .cosmetic-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 12px;
+    .cosmetic-card.top-priority {
+        background: linear-gradient(135deg, rgba(24, 180, 237, 0.08), rgba(255, 255, 255, 0.95));
+        border-left: 4px solid #18b4ed;
+        box-shadow: 0 4px 20px rgba(24, 180, 237, 0.15);
     }
 
-    .cosmetic-name {
-        font-size: 16px;
+    .cosmetic-card.top-priority::before {
+        background: linear-gradient(90deg, #18b4ed, #4fc3f7);
+        opacity: 1;
+    }
+
+
+    .cosmetic-title {
+        font-size: 20px;
         font-weight: 600;
         color: #2c3e50;
-        flex: 1;
-        margin: 0;
-    }
-
-    .stock-badge {
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 500;
-        text-align: center;
-        min-width: 60px;
-    }
-
-    .stock-badge.high {
-        background: #d4edda;
-        color: #155724;
-    }
-
-    .stock-badge.medium {
-        background: #fff3cd;
-        color: #856404;
-    }
-
-    .stock-badge.low {
-        background: #f8d7da;
-        color: #721c24;
-    }
-
-    /* 备注区域 */
-    .cosmetic-memo {
-        font-size: 14px;
-        color: #666;
-        margin-bottom: 8px;
+        margin-bottom: 10px;
         line-height: 1.4;
     }
 
-    /* 提醒信息区域 */
-    .cosmetic-reminder {
+    @keyframes progress-animation {
+        0% {
+            background-position: 0 0;
+        }
+        100% {
+            background-position: 30px 30px;
+        }
+    }
+
+    .cosmetic-info {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-bottom: 8px;
+    }
+
+    .cosmetic-info-item {
+        font-size: 14px;
+        color: #7f8c8d;
+    }
+
+    .cosmetic-info-item .label {
+        font-weight: 500;
+        color: #5a6c7d;
+    }
+
+    .cosmetic-memo {
+        font-size: 13px;
+        color: #95a5a6;
+        margin-top: 8px;
+        line-height: 1.4;
+    }
+
+    .cosmetic-notify-info {
+        margin-top: 8px;
+        font-size: 12px;
+        color: #18b4ed;
+        font-weight: 500;
+    }
+
+    .ui-header {
+        background: #ffffff;
+        border-bottom: 1px solid #e0e0e0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .ui-header span {
+        color: #333;
+        font-weight: 500;
+    }
+
+    .username-display {
+        cursor: pointer;
+        padding: 10px;
+        border-radius: 10px;
+        transition: background 0.3s ease;
+    }
+    
+    /* 滑块容器 */
+    .cosmetic-slider-container {
+        margin-top: 15px;
+        padding: 15px;
+        background: rgba(24, 180, 237, 0.05);
+        border-radius: 8px;
+    }
+    
+    .cosmetic-slider-label {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        font-size: 12px;
-        color: #888;
+        margin-bottom: 10px;
+        font-size: 13px;
+        color: #5a6c7d;
     }
-
-    .reminder-time {
-        flex: 1;
-    }
-
-    .reminder-type {
-        background: #f0f0f0;
-        padding: 2px 8px;
-        border-radius: 12px;
-        font-size: 11px;
-    }
-
-    /* 空状态样式 */
-    .empty-state {
-        text-align: center;
-        padding: 60px 0px;
-        color: #999;
-    }
-
-    .ui-notice {
-        display: none;
-    }
-
-    /* 置顶图标 */
-    .pin-icon {
-        position: absolute;
-        top: 12px;
-        right: 12px;
-        color: #ff6b6b;
+    
+    .cosmetic-slider-value {
         font-size: 16px;
+        font-weight: bold;
+        color: #18b4ed;
     }
 
-    /* 响应式调整 */
-    @media (max-width: 480px) {
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+        .cosmetic-container {
+            padding: 10px;
+        }
+
         .cosmetic-card {
-            margin: 6px 8px;
-            padding: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
+            padding-top: 12px;
         }
 
-        .cosmetic-name {
-            font-size: 15px;
+        .cosmetic-title {
+            font-size: 16px;
+        }
+
+    }
+
+    /* 加载动画 */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
     }
+
+    .cosmetic-card {
+        animation: fadeInUp 0.6s ease-out;
+        animation-fill-mode: both;
+    }
+
+    .cosmetic-card:nth-child(1) { animation-delay: 0.1s; }
+    .cosmetic-card:nth-child(2) { animation-delay: 0.2s; }
+    .cosmetic-card:nth-child(3) { animation-delay: 0.3s; }
+    .cosmetic-card:nth-child(4) { animation-delay: 0.4s; }
+    .cosmetic-card:nth-child(5) { animation-delay: 0.5s; }
+    .cosmetic-card:nth-child(6) { animation-delay: 0.6s; }
+    .cosmetic-card:nth-child(7) { animation-delay: 0.7s; }
+    .cosmetic-card:nth-child(8) { animation-delay: 0.8s; }
+    .cosmetic-card:nth-child(9) { animation-delay: 0.9s; }
+    .cosmetic-card:nth-child(10) { animation-delay: 1.0s; }
 </style>
 <body>
 <div id="app">
     <header class="ui-header ui-header-positive ui-border-b text-center">
         <span @click="menuShow = true" class="position-left username-display">我的菜单</span>
-        <span @click="redirectSaveTodo" class="position-right username-display">添加化妆品</span>
+        <span @click="redirectAddCosmetic" class="position-right username-display">添加化妆品</span>
     </header>
 
-    <template-down-slide-stream :distance-to-bottom="90"
-                                :has-been-bottom="currPage >= totalPage"
-                                :has-data="todoList && todoList.length > 0"
-                                :loading="loading"
-                                :offset-to-bottom="45"
-                                @on-scroll-to-bottom="onScrollToBottom">
-        <slot>
-            <div v-if="todoList && todoList.length > 0">
-                <div :class="{'top-pinned': todo.notifyTopStatus === '1'}"
-                     @click="redirectUpdateTodo(todo)"
-                     class="cosmetic-card"
-                     v-for="todo in todoList">
-                    <!-- 置顶图标 -->
-                    <div class="pin-icon" v-if="todo.notifyTopStatus === '1'">📌</div>
-
-                    <!-- 化妆品名称和库存 -->
-                    <div class="cosmetic-header">
-                        <h4 class="cosmetic-name">{{todo.cosmeticName}}</h4>
-                        <span :class="getStockBadgeClass(todo.cosmeticStock)" class="stock-badge">
-                            库存 {{todo.cosmeticStock}}
-                        </span>
-                    </div>
-
-                    <!-- 备注信息 -->
-                    <div class="cosmetic-memo" v-if="todo.notifyMemo">
-                        {{todo.notifyMemo}}
-                    </div>
-
-                    <!-- 提醒信息 -->
-                    <div class="cosmetic-reminder">
-                        <div class="reminder-time">
-                            📅 下次提醒时间 {{todo.notifyExecTime}}
+    <div class="cosmetic-container">
+        <template-down-slide-stream :distance-to-bottom="90"
+                                    :has-been-bottom="currPage >= totalPage"
+                                    :has-data="cosmeticList && cosmeticList.length > 0"
+                                    :loading="loading"
+                                    :offset-to-bottom="45"
+                                    @on-scroll-to-bottom="onScrollToBottom">
+            <slot>
+                <div class="cosmetic-grid">
+                    <div :class="{'top-priority': cosmetic.cosmeticTopStatus === 1}"
+                         :key="cosmetic.id"
+                         class="cosmetic-card"
+                         v-for="cosmetic in cosmeticList">
+                        <div @click="redirectUpdateCosmetic(cosmetic)">
+                            <div class="cosmetic-title">
+                                💄 {{cosmetic.cosmeticName}}
+                            </div>
+                            <div class="cosmetic-info">
+                                <div class="cosmetic-info-item">
+                                    <span class="label">📦 库存：</span>{{cosmetic.cosmeticStock}}
+                                </div>
+                                <div class="cosmetic-info-item" v-if="cosmetic.notifyType && cosmetic.notifyType !== '0'">
+                                    <span class="label">⏰ 提醒：</span>{{formatNotifyTime(cosmetic)}}
+                                </div>
+                            </div>
+                            <div class="cosmetic-memo" v-if="cosmetic.cosmeticMemo">
+                                💬 {{cosmetic.cosmeticMemo}}
+                            </div>
                         </div>
-                        <span class="reminder-type">{{todo.notifyType | repeatNotifyModeFilter}}</span>
+                        <!-- 百分比滑块 -->
+                        <div class="cosmetic-slider-container" @click.stop>
+                            <div class="cosmetic-slider-label">
+                                <span>调整百分比</span>
+                                <span class="cosmetic-slider-value">{{cosmetic.cosmeticPercent}}%</span>
+                            </div>
+                            <van-slider v-model="cosmetic.cosmeticPercent" 
+                                        :max="100" :min="0" :step="1" 
+                                        active-color="#18b4ed" 
+                                        bar-height="4px"
+                                        @change="updateCosmeticPercent(cosmetic)"></van-slider>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- 空状态 -->
-            <div class="empty-state" v-if="!loading && todoList && todoList.length == 0">
-                <div>💄</div>
-                <div>暂无化妆品</div>
-                <div style="font-size: 14px; margin-top: 8px;">点击右上角添加您的第一个化妆品提醒吧</div>
-            </div>
-        </slot>
-    </template-down-slide-stream>
+            </slot>
+        </template-down-slide-stream>
+    </div>
 
     <template-popup-menu :menu-show="menuShow" @on-close="menuShow = false"></template-popup-menu>
 </div>
 </body>
 <script>
+    Vue.use(vant);
+    
     new Vue({
         el: "#app",
-        data: {
-            // 当前页
-            currPage: 1,
-            // 总页数
-            totalPage: 0,
-            // 加载中
-            loading: false,
-            // 菜单显示
-            menuShow: false,
-            // 默认列表
-            todoList: [],
-        },
-        filters: {
-            repeatNotifyModeFilter(notifyType) {
-                if (notifyType <= 0) {
-                    return "提醒一次";
-                }
-                for (let index in window.repeatModeOption) {
-                    let item = window.repeatModeOption[index];
-                    if (notifyType === item.code) {
-                        return item.label;
-                    }
-                }
+        data() {
+            return {
+                // 当前页
+                currPage: 1,
+                // 总页数
+                totalPage: 0,
+                // 加载中
+                loading: false,
+                // 菜单显示
+                menuShow: false,
+                // 化妆品列表
+                cosmeticList: [],
             }
         },
         methods: {
-            // 获取库存徽章样式类
-            getStockBadgeClass(stock) {
-                const stockNum = parseInt(stock) || 0;
-                if (stockNum <= 0) return 'low';
-                if (stockNum <= 2) return 'medium';
-                return 'high';
-            },
-            // 跳转到添加化妆品待办
-            redirectSaveTodo() {
-                // 跳转到保存化妆品待办
+            // 跳转到添加化妆品
+            redirectAddCosmetic() {
                 window.location = "/fantasy-oss/tian-jia-hua-zhuang-pin.html";
             },
-            // 跳转到修改化妆品待办
-            redirectUpdateTodo(todo) {
-                // 保存ID
-                localStorage.setItem("oss.todo.cosmetic.id", todo.id);
-                // 跳转到修改化妆品待办
+            
+            // 跳转到修改化妆品
+            redirectUpdateCosmetic(cosmetic) {
+                localStorage.setItem("oss.todo.cosmetic.id", cosmetic.id);
                 window.location = "/fantasy-oss/xiu-gai-hua-zhuang-pin.html";
             },
-            // 初始化列表
-            initTodoList() {
+            
+            // 获取进度条颜色类
+            
+            // 格式化提醒时间
+            formatNotifyTime(cosmetic) {
+                if (!cosmetic.notifyType || cosmetic.notifyType === '0') {
+                    return '';
+                }
+                
+                const weekdays = ['', '一', '二', '三', '四', '五', '六', '日'];
+                let time = cosmetic.notifyHour + ':' + cosmetic.notifyMinute;
+                
+                if (cosmetic.notifyType === '3') {
+                    return '每周' + weekdays[cosmetic.notifyWeekday] + ' ' + time;
+                } else if (cosmetic.notifyType === '4') {
+                    return '每天 ' + time;
+                }
+                
+                return time;
+            },
+            
+            // 更新化妆品百分比
+            updateCosmeticPercent(cosmetic) {
+                axios({
+                    method: "post",
+                    url: "/fantasy-oss/api/v1/oss/todo.cosmetic/update-percent",
+                    data: {
+                        id: cosmetic.id,
+                        cosmeticPercent: cosmetic.cosmeticPercent
+                    }
+                }).then(res => {
+                    // 静默更新，不提示
+                    console.log('百分比更新成功', cosmetic.cosmeticPercent);
+                }).catch(err => {
+                    if (err.response && err.response.data && err.response.data.msg) {
+                        alert(err.response.data.msg);
+                    } else {
+                        alert("更新失败，请稍后再试");
+                    }
+                });
+            },
+            
+            // 初始化化妆品列表
+            initCosmeticList() {
                 this.loading = true;
                 const param = {
                     "entity": {},
@@ -251,48 +354,41 @@
                         "pageSize": 15
                     }
                 }
-                // 请求
+                
                 axios({
                     method: "post",
                     url: "/fantasy-oss/api/v1/oss/todo.cosmetic/list",
                     data: param
                 }).then(res => {
-                    // 追加到集合中
-                    this.todoList = this.todoList.concat(commonUtil.getPageList(res));
-                    // 获取到总页数
+                    this.cosmeticList = this.cosmeticList.concat(commonUtil.getPageList(res));
                     this.totalPage = commonUtil.getTotalPage(res);
                     this.loading = false;
-                }).catch(res => {
+                }).catch(err => {
                     this.loading = false;
-                    if (res.data && res.data.msg) {
-                        alert(res.data.msg)
+                    if (err.response && err.response.data && err.response.data.msg) {
+                        alert(err.response.data.msg);
                     } else {
-                        alert("服务器繁忙，请稍后再试")
+                        alert("服务器繁忙，请稍后再试");
                     }
                 })
             },
+            
             // 滚动到底部
             onScrollToBottom() {
                 this.loading = true;
-                // 防抖动
                 commonUtil.debounce(() => {
-                    // 总页数小于等于当前页,则不加载
                     if (this.totalPage <= this.currPage) {
                         this.loading = false;
                         return;
                     }
-                    // 当前页+1
                     this.currPage++;
-                    // 加载下一页
-                    this.initTodoList()
+                    this.initCosmeticList()
                 }, 250);
             }
         },
         created() {
-            // 初始化列表
-            this.initTodoList();
+            this.initCosmeticList();
         }
     });
 </script>
-
 </html>

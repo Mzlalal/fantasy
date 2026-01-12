@@ -7,11 +7,9 @@ import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oss.dto.TodoNotifyEntity;
 import com.mzlalal.base.oauth2.Oauth2Context;
 import com.mzlalal.base.util.FantasyPage;
-import com.mzlalal.notify.service.MailNotifyService;
 import com.mzlalal.oss.dao.TodoNotifyDao;
 import com.mzlalal.oss.service.TodoNotifyService;
 import java.util.List;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 /**
@@ -22,20 +20,6 @@ import org.springframework.stereotype.Service;
  */
 @Service("todoNotifyServiceImpl")
 public class TodoNotifyServiceImpl extends ServiceImpl<TodoNotifyDao, TodoNotifyEntity> implements TodoNotifyService {
-
-    /**
-     * 邮件提醒service
-     */
-    private final MailNotifyService mailNotifyService;
-    /**
-     * string=>对象 redis操作模板
-     */
-    private final RedisTemplate<String, Object> redisTemplate;
-
-    public TodoNotifyServiceImpl(MailNotifyService mailNotifyService, RedisTemplate<String, Object> redisTemplate) {
-        this.mailNotifyService = mailNotifyService;
-        this.redisTemplate = redisTemplate;
-    }
 
     /**
      * 根据 PagePara 查询分页
@@ -50,7 +34,7 @@ public class TodoNotifyServiceImpl extends ServiceImpl<TodoNotifyDao, TodoNotify
         wrapper.eq("create_by", Oauth2Context.getUserIdElseThrow());
         // 排序
         wrapper.orderByDesc("notify_top_status");
-        wrapper.orderByDesc("notify_exec_time");
+        wrapper.orderByAsc("notify_exec_time");
         // 创建分页条件
         Page<TodoNotifyEntity> pageResult = this.createPageQuery(po.getPageInfo());
         // 查询结果集

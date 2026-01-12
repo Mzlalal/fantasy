@@ -1,10 +1,7 @@
 package com.mzlalal.oss.config.schedule;
 
-import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.oss.service.TodoCosmeticService;
-import java.util.concurrent.TimeUnit;
 import lombok.AllArgsConstructor;
-import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -35,26 +32,6 @@ public class TodoNotifyScheduleConfig {
      */
     @Scheduled(cron = "5 0/5 * * * ?")
     public void todoCosmeticSchedule() {
-        // 获取锁
-        RLock lock = redissonClient.getLock(GlobalConstant.todoCosmeticSchedule());
-        try {
-            // 尝试获取锁,最大等待时间30秒,超过30秒自动释放
-            boolean tryLock = lock.tryLock(0, 300, TimeUnit.SECONDS);
-            if (!tryLock) {
-                // 获取锁失败
-                return;
-            }
-            // 对懒人模式的邮件进行提醒
-            todoCosmeticService.notifyLazyModeTodoList();
-            // 对待办列表进行邮件通知
-            todoCosmeticService.notifyCurrentTimeTodoList();
-        } catch (InterruptedException ignored) {
-            // 忽略
-        } finally {
-            // 解锁
-            if (lock.isLocked() && lock.isHeldByCurrentThread()) {
-                lock.unlock();
-            }
-        }
+        
     }
 }

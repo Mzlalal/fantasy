@@ -10,9 +10,8 @@ import com.mzlalal.base.oauth2.Oauth2Context;
 import com.mzlalal.base.util.FantasyPage;
 import com.mzlalal.oss.dao.DayMatterDao;
 import com.mzlalal.oss.service.DayMatterService;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
+import org.springframework.stereotype.Service;
 
 /**
  * 纪念日ServiceImpl
@@ -36,6 +35,8 @@ public class DayMatterServiceImpl extends ServiceImpl<DayMatterDao, DayMatterEnt
         // 根据用户邮箱查询
         String mail = Oauth2Context.getElseThrow().getMail();
         wrapper.apply(StrUtil.isNotBlank(mail), "FIND_IN_SET('" + mail + "', matter_mail_set)");
+        // 排序
+        wrapper.orderByDesc("update_time");
         // 创建分页条件
         Page<DayMatterEntity> pageResult = this.createPageQuery(po.getPageInfo());
         // 查询结果集

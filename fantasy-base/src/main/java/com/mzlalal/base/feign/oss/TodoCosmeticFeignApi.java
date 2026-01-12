@@ -5,10 +5,13 @@ import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.entity.global.Result;
 import com.mzlalal.base.entity.global.po.Po;
 import com.mzlalal.base.entity.oss.dto.TodoCosmeticEntity;
+import com.mzlalal.base.entity.oss.req.UpdatePercentReq;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.core.Ordered;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -77,4 +80,15 @@ public interface TodoCosmeticFeignApi {
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 50)
     Result<Void> delete(@RequestBody String[] ids);
+
+    /**
+     * 更新化妆品百分比
+     *
+     * @param req 请求参数
+     * @return Result
+     */
+    @ApiOperation("更新化妆品百分比")
+    @PostMapping("/update-percent")
+    @ApiOperationSupport(order = Ordered.HIGHEST_PRECEDENCE + 60)
+    Result<Void> updatePercent(@Validated @RequestBody UpdatePercentReq req);
 }
