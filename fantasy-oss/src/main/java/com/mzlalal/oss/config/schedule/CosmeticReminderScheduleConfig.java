@@ -59,7 +59,7 @@ public class CosmeticReminderScheduleConfig {
      * 每5分钟执行一次化妆品库存提醒
      * cron表达式: 秒 分 时 日 月 星期
      */
-    @Scheduled(cron = "0/15 * * * * ?")
+    @Scheduled(cron = "0 0/5 * * * ?")
     public void cosmeticReminderSchedule() {
         // 获取锁
         RLock lock = redissonClient.getLock(GlobalConstant.cosmeticSchedule());
@@ -93,6 +93,7 @@ public class CosmeticReminderScheduleConfig {
             // 查询所有需要提醒的化妆品
             List<TodoCosmeticEntity> allCosmetics = todoCosmeticService.list(Wrappers.<TodoCosmeticEntity>lambdaQuery()
                     .eq(TodoCosmeticEntity::getNotifyHour, hourStr)
+                    .eq(TodoCosmeticEntity::getNotifyMinute, minuteStr)
             );
 
             if (CollUtil.isEmpty(allCosmetics)) {
