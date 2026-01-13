@@ -349,7 +349,7 @@
                     cosmeticName: this.cosmeticName,
                     cosmeticStock: parseInt(this.cosmeticStock),
                     cosmeticPercent: parseInt(this.cosmeticPercent),
-                    cosmeticMemo: this.cosmeticMemo,
+                    cosmeticMemo: this.cosmeticMemo || "",
                     cosmeticTopStatus: this.cosmeticTopStatus ? 1 : 0,
                     notifyType: this.notifyType,
                     notifyWeekday: this.notifyType === '3' ? parseInt(this.notifyWeekday) : null,
