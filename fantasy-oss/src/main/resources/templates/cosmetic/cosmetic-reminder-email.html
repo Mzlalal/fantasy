@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>化妆品库存提醒</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
+            'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .email-header {
+            background: linear-gradient(135deg, #18b4ed 0%, #4fc3f7 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .email-header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .email-header .subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .email-header .emoji {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .email-body {
+            padding: 30px;
+        }
+
+        .summary-box {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .summary-box h2 {
+            font-size: 16px;
+            color: #5a6c7d;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .summary-stats {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .stat-item {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #18b4ed;
+            line-height: 1;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #7f8c8d;
+        }
+
+        .cosmetic-card {
+            background: #ffffff;
+            border: 2px solid #f0f0f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cosmetic-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #18b4ed 0%, #4fc3f7 100%);
+        }
+
+        .cosmetic-card.low-stock::before {
+            background: linear-gradient(180deg, #ff6b6b 0%, #ee5a6f 100%);
+        }
+
+        .cosmetic-card.medium-stock::before {
+            background: linear-gradient(180deg, #ffa726 0%, #ffb74d 100%);
+        }
+
+        .cosmetic-card.high-stock::before {
+            background: linear-gradient(180deg, #66bb6a 0%, #81c784 100%);
+        }
+
+        .cosmetic-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 12px;
+            padding-left: 12px;
+        }
+
+        .cosmetic-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-left: 12px;
+            margin-bottom: 15px;
+        }
+
+        .info-item {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        .info-label {
+            font-weight: 500;
+            color: #5a6c7d;
+        }
+
+        .progress-container {
+            padding-left: 12px;
+            margin-bottom: 10px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            margin-bottom: 8px;
+            color: #5a6c7d;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #18b4ed, #4fc3f7);
+            transition: width 0.6s ease;
+            position: relative;
+        }
+
+        .progress-fill.low {
+            background: linear-gradient(90deg, #ff6b6b, #ee5a6f);
+        }
+
+        .progress-fill.medium {
+            background: linear-gradient(90deg, #ffa726, #ffb74d);
+        }
+
+        .progress-fill.high {
+            background: linear-gradient(90deg, #66bb6a, #81c784);
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: linear-gradient(
+                    45deg,
+                    rgba(255, 255, 255, 0.2) 25%,
+                    transparent 25%,
+                    transparent 50%,
+                    rgba(255, 255, 255, 0.2) 50%,
+                    rgba(255, 255, 255, 0.2) 75%,
+                    transparent 75%,
+                    transparent
+            );
+            background-size: 20px 20px;
+        }
+
+        .cosmetic-memo {
+            font-size: 13px;
+            color: #95a5a6;
+            padding-left: 12px;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .badge.urgent {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+            color: white;
+        }
+
+        .badge.warning {
+            background: linear-gradient(135deg, #ffa726, #ffb74d);
+            color: white;
+        }
+
+        .badge.good {
+            background: linear-gradient(135deg, #66bb6a, #81c784);
+            color: white;
+        }
+
+        .email-footer {
+            background: #f8f9fa;
+            padding: 25px 30px;
+            text-align: center;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .email-footer p {
+            font-size: 13px;
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+
+        .email-footer .time {
+            font-size: 12px;
+            color: #adb5bd;
+        }
+
+        .action-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #18b4ed, #4fc3f7);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 15px;
+            box-shadow: 0 4px 15px rgba(24, 180, 237, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(24, 180, 237, 0.4);
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #e0e0e0, transparent);
+            margin: 20px 0;
+        }
+
+        @media only screen and (max-width: 600px) {
+            .email-body {
+                padding: 20px;
+            }
+
+            .email-header {
+                padding: 30px 20px;
+            }
+
+            .email-header h1 {
+                font-size: 24px;
+            }
+
+            .cosmetic-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .summary-stats {
+                flex-direction: column;
+            }
+
+            .stat-item {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="email-container">
+    <!-- 邮件头部 -->
+    <div class="email-header">
+        <div class="emoji">💄</div>
+        <h1>化妆品库存提醒</h1>
+        <p class="subtitle">您的化妆品需要补货了！</p>
+    </div>
+
+    <!-- 邮件正文 -->
+    <div class="email-body">
+        <!-- 统计概览 -->
+        <div class="summary-box">
+            <h2>📊 本次提醒统计</h2>
+            <div class="summary-stats">
+                <div class="stat-item">
+                    <div class="stat-number">${totalCount}</div>
+                    <div class="stat-label">提醒总数</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" style="color: #ff6b6b;">${urgentCount}</div>
+                    <div class="stat-label">紧急补货</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" style="color: #ffa726;">${warningCount}</div>
+                    <div class="stat-label">库存预警</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 化妆品列表 -->
+        <h3 style="margin-bottom: 20px; color: #2c3e50; font-size: 18px;">📦 库存详情</h3>
+
+        <#list cosmeticList as cosmetic>
+        <div class="cosmetic-card ${cosmetic.stockLevel}">
+            <div class="cosmetic-name">
+                ${cosmetic.cosmeticName}
+                <#if cosmetic.isUrgent??>
+                <span class="badge urgent">🔥 紧急</span>
+                </#if>
+                <#if cosmetic.isWarning??>
+                <span class="badge warning">⚠️ 预警</span>
+                </#if>
+                <#if cosmetic.isGood??>
+                <span class="badge good">✅ 充足</span>
+                </#if>
+            </div>
+
+            <div class="cosmetic-info">
+                <div class="info-item">
+                    <span class="info-label">📦 当前库存：</span>${cosmetic.cosmeticStock}
+                </div>
+                <div class="info-item">
+                    <span class="info-label">⏰ 提醒周期：</span>${cosmetic.notifyTime}
+                </div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-label">
+                    <span>使用进度</span>
+                    <span style="font-weight: 600; color: ${cosmetic.percentColor};">${cosmetic.cosmeticPercent}%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill ${cosmetic.progressClass}" style="width: ${cosmetic.cosmeticPercent}%;"></div>
+                </div>
+            </div>
+
+            <#if cosmetic.cosmeticMemo?? && cosmetic.cosmeticMemo?has_content>
+            <div class="cosmetic-memo">
+                💬 ${cosmetic.cosmeticMemo}
+            </div>
+            </#if>
+        </div>
+        </#list>
+
+        <div class="divider"></div>
+
+        <!-- 行动建议 -->
+        <div style="text-align: center; padding: 20px 0;">
+            <p style="font-size: 14px; color: #6c757d; margin-bottom: 15px;">
+                点击下方按钮查看完整库存列表
+            </p>
+            <a href="${cosmeticListUrl}" class="action-button">
+                查看化妆品列表 →
+            </a>
+        </div>
+    </div>
+
+    <!-- 邮件尾部 -->
+    <div class="email-footer">
+        <p>💡 温馨提示：建议及时补充库存不足的化妆品</p>
+        <p class="time">发送时间：${sendTime}</p>
+        <p style="font-size: 11px; color: #ced4da; margin-top: 15px;">
+            本邮件由系统自动发送，请勿直接回复
+        </p>
+    </div>
+</div>
+</body>
+</html>

@@ -9,8 +9,8 @@ import com.mzlalal.base.common.GlobalConstant;
 import com.mzlalal.base.common.GlobalResult;
 import com.mzlalal.base.entity.oss.dto.TodoNotifyEntity;
 import com.mzlalal.base.util.AssertUtil;
-
 import java.util.Date;
+import lombok.Getter;
 
 /**
  * 提醒周期方式并获取下次提醒时间
@@ -18,6 +18,7 @@ import java.util.Date;
  * @author Mzlalal
  * @date 2022/1/24 21:28
  */
+@Getter
 public enum NotifyTypeEnum {
     /**
      * 提醒一次
@@ -132,6 +133,22 @@ public enum NotifyTypeEnum {
 
     NotifyTypeEnum(String code) {
         this.code = code;
+    }
+
+    /**
+     * 根据重复提醒周期notifyType获取
+     *
+     * @param notifyType 重复提醒周期
+     * @return NotifyTypeVerifyEnum
+     */
+    public static NotifyTypeEnum getEnum(String notifyType) {
+        for (NotifyTypeEnum value : NotifyTypeEnum.values()) {
+            // 枚举名字和type是否相等
+            if (StrUtil.equalsIgnoreCase(notifyType, value.code)) {
+                return value;
+            }
+        }
+        throw GlobalResult.TODO_NOTIFY_TYPE_NOT_CORRECT.boom();
     }
 
     /**
@@ -308,21 +325,5 @@ public enum NotifyTypeEnum {
             chineseDate = new ChineseDate(year, month, day - 1);
         }
         return chineseDate;
-    }
-
-    /**
-     * 根据重复提醒周期notifyType获取
-     *
-     * @param notifyType 重复提醒周期
-     * @return NotifyTypeVerifyEnum
-     */
-    public static NotifyTypeEnum getEnum(String notifyType) {
-        for (NotifyTypeEnum value : NotifyTypeEnum.values()) {
-            // 枚举名字和type是否相等
-            if (StrUtil.equalsIgnoreCase(notifyType, value.code)) {
-                return value;
-            }
-        }
-        throw GlobalResult.TODO_NOTIFY_TYPE_NOT_CORRECT.boom();
     }
 }

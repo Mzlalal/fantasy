@@ -206,4 +206,13 @@ public interface GlobalConstant {
     static String openClockSchedule() {
         return StrUtil.format("fantasy:open:clock:schedule");
     }
+
+    /**
+     * 化妆品库存提醒redisKey
+     *
+     * @return String fantasy:cosmetic:schedule
+     */
+    static String cosmeticSchedule() {
+        return StrUtil.format("fantasy:cosmetic:schedule");
+    }
 }
