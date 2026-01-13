@@ -48,7 +48,7 @@ public class TodoCosmeticEntity implements Serializable {
     private Integer cosmeticPercent;
 
     @ApiModelProperty("备注")
-    private Integer cosmeticMemo;
+    private String cosmeticMemo;
 
     @ApiModelProperty("是否置顶,例:0=不置顶,1=置顶")
     private Integer cosmeticTopStatus;
